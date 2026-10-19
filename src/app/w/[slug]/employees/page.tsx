@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { PayItemsEditor } from "@/components/pay-items";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
-import type { PayItem } from "@/lib/api/people";
+import { type PayItem, pickedPerson, usePeoplePicker } from "@/lib/api/people";
 import type { Employee } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
@@ -47,6 +47,7 @@ export default function EmployeesPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { search: search || undefined, page_size: 200 } } })),
   });
   const departments = useQuery({ queryKey: ["departments", slug], enabled: manage, queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", p)) });
+  const people = usePeoplePicker(slug, manage);
   const branches = useQuery({ queryKey: ["branches", slug], enabled: manage, queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/branches/", p)) });
 
   const save = useMutation({
@@ -55,7 +56,7 @@ export default function EmployeesPage() {
         ...form,
         department_id: form.department_id || null,
         branch_id: form.branch_id || null,
-        reports_to_id: form.reports_to_id || null,
+        ...pickedPerson(form.reports_to_id, "reports_to_id", "reports_to_membership_id"),
         hire_date: form.hire_date || null,
         basic_salary: form.basic_salary || "0",
         ...(can("payroll.manage") ? {} : { on_payroll: undefined, basic_salary: undefined, recurring_items: undefined, pay_method: undefined, annual_leave_days: undefined }),
@@ -123,7 +124,7 @@ export default function EmployeesPage() {
             <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
             <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} /></Field>
             <Field label="National ID" error={fieldError(save.error, "national_id")}><Input value={form.national_id} onChange={set("national_id")} /></Field>
-            <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} /></Field>
+            <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" /></Field>
             <Field label="Job title" error={fieldError(save.error, "job_title")}><Input value={form.job_title} onChange={set("job_title")} /></Field>
             <Field label="Hire date" error={fieldError(save.error, "hire_date")}><Input type="date" value={form.hire_date} onChange={set("hire_date")} /></Field>
             <Field label="Department" error={fieldError(save.error, "department_id")}>
@@ -141,7 +142,8 @@ export default function EmployeesPage() {
             <Field label="Reports to" error={fieldError(save.error, "reports_to_id")}>
               <Select value={form.reports_to_id} onChange={set("reports_to_id")}>
                 <option value="">Nobody</option>
-                {rows.filter((r) => r.id !== current?.id).map((r) => <option key={r.id} value={r.id}>{r.full_name}</option>)}
+                {people.employees.filter((o) => o.value !== current?.id).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                {people.members.length > 0 && <optgroup label="Team members">{people.members.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</optgroup>}
               </Select>
             </Field>
             <Field label="Status" error={fieldError(save.error, "status")}>

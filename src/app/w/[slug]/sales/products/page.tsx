@@ -15,7 +15,7 @@ import { fmt } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 type Kind = "goods" | "service";
-const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true };
+const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "" };
 
 export default function ProductsPage() {
   const { slug, can, context } = useWorkspace();
@@ -34,7 +34,9 @@ export default function ProductsPage() {
   });
   const save = useMutation({
     mutationFn: async () => {
-      const body = { ...form, track_inventory: form.kind === "goods" && form.track_inventory, category_id: form.category_id || null, sale_price: form.sale_price || "0", tax_rate_id: form.tax_rate_id || null, income_account_id: form.income_account_id || null };
+      const body = { ...form, track_inventory: form.kind === "goods" && form.track_inventory, category_id: form.category_id || null, sale_price: form.sale_price || "0", tax_rate_id: form.tax_rate_id || null, income_account_id: form.income_account_id || null,
+        opening_quantity: form.track_inventory && form.opening_quantity ? form.opening_quantity : undefined,
+        opening_unit_cost: form.track_inventory && form.opening_quantity && form.opening_unit_cost ? form.opening_unit_cost : undefined };
       if (editing === "new") return unwrap(await api.POST("/api/v1/w/{workspace}/products/", { ...wsPath(slug), body }));
       const id = (editing as Product).id;
       return unwrap(await api.PATCH("/api/v1/w/{workspace}/products/{id}/", { params: { path: { workspace: slug, id } }, body }));
@@ -52,7 +54,7 @@ export default function ProductsPage() {
     setForm(p === "new" ? { ...EMPTY, tax_rate_id: defaultRate } : {
       code: p.code ?? "", name: p.name, kind: (p.kind ?? "goods") as Kind, category_id: p.category_id ?? "", track_inventory: p.track_inventory ?? false, reorder_level: String(Number(p.reorder_level ?? 0)), description: p.description ?? "", unit: p.unit ?? "pcs",
       sale_price: String(Number(p.sale_price ?? 0)), cost_price: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? "",
-      income_account_id: p.income_account_id ?? "", is_active: p.is_active ?? true,
+      income_account_id: p.income_account_id ?? "", is_active: p.is_active ?? true, opening_quantity: "", opening_unit_cost: "",
     });
     setEditing(p);
   }
@@ -107,7 +109,7 @@ export default function ProductsPage() {
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>
-            <Field label="Code (SKU)" error={fieldError(save.error, "code")}><Input value={form.code} onChange={set("code")} /></Field>
+            <Field label="Code (SKU)" hint="Blank: numbered for you (SKU-00001)." error={fieldError(save.error, "code")}><Input value={form.code} onChange={set("code")} /></Field>
             <Field label="Type"><Select value={form.kind} onChange={set("kind")}><option value="goods">Goods</option><option value="service">Service</option></Select></Field>
             <Field label="Unit" error={fieldError(save.error, "unit")}>
               <Select value={form.unit} onChange={set("unit")}>
@@ -122,6 +124,19 @@ export default function ProductsPage() {
               <label className="flex items-center gap-2 pb-2 text-sm"><input type="checkbox" checked={form.track_inventory} onChange={(e) => setForm((prev) => ({ ...prev, track_inventory: e.target.checked }))} /> Track stock</label>
               {form.track_inventory && <Field label="Warn when stock falls to" error={fieldError(save.error, "reorder_level")}><Input inputMode="decimal" value={form.reorder_level} onChange={set("reorder_level")} /></Field>}
             </div>
+          )}
+          {form.kind === "goods" && form.track_inventory && (editing === "new" || Number((editing as Product | null)?.stock_on_hand ?? 0) === 0) && (
+            <div className="space-y-2 rounded-md bg-stone-50 p-3">
+              <p className="text-sm font-medium text-stone-800">Stock you already have</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Quantity on hand" error={fieldError(save.error, "opening_quantity")}><Input inputMode="decimal" value={form.opening_quantity} onChange={set("opening_quantity")} placeholder="0" /></Field>
+                <Field label="Cost of each" hint="Blank: the cost price." error={fieldError(save.error, "opening_unit_cost")}><Input inputMode="decimal" value={form.opening_unit_cost} onChange={set("opening_unit_cost")} /></Field>
+              </div>
+              <p className="text-xs text-stone-500">Goes into the default warehouse as opening stock. After this, stock comes in when you receive goods on a purchase order (Purchasing &gt; Goods received), or through Inventory &gt; Adjustments.</p>
+            </div>
+          )}
+          {form.kind === "goods" && form.track_inventory && editing !== "new" && Number((editing as Product | null)?.stock_on_hand ?? 0) !== 0 && (
+            <p className="text-xs text-stone-500">In stock: {Number((editing as Product).stock_on_hand)}. To add or remove stock, receive goods on a purchase order or use Inventory &gt; Adjustments.</p>
           )}
           {fieldError(save.error, "track_inventory") && <p className="text-sm text-red-600">{fieldError(save.error, "track_inventory")}</p>}
           <Field label="Category" error={fieldError(save.error, "category_id")}>

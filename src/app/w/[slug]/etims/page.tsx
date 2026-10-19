@@ -72,7 +72,7 @@ function ConnectionForm({ device }: { device: EtimsDevice }) {
           Apply for OSCU on the KRA eTIMS portal and choose MannaBooks as your system. KRA then gives you a serial number for each branch.
         </p>
         <fieldset disabled={!manage} className="grid gap-3 sm:grid-cols-2">
-          <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input required value={form.kra_pin} onChange={set("kra_pin")} /></Field>
+          <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input required value={form.kra_pin} onChange={set("kra_pin")} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" /></Field>
           <Field label="Branch id" error={fieldError(save.error, "branch_code")} hint="00 for the head office."><Input required value={form.branch_code} onChange={set("branch_code")} /></Field>
           <Field label="OSCU serial number" error={fieldError(save.error, "device_serial")} hint="KRA calls it the device serial number."><Input required value={form.device_serial} onChange={set("device_serial")} /></Field>
           <Field label="Environment"><Select value={form.environment} onChange={set("environment")}><option value="sandbox">KRA sandbox (testing)</option><option value="production">KRA production</option></Select></Field>

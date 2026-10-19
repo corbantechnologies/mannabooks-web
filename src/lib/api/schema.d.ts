@@ -5912,11 +5912,13 @@ export interface components {
         };
         /** @enum {unknown} */
         BlankEnum: "";
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Branch: {
             /** Format: uuid */
             readonly id: string;
             name: string;
-            code: string;
+            /** @description Blank: numbered for you (BR-01) */
+            code?: string;
             address?: string;
             phone?: string;
             is_default?: boolean;
@@ -5924,9 +5926,11 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         BranchRequest: {
             name: string;
-            code: string;
+            /** @description Blank: numbered for you (BR-01) */
+            code?: string;
             address?: string;
             phone?: string;
             is_default?: boolean;
@@ -6126,10 +6130,12 @@ export interface components {
             /** Format: uuid */
             invoice_id: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         CostCenter: {
             /** Format: uuid */
             readonly id: string;
-            code: string;
+            /** @description Blank: numbered for you (CC-001) */
+            code?: string;
             name: string;
             /** Format: uuid */
             department_id?: string | null;
@@ -6139,8 +6145,10 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         CostCenterRequest: {
-            code: string;
+            /** @description Blank: numbered for you (CC-001) */
+            code?: string;
             name: string;
             /** Format: uuid */
             department_id?: string | null;
@@ -6424,6 +6432,7 @@ export interface components {
          * @enum {string}
          */
         DeliveryNoteStatusEnum: "draft" | "dispatched" | "delivered" | "void";
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Department: {
             /** Format: uuid */
             readonly id: string;
@@ -6441,12 +6450,18 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         DepartmentRequest: {
             name: string;
             code?: string;
             description?: string;
             /** Format: uuid */
             head_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A team member without a staff record: one is made for them and they become the head
+             */
+            head_membership_id?: string | null;
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
@@ -6548,6 +6563,11 @@ export interface components {
             branch_id?: string | null;
             /** Format: uuid */
             reports_to_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A team member without a staff record (such as the owner): one is made for them
+             */
+            reports_to_membership_id?: string | null;
             /** Format: uuid */
             membership_id?: string | null;
             /** Format: date */
@@ -8977,8 +8997,10 @@ export interface components {
             /** Format: uuid */
             warehouse_id?: string | null;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedBranchRequest: {
             name?: string;
+            /** @description Blank: numbered for you (BR-01) */
             code?: string;
             address?: string;
             phone?: string;
@@ -8996,7 +9018,9 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedCostCenterRequest: {
+            /** @description Blank: numbered for you (CC-001) */
             code?: string;
             name?: string;
             /** Format: uuid */
@@ -9049,12 +9073,18 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["DeliveryNoteLineRequest"][];
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedDepartmentRequest: {
             name?: string;
             code?: string;
             description?: string;
             /** Format: uuid */
             head_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A team member without a staff record: one is made for them and they become the head
+             */
+            head_membership_id?: string | null;
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
@@ -9074,6 +9104,11 @@ export interface components {
             branch_id?: string | null;
             /** Format: uuid */
             reports_to_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A team member without a staff record (such as the owner): one is made for them
+             */
+            reports_to_membership_id?: string | null;
             /** Format: uuid */
             membership_id?: string | null;
             /** Format: date */
@@ -9281,6 +9316,7 @@ export interface components {
             description?: string;
             is_active?: boolean;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedProductRequest: {
             /** @description SKU or item code */
             code?: string;
@@ -9307,6 +9343,21 @@ export interface components {
              */
             reorder_level?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Stock already on the shelf, for a tracked product with no stock yet
+             */
+            opening_quantity?: string;
+            /**
+             * Format: decimal
+             * @description What each unit cost; blank: the cost price
+             */
+            opening_unit_cost?: string;
+            /**
+             * Format: uuid
+             * @description Blank: the default warehouse
+             */
+            opening_warehouse_id?: string | null;
         };
         PatchedProjectRequest: {
             code?: string;
@@ -9508,6 +9559,7 @@ export interface components {
             phone?: string;
             avatar_url?: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedWarehouseRequest: {
             name?: string;
             code?: string;
@@ -10012,6 +10064,7 @@ export interface components {
             is_active?: boolean;
             items?: components["schemas"]["PriceListItemRequest"][];
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Product: {
             /** Format: uuid */
             readonly id: string;
@@ -10083,6 +10136,7 @@ export interface components {
             /** Format: decimal */
             price: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         ProductRequest: {
             /** @description SKU or item code */
             code?: string;
@@ -10109,6 +10163,21 @@ export interface components {
              */
             reorder_level?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Stock already on the shelf, for a tracked product with no stock yet
+             */
+            opening_quantity?: string;
+            /**
+             * Format: decimal
+             * @description What each unit cost; blank: the cost price
+             */
+            opening_unit_cost?: string;
+            /**
+             * Format: uuid
+             * @description Blank: the default warehouse
+             */
+            opening_warehouse_id?: string | null;
         };
         /**
          * @description * `complete` - complete
@@ -11875,6 +11944,7 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Warehouse: {
             /** Format: uuid */
             readonly id: string;
@@ -11894,6 +11964,7 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         WarehouseRequest: {
             name: string;
             code?: string;

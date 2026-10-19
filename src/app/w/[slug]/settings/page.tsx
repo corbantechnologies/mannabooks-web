@@ -51,7 +51,7 @@ export default function SettingsPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Business name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field>
             <Field label="Registered (legal) name" error={fieldError(save.error, "legal_name")}><Input value={form.legal_name} onChange={set("legal_name")} /></Field>
-            <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} placeholder="P051234567X" /></Field>
+            <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} placeholder="P051234567X" maxLength={11} autoCapitalize="characters" className="uppercase" /></Field>
             <Field label="Currency" error={fieldError(save.error, "currency")}><Input value={form.currency} onChange={set("currency")} maxLength={3} /></Field>
             <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} /></Field>
             <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>

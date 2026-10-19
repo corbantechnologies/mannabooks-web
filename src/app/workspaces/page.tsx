@@ -84,7 +84,7 @@ export default function WorkspacesPage() {
             <Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="Acme Traders Ltd" />
           </Field>
           <Field label="KRA PIN (optional)" error={fieldError(create.error, "kra_pin")} hint="You can add it later in Settings.">
-            <Input value={form.kra_pin} onChange={(e) => setForm((prev) => ({ ...prev, kra_pin: e.target.value }))} placeholder="P051234567X" />
+            <Input value={form.kra_pin} maxLength={11} autoCapitalize="characters" className="uppercase" onChange={(e) => setForm((prev) => ({ ...prev, kra_pin: e.target.value }))} placeholder="P051234567X" />
           </Field>
           <Field label="Currency" error={fieldError(create.error, "currency")}>
             <Select value={form.currency} onChange={(e) => setForm((prev) => ({ ...prev, currency: e.target.value }))}>

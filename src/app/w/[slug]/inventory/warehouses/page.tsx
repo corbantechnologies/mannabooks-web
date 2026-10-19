@@ -56,7 +56,7 @@ export default function WarehousesPage() {
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field>
-            <Field label="Code"><Input value={form.code} onChange={set("code")} /></Field>
+            <Field label="Code" hint="Blank: numbered for you."><Input value={form.code} onChange={set("code")} /></Field>
             <Field label="Branch"><Select value={form.branch_id} onChange={set("branch_id")}><option value="">None</option>{(branches.data?.results ?? []).map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</Select></Field>
           </div>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_default} onChange={(e) => setForm((p) => ({ ...p, is_default: e.target.checked }))} /> Default warehouse</label>

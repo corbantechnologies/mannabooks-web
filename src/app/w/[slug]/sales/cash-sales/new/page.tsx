@@ -52,7 +52,7 @@ export default function NewCashSalePage() {
             </Select>
           </Field>
           {!head.customer_id && <Field label="Walk-in name"><Input value={head.customer_name} onChange={set("customer_name")} /></Field>}
-          {!head.customer_id && <Field label="Their KRA PIN" hint="If they want it on the receipt."><Input value={head.customer_pin} onChange={set("customer_pin")} /></Field>}
+          {!head.customer_id && <Field label="Their KRA PIN" hint="If they want it on the receipt."><Input value={head.customer_pin} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" onChange={set("customer_pin")} /></Field>}
           <Field label="Date"><Input type="date" required value={head.issue_date} onChange={set("issue_date")} /></Field>
           <Field label="Paid by"><Select value={head.method} onChange={(e) => setHead((prev) => ({ ...prev, method: e.target.value, deposit_account_id: "" }))}>{METHODS.filter((m) => m.value !== "cheque").map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
           <Field label={head.method === "mpesa" ? "M-Pesa code" : "Reference"} error={fieldError(save.error, "payment_reference")}><Input required={head.method === "mpesa"} value={head.payment_reference} onChange={set("payment_reference")} /></Field>

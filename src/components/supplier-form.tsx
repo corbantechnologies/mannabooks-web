@@ -41,7 +41,7 @@ export function SupplierForm({ supplier, onSaved, onCancel }: { supplier?: Suppl
       <div className="grid grid-cols-2 gap-3">
         <Field label="Phone"><Input value={form.phone} onChange={set("phone")} /></Field>
         <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
-        <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} /></Field>
+        <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" onChange={set("kra_pin")} /></Field>
         <Field label="Days to pay them"><Input type="number" min={0} value={form.payment_terms_days} onChange={set("payment_terms_days")} /></Field>
         <div className="col-span-2">
           <Field label="Withholding tax" hint="Deducted when you pay them, e.g. professional fees. Sent to KRA by you." error={fieldError(save.error, "withholding_tax_rate_id")}>

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
+import { pickedPerson, usePeoplePicker } from "@/lib/api/people";
 import type { Department } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
@@ -19,16 +20,12 @@ export default function DepartmentsPage() {
   const [form, setForm] = useState(EMPTY);
 
   const list = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", p)) });
-  const employees = useQuery({
-    queryKey: ["employees", slug, "all"],
-    enabled: can("employees.view"),
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { page_size: 200 } } })),
-  });
+  const people = usePeoplePicker(slug, can("employees.view"));
   const catalog = useQuery({ queryKey: ["permission-catalog", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/permissions/", p)) });
 
   const save = useMutation({
     mutationFn: async () => {
-      const body = { ...form, head_id: form.head_id || null };
+      const body = { ...form, ...pickedPerson(form.head_id, "head_id", "head_membership_id") } as never;
       if (editing === "new") return unwrap(await api.POST("/api/v1/w/{workspace}/departments/", { ...p, body }));
       const id = (editing as Department).id;
       return unwrap(await api.PATCH("/api/v1/w/{workspace}/departments/{id}/", { params: { path: { workspace: slug, id } }, body }));
@@ -85,14 +82,15 @@ export default function DepartmentsPage() {
                 <Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
               </Field>
             </div>
-            <Field label="Code" error={fieldError(save.error, "code")}>
+            <Field label="Code" hint="Blank: numbered for you." error={fieldError(save.error, "code")}>
               <Input value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} />
             </Field>
           </div>
           <Field label="Head" error={fieldError(save.error, "head_id")} hint="The head is the in-charge of the modules below.">
             <Select value={form.head_id} onChange={(e) => setForm((prev) => ({ ...prev, head_id: e.target.value }))}>
               <option value="">No head yet</option>
-              {(employees.data?.results ?? []).map((emp) => <option key={emp.id} value={emp.id}>{emp.full_name} ({emp.staff_number})</option>)}
+              {people.employees.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {people.members.length > 0 && <optgroup label="Team members">{people.members.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</optgroup>}
             </Select>
           </Field>
           <fieldset>

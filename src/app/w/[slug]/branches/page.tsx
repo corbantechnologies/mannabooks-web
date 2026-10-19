@@ -42,7 +42,7 @@ export default function BranchesPage() {
 
   function open(branch: Branch | "new") {
     save.reset();
-    setForm(branch === "new" ? EMPTY : { name: branch.name, code: branch.code, phone: branch.phone ?? "", address: branch.address ?? "", is_default: !!branch.is_default, is_active: branch.is_active ?? true });
+    setForm(branch === "new" ? EMPTY : { name: branch.name, code: branch.code ?? "", phone: branch.phone ?? "", address: branch.address ?? "", is_default: !!branch.is_default, is_active: branch.is_active ?? true });
     setEditing(branch);
   }
   const manage = can("branches.manage");
@@ -81,8 +81,8 @@ export default function BranchesPage() {
                 <Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
               </Field>
             </div>
-            <Field label="Code" error={fieldError(save.error, "code")}>
-              <Input required value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} placeholder="NRB" />
+            <Field label="Code" hint="Blank: numbered for you." error={fieldError(save.error, "code")}>
+              <Input value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} placeholder="NRB" />
             </Field>
           </div>
           <Field label="Phone" error={fieldError(save.error, "phone")}>
