@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f7f5;
+  --foreground: #1c1917;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-600: #047857;
+  --color-brand-700: #065f46;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.prose-guide h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 0.75rem; }
+.prose-guide h2 { font-size: 1.15rem; font-weight: 600; margin: 1.75rem 0 0.5rem; }
+.prose-guide h3 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.prose-guide p { margin: 0.6rem 0; line-height: 1.65; color: #44403c; }
+.prose-guide ul, .prose-guide ol { margin: 0.6rem 0 0.6rem 1.25rem; line-height: 1.65; color: #44403c; }
+.prose-guide ul { list-style: disc; }
+.prose-guide ol { list-style: decimal; }
+.prose-guide li { margin: 0.2rem 0; }
+.prose-guide code { background: #f0efec; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+.prose-guide table { width: 100%; border-collapse: collapse; margin: 0.9rem 0; font-size: 0.9rem; }
+.prose-guide th, .prose-guide td { border: 1px solid #e7e5e4; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+.prose-guide th { background: #f5f5f4; font-weight: 600; }
+.prose-guide a { color: #047857; text-decoration: underline; }
+.prose-guide blockquote { border-left: 3px solid #a7f3d0; padding-left: 0.9rem; color: #57534e; margin: 0.9rem 0; }

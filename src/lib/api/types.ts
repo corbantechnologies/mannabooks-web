@@ -1,0 +1,93 @@
+import type { components } from "./schema";
+
+type S = components["schemas"];
+
+export type User = S["User"];
+export type Workspace = S["Workspace"];
+export type MyWorkspace = S["MyWorkspace"];
+export type WorkspaceContext = S["WorkspaceContext"];
+export type Branch = S["Branch"];
+export type Role = S["Role"];
+export type PermissionCatalog = S["PermissionCatalog"];
+export type Membership = S["Membership"];
+export type Invitation = S["Invitation"];
+export type InvitationPreview = S["InvitationPreview"];
+export type Department = S["Department"];
+export type Employee = S["Employee"];
+export type Sequence = S["Sequence"];
+export type AuditLog = S["AuditLog"];
+// Accounting
+export type LedgerAccount = S["LedgerAccount"];
+export type AccountLedger = S["AccountLedger"];
+export type JournalEntry = S["JournalEntry"];
+export type JournalListItem = S["JournalList"];
+export type FiscalYear = S["FiscalYear"];
+export type AccountingPeriod = S["AccountingPeriod"];
+export type OpeningBalance = S["OpeningBalance"];
+export type Currency = S["Currency"];
+export type ExchangeRate = S["ExchangeRate"];
+export type TaxRate = S["TaxRate"];
+export type TrialBalance = S["TrialBalance"];
+// Sales
+export type Customer = S["Customer"];
+export type Statement = S["Statement"];
+export type Product = S["Product"];
+export type SalesLine = S["SalesLine"];
+export type Quotation = S["Quotation"];
+export type Invoice = S["Invoice"];
+export type Payment = S["Payment"];
+export type Receipt = S["Receipt"];
+export type CreditNote = S["CreditNote"];
+export type EtimsDevice = S["EtimsDevice"];
+export type EtimsSubmission = S["EtimsSubmission"];
+// Sales, Phase 2 completion
+export type ProductCategory = S["ProductCategory"];
+export type Unit = S["Unit"];
+export type PriceList = S["PriceList"];
+export type PriceListItem = S["PriceListItem"];
+export type DeliveryNote = S["DeliveryNote"];
+export type RecurringInvoice = S["RecurringInvoice"];
+export type ReminderRule = S["ReminderRule"];
+export type ReminderLog = S["ReminderLog"];
+export type MpesaConnection = S["MpesaConnection"];
+export type MpesaTransaction = S["MpesaTransaction"];
+export type PosRegister = S["PosRegister"];
+export type PosShift = S["PosShift"];
+export type LoyaltyProgram = S["LoyaltyProgram"];
+export type LoyaltyTier = S["LoyaltyTier"];
+export type LoyaltyMember = S["LoyaltyMember"];
+export type LoyaltyTransaction = S["LoyaltyTransaction"];
+export type PortalLink = S["PortalLink"];
+export type PortalData = S["PortalData"];
+// Purchasing and stock
+export type Supplier = S["Supplier"];
+export type SupplierStatement = S["SupplierStatement"];
+export type PurchaseLine = S["PurchaseLine"];
+export type PurchaseOrder = S["PurchaseOrder"];
+export type ServiceOrder = S["ServiceOrder"];
+export type ServiceCompletion = S["ServiceCompletion"];
+export type GoodsReceipt = S["GoodsReceipt"];
+export type Bill = S["Bill"];
+export type SupplierPayment = S["SupplierPayment"];
+export type PaymentVoucher = S["PaymentVoucher"];
+export type Warehouse = S["Warehouse"];
+export type StockLevel = S["StockLevel"];
+export type StockMovement = S["StockMovement"];
+export type StockTransfer = S["StockTransfer"];
+export type StockAdjustment = S["StockAdjustment"];
+export type StockTake = S["StockTake"];
+export type BillOfMaterials = S["BillOfMaterials"];
+export type ProductionOrder = S["ProductionOrder"];
+// Cash and banking
+export type BankAccount = S["BankAccount"];
+export type Expense = S["Expense"];
+export type OtherIncome = S["OtherIncome"];
+export type BankTransfer = S["BankTransfer"];
+export type BankStatementLine = S["BankStatementLine"];
+export type Reconciliation = S["Reconciliation"];
+// People
+export type LeaveRequest = S["LeaveRequest"];
+export type LeaveBalance = S["LeaveBalance"];
+export type PayRun = S["PayRun"];
+export type Payslip = S["Payslip"];
+export type StatutoryRate = S["StatutoryRate"];
