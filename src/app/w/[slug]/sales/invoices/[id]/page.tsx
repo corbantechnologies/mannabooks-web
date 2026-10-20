@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
-import { SendEmailDialog } from "@/components/send-email";
+import { SendEmailDialog, openPdf } from "@/components/send-email";
 import { SendToInbox } from "@/components/send-to-inbox";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -24,7 +24,7 @@ import { useWorkspace } from "@/lib/workspace";
 interface AppliedRow { kind: string; id: string; number: string; date: string; amount: string }
 
 export default function InvoicePage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const path = { params: { path: { workspace: slug, id } } };
@@ -108,6 +108,7 @@ export default function InvoicePage() {
             {open && can("payments.create") && <Button onClick={openPayment}>Record payment</Button>}
             {!debit && <SendToInbox kind="invoice" id={inv.id} disabled={!issued} />}
             <ActionMenu actions={[
+              { label: "Download PDF", onClick: () => openPdf(slug, "invoice", inv.id), hidden: !context.pdf_enabled || inv.status === "draft" },
               { label: "Edit", onClick: () => setEditing(true), hidden: !(inv.status === "draft" && can("invoices.create")) },
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !(issued && can("invoices.create")) },
               { label: "Print or save as PDF", href: `/w/${slug}/sales/invoices/${inv.id}/print`, hidden: inv.status === "draft" },

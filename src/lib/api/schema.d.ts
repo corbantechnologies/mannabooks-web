@@ -336,6 +336,299 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plans/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The plans and prices for the public pricing page. */
+        get: operations["plans_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/actions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_actions_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/businesses/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_businesses_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/businesses/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_businesses_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/businesses/{slug}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_businesses_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/coupons/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_coupons_list"];
+        put?: never;
+        post: operations["platform_coupons_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/coupons/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_coupons_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platform_coupons_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/platform/payments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Subscription payments. `reconcile=true`: payments waiting for staff (part payments, unclear paybill payments). */
+        get: operations["platform_payments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/payments/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_payments_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/plans/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_plans_list"];
+        put?: never;
+        post: operations["platform_plans_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/plans/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_plans_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platform_plans_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/platform/renewals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Trials ending and plans renewing in the next `days` (default 14), and businesses already behind. */
+        get: operations["platform_renewals_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/stats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_stats_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/tickets/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_tickets_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/tickets/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_tickets_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platform_tickets_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/platform/tickets/{id}/reply/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_tickets_reply_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/users/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone with a MannaBooks login. `show`: full_access, staff or blocked. */
+        get: operations["platform_users_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/users/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Block or unblock a person, give or take back full access (all their businesses free on the top plan), or staff access. */
+        post: operations["platform_users_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/portal/{token}/": {
         parameters: {
             query?: never;
@@ -798,6 +1091,91 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_bank_transfers_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/billing/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Plan and billing: Owners and Admins. Works while read-only, so an unpaid business can pay. */
+        get: operations["w_billing_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/billing/free/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Stop paying: the business moves to the free plan now. Its records stay; parts outside the plan become read-only. */
+        post: operations["w_billing_free_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/billing/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Plan and billing: Owners and Admins. Works while read-only, so an unpaid business can pay. */
+        post: operations["w_billing_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/billing/payments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Plan and billing: Owners and Admins. Works while read-only, so an unpaid business can pay. */
+        get: operations["w_billing_payments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/billing/quote/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Plan and billing: Owners and Admins. Works while read-only, so an unpaid business can pay. */
+        post: operations["w_billing_quote_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1758,6 +2136,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/document-emails/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The document as a PDF (needs the PDF service; otherwise use the browser's Print > Save as PDF). */
+        get: operations["w_document_emails_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/": {
         parameters: {
             query?: never;
@@ -2002,6 +2397,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_expenses_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/exports/{kind}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Download a list as CSV: customers, suppliers, products, accounts (with balances), invoices, bills or journal lines. */
+        get: operations["w_exports_retrieve"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2271,6 +2683,41 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_goods_receipts_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/imports/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Past imports; POST a CSV to check it (commit=false) or import it (commit=true). Nothing is saved unless every row is right. */
+        get: operations["w_imports_list"];
+        put?: never;
+        /** @description Past imports; POST a CSV to check it (commit=false) or import it (commit=true). Nothing is saved unless every row is right. */
+        post: operations["w_imports_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/imports/templates/{kind}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A CSV with the right headings and an example row. */
+        get: operations["w_imports_templates_retrieve"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5894,6 +6341,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/support/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Help and feedback: anyone in the workspace, even when it is blocked or read-only. People see their own tickets. */
+        get: operations["w_support_list"];
+        put?: never;
+        /** @description Help and feedback: anyone in the workspace, even when it is blocked or read-only. People see their own tickets. */
+        post: operations["w_support_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/support/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Help and feedback: anyone in the workspace, even when it is blocked or read-only. People see their own tickets. */
+        get: operations["w_support_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/support/{id}/close/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description The customer says it's sorted. */
+        post: operations["w_support_close_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/support/{id}/reply/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Help and feedback: anyone in the workspace, even when it is blocked or read-only. People see their own tickets. */
+        post: operations["w_support_reply_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tax-rates/": {
         parameters: {
             query?: never;
@@ -6791,6 +7307,14 @@ export interface components {
         BillVoidRequest: {
             reason: string;
         };
+        Billing: {
+            subscription: components["schemas"]["Subscription"];
+            usage: components["schemas"]["PlanUsage"];
+            plans: components["schemas"]["Plan"][];
+            payments: components["schemas"]["SubscriptionPayment"][];
+            /** @description MannaBooks' paybill number, for paying from the M-Pesa menu */
+            paybill: string;
+        };
         /** @enum {unknown} */
         BlankEnum: "";
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
@@ -6947,6 +7471,115 @@ export interface components {
             income: components["schemas"]["BudgetTotals"];
             expense: components["schemas"]["BudgetTotals"];
         };
+        Business: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            slug: string;
+            kra_pin: string;
+            phone: string;
+            email: string;
+            owner_name: string;
+            owner_email: string;
+            /** Format: uuid */
+            owner_id: string;
+            owner_full_access: boolean;
+            /** @default 0 */
+            members: number;
+            plan?: string;
+            plan_key?: string;
+            status?: string;
+            account_number?: string;
+            /** Format: date */
+            trial_ends_on?: string;
+            /** Format: date */
+            paid_until?: string;
+            /** @default false */
+            complimentary: boolean;
+            /** Format: date */
+            complimentary_until?: string;
+            /**
+             * Format: decimal
+             * @default 0.00
+             */
+            discount_percent: string;
+            /** @default  */
+            notes: string;
+            /** Format: date-time */
+            blocked_at: string | null;
+            blocked_reason: string;
+            is_active: boolean;
+            /** Format: date-time */
+            created_at: string;
+        };
+        /**
+         * @description * `block` - block
+         *     * `unblock` - unblock
+         *     * `change_plan` - change_plan
+         *     * `extend_trial` - extend_trial
+         *     * `set_discount` - set_discount
+         *     * `set_complimentary` - set_complimentary
+         *     * `record_payment` - record_payment
+         *     * `move_to_free` - move_to_free
+         *     * `note` - note
+         *     * `send_reminder` - send_reminder
+         * @enum {string}
+         */
+        BusinessActionActionEnum: "block" | "unblock" | "change_plan" | "extend_trial" | "set_discount" | "set_complimentary" | "record_payment" | "move_to_free" | "note" | "send_reminder";
+        /**
+         * @description * `monthly` - monthly
+         *     * `yearly` - yearly
+         * @enum {string}
+         */
+        BusinessActionCycleEnum: "monthly" | "yearly";
+        /**
+         * @description * `mpesa` - mpesa
+         *     * `bank` - bank
+         *     * `cash` - cash
+         *     * `credit` - credit
+         * @enum {string}
+         */
+        BusinessActionMethodEnum: "mpesa" | "bank" | "cash" | "credit";
+        BusinessActionRequest: {
+            action: components["schemas"]["BusinessActionActionEnum"];
+            /**
+             * Format: date
+             * @description set_complimentary: the last free day; blank: until ended
+             */
+            until?: string | null;
+            reason?: string;
+            plan?: string;
+            days?: number;
+            /** Format: decimal */
+            discount_percent?: string;
+            complimentary?: boolean;
+            cycle?: components["schemas"]["BusinessActionCycleEnum"];
+            periods?: number;
+            /** Format: decimal */
+            amount?: string;
+            method?: components["schemas"]["BusinessActionMethodEnum"];
+            reference?: string;
+            note?: string;
+            notes?: string;
+        };
+        BusinessDetail: {
+            business: components["schemas"]["Business"];
+            usage: components["schemas"]["BusinessUsage"];
+            members: components["schemas"]["Member"][];
+            payments: {
+                [key: string]: unknown;
+            }[];
+            tickets: {
+                [key: string]: unknown;
+            }[];
+            actions: components["schemas"]["PlatformAction"][];
+        };
+        BusinessUsage: {
+            documents_this_month: number;
+            users: number;
+            /** Format: date-time */
+            last_active: string | null;
+        };
         Candidate: {
             /** Format: uuid */
             journal_line_id: string;
@@ -6960,6 +7593,15 @@ export interface components {
             money_out: string;
             cleared: boolean;
         };
+        /**
+         * @description * `question` - Question
+         *     * `problem` - Something isn't working
+         *     * `billing` - Billing and payments
+         *     * `complaint` - Complaint
+         *     * `idea` - Idea or request
+         * @enum {string}
+         */
+        Category98eEnum: "question" | "problem" | "billing" | "complaint" | "idea";
         CategoryDefault: {
             category: string;
             label: string;
@@ -6970,18 +7612,6 @@ export interface components {
             /** Format: uuid */
             asset_account_id: string | null;
         };
-        /**
-         * @description * `land` - Land
-         *     * `buildings` - Buildings
-         *     * `motor_vehicles` - Motor vehicles
-         *     * `furniture` - Furniture and fittings
-         *     * `computers` - Computers and IT equipment
-         *     * `plant` - Plant and machinery
-         *     * `office_equipment` - Office equipment
-         *     * `other` - Other
-         * @enum {string}
-         */
-        CategoryEnum: "land" | "buildings" | "motor_vehicles" | "furniture" | "computers" | "plant" | "office_equipment" | "other";
         CategoryReport: {
             /** Format: date */
             from_date: string;
@@ -7122,6 +7752,24 @@ export interface components {
             /** Format: decimal */
             total: string;
         };
+        ContextSubscription: {
+            plan_key: string;
+            plan_name: string;
+            status: string;
+            is_free: boolean;
+            /** Format: date */
+            trial_ends_on: string | null;
+            /** Format: date */
+            paid_until: string | null;
+            /** @description The business's account number for paying MannaBooks by paybill */
+            account_number: string;
+            complimentary: boolean;
+            /** @description False: read-only until paid */
+            can_write: boolean;
+            /** @description App modules the plan includes */
+            modules: string[];
+            features: string[];
+        };
         Converted: {
             /** Format: uuid */
             invoice_id: string;
@@ -7191,6 +7839,47 @@ export interface components {
         };
         CountsRequest: {
             counts: components["schemas"]["CountLineRequest"][];
+        };
+        Coupon: {
+            /** Format: uuid */
+            readonly id: string;
+            code: string;
+            description?: string;
+            /** Format: decimal */
+            percent_off?: string;
+            /**
+             * Format: decimal
+             * @description KES off each payment (after any percentage)
+             */
+            amount_off?: string;
+            /** @description How many payments it applies to; blank: every payment */
+            payments?: number | null;
+            plan_keys?: string[];
+            /** Format: date */
+            valid_until?: string | null;
+            max_redemptions?: number | null;
+            readonly times_redeemed: number;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CouponRequest: {
+            code: string;
+            description?: string;
+            /** Format: decimal */
+            percent_off?: string;
+            /**
+             * Format: decimal
+             * @description KES off each payment (after any percentage)
+             */
+            amount_off?: string;
+            /** @description How many payments it applies to; blank: every payment */
+            payments?: number | null;
+            plan_keys?: string[];
+            /** Format: date */
+            valid_until?: string | null;
+            max_redemptions?: number | null;
+            is_active?: boolean;
         };
         CreditNote: {
             /** Format: uuid */
@@ -7350,6 +8039,12 @@ export interface components {
             notes?: string;
             is_active?: boolean;
         };
+        /**
+         * @description * `monthly` - Monthly
+         *     * `yearly` - Yearly
+         * @enum {string}
+         */
+        CycleDceEnum: "monthly" | "yearly";
         Deal: {
             /** Format: uuid */
             readonly id: string;
@@ -7922,7 +8617,7 @@ export interface components {
             readonly number: string;
             name: string;
             description?: string;
-            category?: components["schemas"]["CategoryEnum"];
+            category?: components["schemas"]["FixedAssetCategoryEnum"];
             /** @description Serial, chassis or registration number */
             serial_number?: string;
             /** Format: uuid */
@@ -8000,6 +8695,18 @@ export interface components {
             readonly created_at: string;
         };
         /**
+         * @description * `land` - Land
+         *     * `buildings` - Buildings
+         *     * `motor_vehicles` - Motor vehicles
+         *     * `furniture` - Furniture and fittings
+         *     * `computers` - Computers and IT equipment
+         *     * `plant` - Plant and machinery
+         *     * `office_equipment` - Office equipment
+         *     * `other` - Other
+         * @enum {string}
+         */
+        FixedAssetCategoryEnum: "land" | "buildings" | "motor_vehicles" | "furniture" | "computers" | "plant" | "office_equipment" | "other";
+        /**
          * @description * `straight_line` - Straight line (same amount each month)
          *     * `reducing_balance` - Reducing balance (a percentage of what is left)
          *     * `none` - Not depreciated (e.g. land)
@@ -8009,7 +8716,7 @@ export interface components {
         FixedAssetRequest: {
             name: string;
             description?: string;
-            category?: components["schemas"]["CategoryEnum"];
+            category?: components["schemas"]["FixedAssetCategoryEnum"];
             /** @description Serial, chassis or registration number */
             serial_number?: string;
             /** Format: uuid */
@@ -8162,6 +8869,29 @@ export interface components {
             kra_pin: string;
             currency: string;
         };
+        ImportJob: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly kind: components["schemas"]["KindC09Enum"];
+            readonly filename: string;
+            readonly status: components["schemas"]["ImportJobStatusEnum"];
+            readonly total_rows: number;
+            readonly imported_rows: number;
+            /** @description Already there (same name or code), left as they were */
+            readonly skipped_rows: number;
+            /** @description [{row, message}] */
+            readonly errors: unknown;
+            readonly created_by_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `checked` - Checked, not imported
+         *     * `imported` - Imported
+         *     * `failed` - Has errors
+         * @enum {string}
+         */
+        ImportJobStatusEnum: "checked" | "imported" | "failed";
         ImportRequest: {
             /** Format: uuid */
             bank_account_id: string;
@@ -8174,6 +8904,18 @@ export interface components {
             reference?: string;
             /** Format: decimal */
             amount: string;
+        };
+        ImportUploadRequest: {
+            kind: components["schemas"]["KindC09Enum"];
+            /** Format: binary */
+            file: string;
+            /** @default false */
+            commit: boolean;
+            /**
+             * Format: date
+             * @description Opening balances: the date they are at
+             */
+            as_of?: string;
         };
         /**
          * @description * `invoice` - Invoice
@@ -8575,6 +9317,14 @@ export interface components {
          * @enum {string}
          */
         JournalStatusEnum: "draft" | "posted" | "reversed";
+        /**
+         * @description * `customers` - Customers
+         *     * `suppliers` - Suppliers
+         *     * `products` - Products and services
+         *     * `opening_balances` - Opening balances
+         * @enum {string}
+         */
+        KindC09Enum: "customers" | "suppliers" | "products" | "opening_balances";
         Lead: {
             /** Format: uuid */
             readonly id: string;
@@ -8953,6 +9703,17 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionKindEnum: "earn" | "redeem" | "expire" | "adjust" | "reverse";
+        Member: {
+            /** Format: uuid */
+            user_id: string;
+            name: string;
+            email: string;
+            phone: string;
+            role: string;
+            user_active: boolean;
+            /** Format: date-time */
+            last_login: string | null;
+        };
         MemberUser: {
             /** Format: uuid */
             id: string;
@@ -9226,6 +9987,12 @@ export interface components {
         };
         OpenForDateResult: {
             message: string;
+        };
+        OpenTicketRequest: {
+            category: components["schemas"]["Category98eEnum"];
+            subject: string;
+            body: string;
+            page?: string;
         };
         OpeningBalance: {
             /** Format: uuid */
@@ -9525,6 +10292,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Budget"][];
         };
+        PaginatedBusinessList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Business"][];
+        };
         PaginatedCompanyGroupList: {
             /** @example 123 */
             count: number;
@@ -9539,6 +10321,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["CompanyGroup"][];
+        };
+        PaginatedCouponList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Coupon"][];
         };
         PaginatedCreditNoteList: {
             /** @example 123 */
@@ -9719,6 +10516,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["GoodsReceipt"][];
+        };
+        PaginatedImportJobList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ImportJob"][];
         };
         PaginatedInboxMessageList: {
             /** @example 123 */
@@ -10004,6 +10816,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Payslip"][];
+        };
+        PaginatedPlatformActionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PlatformAction"][];
+        };
+        PaginatedPlatformUserList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PlatformUser"][];
         };
         PaginatedPortalLinkList: {
             /** @example 123 */
@@ -10410,6 +11252,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["StockTransfer"][];
         };
+        PaginatedSubscriptionPaymentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["SubscriptionPayment"][];
+        };
         PaginatedSupplierList: {
             /** @example 123 */
             count: number;
@@ -10439,6 +11296,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["SupplierPayment"][];
+        };
+        PaginatedSupportTicketList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["SupportTicket"][];
         };
         PaginatedTaxRateList: {
             /** @example 123 */
@@ -10620,6 +11492,24 @@ export interface components {
             description?: string;
             is_active?: boolean;
         };
+        PatchedCouponRequest: {
+            code?: string;
+            description?: string;
+            /** Format: decimal */
+            percent_off?: string;
+            /**
+             * Format: decimal
+             * @description KES off each payment (after any percentage)
+             */
+            amount_off?: string;
+            /** @description How many payments it applies to; blank: every payment */
+            payments?: number | null;
+            plan_keys?: string[];
+            /** Format: date */
+            valid_until?: string | null;
+            max_redemptions?: number | null;
+            is_active?: boolean;
+        };
         PatchedCurrencyRequest: {
             code?: string;
             name?: string;
@@ -10764,7 +11654,7 @@ export interface components {
         PatchedFixedAssetRequest: {
             name?: string;
             description?: string;
-            category?: components["schemas"]["CategoryEnum"];
+            category?: components["schemas"]["FixedAssetCategoryEnum"];
             /** @description Serial, chassis or registration number */
             serial_number?: string;
             /** Format: uuid */
@@ -10927,6 +11817,44 @@ export interface components {
             /** Format: decimal */
             unpaid_leave_days?: string;
             items?: components["schemas"]["PayItemRequest"][];
+        };
+        PatchedPlanRequest: {
+            key?: string;
+            name?: string;
+            description?: string;
+            /**
+             * Format: decimal
+             * @description KES a month, VAT included
+             */
+            price_monthly?: string;
+            /**
+             * Format: decimal
+             * @description KES for a year paid at once (usually 10 months' price)
+             */
+            price_yearly?: string;
+            /** @description APP_MODULES keys this plan includes */
+            modules?: unknown;
+            /** @description Extra features, e.g. company_groups */
+            features?: unknown;
+            /** @description Team members, not counting accountants and self-service staff; blank: no limit */
+            max_users?: number | null;
+            /** @description Invoices, cash sales and quotations a month; blank: no limit */
+            max_documents_month?: number | null;
+            /**
+             * Format: decimal
+             * @description Payroll add-on, KES per employee a month
+             */
+            payroll_per_employee?: string;
+            /**
+             * Format: decimal
+             * @description Lowest payroll add-on a month, once payroll is used
+             */
+            payroll_minimum?: string;
+            is_free?: boolean;
+            /** @description Shown on the pricing page and to businesses choosing a plan */
+            is_public?: boolean;
+            is_active?: boolean;
+            sort?: number;
         };
         PatchedPosRegisterRequest: {
             name?: string;
@@ -11207,6 +12135,11 @@ export interface components {
             is_default?: boolean;
             is_active?: boolean;
         };
+        PatchedTicketUpdateRequest: {
+            status?: components["schemas"]["TicketUpdateStatusEnum"];
+            priority?: components["schemas"]["TicketUpdatePriorityEnum"];
+            assign_to_me?: boolean;
+        };
         PatchedUnitRequest: {
             name?: string;
             abbreviation?: string;
@@ -11290,6 +12223,14 @@ export interface components {
         PayOrderRequest: {
             /** @description Blank: the order's phone */
             phone?: string;
+        };
+        PayRequestRequest: {
+            plan: string;
+            cycle: components["schemas"]["CycleDceEnum"];
+            /** @default 1 */
+            periods: number;
+            coupon?: string;
+            phone: string;
         };
         PayRun: {
             /** Format: uuid */
@@ -11400,6 +12341,19 @@ export interface components {
             allocations?: components["schemas"]["Allocation"][];
             /** Format: date-time */
             readonly created_at: string;
+        };
+        /**
+         * @description * `complete` - complete
+         *     * `fail` - fail
+         *     * `refund` - refund
+         * @enum {string}
+         */
+        PaymentActionActionEnum: "complete" | "fail" | "refund";
+        PaymentActionRequest: {
+            action: components["schemas"]["PaymentActionActionEnum"];
+            periods?: number;
+            reference?: string;
+            note?: string;
         };
         PaymentOption: {
             /** Format: uuid */
@@ -11697,6 +12651,127 @@ export interface components {
             notes?: string;
             payment_method: components["schemas"]["OnlinePaymentMethodEnum"];
             lines: components["schemas"]["PlaceLineRequest"][];
+        };
+        Plan: {
+            /** Format: uuid */
+            readonly id: string;
+            key: string;
+            name: string;
+            description?: string;
+            /**
+             * Format: decimal
+             * @description KES a month, VAT included
+             */
+            price_monthly?: string;
+            /**
+             * Format: decimal
+             * @description KES for a year paid at once (usually 10 months' price)
+             */
+            price_yearly?: string;
+            /** @description APP_MODULES keys this plan includes */
+            modules?: unknown;
+            /** @description Extra features, e.g. company_groups */
+            features?: unknown;
+            /** @description Team members, not counting accountants and self-service staff; blank: no limit */
+            max_users?: number | null;
+            /** @description Invoices, cash sales and quotations a month; blank: no limit */
+            max_documents_month?: number | null;
+            /**
+             * Format: decimal
+             * @description Payroll add-on, KES per employee a month
+             */
+            payroll_per_employee?: string;
+            /**
+             * Format: decimal
+             * @description Lowest payroll add-on a month, once payroll is used
+             */
+            payroll_minimum?: string;
+            is_free?: boolean;
+            /** @description Shown on the pricing page and to businesses choosing a plan */
+            is_public?: boolean;
+            is_active?: boolean;
+            sort?: number;
+        };
+        PlanRequest: {
+            key: string;
+            name: string;
+            description?: string;
+            /**
+             * Format: decimal
+             * @description KES a month, VAT included
+             */
+            price_monthly?: string;
+            /**
+             * Format: decimal
+             * @description KES for a year paid at once (usually 10 months' price)
+             */
+            price_yearly?: string;
+            /** @description APP_MODULES keys this plan includes */
+            modules?: unknown;
+            /** @description Extra features, e.g. company_groups */
+            features?: unknown;
+            /** @description Team members, not counting accountants and self-service staff; blank: no limit */
+            max_users?: number | null;
+            /** @description Invoices, cash sales and quotations a month; blank: no limit */
+            max_documents_month?: number | null;
+            /**
+             * Format: decimal
+             * @description Payroll add-on, KES per employee a month
+             */
+            payroll_per_employee?: string;
+            /**
+             * Format: decimal
+             * @description Lowest payroll add-on a month, once payroll is used
+             */
+            payroll_minimum?: string;
+            is_free?: boolean;
+            /** @description Shown on the pricing page and to businesses choosing a plan */
+            is_public?: boolean;
+            is_active?: boolean;
+            sort?: number;
+        };
+        PlanUsage: {
+            documents_this_month: number;
+            /** @description Team members using a seat (accountants and self-service staff are free) */
+            users: number;
+        };
+        PlatformAction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly actor_name: string;
+            readonly action: string;
+            readonly target_type: string;
+            readonly target_id: string;
+            readonly target_label: string;
+            readonly details: unknown;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        PlatformUser: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            email: string;
+            phone: string;
+            is_active: boolean;
+            is_staff: boolean;
+            is_superuser: boolean;
+            full_access: boolean;
+            full_access_note: string;
+            /**
+             * @description Businesses they own
+             * @default 0
+             */
+            businesses: number;
+            /**
+             * @description Businesses they belong to
+             * @default 0
+             */
+            memberships_count: number;
+            /** Format: date-time */
+            date_joined: string;
+            /** Format: date-time */
+            last_login: string | null;
         };
         PortalData: {
             business: {
@@ -12472,6 +13547,35 @@ export interface components {
          * @enum {string}
          */
         QuotationStatusEnum: "draft" | "sent" | "accepted" | "declined" | "converted";
+        Quote: {
+            plan: string;
+            cycle: string;
+            periods: number;
+            /** Format: decimal */
+            base: string;
+            /**
+             * Format: decimal
+             * @description Payroll add-on included in the list price
+             */
+            payroll_addon: string;
+            /** Format: decimal */
+            list_price: string;
+            /** Format: decimal */
+            discount: string;
+            /**
+             * Format: decimal
+             * @description To pay, in whole shillings
+             */
+            amount: string;
+            coupon?: string | null;
+        };
+        QuoteRequestRequest: {
+            plan: string;
+            cycle: components["schemas"]["CycleDceEnum"];
+            /** @default 1 */
+            periods: number;
+            coupon?: string;
+        };
         /**
          * @description * `opening` - Opening stock
          *     * `damaged` - Damaged
@@ -12824,6 +13928,27 @@ export interface components {
             subject?: string;
             message?: string;
             is_active?: boolean;
+        };
+        Renewal: {
+            business: string;
+            slug: string;
+            owner_email: string;
+            plan: string;
+            status: string;
+            /** Format: date */
+            trial_ends_on: string | null;
+            /** Format: date */
+            paid_until: string | null;
+            account_number: string;
+            reminders_sent: string[];
+        };
+        ReplyRequest: {
+            body: string;
+            /**
+             * @description Staff only: a note the customer doesn't see
+             * @default false
+             */
+            internal: boolean;
         };
         /**
          * @description * `once` - Once
@@ -13293,6 +14418,26 @@ export interface components {
          * @enum {string}
          */
         StatementRowKindEnum: "invoice" | "payment" | "credit_note";
+        Stats: {
+            businesses: number;
+            new_this_month: number;
+            trialing: number;
+            paying: number;
+            free: number;
+            complimentary: number;
+            past_due: number;
+            blocked: number;
+            /**
+             * Format: decimal
+             * @description Monthly recurring revenue from paying businesses
+             */
+            mrr: string;
+            /** Format: decimal */
+            collected_this_month: string;
+            payments_to_reconcile: number;
+            open_tickets: number;
+            urgent_tickets: number;
+        };
         StatutoryRate: {
             /** Format: uuid */
             readonly id: string;
@@ -13549,6 +14694,94 @@ export interface components {
             /** Format: uuid */
             object_id: string;
         };
+        Subscription: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly plan: components["schemas"]["Plan"];
+            readonly status: components["schemas"]["SubscriptionStatusEnum"];
+            readonly cycle: components["schemas"]["CycleDceEnum"];
+            /** @description Paybill account number for this business, e.g. MB104233 */
+            readonly account_number: string;
+            /** Format: date */
+            readonly trial_ends_on: string | null;
+            /**
+             * Format: date
+             * @description The last day already paid for
+             */
+            readonly paid_until: string | null;
+            /** @description No payments needed (pilot and founding businesses, partners) */
+            readonly complimentary: boolean;
+            /**
+             * Format: decimal
+             * @description Standing discount, e.g. 25 for NGOs
+             */
+            readonly discount_percent: string;
+            readonly coupon_code: string;
+            /** @description Payments the coupon still applies to; blank: every payment */
+            readonly coupon_payments_left: number | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        SubscriptionPayment: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly business: string;
+            readonly business_slug: string;
+            readonly account_number: string;
+            readonly plan_name: string;
+            readonly cycle: string;
+            /** @description Months (monthly) or years (yearly) paid for */
+            readonly periods: number;
+            /** Format: decimal */
+            readonly list_price: string;
+            /** Format: decimal */
+            readonly discount: string;
+            /**
+             * Format: decimal
+             * @description What was charged
+             */
+            readonly amount: string;
+            readonly coupon_code: string;
+            readonly method: components["schemas"]["SubscriptionPaymentMethodEnum"];
+            readonly status: components["schemas"]["SubscriptionPaymentStatusEnum"];
+            /** @description M-Pesa code or bank reference */
+            readonly reference: string;
+            /** Format: date */
+            readonly covers_from: string | null;
+            /** Format: date */
+            readonly covers_to: string | null;
+            /** Format: date-time */
+            readonly paid_at: string | null;
+            readonly recorded_by_name: string;
+            readonly note: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `mpesa` - M-Pesa
+         *     * `bank` - Bank transfer
+         *     * `cash` - Cash
+         *     * `credit` - Credit from MannaBooks
+         * @enum {string}
+         */
+        SubscriptionPaymentMethodEnum: "mpesa" | "bank" | "cash" | "credit";
+        /**
+         * @description * `pending` - Waiting for M-Pesa
+         *     * `completed` - Completed
+         *     * `failed` - Failed
+         *     * `refunded` - Refunded
+         * @enum {string}
+         */
+        SubscriptionPaymentStatusEnum: "pending" | "completed" | "failed" | "refunded";
+        /**
+         * @description * `trialing` - Trial
+         *     * `active` - Active
+         *     * `past_due` - Payment due
+         *     * `read_only` - Read only (unpaid)
+         *     * `cancelled` - Cancelled
+         * @enum {string}
+         */
+        SubscriptionStatusEnum: "trialing" | "active" | "past_due" | "read_only" | "cancelled";
         /**
          * @description * `cash` - Cash
          *     * `bank` - Bank and mobile money
@@ -13730,6 +14963,46 @@ export interface components {
          * @enum {string}
          */
         SupplierStatementRowKindEnum: "bill" | "payment";
+        SupportTicket: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            readonly business: string;
+            readonly business_slug: string;
+            readonly raised_by_name: string;
+            readonly raised_by_email: string;
+            readonly category: components["schemas"]["Category98eEnum"];
+            readonly subject: string;
+            readonly status: components["schemas"]["SupportTicketStatusEnum"];
+            readonly priority: components["schemas"]["SupportTicketPriorityEnum"];
+            readonly assigned_to_name: string;
+            /** @description The page they were on */
+            readonly page: string;
+            readonly messages: components["schemas"]["TicketMessage"][];
+            readonly last_reply_by_staff: boolean;
+            /** Format: date-time */
+            readonly resolved_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /**
+         * @description * `low` - Low
+         *     * `normal` - Normal
+         *     * `high` - High
+         *     * `urgent` - Urgent
+         * @enum {string}
+         */
+        SupportTicketPriorityEnum: "low" | "normal" | "high" | "urgent";
+        /**
+         * @description * `open` - Open
+         *     * `waiting` - Waiting for the customer
+         *     * `resolved` - Resolved
+         *     * `closed` - Closed
+         * @enum {string}
+         */
+        SupportTicketStatusEnum: "open" | "waiting" | "resolved" | "closed";
         TaxRate: {
             /** Format: uuid */
             readonly id: string;
@@ -13783,6 +15056,31 @@ export interface components {
             journal_line_ids: string[];
             cleared: boolean;
         };
+        TicketMessage: {
+            author_name: string;
+            staff: boolean;
+            /** @default false */
+            internal: boolean;
+            body: string;
+            /** Format: date-time */
+            at: string;
+        };
+        /**
+         * @description * `low` - low
+         *     * `normal` - normal
+         *     * `high` - high
+         *     * `urgent` - urgent
+         * @enum {string}
+         */
+        TicketUpdatePriorityEnum: "low" | "normal" | "high" | "urgent";
+        /**
+         * @description * `open` - open
+         *     * `waiting` - waiting
+         *     * `resolved` - resolved
+         *     * `closed` - closed
+         * @enum {string}
+         */
+        TicketUpdateStatusEnum: "open" | "waiting" | "resolved" | "closed";
         /** @description What every sign-in returns. */
         TokenPair: {
             access: string;
@@ -13892,8 +15190,24 @@ export interface components {
             avatar_url?: string;
             readonly email_verified: boolean;
             readonly has_password: boolean;
+            /** @description MannaBooks staff: can use the platform admin (/admin). */
+            readonly is_staff: boolean;
             /** Format: date-time */
             readonly date_joined: string;
+        };
+        /**
+         * @description * `block` - block
+         *     * `unblock` - unblock
+         *     * `grant_full_access` - grant_full_access
+         *     * `revoke_full_access` - revoke_full_access
+         *     * `make_staff` - make_staff
+         *     * `remove_staff` - remove_staff
+         * @enum {string}
+         */
+        UserActionActionEnum: "block" | "unblock" | "grant_full_access" | "revoke_full_access" | "make_staff" | "remove_staff";
+        UserActionRequest: {
+            action: components["schemas"]["UserActionActionEnum"];
+            note?: string;
         };
         VatRow: {
             tax_rate: string;
@@ -14062,6 +15376,12 @@ export interface components {
             goal_catalog: {
                 [key: string]: unknown;
             }[];
+            /** @description Documents can be downloaded as PDF (the PDF service is set up) */
+            pdf_enabled: boolean;
+            /** @description Blocked by MannaBooks staff */
+            blocked: boolean;
+            blocked_reason: string;
+            subscription: components["schemas"]["ContextSubscription"];
         };
         WorkspaceRequest: {
             name: string;
@@ -14706,6 +16026,626 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AcceptedInvitation"];
+                };
+            };
+        };
+    };
+    plans_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"][];
+                };
+            };
+        };
+    };
+    platform_actions_list: {
+        parameters: {
+            query?: {
+                action?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                target_type?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPlatformActionList"];
+                };
+            };
+        };
+    };
+    platform_businesses_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBusinessList"];
+                };
+            };
+        };
+    };
+    platform_businesses_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BusinessDetail"];
+                };
+            };
+        };
+    };
+    platform_businesses_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BusinessActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BusinessActionRequest"];
+                "multipart/form-data": components["schemas"]["BusinessActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Business"];
+                };
+            };
+        };
+    };
+    platform_coupons_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCouponList"];
+                };
+            };
+        };
+    };
+    platform_coupons_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CouponRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CouponRequest"];
+                "multipart/form-data": components["schemas"]["CouponRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Coupon"];
+                };
+            };
+        };
+    };
+    platform_coupons_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Coupon"];
+                };
+            };
+        };
+    };
+    platform_coupons_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCouponRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCouponRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCouponRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Coupon"];
+                };
+            };
+        };
+    };
+    platform_payments_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `mpesa` - M-Pesa
+                 *     * `bank` - Bank transfer
+                 *     * `cash` - Cash
+                 *     * `credit` - Credit from MannaBooks
+                 */
+                method?: "bank" | "cash" | "credit" | "mpesa";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - Waiting for M-Pesa
+                 *     * `completed` - Completed
+                 *     * `failed` - Failed
+                 *     * `refunded` - Refunded
+                 */
+                status?: "completed" | "failed" | "pending" | "refunded";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSubscriptionPaymentList"];
+                };
+            };
+        };
+    };
+    platform_payments_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentActionRequest"];
+                "multipart/form-data": components["schemas"]["PaymentActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionPayment"];
+                };
+            };
+        };
+    };
+    platform_plans_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"][];
+                };
+            };
+        };
+    };
+    platform_plans_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PlanRequest"];
+                "multipart/form-data": components["schemas"]["PlanRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"];
+                };
+            };
+        };
+    };
+    platform_plans_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"];
+                };
+            };
+        };
+    };
+    platform_plans_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPlanRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPlanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"];
+                };
+            };
+        };
+    };
+    platform_renewals_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Renewal"][];
+                };
+            };
+        };
+    };
+    platform_stats_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Stats"];
+                };
+            };
+        };
+    };
+    platform_tickets_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `question` - Question
+                 *     * `problem` - Something isn't working
+                 *     * `billing` - Billing and payments
+                 *     * `complaint` - Complaint
+                 *     * `idea` - Idea or request
+                 */
+                category?: "billing" | "complaint" | "idea" | "problem" | "question";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `low` - Low
+                 *     * `normal` - Normal
+                 *     * `high` - High
+                 *     * `urgent` - Urgent
+                 */
+                priority?: "high" | "low" | "normal" | "urgent";
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `open` - Open
+                 *     * `waiting` - Waiting for the customer
+                 *     * `resolved` - Resolved
+                 *     * `closed` - Closed
+                 */
+                status?: "closed" | "open" | "resolved" | "waiting";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSupportTicketList"];
+                };
+            };
+        };
+    };
+    platform_tickets_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    platform_tickets_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTicketUpdateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTicketUpdateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTicketUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    platform_tickets_reply_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ReplyRequest"];
+                "multipart/form-data": components["schemas"]["ReplyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    platform_users_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPlatformUserList"];
+                };
+            };
+        };
+    };
+    platform_users_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UserActionRequest"];
+                "multipart/form-data": components["schemas"]["UserActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlatformUser"];
                 };
             };
         };
@@ -15623,6 +17563,124 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BankTransfer"];
+                };
+            };
+        };
+    };
+    w_billing_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Billing"];
+                };
+            };
+        };
+    };
+    w_billing_free_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Billing"];
+                };
+            };
+        };
+    };
+    w_billing_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PayRequestRequest"];
+                "multipart/form-data": components["schemas"]["PayRequestRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionPayment"];
+                };
+            };
+        };
+    };
+    w_billing_payments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionPayment"];
+                };
+            };
+        };
+    };
+    w_billing_quote_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["QuoteRequestRequest"];
+                "multipart/form-data": components["schemas"]["QuoteRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Quote"];
                 };
             };
         };
@@ -17500,6 +19558,30 @@ export interface operations {
             };
         };
     };
+    w_document_emails_pdf_retrieve: {
+        parameters: {
+            query: {
+                document_type: "cash_sale" | "credit_note" | "delivery_note" | "invoice" | "payment" | "purchase_order" | "quotation" | "service_order" | "supplier_payment";
+                object_id: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
     w_employees_list: {
         parameters: {
             query?: {
@@ -18016,6 +20098,31 @@ export interface operations {
             };
         };
     };
+    w_exports_retrieve: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                kind: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
     w_fiscal_years_list: {
         parameters: {
             query?: {
@@ -18470,6 +20577,83 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GoodsReceipt"];
+                };
+            };
+        };
+    };
+    w_imports_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedImportJobList"];
+                };
+            };
+        };
+    };
+    w_imports_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ImportUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportJob"];
+                };
+            };
+        };
+    };
+    w_imports_templates_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
                 };
             };
         };
@@ -25408,6 +27592,135 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SupplierStatement"];
+                };
+            };
+        };
+    };
+    w_support_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSupportTicketList"];
+                };
+            };
+        };
+    };
+    w_support_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpenTicketRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OpenTicketRequest"];
+                "multipart/form-data": components["schemas"]["OpenTicketRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    w_support_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    w_support_close_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    w_support_reply_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ReplyRequest"];
+                "multipart/form-data": components["schemas"]["ReplyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupportTicket"];
                 };
             };
         };

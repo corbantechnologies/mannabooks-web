@@ -26,3 +26,5 @@ Choose **Record payment** on the invoice. The status moves from **Issued** to **
 
 - **M-Pesa prompt**: ask the customer's phone for the payment (needs M-Pesa connected).
 - **More > Share link with customer**, **Email a payment reminder**, **Delivery note** and **Debit note**.
+- **More > Send by email**: the customer gets the lines, the total, how to pay, a link to pay online and, where PDFs are set up, the invoice as a **PDF**.
+- **More > Download PDF** or **Print or save as PDF**: an A4 copy with your logo, KRA PIN and the eTIMS details once signed.

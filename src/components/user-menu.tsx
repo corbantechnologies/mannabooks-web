@@ -1,14 +1,18 @@
 "use client";
 
-import { LogOut, UserRound } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { LogOut, ShieldCheck, UserRound } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
+
+import { api, unwrap } from "@/lib/api/client";
 
 export function UserMenu() {
   const { data } = useSession();
   const [open, setOpen] = useState(false);
   const name = data?.user?.name || data?.user?.email || "Account";
+  const me = useQuery({ queryKey: ["me"], enabled: Boolean(data), staleTime: 300000, queryFn: async () => unwrap(await api.GET("/api/v1/auth/me/")) });
   return (
     <div className="relative">
       <button
@@ -26,6 +30,11 @@ export function UserMenu() {
           <Link href="/account" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
             <UserRound className="h-4 w-4" /> My account
           </Link>
+          {me.data?.is_staff && (
+            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
+              <ShieldCheck className="h-4 w-4" /> MannaBooks admin
+            </Link>
+          )}
           <button
             onClick={async () => {
               await fetch("/api/session/logout", { method: "POST" });

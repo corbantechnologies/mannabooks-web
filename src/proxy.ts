@@ -9,7 +9,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { REFRESH_MARGIN_MS, SESSION_MAX_AGE, expiresAt, refreshTokens, sessionCookieName } from "@/lib/auth/tokens";
 
-const APP_PREFIXES = ["/workspaces", "/w/", "/account", "/groups"];
+const APP_PREFIXES = ["/workspaces", "/w/", "/account", "/groups", "/admin"];
 const AUTH_PAGES = ["/signin", "/signup"];
 
 export async function proxy(req: NextRequest) {

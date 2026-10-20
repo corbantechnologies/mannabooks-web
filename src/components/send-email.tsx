@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Mail } from "lucide-react";
+import { FileDown, Mail } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -14,11 +14,24 @@ import { Badge, Button, Field, FormError, Input, Modal, Textarea } from "./ui";
 export type EmailDocType = "invoice" | "quotation" | "credit_note" | "cash_sale" | "purchase_order" | "payment" | "delivery_note"
   | "supplier_payment" | "service_order";
 
-/** "Send by email" as a button. Inside a More menu, use SendEmailDialog with your own open state instead. */
+/** Opens the document's PDF (made by the PDF service) in a new tab. */
+export function openPdf(slug: string, docType: EmailDocType, id: string) {
+  window.open(`/api/backend/api/v1/w/${slug}/document-emails/pdf/?document_type=${docType}&object_id=${id}`, "_blank", "noopener");
+}
+
+/** A "PDF" button, shown only when the PDF service is set up. */
+export function PdfButton({ docType, id }: { docType: EmailDocType; id: string }) {
+  const { slug, context } = useWorkspace();
+  if (!context.pdf_enabled) return null;
+  return <Button variant="secondary" onClick={() => openPdf(slug, docType, id)}><FileDown className="h-4 w-4" /> PDF</Button>;
+}
+
+/** "Send by email" as a button (with a PDF button beside it when PDFs are set up). Inside a More menu, use SendEmailDialog instead. */
 export function SendEmailButton({ docType, id, disabled, label = "Send by email" }: { docType: EmailDocType; id: string; disabled?: boolean; label?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
+      {!disabled && <PdfButton docType={docType} id={id} />}
       <Button variant="secondary" disabled={disabled} onClick={() => setOpen(true)}><Mail className="h-4 w-4" /> {label}</Button>
       <SendEmailDialog docType={docType} id={id} open={open} onClose={() => setOpen(false)} />
     </>

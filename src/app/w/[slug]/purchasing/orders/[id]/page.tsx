@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
-import { SendEmailDialog } from "@/components/send-email";
+import { SendEmailDialog, openPdf } from "@/components/send-email";
 import { SendToInbox } from "@/components/send-to-inbox";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
@@ -23,7 +23,7 @@ import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function PurchaseOrderPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const approval = useApprovalStatus(slug, "purchase_order", id);
   const path = { params: { path: { workspace: slug, id } } };
@@ -54,6 +54,7 @@ export default function PurchaseOrderPage() {
             {receivable && can("goodsreceipts.manage") && <Link href={`/w/${slug}/purchasing/receipts/new?order=${o.id}`}><Button>Receive goods</Button></Link>}
             <SendToInbox kind="purchase_order" id={o.id} disabled={o.status === "draft" || o.status === "cancelled"} />
             <ActionMenu actions={[
+              { label: "Download PDF", onClick: () => openPdf(slug, "purchase_order", o.id), hidden: !context.pdf_enabled || o.status === "draft" },
               { label: "Send to supplier by email", onClick: () => setEmailing(true), hidden: !(o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create")) },
               { label: "Print LPO or save as PDF", href: `/w/${slug}/purchasing/orders/${o.id}/print`, hidden: o.status === "draft" },
               { label: "Edit", onClick: () => setEditing(true), hidden: !(o.status === "draft" && can("purchaseorders.create")) },

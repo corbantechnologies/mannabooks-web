@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
-import { SendEmailDialog } from "@/components/send-email";
+import { SendEmailDialog, openPdf } from "@/components/send-email";
 import { SendToInbox } from "@/components/send-to-inbox";
 import { DocumentLines, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -20,7 +20,7 @@ import { QUOTE_STATUS } from "@/lib/api/sales";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function QuotationPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const path = { params: { path: { workspace: slug, id } } };
@@ -59,6 +59,7 @@ export default function QuotationPage() {
             {q.status === "converted" && q.invoice_id && <Link href={`/w/${slug}/sales/invoices/${q.invoice_id}`}><Button>Open invoice</Button></Link>}
             <SendToInbox kind="quotation" id={q.id} disabled={!["sent", "accepted"].includes(q.status)} />
             <ActionMenu actions={[
+              { label: "Download PDF", onClick: () => openPdf(slug, "quotation", q.id), hidden: !context.pdf_enabled || q.status === "draft" },
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !manage },
               { label: "Print or save as PDF", href: `/w/${slug}/sales/quotations/${q.id}/print` },
               { label: "Edit", onClick: () => setEditing(true), hidden: !(manage && ["draft", "sent"].includes(q.status)) },

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import {
   Building2,
   Globe,
+  LifeBuoy,
   Handshake,
   Inbox,
   Kanban,
@@ -80,6 +81,7 @@ import { useState } from "react";
 
 import { PeriodFixDialog } from "@/components/period-fix-dialog";
 import { PeriodSwitcher } from "@/components/period-switcher";
+import { SubscriptionBanner } from "@/components/subscription-banner";
 import { TopBar } from "@/components/top-bar";
 import { ErrorState, Spinner } from "@/components/ui";
 import { PeriodProvider } from "@/lib/period";
@@ -205,9 +207,14 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/mpesa", label: "M-Pesa (Daraja)", icon: Smartphone, perm: ["mpesa.view"] },
       { href: "/audit-log", label: "Audit log", icon: History, perm: ["auditlogs.view"] },
       { href: "/settings", label: "Settings", icon: Settings, perm: ["workspace.manage"] },
+      { href: "/billing", label: "Plan and billing", icon: CreditCard, perm: ["workspace.manage"] },
+      { href: "/data", label: "Import and export", icon: ArrowLeftRight, perm: ["customers.manage", "products.manage", "openingbalances.manage", "ledgeraccounts.view"] },
     ],
   },
-  { section: "Help", items: [{ href: "/guide", label: "User guides", icon: BookOpen, perm: null }] },
+  { section: "Help", items: [
+    { href: "/guide", label: "User guides", icon: BookOpen, perm: null },
+    { href: "/help", label: "Help and feedback", icon: LifeBuoy, perm: null },
+  ] },
 ];
 
 /** The module a menu item belongs to; switched-off modules leave the menu (their data stays). Null: always shown. */
@@ -325,7 +332,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
       <div className="flex">
         <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>
         {menuOpen && <aside className="fixed inset-x-0 top-14 z-20 border-b border-stone-200 bg-white shadow md:hidden">{nav}</aside>}
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-8">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-8"><SubscriptionBanner />{children}</main>
         <PeriodFixDialog />
       </div>
       </PeriodProvider>
