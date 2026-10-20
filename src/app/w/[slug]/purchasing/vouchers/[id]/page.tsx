@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
@@ -48,6 +49,7 @@ export default function VoucherPage() {
             {v.status === "approved" && can("supplierpayments.create") && <Button onClick={() => { act.reset(); setPaying(true); }}>Record payment</Button>}
           </div>
         } />
+      <RelatedDocuments kind="payment_voucher" id={id} />
       <ApprovalPanel docType="payment_voucher" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={PV_STATUS[v.status ?? "draft"].tone}>{PV_STATUS[v.status ?? "draft"].label}</Badge></Meta>

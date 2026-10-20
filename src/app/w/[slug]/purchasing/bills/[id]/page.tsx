@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { PurchaseDocForm } from "@/components/purchase-doc-form";
@@ -54,6 +55,7 @@ export default function BillPage() {
             {open && can("paymentvouchers.create") && <Link href={`/w/${slug}/purchasing/vouchers/new?supplier=${b.supplier_id}&bill=${b.id}`}><Button>Pay</Button></Link>}
           </div>
         } />
+      <RelatedDocuments kind="bill" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status"><Badge tone={BILL_STATUS[b.status ?? "draft"].tone}>{BILL_STATUS[b.status ?? "draft"].label}</Badge>{b.is_overdue && <span className="ml-1"><Badge tone="red">Overdue</Badge></span>}</Meta>
         <Meta label="Bill date">{fmtDate(b.bill_date)}</Meta>

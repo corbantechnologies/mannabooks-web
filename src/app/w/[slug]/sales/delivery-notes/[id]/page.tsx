@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -49,6 +50,7 @@ export default function DeliveryNotePage() {
           </div>
         }
       />
+      <RelatedDocuments kind="delivery_note" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={DELIVERY_STATUS[d.status as Status].tone}>{DELIVERY_STATUS[d.status as Status].label}</Badge></Meta>
         <Meta label="Date">{fmtDate(d.delivery_date)}</Meta>

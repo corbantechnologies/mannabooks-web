@@ -1,12 +1,14 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { useCustomerPrices, useProducts, useVatRates } from "@/lib/api/sales";
 import type { Product, TaxRate } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
 
 import { Button, Card, Input, Select } from "./ui";
+import { QuickProductModal } from "./quick-product";
 
 export interface EditLine {
   product_id: string;
@@ -90,7 +92,9 @@ export function LinesEditor({
   function update(i: number, patch: Partial<EditLine>) {
     setLines((prev) => prev.map((l, n) => (n === i ? { ...l, ...patch } : l)));
   }
+  const [adding, setAdding] = useState<number | null>(null);
   function pickProduct(i: number, id: string) {
+    if (id === "__new") return setAdding(i);
     const p = (products.data?.results ?? []).find((x: Product) => x.id === id);
     const listed = prices.data?.[id];
     update(i, p ? { product_id: id, description: p.name, unit_price: String(Number(listed ?? p.sale_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultRate } : { product_id: "" });
@@ -117,6 +121,7 @@ export function LinesEditor({
               <td className="px-2 py-2">
                 <Select disabled={disabled} value={l.product_id} onChange={(e) => pickProduct(i, e.target.value)}>
                   <option value="">Free text</option>
+                  <option value="__new">+ New product...</option>
                   {(products.data?.results ?? []).map((p) => <option key={p.id} value={p.id}>{p.code ? `${p.code} ` : ""}{p.name}</option>)}
                 </Select>
               </td>
@@ -156,6 +161,10 @@ export function LinesEditor({
           <dt className="font-semibold">Total {currency}</dt><dd className="font-mono font-semibold">{fmt(totals.total)}</dd>
         </dl>
       </div>
+      <QuickProductModal open={adding !== null} onClose={() => setAdding(null)} onCreated={(p) => {
+        if (adding !== null) update(adding, { product_id: p.id, description: p.name, unit_price: String(Number(p.sale_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultRate });
+        setAdding(null);
+      }} />
     </Card>
   );
 }

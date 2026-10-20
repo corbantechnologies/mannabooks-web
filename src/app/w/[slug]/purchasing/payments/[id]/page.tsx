@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -32,6 +33,7 @@ export default function SupplierPaymentPage() {
       <Link href={`/w/${slug}/purchasing/payments`} className="text-sm text-stone-500 hover:underline">&larr; Supplier payments</Link>
       <PageHeader title={`Payment ${p.number}`} description={p.supplier_name} guide="supplier-payments"
         actions={p.status === "posted" && can("supplierpayments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>} />
+      <RelatedDocuments kind="supplier_payment" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Paid">{fmt(p.amount)}</Meta>
         <Meta label="Withholding tax">{fmt(p.withholding_amount)}</Meta>

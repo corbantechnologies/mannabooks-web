@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
+import { SendEmailButton } from "@/components/send-email";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -46,6 +48,7 @@ export default function PurchaseOrderPage() {
       <PageHeader title={`Purchase order ${o.number}`} description={o.supplier_name} guide="purchase-orders"
         actions={
           <div className="flex flex-wrap gap-2">
+            {o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create") && <SendEmailButton docType="purchase_order" id={o.id} />}
             {o.status !== "draft" && <Link href={`/w/${slug}/purchasing/orders/${o.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print LPO</Button></Link>}
             {o.status === "draft" && can("purchaseorders.create") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
             {(o.status === "draft" || o.status === "approved") && can("purchaseorders.create") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel order</Button>}
@@ -55,6 +58,7 @@ export default function PurchaseOrderPage() {
             {receivable && !(receipts.data?.results ?? []).some((g) => g.status === "posted") && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?order=${o.id}`}><Button variant="secondary">Enter bill</Button></Link>}
           </div>
         } />
+      <RelatedDocuments kind="purchase_order" id={id} />
       <ApprovalPanel docType="purchase_order" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status"><Badge tone={PO_STATUS[o.status ?? "draft"].tone}>{PO_STATUS[o.status ?? "draft"].label}</Badge></Meta>

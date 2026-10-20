@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { AccountOptions } from "@/lib/api/accounting";
 import { usePurchaseAccounts } from "@/lib/api/purchasing";
@@ -9,6 +10,7 @@ import type { PurchaseLine } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
 
 import { priceLine } from "./lines-editor";
+import { QuickProductModal } from "./quick-product";
 import { Button, Card, Input, Select } from "./ui";
 
 export interface BuyLine { product_id: string; description: string; quantity: string; unit_cost: string; tax_rate_id: string; account_id: string }
@@ -42,7 +44,9 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
   const priced = lines.map((l) => priceLine({ ...l, unit_price: l.unit_cost, discount_percent: "0" }, vat, includeTax));
   const totals = priced.reduce((t, p) => ({ net: t.net + p.net, tax: t.tax + p.tax, total: t.total + p.total }), { net: 0, tax: 0, total: 0 });
   const update = (i: number, patch: Partial<BuyLine>) => setLines((prev) => prev.map((l, n) => (n === i ? { ...l, ...patch } : l)));
+  const [adding, setAdding] = useState<number | null>(null);
   function pick(i: number, id: string) {
+    if (id === "__new") return setAdding(i);
     const p = (products.data?.results ?? []).find((x) => x.id === id);
     update(i, p ? { product_id: id, description: p.name, unit_cost: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultVat } : { product_id: "" });
   }
@@ -69,6 +73,7 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
                 <td className="px-2 py-2">
                   <Select value={l.product_id} onChange={(e) => pick(i, e.target.value)}>
                     <option value="">Free text</option>
+                    <option value="__new">+ New product...</option>
                     {(products.data?.results ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </Select>
                 </td>
@@ -112,6 +117,10 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
           <dt className="font-semibold">Total</dt><dd className="font-mono font-semibold">{fmt(totals.total)}</dd>
         </dl>
       </div>
+      <QuickProductModal open={adding !== null} onClose={() => setAdding(null)} onCreated={(p) => {
+        if (adding !== null) update(adding, { product_id: p.id, description: p.name, unit_cost: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultVat });
+        setAdding(null);
+      }} />
     </Card>
   );
 }

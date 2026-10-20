@@ -7,6 +7,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
+import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { MpesaPromptModal } from "@/components/mpesa-prompt";
@@ -100,6 +102,7 @@ export default function InvoicePage() {
         guide="invoices"
         actions={
           <div className="flex flex-wrap gap-2">
+            {inv.status !== "draft" && inv.status !== "void" && can("invoices.create") && <SendEmailButton docType="invoice" id={inv.id} />}
             {inv.status === "draft" && can("invoices.create") && (
               <>
                 <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this draft?") && remove.mutate()}>Delete</Button>
@@ -128,6 +131,7 @@ export default function InvoicePage() {
           </div>
         }
       />
+      <RelatedDocuments kind="invoice" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status">
           <Badge tone={INVOICE_STATUS[inv.status].tone}>{INVOICE_STATUS[inv.status].label}</Badge>

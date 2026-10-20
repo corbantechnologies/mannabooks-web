@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
@@ -37,6 +38,7 @@ export default function CashSalePage() {
         guide="cash-sales"
         actions={
           <div className="flex gap-2">
+            {r.status === "issued" && can("receipts.create") && <SendEmailButton docType="cash_sale" id={r.id} />}
             <Link href={`/w/${slug}/sales/cash-sales/${r.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
             {r.status === "issued" && can("receipts.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
           </div>

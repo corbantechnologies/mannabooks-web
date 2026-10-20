@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
@@ -36,6 +37,7 @@ export default function PaymentPage() {
         guide="payments"
         actions={p.status === "posted" && can("payments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
       />
+      <RelatedDocuments kind="payment" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Amount">{fmt(p.amount)}</Meta>
         <Meta label="Date">{fmtDate(p.payment_date)}</Meta>

@@ -13,8 +13,9 @@ import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { useDefaultVat } from "./lines-editor";
 import { BuyLine, PurchaseLinesEditor, blankBuyLine, buyLinesFrom, buyLinesToRequest } from "./purchase-lines";
+import { SupplierForm } from "./supplier-form";
 import { TagPickers, tagsBody, tagsOf } from "./tag-pickers";
-import { Button, Card, Field, FormError, Input, Select, Textarea } from "./ui";
+import { Button, Card, Field, FormError, Input, Modal, Select, Textarea } from "./ui";
 
 type Kind = "order" | "service" | "bill";
 const PATHS = { order: "orders", service: "service-orders", bill: "bills" } as const;
@@ -36,6 +37,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
     scope: so?.scope ?? "", supplier_invoice_number: bill?.supplier_invoice_number ?? "", supplier_etims_number: bill?.supplier_etims_number ?? "",
   });
   const [tags, setTags] = useState(tagsOf(existing));
+  const [addingSupplier, setAddingSupplier] = useState(false);
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
   const [stored, setStored] = useState<BuyLine[] | null>(existing?.lines?.length ? buyLinesFrom(existing.lines) : null);
   const lines = stored ?? [blankBuyLine(defaultVat)];
@@ -71,12 +73,14 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
   });
 
   return (
+    <>
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(false); }}>
       <Card className="grid gap-3 p-4 sm:grid-cols-4">
         <div className="sm:col-span-2">
           <Field label="Supplier" error={fieldError(save.error, "supplier_id")}>
-            <Select required value={head.supplier_id} onChange={set("supplier_id")}>
+            <Select required value={head.supplier_id} onChange={(e) => (e.target.value === "__new" ? setAddingSupplier(true) : setHead((prev) => ({ ...prev, supplier_id: e.target.value })))}>
               <option value="">Choose a supplier</option>
+              <option value="__new">+ New supplier...</option>
               {(suppliers.data?.results ?? []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </Select>
           </Field>
@@ -108,5 +112,9 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
         {kind === "bill" && <Button type="button" loading={save.isPending && save.variables} onClick={() => save.mutate(true)}>Save and post</Button>}
       </div>
     </form>
+    <Modal size="lg" open={addingSupplier} title="New supplier" onClose={() => setAddingSupplier(false)}>
+      <SupplierForm onSaved={(sup) => { setHead((prev) => ({ ...prev, supplier_id: sup.id })); setAddingSupplier(false); }} onCancel={() => setAddingSupplier(false)} />
+    </Modal>
+    </>
   );
 }

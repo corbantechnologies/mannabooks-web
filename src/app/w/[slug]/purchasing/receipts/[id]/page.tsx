@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -36,6 +37,7 @@ export default function GoodsReceiptPage() {
             {!g.is_billed && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?receipt=${g.id}`}><Button>Enter their bill</Button></Link>}
           </div>
         )} />
+      <RelatedDocuments kind="goods_receipt" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status">{g.status === "void" ? <Badge>Void: {g.void_reason}</Badge> : g.is_billed ? <Badge tone="green">Billed</Badge> : <Badge tone="amber">Waiting for the bill</Badge>}</Meta>
         <Meta label="Date">{fmtDate(g.receipt_date)}</Meta>

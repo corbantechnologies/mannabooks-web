@@ -1351,6 +1351,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/document-emails/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET: the emails sent for one document. POST: send a document by email. */
+        get: operations["w_document_emails_list"];
+        put?: never;
+        /** @description GET: the emails sent for one document. POST: send a document by email. */
+        post: operations["w_document_emails_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/document-emails/draft/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The suggested To, subject and message for a document, to fill the send form. */
+        get: operations["w_document_emails_draft_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/": {
         parameters: {
             query?: never;
@@ -3999,6 +4034,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/related-documents/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The chain a document belongs to, both ways, in the order of the process: what it came from and what came after it. */
+        get: operations["w_related_documents_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reminders/rules/": {
         parameters: {
             query?: never;
@@ -6561,6 +6613,45 @@ export interface components {
             total: string;
             entries: number;
             assets: number;
+        };
+        DocumentEmail: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly document_type: string;
+            /** Format: uuid */
+            readonly object_id: string;
+            readonly document_number: string;
+            /** @description Comma-separated addresses */
+            readonly to: string;
+            readonly cc: string;
+            readonly subject: string;
+            /** @description The sender's own note, above the document summary */
+            readonly message: string;
+            /**
+             * Format: uri
+             * @description The private view-and-pay link, for invoices
+             */
+            readonly link: string;
+            readonly status: components["schemas"]["DocumentEmailStatusEnum"];
+            readonly error: string;
+            /** Format: date-time */
+            readonly sent_at: string | null;
+            readonly sent_by_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `queued` - Sending
+         *     * `sent` - Sent
+         *     * `failed` - Not sent
+         * @enum {string}
+         */
+        DocumentEmailStatusEnum: "queued" | "sent" | "failed";
+        Draft: {
+            to: string;
+            cc: string;
+            subject: string;
+            message: string;
         };
         Employee: {
             /** Format: uuid */
@@ -11054,6 +11145,21 @@ export interface components {
             /** @description The workspace created from business_name, if any */
             workspace_slug: string | null;
         };
+        RelatedDocument: {
+            kind: string;
+            label: string;
+            /** Format: uuid */
+            id: string;
+            number: string;
+            /** Format: date */
+            date: string;
+            status: string;
+            status_label: string;
+            /** Format: decimal */
+            amount: string | null;
+            path: string;
+            current: boolean;
+        };
         ReminderLog: {
             /** Format: uuid */
             readonly id: string;
@@ -11335,9 +11441,29 @@ export interface components {
             /** Format: decimal */
             closing: string;
         };
+        /**
+         * @description * `invoice` - invoice
+         *     * `quotation` - quotation
+         *     * `credit_note` - credit_note
+         *     * `cash_sale` - cash_sale
+         *     * `purchase_order` - purchase_order
+         * @enum {string}
+         */
+        SendDocumentTypeEnum: "invoice" | "quotation" | "credit_note" | "cash_sale" | "purchase_order";
         SendReminderRequest: {
             /** Format: uuid */
             invoice_id: string;
+        };
+        SendRequest: {
+            document_type: components["schemas"]["SendDocumentTypeEnum"];
+            /** Format: uuid */
+            object_id: string;
+            to: string;
+            /** @default  */
+            cc: string;
+            subject: string;
+            /** @default  */
+            message: string;
         };
         Sequence: {
             /** Format: uuid */
@@ -14803,6 +14929,85 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    w_document_emails_list: {
+        parameters: {
+            query: {
+                document_type: "cash_sale" | "credit_note" | "invoice" | "purchase_order" | "quotation";
+                object_id: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentEmail"][];
+                };
+            };
+        };
+    };
+    w_document_emails_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SendRequest"];
+                "multipart/form-data": components["schemas"]["SendRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentEmail"];
+                };
+            };
+        };
+    };
+    w_document_emails_draft_retrieve: {
+        parameters: {
+            query: {
+                document_type: "cash_sale" | "credit_note" | "invoice" | "purchase_order" | "quotation";
+                object_id: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Draft"];
+                };
             };
         };
     };
@@ -20051,6 +20256,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RecurringInvoice"];
+                };
+            };
+        };
+    };
+    w_related_documents_list: {
+        parameters: {
+            query: {
+                id: string;
+                kind: "bill" | "credit_note" | "delivery_note" | "goods_receipt" | "invoice" | "payment" | "payment_voucher" | "purchase_order" | "quotation" | "service_order" | "supplier_payment";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelatedDocument"][];
                 };
             };
         };

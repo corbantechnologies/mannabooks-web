@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -60,6 +61,7 @@ export default function ServiceOrderPage() {
             {o.status !== "draft" && o.status !== "cancelled" && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?service=${o.id}`}><Button variant="secondary">Enter bill</Button></Link>}
           </div>
         } />
+      <RelatedDocuments kind="service_order" id={id} />
       <ApprovalPanel docType="service_order" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={SO_STATUS[o.status ?? "draft"].tone}>{SO_STATUS[o.status ?? "draft"].label}</Badge></Meta>

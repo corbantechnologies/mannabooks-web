@@ -7,6 +7,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
+import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { SalesDocForm } from "@/components/sales-doc-form";
@@ -51,6 +53,7 @@ export default function QuotationPage() {
         guide="quotations"
         actions={
           <div className="flex flex-wrap gap-2">
+            {manage && <SendEmailButton docType="quotation" id={q.id} />}
             <Link href={`/w/${slug}/sales/quotations/${q.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print or PDF</Button></Link>
             {manage && ["draft", "declined"].includes(q.status) && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this quotation?") && remove.mutate()}>Delete</Button>}
             {manage && ["draft", "sent"].includes(q.status) && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
@@ -63,6 +66,7 @@ export default function QuotationPage() {
           </div>
         }
       />
+      <RelatedDocuments kind="quotation" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={QUOTE_STATUS[q.status].tone}>{QUOTE_STATUS[q.status].label}</Badge>{q.is_expired && <span className="ml-1"><Badge tone="red">Expired</Badge></span>}</Meta>
         <Meta label="Date">{fmtDate(q.issue_date)}</Meta>

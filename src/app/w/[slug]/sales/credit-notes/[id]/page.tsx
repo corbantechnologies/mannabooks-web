@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RelatedDocuments } from "@/components/related-documents";
+import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
@@ -36,11 +38,13 @@ export default function CreditNotePage() {
         guide="credit-notes"
         actions={
           <div className="flex gap-2">
+            {c.status === "issued" && can("creditnotes.create") && <SendEmailButton docType="credit_note" id={c.id} />}
             <Link href={`/w/${slug}/sales/credit-notes/${c.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
             {c.status === "issued" && can("creditnotes.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
           </div>
         }
       />
+      <RelatedDocuments kind="credit_note" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Date">{fmtDate(c.issue_date)}</Meta>
         <Meta label="Invoice">{c.invoice_id ? <Link href={`/w/${slug}/sales/invoices/${c.invoice_id}`} className="font-mono text-xs hover:underline">{c.invoice_number}</Link> : "-"}</Meta>
