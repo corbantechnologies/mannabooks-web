@@ -57,7 +57,7 @@ export default function PayRunPage() {
       ...rows.map((s) => [s.staff_number, s.employee_name, s.kra_pin, s.nssf_number, s.shif_number, s.gross_pay, s.taxable_pay, s.paye, s.shif, s.nssf_employee, s.nssf_employer, s.housing_levy_employee, s.housing_levy_employer])]);
   }
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/payroll`} className="text-sm text-stone-500 hover:underline">&larr; Payroll</Link>
       <PageHeader title={`Payroll ${r.name}`} description={`Pay date ${fmtDate(r.pay_date)} · ${r.employees} staff`} guide="payroll"
         actions={

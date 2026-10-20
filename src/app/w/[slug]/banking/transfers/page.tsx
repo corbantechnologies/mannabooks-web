@@ -29,7 +29,7 @@ export default function TransfersPage() {
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((p) => ({ ...p, [key]: e.target.value }));
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader title="Transfers" description="Money moved between your own accounts: banking the day's cash, M-Pesa to bank, topping up petty cash." guide="banking"
         actions={can("banking.transfer") && <Button onClick={() => { save.reset(); setOpen(true); }}><Plus className="h-4 w-4" /> New transfer</Button>} />
       <Card>

@@ -37,7 +37,7 @@ export default function CostCentresPage() {
   });
   const rows = centres.data ?? [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader title="Cost centres" guide="cost-centres"
         description="Parts of the business you want a separate profit and loss for: a shop, a vehicle, a farm, a donor programme. Tag sales and costs with one, then filter reports by it."
         actions={can("budgets.manage") && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New cost centre</Button>} />

@@ -14,6 +14,7 @@ export interface EditLine {
   product_id: string;
   description: string;
   quantity: string;
+  unit?: string; // "" or the product's own unit; another one must be one of the product's other units
   unit_price: string;
   discount_percent: string;
   discount_amount?: string; // fixed discount, e.g. loyalty points (kept when copying a document)
@@ -46,6 +47,7 @@ export function linesToRequest(lines: EditLine[]) {
       product_id: l.product_id || null,
       description: l.description,
       quantity: l.quantity || "1",
+      ...(l.product_id && l.unit ? { unit: l.unit } : {}),
       unit_price: l.unit_price || "0",
       discount_percent: l.discount_percent || "0",
       discount_amount: l.discount_amount || "0",
@@ -53,9 +55,9 @@ export function linesToRequest(lines: EditLine[]) {
     }));
 }
 
-export function linesFromDocument(lines: { product_id?: string | null; description?: string; quantity?: string; unit_price?: string; discount_percent?: string; discount_amount?: string; tax_rate_id?: string | null }[]): EditLine[] {
+export function linesFromDocument(lines: { product_id?: string | null; description?: string; quantity?: string; unit?: string; unit_price?: string; discount_percent?: string; discount_amount?: string; tax_rate_id?: string | null }[]): EditLine[] {
   return lines.map((l) => ({
-    product_id: l.product_id ?? "", description: l.description ?? "", quantity: String(Number(l.quantity ?? 1)),
+    product_id: l.product_id ?? "", description: l.description ?? "", quantity: String(Number(l.quantity ?? 1)), unit: l.unit ?? "",
     unit_price: String(Number(l.unit_price ?? 0)), discount_percent: String(Number(l.discount_percent ?? 0)),
     discount_amount: String(Number(l.discount_amount ?? 0)), tax_rate_id: l.tax_rate_id ?? "",
   }));
@@ -97,7 +99,17 @@ export function LinesEditor({
     if (id === "__new") return setAdding(i);
     const p = (products.data?.results ?? []).find((x: Product) => x.id === id);
     const listed = prices.data?.[id];
-    update(i, p ? { product_id: id, description: p.name, unit_price: String(Number(listed ?? p.sale_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultRate } : { product_id: "" });
+    update(i, p ? { product_id: id, description: p.name, unit: p.unit ?? "", unit_price: String(Number(listed ?? p.sale_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultRate } : { product_id: "", unit: "" });
+  }
+  const productOf = (id: string) => (products.data?.results ?? []).find((x: Product) => x.id === id);
+  /** A carton: its own price, else the price of one piece times the pieces in it (as the API does). */
+  function pickUnit(i: number, unit: string) {
+    const p = productOf(lines[i].product_id);
+    if (!p) return;
+    const base = Number(prices.data?.[p.id] ?? p.sale_price ?? 0);
+    const other = (p.units ?? []).find((u) => u.unit === unit);
+    const price = other ? (other.sale_price != null ? Number(other.sale_price) : base * Number(other.factor)) : base;
+    update(i, { unit, unit_price: String(Math.round(price * 10000) / 10000) });
   }
 
   return (
@@ -107,7 +119,7 @@ export function LinesEditor({
           <tr>
             <th className="w-48 px-3 py-2 text-left">Product</th>
             <th className="px-3 py-2 text-left">Description</th>
-            <th className="w-20 px-3 py-2 text-right">Qty</th>
+            <th className="w-24 px-3 py-2 text-right">Qty</th>
             <th className="w-32 px-3 py-2 text-right">Price</th>
             <th className="w-20 px-3 py-2 text-right">Disc %</th>
             <th className="w-36 px-3 py-2 text-left">VAT</th>
@@ -126,7 +138,15 @@ export function LinesEditor({
                 </Select>
               </td>
               <td className="px-2 py-2"><Input disabled={disabled} value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
-              <td className="px-2 py-2"><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} /></td>
+              <td className="px-2 py-2">
+                <Input disabled={disabled} inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} />
+                {(productOf(l.product_id)?.units ?? []).length > 0 && (
+                  <Select disabled={disabled} aria-label="Unit" className="mt-1 py-1 text-xs" value={l.unit || productOf(l.product_id)?.unit || ""} onChange={(e) => pickUnit(i, e.target.value)}>
+                    <option value={productOf(l.product_id)?.unit ?? ""}>{productOf(l.product_id)?.unit}</option>
+                    {productOf(l.product_id)!.units!.map((u) => <option key={u.unit} value={u.unit}>{u.unit} of {Number(u.factor)}</option>)}
+                  </Select>
+                )}
+              </td>
               <td className="px-2 py-2"><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.unit_price} onChange={(e) => update(i, { unit_price: e.target.value })} /></td>
               <td className="px-2 py-2"><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.discount_percent} onChange={(e) => update(i, { discount_percent: e.target.value })} /></td>
               <td className="px-2 py-2">

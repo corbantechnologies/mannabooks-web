@@ -28,7 +28,7 @@ export default function QuotationsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Quotations"
         description="Price offers. Nothing is posted to the books; turn an accepted quotation into an invoice with one click."

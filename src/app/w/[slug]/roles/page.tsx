@@ -47,7 +47,7 @@ export default function RolesPage() {
   const fullAccess = form.permissions.includes("*");
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader
         title="Roles"
         description="A role is a set of permissions. Preset roles cover the usual jobs; copy the idea into custom roles for anything else."

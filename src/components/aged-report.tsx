@@ -37,7 +37,7 @@ export function AgedReport({ kind }: { kind: "receivables" | "payables" }) {
       ...d.rows.map((r) => [r.name, ...BUCKETS.map((b) => r[b[0]]), r.total]), ["Total", ...BUCKETS.map((b) => d.totals[b[0]]), d.totals.total]]);
   }
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/reports`} className="text-sm text-stone-500 hover:underline print:hidden">&larr; Reports</Link>
       <PageHeader title={kind === "receivables" ? "Aged receivables" : "Aged payables"}
         description={kind === "receivables" ? `Who owes you, and for how long past the due date, in ${context.workspace.currency}.` : `What you owe suppliers, and how long it has been due, in ${context.workspace.currency}.`}

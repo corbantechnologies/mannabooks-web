@@ -24,7 +24,7 @@ function NewProduction() {
   });
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-2xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/manufacturing/production`} className="text-sm text-stone-500 hover:underline">&larr; Production</Link>
       <PageHeader title="New production order" guide="manufacturing" />
       <Card className="p-5">

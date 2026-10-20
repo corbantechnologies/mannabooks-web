@@ -38,7 +38,7 @@ export default function ReportRequestPage() {
   const rounds = new Map<string, NonNullable<typeof subs.data>["results"]>();
   for (const s of subs.data?.results ?? []) rounds.set(s.due_date, [...(rounds.get(s.due_date) ?? []), s]);
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
       <PageHeader title={r.title} description={`${REPORT_FREQUENCIES.find((f) => f.value === r.frequency)?.label}, from ${r.assignee_names.join(", ")}`} guide="work-reports"
         actions={<div className="flex flex-wrap gap-2">

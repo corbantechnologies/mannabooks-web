@@ -25,7 +25,7 @@ export default function ShiftPage() {
   const s = shift.data!;
   const totals = s.totals as unknown as ShiftTotals;
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/pos/shifts`} className="text-sm text-stone-500 hover:underline">&larr; Shifts</Link>
       <PageHeader title={`Shift ${s.number}`} description={`${s.register_name} · ${s.cashier_name}`} guide="pos" />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">

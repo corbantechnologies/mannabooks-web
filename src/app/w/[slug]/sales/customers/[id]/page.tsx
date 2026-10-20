@@ -37,7 +37,7 @@ export default function CustomerPage() {
   const { customer: c, rows, opening_balance, closing_balance } = statement.data!;
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/customers`} className="text-sm text-stone-500 hover:underline">&larr; Customers</Link>
       <PageHeader
         title={c.name}

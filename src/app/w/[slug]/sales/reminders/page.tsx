@@ -29,7 +29,7 @@ export default function RemindersPage() {
     onSuccess: () => { toast.success("Reminder saved"); setEditing(null); },
   });
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Payment reminders"
         description="Emails sent each morning to customers with unpaid invoices. Switch on the ones you want; customers need an email address."

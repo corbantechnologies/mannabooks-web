@@ -31,14 +31,14 @@ export default function RecurringInvoicePage() {
   const manage = can("recurringinvoices.manage");
   if (editing) {
     return (
-      <div className="max-w-6xl">
+      <div className="w-full">
         <PageHeader title={`Edit ${r.name}`} guide="recurring-invoices" />
         <RecurringForm existing={r} onDone={() => setEditing(false)} />
       </div>
     );
   }
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/recurring-invoices`} className="text-sm text-stone-500 hover:underline">&larr; Recurring invoices</Link>
       <PageHeader
         title={r.name}

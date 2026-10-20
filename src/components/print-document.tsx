@@ -5,7 +5,7 @@ import { Printer } from "lucide-react";
 
 import { api, unwrap } from "@/lib/api/client";
 import type { SalesLine, Workspace } from "@/lib/api/types";
-import { fmt, fmtDate, todayIso } from "@/lib/format";
+import { fmt, fmtDate, todayIso, qtyText } from "@/lib/format";
 
 import { Button } from "./ui";
 
@@ -89,7 +89,7 @@ export function PrintDocument({
             {lines.map((l) => (
               <tr key={l.id} className="border-b border-stone-200">
                 <td className="py-2 pr-2">{l.description}{Number(l.discount_percent) ? <span className="text-stone-500"> (less {Number(l.discount_percent)}%)</span> : null}</td>
-                <td className="py-2 text-right">{Number(l.quantity)}</td>
+                <td className="py-2 text-right">{qtyText(l)}</td>
                 <td className="py-2 text-right">{fmt(l.unit_price)}</td>
                 <td className="py-2 text-right">{fmt(l.tax_amount)}</td>
                 <td className="py-2 text-right">{fmt(l.total_amount)}</td>

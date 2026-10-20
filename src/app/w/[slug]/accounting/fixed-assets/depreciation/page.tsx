@@ -41,7 +41,7 @@ export default function DepreciationPage() {
   const total = rows.reduce((a, r) => a + Number(r.amount), 0);
   const history = runs.data ?? [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/fixed-assets`} className="text-sm text-stone-500 hover:underline">&larr; Fixed assets</Link>
       <PageHeader title="Depreciation" guide="fixed-assets"
         description="Charge each month's depreciation once the month ends. One journal is posted per run: depreciation expense against accumulated depreciation. Months missed are caught up." />

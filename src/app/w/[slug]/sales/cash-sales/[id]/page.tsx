@@ -30,7 +30,7 @@ export default function CashSalePage() {
   if (receipt.error) return <ErrorState error={receipt.error} />;
   const r = receipt.data!;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/cash-sales`} className="text-sm text-stone-500 hover:underline">&larr; Cash sales</Link>
       <PageHeader
         title={`Cash sale ${r.number}`}

@@ -32,7 +32,7 @@ export default function NewWorkReportPage() {
   });
   const list = people.data ?? [];
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
       <PageHeader title="Ask for a report" guide="work-reports" description="People get an email, a reminder before it is due, and you are told when it comes in or is late." />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

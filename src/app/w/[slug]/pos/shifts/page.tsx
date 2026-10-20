@@ -13,7 +13,7 @@ export default function ShiftsPage() {
   const shifts = useQuery({ queryKey: ["pos-shifts", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/pos/shifts/", { params: { path: { workspace: slug }, query: { page_size: 100 } } })) });
   const rows = shifts.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/pos`} className="text-sm text-stone-500 hover:underline">&larr; Point of sale</Link>
       <PageHeader title="Shifts" description="Each cashier session, with its takings and cash count." guide="pos" />
       <Card>

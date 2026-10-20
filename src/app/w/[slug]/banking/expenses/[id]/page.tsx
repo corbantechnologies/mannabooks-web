@@ -29,7 +29,7 @@ export default function ExpensePage() {
   if (x.error) return <ErrorState error={x.error} />;
   const e = x.data!;
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking/expenses`} className="text-sm text-stone-500 hover:underline">&larr; Expenses</Link>
       <PageHeader title={`Expense ${e.number}`} description={e.payee || e.supplier_name || ""} guide="expenses"
         actions={e.status === "posted" && can("banking.spend") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>} />

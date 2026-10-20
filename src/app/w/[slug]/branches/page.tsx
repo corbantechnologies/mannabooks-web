@@ -49,7 +49,7 @@ export default function BranchesPage() {
   const branches = list.data?.results ?? [];
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader
         title="Branches"
         description="The places you operate from: shops, offices, sites. Documents and stock will be recorded per branch."

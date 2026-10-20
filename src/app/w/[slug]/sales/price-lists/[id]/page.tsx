@@ -43,7 +43,7 @@ function Editor({ list }: { list: PriceList }) {
     onError: (e) => toast.error(e.message),
   });
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/price-lists`} className="text-sm text-stone-500 hover:underline">&larr; Price lists</Link>
       <PageHeader title={list.name} description={`Used by ${list.customer_count ?? 0} customer(s).`} guide="price-lists"
         actions={manage && <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this price list?") && remove.mutate()}>Delete</Button>} />

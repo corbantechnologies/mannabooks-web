@@ -41,10 +41,10 @@ export default function BillPage() {
   if (bill.isLoading) return <Spinner />;
   if (bill.error) return <ErrorState error={bill.error} />;
   const b = bill.data!;
-  if (editing) return <div className="max-w-6xl"><PageHeader title="Edit draft bill" guide="bills" /><PurchaseDocForm kind="bill" existing={b} /></div>;
+  if (editing) return <div className="w-full"><PageHeader title="Edit draft bill" guide="bills" /><PurchaseDocForm kind="bill" existing={b} /></div>;
   const open = b.status === "posted" || b.status === "partially_paid";
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/bills`} className="text-sm text-stone-500 hover:underline">&larr; Bills</Link>
       <PageHeader title={`Bill ${b.supplier_invoice_number || "(draft)"}`} description={`${b.supplier_name}${b.number ? ` · ${b.number}` : ""}`} guide="bills"
         actions={

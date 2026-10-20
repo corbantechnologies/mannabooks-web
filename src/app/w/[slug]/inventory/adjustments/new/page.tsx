@@ -29,7 +29,7 @@ function NewAdjustment() {
   });
   const set = (key: keyof typeof head) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setHead((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/adjustments`} className="text-sm text-stone-500 hover:underline">&larr; Adjustments</Link>
       <PageHeader title={opening ? "Opening stock" : "Adjust stock"} guide="inventory"
         description={opening ? "What you have on the day you start, at what it cost you. It is posted against Opening balance equity." : "Enter a negative quantity to remove stock (damaged, lost), positive to add it (found)."} />

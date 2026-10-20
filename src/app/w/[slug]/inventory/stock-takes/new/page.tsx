@@ -26,7 +26,7 @@ export default function NewStockTakePage() {
     onSuccess: (t) => { toast.success("Count sheet ready"); router.push(`/w/${slug}/inventory/stock-takes/${t.id}`); },
   });
   return (
-    <div className="max-w-2xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/stock-takes`} className="text-sm text-stone-500 hover:underline">&larr; Stock takes</Link>
       <PageHeader title="Start a stock take" description="MannaBooks lists every stock product with what the books say. Count, enter the numbers, then post." guide="stock-takes" />
       <Card className="p-5">

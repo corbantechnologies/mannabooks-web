@@ -42,7 +42,7 @@ export default function BalanceSheetPage() {
       compare: Number(d.compare_total_liabilities) + Number(d.compare_total_equity), strong: true },
   ] : [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/reports`} className="text-sm text-stone-500 hover:underline print:hidden">&larr; Reports</Link>
       <PageHeader title="Balance sheet" guide="financial-reports" description={`As at ${fmtDate(asOf)}, in ${context.workspace.currency}.`}
         actions={<div className="flex gap-2 print:hidden">

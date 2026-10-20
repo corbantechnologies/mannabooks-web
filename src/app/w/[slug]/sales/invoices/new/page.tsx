@@ -12,7 +12,7 @@ function NewInvoice() {
   const { slug } = useWorkspace();
   const params = useSearchParams();
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/invoices`} className="text-sm text-stone-500 hover:underline">&larr; Invoices</Link>
       <PageHeader title="New invoice" description="Save a draft to finish later, or issue it now." guide="invoices" />
       <SalesDocForm kind="invoice" initialCustomer={params.get("customer") ?? undefined} />

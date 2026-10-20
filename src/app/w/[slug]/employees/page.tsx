@@ -88,7 +88,7 @@ export default function EmployeesPage() {
   const current = editing !== "new" && editing !== null ? editing : null;
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title={viewAll ? "Employees" : "My employee record"}
         description={viewAll ? "Everyone who works here. Link an employee to a login so they can use self-service." : "Your details as HR has them. Ask HR to correct anything wrong."}

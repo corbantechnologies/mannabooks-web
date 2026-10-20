@@ -25,7 +25,7 @@ export default function ProductionPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Production" description="Making products from their recipes. Completing an order uses up the components and adds the product at their cost." guide="manufacturing" actions={can("manufacturing.manage") && <Link href={`/w/${slug}/manufacturing/production/new`}><Button><Plus className="h-4 w-4" /> New production order</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search number or product" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>

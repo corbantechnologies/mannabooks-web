@@ -24,7 +24,7 @@ export default function AdjustmentsPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Stock adjustments" description="Opening stock, damage, expiry, losses and stock found. Each change is valued and posted." guide="inventory" actions={can("inventory.manage") && <Link href={`/w/${slug}/inventory/adjustments/new`}><Button><Plus className="h-4 w-4" /> New adjustment</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search number" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>

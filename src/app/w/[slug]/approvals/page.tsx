@@ -29,7 +29,7 @@ export default function ApprovalsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader title="Approvals" description="Orders, vouchers, payroll and budgets that need someone's go-ahead, level by level." guide="approvals"
         actions={can("approvals.view") && <Link href={`/w/${slug}/approvals/rules`}><Button variant="secondary"><Settings2 className="h-4 w-4" /> Rules</Button></Link>} />
       <div className="mb-4 flex gap-1 border-b border-stone-200">

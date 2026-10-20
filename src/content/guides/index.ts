@@ -14,8 +14,8 @@ export interface Guide {
 }
 
 export const GUIDES: Guide[] = [
-  { slug: "getting-started", title: "Getting started", summary: "Create your account and workspace, and set it up in five steps.", section: "Start here" },
-  { slug: "workspace-settings", title: "Workspace settings", summary: "Business details, KRA PIN, VAT, financial year and numbering.", section: "Organisation", app: "/settings" },
+  { slug: "getting-started", title: "Getting started", summary: "Create your workspace, choose what you want to do first, and follow the checklist.", section: "Start here" },
+  { slug: "workspace-settings", title: "Workspace settings", summary: "Business details, KRA PIN, VAT, modules, financial year and numbering.", section: "Organisation", app: "/settings" },
   { slug: "branches", title: "Branches", summary: "The shops, offices and sites you operate from.", section: "Organisation", app: "/branches" },
   { slug: "departments", title: "Departments and in-charges", summary: "Group staff, and decide who is in charge of each module.", section: "Organisation", app: "/departments" },
   { slug: "self-service", title: "My leave and pay", summary: "Your leave days, leave requests and payslips.", section: "People", app: "/me" },
@@ -37,7 +37,7 @@ export const GUIDES: Guide[] = [
   { slug: "recurring-invoices", title: "Recurring invoices", summary: "Rent, retainers and contracts invoiced on a schedule.", section: "Sales", app: "/sales/recurring-invoices" },
   { slug: "reminders", title: "Payment reminders", summary: "Emails to customers before and after invoices fall due.", section: "Sales", app: "/sales/reminders" },
   { slug: "customer-portal", title: "Sharing with customers", summary: "Private links to invoices and statements, with M-Pesa pay.", section: "Sales" },
-  { slug: "catalogue", title: "Categories and units", summary: "Group products and choose the units you sell in.", section: "Sales", app: "/sales/catalogue" },
+  { slug: "catalogue", title: "Categories and units", summary: "Group products, set category defaults, and buy and sell in cartons, bags or shots.", section: "Sales", app: "/sales/catalogue" },
   { slug: "price-lists", title: "Price lists", summary: "Wholesale, staff and contract prices for groups of customers.", section: "Sales", app: "/sales/price-lists" },
   { slug: "pos", title: "Point of sale", summary: "Sell at the till, run shifts and count the cash.", section: "Point of sale", app: "/pos" },
   { slug: "loyalty", title: "Loyalty", summary: "Points, tiers and rewards for returning customers.", section: "Point of sale", app: "/sales/loyalty" },
@@ -52,7 +52,7 @@ export const GUIDES: Guide[] = [
   { slug: "supplier-payments", title: "Supplier payments", summary: "Payments to suppliers and withholding tax.", section: "Purchasing", app: "/purchasing/payments" },
   { slug: "inventory", title: "Inventory", summary: "Stock levels, average cost, warehouses, transfers and adjustments.", section: "Inventory", app: "/inventory" },
   { slug: "stock-takes", title: "Stock takes", summary: "Count your stock and post the differences.", section: "Inventory", app: "/inventory/stock-takes" },
-  { slug: "manufacturing", title: "Manufacturing", summary: "Recipes and production orders for what you make.", section: "Inventory", app: "/manufacturing/production" },
+  { slug: "manufacturing", title: "Manufacturing", summary: "Recipes with their cost and margin, production, and products made when sold.", section: "Inventory", app: "/manufacturing/production" },
   { slug: "banking", title: "Cash and banking", summary: "Bank, M-Pesa and cash accounts, and moving money between them.", section: "Cash and banking", app: "/banking" },
   { slug: "expenses", title: "Expenses", summary: "Costs paid on the spot, with their VAT.", section: "Cash and banking", app: "/banking/expenses" },
   { slug: "other-income", title: "Other income", summary: "Interest, rent received and other money that isn't a sale.", section: "Cash and banking", app: "/banking/income" },
@@ -69,7 +69,7 @@ export const GUIDES: Guide[] = [
   { slug: "fixed-assets", title: "Fixed assets", summary: "The asset register, monthly depreciation, and selling or scrapping assets.", section: "Accounting", app: "/accounting/fixed-assets" },
   { slug: "cost-centres", title: "Cost centres", summary: "Track the profit of a shop, vehicle, farm or programme on its own.", section: "Accounting", app: "/accounting/cost-centres" },
   { slug: "projects", title: "Projects", summary: "Job costing: the income, costs and profit of each job or contract.", section: "Projects", app: "/projects" },
-  { slug: "financial-reports", title: "Financial reports", summary: "Profit and loss, balance sheet, ageing and the VAT summary.", section: "Accounting", app: "/accounting/reports" },
+  { slug: "financial-reports", title: "Financial reports", summary: "Profit and loss, balance sheet, ageing, sales by category and the VAT summary.", section: "Accounting", app: "/accounting/reports" },
 ];
 
 export const PUBLIC_GUIDES = GUIDES.filter((g) => g.audience !== "internal");

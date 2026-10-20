@@ -48,7 +48,7 @@ export default function DepartmentsPage() {
   const rows = list.data?.results ?? [];
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader
         title="Departments"
         description="Each department runs one or more modules. Its head is the in-charge of those modules and receives their approvals and alerts."

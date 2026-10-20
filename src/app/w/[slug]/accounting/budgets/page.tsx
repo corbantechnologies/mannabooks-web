@@ -33,7 +33,7 @@ export default function BudgetsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader title="Budgets" guide="budgets"
         description="Plan the year's income and spending month by month, for the whole business or one cost centre or project, then watch the actual figures against it."
         actions={can("budgets.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New budget</Button>} />

@@ -27,7 +27,7 @@ export default function GoodsReceiptsPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Goods received" description="Deliveries from suppliers (GRNs). Stock items go straight into the warehouse." guide="goods-received" actions={can("goodsreceipts.manage") && <Link href={`/w/${slug}/purchasing/receipts/new`}><Button><Plus className="h-4 w-4" /> Receive goods</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(POSTED_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>

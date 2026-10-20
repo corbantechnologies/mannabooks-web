@@ -22,7 +22,7 @@ export default function SupplierPage() {
   if (st.error) return <ErrorState error={st.error} />;
   const { supplier: s, rows, closing_balance } = st.data!;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/suppliers`} className="text-sm text-stone-500 hover:underline">&larr; Suppliers</Link>
       <PageHeader title={s.name} description={s.number} guide="suppliers"
         actions={

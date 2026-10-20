@@ -24,7 +24,7 @@ export default function BankingPage() {
   const rows = (accounts.data?.results ?? []).filter((a) => a.is_active);
   const total = rows.reduce((s, a) => s + Number(a.balance), 0);
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Cash and banking" description={`Your bank, M-Pesa and cash accounts. Total ${context.workspace.currency} ${fmt(total)}.`} guide="banking"
         actions={
           <div className="flex flex-wrap gap-2">

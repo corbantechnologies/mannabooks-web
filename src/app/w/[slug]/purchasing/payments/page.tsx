@@ -27,7 +27,7 @@ export default function SupplierPaymentsPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Supplier payments" description="Money paid to suppliers. Most are made from approved payment vouchers." guide="supplier-payments" actions={can("supplierpayments.create") && <Link href={`/w/${slug}/purchasing/payments/new`}><Button><Plus className="h-4 w-4" /> Record payment</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(POSTED_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>

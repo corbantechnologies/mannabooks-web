@@ -37,7 +37,7 @@ export default function NewIncomePage() {
   const set = (key: keyof typeof head) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setHead((p) => ({ ...p, [key]: e.target.value }));
   const total = lines.reduce((s, l) => s + (Number(l.amount) || 0), 0);
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking/income`} className="text-sm text-stone-500 hover:underline">&larr; Other income</Link>
       <PageHeader title="Receive money" description="For money that isn't from a sale. Customer payments go under Sales > Payments." guide="other-income" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

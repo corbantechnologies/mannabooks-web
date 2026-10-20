@@ -23,7 +23,7 @@ export default function CustomersPage() {
   const rows = list.data?.results ?? [];
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Customers"
         description={`The people and businesses you sell to, and what each owes you (in ${context.workspace.currency}).`}

@@ -17,7 +17,7 @@ export default function RatesPage() {
   const [adding, setAdding] = useState(false);
   const latest = rates.data?.results[0];
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <Link href={`/w/${slug}/payroll`} className="text-sm text-stone-500 hover:underline">&larr; Payroll</Link>
       <PageHeader title="Statutory rates" description="The rates payroll uses, from each date. When KRA, SHA or NSSF change them, add a new set from the date they apply." guide="payroll"
         actions={can("payroll.manage") && !adding && <Button onClick={() => setAdding(true)}>Add new rates</Button>} />

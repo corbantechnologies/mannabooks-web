@@ -38,7 +38,7 @@ export default function NewExpensePage() {
   });
   const set = (key: keyof typeof head) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setHead((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking/expenses`} className="text-sm text-stone-500 hover:underline">&larr; Expenses</Link>
       <PageHeader title="Spend money" description="For costs paid on the spot. For a supplier's invoice you pay later, enter a bill instead." guide="expenses" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

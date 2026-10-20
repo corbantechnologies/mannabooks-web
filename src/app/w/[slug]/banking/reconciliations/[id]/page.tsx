@@ -35,7 +35,7 @@ export default function ReconciliationPage() {
   const all = lines.data ?? [];
   const diff = Number(r.difference);
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking/accounts/${r.bank_account_id}`} className="text-sm text-stone-500 hover:underline">&larr; {r.bank_account_name}</Link>
       <PageHeader title={`Reconcile ${r.bank_account_name}`} description={`Statement of ${fmtDate(r.statement_date)}. Tick each transaction that appears on the statement.`} guide="bank-reconciliation"
         actions={

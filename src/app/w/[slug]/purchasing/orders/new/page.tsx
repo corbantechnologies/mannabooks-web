@@ -12,7 +12,7 @@ function NewOrder() {
   const { slug } = useWorkspace();
   const supplier = useSearchParams().get("supplier") ?? undefined;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/orders`} className="text-sm text-stone-500 hover:underline">&larr; Purchase orders</Link>
       <PageHeader title="New purchase order" description="Saved as a draft. Someone allowed to approve orders approves it before it is sent." guide="purchase-orders" />
       <PurchaseDocForm kind="order" supplierId={supplier} />

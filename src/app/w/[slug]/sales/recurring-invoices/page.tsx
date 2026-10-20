@@ -18,7 +18,7 @@ export default function RecurringInvoicesPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Recurring invoices"
         description="Invoices raised automatically on a schedule: rent, retainers, service contracts. MannaBooks raises them each morning."

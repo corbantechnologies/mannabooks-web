@@ -24,7 +24,7 @@ export default function SuppliersPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Suppliers" description={`Who you buy from, and what you owe each of them (in ${context.workspace.currency}).`} guide="suppliers"
         actions={can("suppliers.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New supplier</Button>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search name, phone or KRA PIN" value={search} onChange={(e) => setSearch(e.target.value)} /></div>

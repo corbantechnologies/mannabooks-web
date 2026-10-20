@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ModuleSettings } from "@/components/module-settings";
 import { PaymentOptions } from "@/components/payment-options";
 import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
@@ -44,7 +45,7 @@ export default function SettingsPage() {
     setForm((prev) => ({ ...prev, [key]: key === "fiscal_year_start_month" ? Number(e.target.value) : e.target.value }));
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="space-y-6">
       <PageHeader title="Settings" description="Your business details appear on documents and KRA submissions." guide="workspace-settings" />
       <Card className="p-5">
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
@@ -73,6 +74,8 @@ export default function SettingsPage() {
       </Card>
 
       <PaymentOptions />
+
+      <ModuleSettings />
 
       {can("sequences.view") && (
         <Card>

@@ -28,7 +28,7 @@ export default function GoodsReceiptPage() {
   if (grn.error) return <ErrorState error={grn.error} />;
   const g = grn.data!;
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/receipts`} className="text-sm text-stone-500 hover:underline">&larr; Goods received</Link>
       <PageHeader title={`Goods received ${g.number}`} description={g.supplier_name} guide="goods-received"
         actions={g.status === "posted" && (

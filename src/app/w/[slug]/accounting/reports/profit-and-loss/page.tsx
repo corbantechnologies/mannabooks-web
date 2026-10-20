@@ -48,7 +48,7 @@ export default function ProfitAndLossPage() {
   const scope = [centres.data?.find((c) => c.id === dims.cost_center)?.name, projects.data?.results.find((p) => p.id === dims.project)?.name,
     (branches.data?.results ?? []).find((b) => b.id === dims.branch)?.name].filter(Boolean).join(", ");
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/reports`} className="text-sm text-stone-500 hover:underline print:hidden">&larr; Reports</Link>
       <PageHeader title="Profit and loss" guide="financial-reports"
         description={`${fmtDate(range.from)} to ${fmtDate(range.to)}${scope ? `, ${scope}` : ""}, in ${context.workspace.currency}.`}

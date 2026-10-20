@@ -23,7 +23,7 @@ function NewDebitNote() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/invoices/{id}/", { params: { path: { workspace: slug, id: invoiceId! } } })),
   });
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/debit-notes`} className="text-sm text-stone-500 hover:underline">&larr; Debit notes</Link>
       <PageHeader title="New debit note" description="It is saved as a draft; issuing it adds to what the customer owes and sends it to KRA eTIMS when signing is on." guide="debit-notes" />
       <Card className="mb-4 p-4">

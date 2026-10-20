@@ -22,7 +22,7 @@ export default function LoyaltyPage() {
   });
   const rows = members.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Loyalty"
         description="Customers earn points on what they spend and use them as a discount at the till."

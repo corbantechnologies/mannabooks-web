@@ -25,7 +25,7 @@ export default function ProjectsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Projects" guide="projects"
         description="Jobs and contracts whose income and costs you track together. Tag invoices, bills and expenses with the project to see its profit."
         actions={can("projects.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New project</Button>} />

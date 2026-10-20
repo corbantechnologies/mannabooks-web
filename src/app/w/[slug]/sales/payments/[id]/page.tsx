@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { SendEmailButton } from "@/components/send-email";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
@@ -29,13 +30,18 @@ export default function PaymentPage() {
   if (payment.error) return <ErrorState error={payment.error} />;
   const p = payment.data!;
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/payments`} className="text-sm text-stone-500 hover:underline">&larr; Payments</Link>
       <PageHeader
         title={`Payment ${p.number}`}
         description={p.customer_name}
         guide="payments"
-        actions={p.status === "posted" && can("payments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
+        actions={p.status === "posted" && (
+          <div className="flex flex-wrap gap-2">
+            {can("payments.create") && <SendEmailButton docType="payment" id={p.id} label="Email receipt" />}
+            {can("payments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
+          </div>
+        )}
       />
       <RelatedDocuments kind="payment" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">

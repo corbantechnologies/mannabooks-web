@@ -28,7 +28,7 @@ export default function DebitNotesPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Debit notes"
         description="Charge a customer more against an invoice already issued: an undercharge, transport or extra work. They are paid like invoices."

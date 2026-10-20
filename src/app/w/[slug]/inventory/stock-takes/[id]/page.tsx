@@ -40,7 +40,7 @@ export default function StockTakePage() {
   const counting = t.status === "counting" && can("inventory.manage");
   const lines = t.lines.filter((l) => !search || l.product_name.toLowerCase().includes(search.toLowerCase()) || (l.product_code ?? "").toLowerCase().includes(search.toLowerCase()));
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/stock-takes`} className="text-sm text-stone-500 hover:underline">&larr; Stock takes</Link>
       <PageHeader title={`Stock take ${t.number}`} description={`${t.warehouse_name}${t.category_name ? ` · ${t.category_name}` : ""}`} guide="stock-takes"
         actions={

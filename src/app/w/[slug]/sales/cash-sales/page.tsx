@@ -26,7 +26,7 @@ export default function CashSalesPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Cash sales"
         description="Sales paid on the spot by cash, M-Pesa or card. Each is posted straight to the account the money went into."

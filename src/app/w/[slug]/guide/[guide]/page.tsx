@@ -11,7 +11,7 @@ export default async function WorkspaceGuide({ params }: { params: Promise<{ slu
   if (!guide) notFound();
   const base = `/w/${slug}/guide`;
   return (
-    <div className="flex max-w-6xl gap-8">
+    <div className="flex gap-8">
       <div className="min-w-0 flex-1">
         <div className="mb-3 flex items-center justify-between gap-2">
           <Link href={base} className="text-sm text-stone-500 hover:underline">&larr; All guides</Link>

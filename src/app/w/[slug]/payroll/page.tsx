@@ -25,7 +25,7 @@ export default function PayrollPage() {
   });
   const rows = runs.data?.results ?? [];
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader title="Payroll" description="Monthly payroll with PAYE, SHIF, NSSF and the Housing Levy worked out, posted to the books, and payslips for staff." guide="payroll"
         actions={
           <div className="flex gap-2">

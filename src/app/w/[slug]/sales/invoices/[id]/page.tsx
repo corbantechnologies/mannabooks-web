@@ -1,14 +1,14 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { MoreHorizontal, Printer } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
-import { SendEmailButton } from "@/components/send-email";
+import { SendEmailDialog } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { MpesaPromptModal } from "@/components/mpesa-prompt";
@@ -33,7 +33,7 @@ export default function InvoicePage() {
   const [reason, setReason] = useState("");
   const [prompting, setPrompting] = useState(false);
   const [sharing, setSharing] = useState(false);
-  const [more, setMore] = useState(false);
+  const [emailing, setEmailing] = useState(false);
   const deposits = useDepositAccounts(slug);
   const [pay, setPay] = useState({ amount: "", method: "mpesa", reference: "", deposit_account_id: "", payment_date: todayIso() });
 
@@ -77,13 +77,14 @@ export default function InvoicePage() {
   const inv = invoice.data!;
   if (editing) {
     return (
-      <div className="max-w-6xl">
+      <div className="w-full">
         <PageHeader title={inv.kind === "debit_note" ? "Edit draft debit note" : "Edit draft invoice"} guide="invoices" />
         <SalesDocForm kind={inv.kind === "debit_note" ? "debit_note" : "invoice"} existing={inv} />
       </div>
     );
   }
   const open = inv.status === "issued" || inv.status === "partially_paid";
+  const issued = inv.status !== "draft" && inv.status !== "void";  // paid invoices too: they can still be credited
   const debit = inv.kind === "debit_note";
   const label = debit ? "Debit note" : "Invoice";
 
@@ -94,7 +95,7 @@ export default function InvoicePage() {
   }
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/${debit ? "debit-notes" : "invoices"}`} className="text-sm text-stone-500 hover:underline">&larr; {debit ? "Debit notes" : "Invoices"}</Link>
       <PageHeader
         title={inv.number ? `${label} ${inv.number}` : `Draft ${label.toLowerCase()}`}
@@ -102,36 +103,26 @@ export default function InvoicePage() {
         guide="invoices"
         actions={
           <div className="flex flex-wrap gap-2">
-            {inv.status !== "draft" && inv.status !== "void" && can("invoices.create") && <SendEmailButton docType="invoice" id={inv.id} />}
-            {inv.status === "draft" && can("invoices.create") && (
-              <>
-                <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this draft?") && remove.mutate()}>Delete</Button>
-                <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
-              </>
-            )}
             {inv.status === "draft" && can("invoices.issue") && <Button loading={issue.isPending} onClick={() => issue.mutate()}>Issue invoice</Button>}
-            {inv.status !== "draft" && <Link href={`/w/${slug}/sales/invoices/${inv.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>}
-            {open && can("creditnotes.create") && <Link href={`/w/${slug}/sales/credit-notes/new?invoice=${inv.id}`}><Button variant="secondary">Credit note</Button></Link>}
-            {open && can("invoices.void") && Number(inv.amount_paid) === 0 && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
-            {inv.status !== "draft" && inv.status !== "void" && (
-              <div className="relative">
-                <Button variant="secondary" onClick={() => setMore((v) => !v)} aria-label="More actions"><MoreHorizontal className="h-4 w-4" /> More</Button>
-                {more && (
-                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-md border border-stone-200 bg-white py-1 text-sm shadow-lg" onClick={() => setMore(false)}>
-                    {can("customers.manage") && <button className="block w-full px-3 py-2 text-left hover:bg-stone-50" onClick={() => setSharing(true)}>Share link with customer</button>}
-                    {open && <button className="block w-full px-3 py-2 text-left hover:bg-stone-50" onClick={() => remind.mutate()}>Email a payment reminder</button>}
-                    {can("deliverynotes.manage") && <Link className="block px-3 py-2 hover:bg-stone-50" href={`/w/${slug}/sales/delivery-notes/new?invoice=${inv.id}`}>Delivery note</Link>}
-                    {!debit && can("invoices.create") && <Link className="block px-3 py-2 hover:bg-stone-50" href={`/w/${slug}/sales/debit-notes/new?invoice=${inv.id}`}>Debit note (charge more)</Link>}
-                  </div>
-                )}
-              </div>
-            )}
-            {open && can("receipts.create") && <Button variant="secondary" onClick={() => setPrompting(true)}>M-Pesa prompt</Button>}
             {open && can("payments.create") && <Button onClick={openPayment}>Record payment</Button>}
+            <ActionMenu actions={[
+              { label: "Edit", onClick: () => setEditing(true), hidden: !(inv.status === "draft" && can("invoices.create")) },
+              { label: "Send by email", onClick: () => setEmailing(true), hidden: !(issued && can("invoices.create")) },
+              { label: "Print or save as PDF", href: `/w/${slug}/sales/invoices/${inv.id}/print`, hidden: inv.status === "draft" },
+              { label: "M-Pesa payment prompt", onClick: () => setPrompting(true), hidden: !(open && can("receipts.create")) },
+              { label: "Share link with customer", onClick: () => setSharing(true), hidden: !(issued && can("customers.manage")) },
+              { label: "Email a payment reminder", onClick: () => remind.mutate(), hidden: !open },
+              { label: "Credit note (returns, discounts)", href: `/w/${slug}/sales/credit-notes/new?invoice=${inv.id}`, hidden: !(issued && can("creditnotes.create")) },
+              { label: "Debit note (charge more)", href: `/w/${slug}/sales/debit-notes/new?invoice=${inv.id}`, hidden: !(issued && !debit && can("invoices.create")) },
+              { label: "Delivery note", href: `/w/${slug}/sales/delivery-notes/new?invoice=${inv.id}`, hidden: !(issued && can("deliverynotes.manage")) },
+              { label: "Void invoice", danger: true, onClick: () => { voidIt.reset(); setVoiding(true); }, hidden: !(open && can("invoices.void") && Number(inv.amount_paid) === 0) },
+              { label: "Delete draft", danger: true, onClick: () => { if (confirm("Delete this draft?")) remove.mutate(); }, hidden: !(inv.status === "draft" && can("invoices.create")) },
+            ]} />
           </div>
         }
       />
       <RelatedDocuments kind="invoice" id={id} />
+      <SendEmailDialog docType="invoice" id={inv.id} open={emailing} onClose={() => setEmailing(false)} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status">
           <Badge tone={INVOICE_STATUS[inv.status].tone}>{INVOICE_STATUS[inv.status].label}</Badge>

@@ -49,7 +49,7 @@ export default function RegistersPage() {
   );
   const rows = registers.data?.results ?? [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/pos`} className="text-sm text-stone-500 hover:underline">&larr; Point of sale</Link>
       <PageHeader title="Tills" description="Each till has its own shifts and decides which account cash, M-Pesa and card money goes into." guide="pos"
         actions={manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New till</Button>} />

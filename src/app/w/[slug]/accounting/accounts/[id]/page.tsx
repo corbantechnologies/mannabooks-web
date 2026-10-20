@@ -25,7 +25,7 @@ export default function AccountLedgerPage() {
   const data = ledger.data;
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/chart`} className="text-sm text-stone-500 hover:underline">&larr; Chart of accounts</Link>
       <PageHeader title={data ? `${data.account.code} ${data.account.name}` : "Account"} description="Every posted entry in this account, with the running balance." guide="chart-of-accounts" />
       <div className="mb-4 flex flex-wrap items-end gap-3">

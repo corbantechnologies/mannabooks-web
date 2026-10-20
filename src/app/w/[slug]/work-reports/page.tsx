@@ -28,7 +28,7 @@ export default function WorkReportsPage() {
   const rows = subs.data?.results ?? [];
   const tabs = [{ key: "todo", label: "My reports" }, { key: "review", label: "To review" }, { key: "requests", label: "My requests" }] as const;
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader title="Work reports" guide="work-reports"
         description="Reports your manager asks you for, and the ones you ask your team for: weekly sales, site visits, monthly summaries."
         actions={can("workreports.request") && <Link href={`/w/${slug}/work-reports/new`}><Button><Plus className="h-4 w-4" /> Ask for a report</Button></Link>} />

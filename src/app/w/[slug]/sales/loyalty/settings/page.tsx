@@ -15,7 +15,7 @@ export default function LoyaltySettingsPage() {
   const { slug } = useWorkspace();
   const program = useQuery({ queryKey: ["loyalty-program", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/loyalty/program/", wsPath(slug))) });
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <Link href={`/w/${slug}/sales/loyalty`} className="text-sm text-stone-500 hover:underline">&larr; Loyalty</Link>
       <PageHeader title="Loyalty settings" description="How points are earned and spent, and the tiers members move up through." guide="loyalty" />
       {program.isLoading ? <Spinner /> : program.error ? <ErrorState error={program.error} /> : <ProgramForm program={program.data!} />}

@@ -22,23 +22,25 @@ export default function RecipesPage() {
     })),
   });
   const rows = list.data?.results ?? [];
-  void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
+  void fmtDate; void ListFilters; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Recipes (bills of materials)" description="What goes into each product you make, e.g. 10 blocks from 1 bag of cement and 3 bags of sand." guide="manufacturing" actions={can("manufacturing.manage") && <Link href={`/w/${slug}/manufacturing/recipes/new`}><Button><Plus className="h-4 w-4" /> New recipe</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search product" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="Nothing here yet" />
         ) : (
-          <Table head={["Product", "Name", "Makes", "Components", ""]}>
+          <Table head={["Product", "Name", "Makes", "Components", "Cost of one", "Margin", ""]}>
             {rows.map((r) => (
               <tr key={r.id} className="hover:bg-stone-50">
                 <Td><Link href={`/w/${slug}/manufacturing/recipes/${r.id}`} className="font-medium hover:underline">{r.product_name}</Link></Td>
                 <Td>{r.name || "-"}</Td>
                 <Td className="text-right font-mono">{Number(r.output_quantity)}</Td>
                 <Td className="text-stone-600">{r.lines.map((l) => `${Number(l.quantity)} ${l.unit} ${l.component_name}`).join(", ")}</Td>
-                <Td>{!r.is_active && <Badge>Inactive</Badge>}</Td>
+                <Td className="text-right font-mono">{fmt(r.costing.unit_cost)}</Td>
+                <Td className={`text-right font-mono ${r.costing.margin != null && Number(r.costing.margin) < 0 ? "text-red-700" : ""}`}>{r.costing.margin_percent != null ? `${Number(r.costing.margin_percent)}%` : "-"}</Td>
+                <Td>{!r.is_active && <Badge>Inactive</Badge>}{r.made_to_order && <Badge tone="green">Made when sold</Badge>}</Td>
               </tr>
             ))}
           </Table>

@@ -25,7 +25,7 @@ export default function StockPage() {
   const rows = levels.data?.results ?? [];
   const total = rows.reduce((s, r) => s + Number(r.value), 0);
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Stock" description="What is on hand in each warehouse, at its average cost." guide="inventory"
         actions={
           <div className="flex flex-wrap gap-2">

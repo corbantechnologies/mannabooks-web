@@ -25,7 +25,7 @@ export default function ServiceOrdersPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Service orders" description="Work ordered from suppliers: repairs, cleaning, consultancy. Confirm the work is done before paying." guide="service-orders" actions={can("purchaseorders.create") && <Link href={`/w/${slug}/purchasing/service-orders/new`}><Button><Plus className="h-4 w-4" /> New service order</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(SO_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>

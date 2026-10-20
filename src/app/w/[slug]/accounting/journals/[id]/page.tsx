@@ -44,7 +44,7 @@ export default function JournalDetailPage() {
   const e = entry.data!;
   if (editing) {
     return (
-      <div className="max-w-5xl">
+      <div className="w-full">
         <PageHeader title="Edit draft entry" guide="journal-entries" />
         <JournalForm entry={e} />
       </div>
@@ -52,7 +52,7 @@ export default function JournalDetailPage() {
   }
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/journals`} className="text-sm text-stone-500 hover:underline">&larr; Journal entries</Link>
       <PageHeader
         title={e.number || "Draft entry"}

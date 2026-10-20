@@ -24,7 +24,7 @@ export default function TransfersPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Stock transfers" description="Stock moved between warehouses." guide="inventory" actions={can("inventory.manage") && <Link href={`/w/${slug}/inventory/transfers/new`}><Button><Plus className="h-4 w-4" /> New transfer</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search number" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>

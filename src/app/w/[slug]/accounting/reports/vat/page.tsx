@@ -46,7 +46,7 @@ export default function VatPage() {
   const d = vat.data;
   const net = Number(d?.net_vat ?? 0);
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/reports`} className="text-sm text-stone-500 hover:underline print:hidden">&larr; Reports</Link>
       <PageHeader title="VAT summary" guide="financial-reports"
         description={`${fmtDate(range.from)} to ${fmtDate(range.to)}, in ${context.workspace.currency}. The figures for your VAT return (VAT3) on iTax, due by the 20th of the next month.`}

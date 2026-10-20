@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 export async function GuideArticle({ slug, base, children }: { slug: string; base: string; children?: React.ReactNode }) {
   const markdown = await readFile(path.join(process.cwd(), "src", "content", "guides", `${slug}.md`), "utf8");
   return (
-    <article className="prose-guide rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
+    <article className="prose-guide max-w-4xl rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
       {children}
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

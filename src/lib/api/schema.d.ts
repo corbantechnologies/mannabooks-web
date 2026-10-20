@@ -4362,6 +4362,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/reports/by-category/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Stock value now and sales in the period, per product category. */
+        get: operations["w_reports_by_category_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/period/": {
         parameters: {
             query?: never;
@@ -5937,6 +5954,10 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
+            /** Format: decimal */
+            readonly unit_factor: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -5961,6 +5982,8 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -5980,6 +6003,8 @@ export interface components {
             notes?: string;
             is_active?: boolean;
             lines: components["schemas"]["Component"][];
+            readonly made_to_order: boolean;
+            readonly costing: components["schemas"]["Costing"];
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -6224,6 +6249,32 @@ export interface components {
          * @enum {string}
          */
         CategoryEnum: "land" | "buildings" | "motor_vehicles" | "furniture" | "computers" | "plant" | "office_equipment" | "other";
+        CategoryReport: {
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            rows: components["schemas"]["CategoryRow"][];
+            /** Format: decimal */
+            total_sales: string;
+            /** Format: decimal */
+            total_stock_value: string;
+        };
+        CategoryRow: {
+            /** Format: uuid */
+            category_id: string | null;
+            name: string;
+            products: number;
+            /** Format: decimal */
+            stock_value: string;
+            /** Format: decimal */
+            sales: string;
+            /**
+             * Format: decimal
+             * @description Share of the period's sales, in percent
+             */
+            share: string;
+        };
         ChangePasswordRequest: {
             current_password?: string;
             new_password: string;
@@ -6242,6 +6293,10 @@ export interface components {
             readonly unit: string;
             /** Format: decimal */
             quantity: string;
+            /** @description What one unit of the ingredient costs now */
+            readonly unit_cost: string | null;
+            /** @description This ingredient's cost for one batch */
+            readonly cost: string | null;
         };
         ComponentRequest: {
             /** Format: uuid */
@@ -6277,6 +6332,21 @@ export interface components {
             department_id?: string | null;
             description?: string;
             is_active?: boolean;
+        };
+        Costing: {
+            /** Format: decimal */
+            batch_cost: string;
+            /**
+             * Format: decimal
+             * @description Cost of one finished unit
+             */
+            unit_cost: string;
+            /** Format: decimal */
+            sale_price: string;
+            /** Format: decimal */
+            margin: string | null;
+            /** Format: decimal */
+            margin_percent: string | null;
         };
         CountLine: {
             /** Format: uuid */
@@ -7924,6 +7994,10 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Switched-on modules (keys of APP_MODULES); empty means all */
+            modules?: unknown;
+            /** @description What the business chose to do first */
+            business_goal?: string;
             /** Format: date-time */
             readonly created_at: string;
             readonly role: string | null;
@@ -8004,6 +8078,10 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
+            /** Format: decimal */
+            readonly unit_factor: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -8030,6 +8108,8 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -9497,6 +9577,15 @@ export interface components {
             /** Format: uuid */
             parent_id?: string | null;
             description?: string;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: uuid */
+            income_account_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Suggests a selling price from the cost: cost x (1 + markup)
+             */
+            markup_percent?: string | null;
             is_active?: boolean;
         };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
@@ -9520,11 +9609,15 @@ export interface components {
             income_account_id?: string | null;
             /** @description Keep stock levels and cost of sales for this product */
             track_inventory?: boolean;
+            /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
+            made_to_order?: boolean;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
              */
             reorder_level?: string;
+            /** @description Other units it is bought or sold in, e.g. a carton of 24 */
+            units?: components["schemas"]["ProductUnitRequest"][];
             is_active?: boolean;
             /**
              * Format: decimal
@@ -9766,6 +9859,10 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Switched-on modules (keys of APP_MODULES); empty means all */
+            modules?: unknown;
+            /** @description What the business chose to do first */
+            business_goal?: string;
         };
         PayItem: {
             name: string;
@@ -10378,6 +10475,8 @@ export interface components {
             income_account_id?: string | null;
             /** @description Keep stock levels and cost of sales for this product */
             track_inventory?: boolean;
+            /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
+            made_to_order?: boolean;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
@@ -10388,6 +10487,8 @@ export interface components {
              * @description All warehouses; blank if stock isn't tracked
              */
             readonly stock_on_hand: string;
+            /** @description Other units it is bought or sold in, e.g. a carton of 24 */
+            units?: components["schemas"]["ProductUnit"][];
             is_active?: boolean;
             /** Format: date-time */
             readonly created_at: string;
@@ -10400,6 +10501,17 @@ export interface components {
             parent_id?: string | null;
             readonly parent_name: string;
             description?: string;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            readonly tax_rate_name: string;
+            /** Format: uuid */
+            income_account_id?: string | null;
+            readonly income_account_name: string;
+            /**
+             * Format: decimal
+             * @description Suggests a selling price from the cost: cost x (1 + markup)
+             */
+            markup_percent?: string | null;
             is_active?: boolean;
             /** @default 0 */
             readonly product_count: number;
@@ -10411,6 +10523,15 @@ export interface components {
             /** Format: uuid */
             parent_id?: string | null;
             description?: string;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: uuid */
+            income_account_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Suggests a selling price from the cost: cost x (1 + markup)
+             */
+            markup_percent?: string | null;
             is_active?: boolean;
         };
         /**
@@ -10446,11 +10567,15 @@ export interface components {
             income_account_id?: string | null;
             /** @description Keep stock levels and cost of sales for this product */
             track_inventory?: boolean;
+            /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
+            made_to_order?: boolean;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
              */
             reorder_level?: string;
+            /** @description Other units it is bought or sold in, e.g. a carton of 24 */
+            units?: components["schemas"]["ProductUnitRequest"][];
             is_active?: boolean;
             /**
              * Format: decimal
@@ -10467,6 +10592,34 @@ export interface components {
              * @description Blank: the default warehouse
              */
             opening_warehouse_id?: string | null;
+        };
+        ProductUnit: {
+            /** Format: uuid */
+            readonly id: string;
+            unit: string;
+            /**
+             * Format: decimal
+             * @description How many of the product's own unit one of these holds
+             */
+            factor: string;
+            /**
+             * Format: decimal
+             * @description Blank: the product's price times the factor
+             */
+            sale_price?: string | null;
+        };
+        ProductUnitRequest: {
+            unit: string;
+            /**
+             * Format: decimal
+             * @description How many of the product's own unit one of these holds
+             */
+            factor: string;
+            /**
+             * Format: decimal
+             * @description Blank: the product's price times the factor
+             */
+            sale_price?: string | null;
         };
         /**
          * @description * `complete` - complete
@@ -10668,6 +10821,10 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
+            /** Format: decimal */
+            readonly unit_factor: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -10690,6 +10847,8 @@ export interface components {
             description?: string;
             /** Format: decimal */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
             /** Format: decimal */
             unit_cost?: string;
             /** Format: uuid */
@@ -11380,6 +11539,10 @@ export interface components {
              * @default 1.000
              */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
+            /** Format: decimal */
+            readonly unit_factor: string;
             /** Format: decimal */
             unit_price?: string;
             /**
@@ -11415,6 +11578,8 @@ export interface components {
              * @default 1.000
              */
             quantity: string;
+            /** @description Blank: the product's own unit. Another unit must be one of the product's other units. */
+            unit?: string;
             /** Format: decimal */
             unit_price?: string;
             /**
@@ -11446,10 +11611,14 @@ export interface components {
          *     * `quotation` - quotation
          *     * `credit_note` - credit_note
          *     * `cash_sale` - cash_sale
+         *     * `payment` - payment
+         *     * `delivery_note` - delivery_note
          *     * `purchase_order` - purchase_order
+         *     * `service_order` - service_order
+         *     * `supplier_payment` - supplier_payment
          * @enum {string}
          */
-        SendDocumentTypeEnum: "invoice" | "quotation" | "credit_note" | "cash_sale" | "purchase_order";
+        SendDocumentTypeEnum: "invoice" | "quotation" | "credit_note" | "cash_sale" | "payment" | "delivery_note" | "purchase_order" | "service_order" | "supplier_payment";
         SendReminderRequest: {
             /** Format: uuid */
             invoice_id: string;
@@ -12327,6 +12496,10 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Switched-on modules (keys of APP_MODULES); empty means all */
+            modules?: unknown;
+            /** @description What the business chose to do first */
+            business_goal?: string;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -12351,6 +12524,14 @@ export interface components {
             }[];
             /** @description Years that have ended but are not closed yet */
             unclosed_years: string[];
+            /** @description Modules that can be switched on: key, label, description */
+            module_catalog: {
+                [key: string]: unknown;
+            }[];
+            /** @description Starting goals: key, label, description, modules */
+            goal_catalog: {
+                [key: string]: unknown;
+            }[];
         };
         WorkspaceRequest: {
             name: string;
@@ -12366,6 +12547,10 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Switched-on modules (keys of APP_MODULES); empty means all */
+            modules?: unknown;
+            /** @description What the business chose to do first */
+            business_goal?: string;
         };
     };
     responses: never;
@@ -14935,7 +15120,7 @@ export interface operations {
     w_document_emails_list: {
         parameters: {
             query: {
-                document_type: "cash_sale" | "credit_note" | "invoice" | "purchase_order" | "quotation";
+                document_type: "cash_sale" | "credit_note" | "delivery_note" | "invoice" | "payment" | "purchase_order" | "quotation" | "service_order" | "supplier_payment";
                 object_id: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -14990,7 +15175,7 @@ export interface operations {
     w_document_emails_draft_retrieve: {
         parameters: {
             query: {
-                document_type: "cash_sale" | "credit_note" | "invoice" | "purchase_order" | "quotation";
+                document_type: "cash_sale" | "credit_note" | "delivery_note" | "invoice" | "payment" | "purchase_order" | "quotation" | "service_order" | "supplier_payment";
                 object_id: string;
             };
             header?: never;
@@ -19135,6 +19320,7 @@ export interface operations {
                  *     * `service` - Service
                  */
                 kind?: "goods" | "service";
+                made_to_order?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -20857,6 +21043,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BalanceSheet"];
+                };
+            };
+        };
+    };
+    w_reports_by_category_retrieve: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryReport"];
                 };
             };
         };

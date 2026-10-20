@@ -58,7 +58,7 @@ function NewPayment() {
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/payments`} className="text-sm text-stone-500 hover:underline">&larr; Payments</Link>
       <PageHeader title="Record a payment" description="Choose the customer and enter what they paid, then apply it to their invoices." guide="payments" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

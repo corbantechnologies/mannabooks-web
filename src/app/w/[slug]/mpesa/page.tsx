@@ -15,7 +15,7 @@ export default function MpesaSettingsPage() {
   const { slug } = useWorkspace();
   const conn = useQuery({ queryKey: ["mpesa-connection", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/mpesa/connection/", wsPath(slug))) });
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="space-y-6">
       <PageHeader title="M-Pesa (Daraja)" description="Connect your own paybill or till so customers can pay by M-Pesa prompt, and payments to your number appear in MannaBooks." guide="mpesa" />
       <div className="rounded-md border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
         Money goes straight to your paybill or till; MannaBooks never holds it. You need a Daraja app linked to your shortcode

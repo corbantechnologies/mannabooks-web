@@ -12,7 +12,7 @@ function NewQuotation() {
   const { slug } = useWorkspace();
   const params = useSearchParams();
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/quotations`} className="text-sm text-stone-500 hover:underline">&larr; Quotations</Link>
       <PageHeader title="New quotation" guide="quotations" />
       <SalesDocForm kind="quotation" initialCustomer={params.get("customer") ?? undefined} />

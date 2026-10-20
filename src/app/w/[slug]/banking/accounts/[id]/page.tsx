@@ -50,7 +50,7 @@ export default function BankAccountPage() {
   const a = account.data!;
   const open = (recs.data?.results ?? []).find((r) => r.status === "in_progress");
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking`} className="text-sm text-stone-500 hover:underline">&larr; Cash and banking</Link>
       <PageHeader title={a.name} description={`Balance per the books ${fmt(a.balance)} · ledger ${a.ledger_code}${a.last_reconciled ? ` · reconciled to ${fmtDate(a.last_reconciled)}` : ""}`} guide="bank-reconciliation"
         actions={can("banking.reconcile") && (

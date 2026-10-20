@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { Button, ErrorState, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { METHODS, etimsVisible } from "@/lib/api/sales";
-import { fmt } from "@/lib/format";
+import { fmt, qtyText } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
 /** A till slip for 80 mm receipt printers. */
@@ -38,7 +38,7 @@ export default function SlipPage() {
         {(r.lines ?? []).map((l) => (
           <div key={l.id} className="mb-1">
             <p>{l.description}</p>
-            <p className="flex justify-between"><span>{Number(l.quantity)} x {fmt(l.unit_price)}{Number(l.discount_amount) ? ` -${fmt(l.discount_amount)}` : ""}</span><span>{fmt(l.total_amount)}</span></p>
+            <p className="flex justify-between"><span>{qtyText(l)} x {fmt(l.unit_price)}{Number(l.discount_amount) ? ` -${fmt(l.discount_amount)}` : ""}</span><span>{fmt(l.total_amount)}</span></p>
           </div>
         ))}
         <hr className="my-2 border-dashed border-black" />

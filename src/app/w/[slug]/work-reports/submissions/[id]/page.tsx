@@ -39,7 +39,7 @@ export default function SubmissionPage() {
   const s = sub.data!;
   const get = (p: string, name: string) => downloadFile(p, name).catch((e) => toast.error(e.message));
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
       <PageHeader title={s.title} description={`${s.employee_name}${s.period_label ? `, ${s.period_label}` : ""}, due ${fmtDate(s.due_date)}. Asked by ${s.requested_by_name}.`} guide="work-reports" />
       <div className="mb-4 flex flex-wrap items-center gap-2">

@@ -26,7 +26,7 @@ export default function PaymentsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Customer payments"
         description="Money received against invoices. Each payment is applied to one or more invoices; anything left over stays as the customer's credit."

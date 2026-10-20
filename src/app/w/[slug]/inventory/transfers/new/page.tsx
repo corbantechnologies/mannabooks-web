@@ -28,7 +28,7 @@ export default function NewTransferPage() {
   });
   const set = (key: keyof typeof head) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setHead((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/transfers`} className="text-sm text-stone-500 hover:underline">&larr; Transfers</Link>
       <PageHeader title="Move stock" guide="inventory" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

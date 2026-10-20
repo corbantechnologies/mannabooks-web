@@ -26,7 +26,7 @@ export default function OtherIncomePage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Other income" description="Money received that isn't a sale: interest, rent received, commission, grants, refunds." guide="other-income" actions={can("banking.receive") && <Link href={`/w/${slug}/banking/income/new`}><Button><Plus className="h-4 w-4" /> Receive money</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search payer or reference" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>

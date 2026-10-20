@@ -49,7 +49,7 @@ export default function TeamPage() {
   const pending = invitations.data?.results ?? [];
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Team and access"
         description="Who can sign in to this workspace, and with which role. People join by invitation."

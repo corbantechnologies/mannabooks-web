@@ -10,6 +10,7 @@ A manager adds the **tills** (**Point of sale > Tills**): a name, the branch, an
 
 1. Open **Point of sale > Till** and open a shift: choose the till and count the cash already in the drawer (the float).
 2. Tap products, search, or scan a barcode (the product code) and press Enter.
+   For a product with other units (a carton, a crate), change the unit under its name in the cart; the price changes with it.
 3. For a loyalty customer, enter their phone or card number: their prices and points appear.
 4. Choose how they pay:
    - **Cash**: enter the cash received to see the change.

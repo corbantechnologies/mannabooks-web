@@ -45,7 +45,7 @@ function NewVoucher() {
     onSuccess: (v) => { toast.success(`${v.number} sent for approval`); router.push(`/w/${slug}/purchasing/vouchers/${v.id}`); },
   });
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/vouchers`} className="text-sm text-stone-500 hover:underline">&larr; Payment vouchers</Link>
       <PageHeader title="New payment voucher" description="Choose the bills to pay. The voucher is approved, then paid." guide="payment-vouchers" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>

@@ -25,7 +25,7 @@ export default function VouchersPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Payment vouchers" description="Requests to pay suppliers. Someone with approval rights approves each one before it is paid." guide="payment-vouchers" actions={can("paymentvouchers.create") && <Link href={`/w/${slug}/purchasing/vouchers/new`}><Button><Plus className="h-4 w-4" /> New voucher</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(PV_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>

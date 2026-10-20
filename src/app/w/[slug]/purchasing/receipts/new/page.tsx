@@ -100,7 +100,7 @@ function NewReceipt() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/purchase-orders/{id}/", { params: { path: { workspace: slug, id: orderId! } } })),
   });
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/receipts`} className="text-sm text-stone-500 hover:underline">&larr; Goods received</Link>
       <PageHeader title="Receive goods" description="Count what arrived. Saving puts stock items into the warehouse." guide="goods-received" />
       {orderId && order.isLoading ? <Spinner /> : <ReceiveForm order={order.data} />}

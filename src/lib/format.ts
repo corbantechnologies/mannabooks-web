@@ -35,3 +35,9 @@ export function downloadCsv(filename: string, rows: (string | number)[][]) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+/** A line's quantity, with its unit when it isn't the product's own (e.g. "2 ctn"). */
+export function qtyText(line: { quantity?: string | number | null; unit?: string | null; unit_factor?: string | number | null }): string {
+  const q = String(Number(line.quantity ?? 0));
+  return line.unit && Number(line.unit_factor ?? 1) !== 1 ? `${q} ${line.unit}` : q;
+}

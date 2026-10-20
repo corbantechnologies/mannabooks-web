@@ -28,7 +28,7 @@ export default function StockCardPage() {
   if (product.error) return <ErrorState error={product.error} />;
   const p = product.data!;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory`} className="text-sm text-stone-500 hover:underline">&larr; Stock</Link>
       <PageHeader title={p.name} description={`Stock card · ${p.stock_on_hand != null ? `${Number(p.stock_on_hand)} ${p.unit} on hand` : "stock not tracked"}`} guide="inventory" />
       <Card>

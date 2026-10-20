@@ -24,7 +24,7 @@ export default function TransferPage() {
   if (t.error) return <ErrorState error={t.error} />;
   const d = t.data!;
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/transfers`} className="text-sm text-stone-500 hover:underline">&larr; Transfers</Link>
       <PageHeader title={`Transfer ${d.number}`} description={`${d.from_warehouse_name} → ${d.to_warehouse_name}`} guide="inventory"
         actions={d.status === "posted" && can("inventory.manage") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Move the stock back?") && voidIt.mutate()}>Void</Button>} />

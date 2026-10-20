@@ -27,7 +27,7 @@ export default function BillsPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Bills" description="Supplier invoices: what you owe. Posting a bill records the payable and the input VAT you can claim." guide="bills" actions={can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new`}><Button><Plus className="h-4 w-4" /> Enter bill</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(BILL_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search supplier or invoice number" />
       <Card>

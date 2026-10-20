@@ -36,7 +36,7 @@ export default function WarehousesPage() {
   }
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader title="Warehouses" description="Places stock is kept. Sales at a branch take stock from that branch's warehouse, otherwise from the default." guide="inventory"
         actions={manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New warehouse</Button>} />
       <Card>

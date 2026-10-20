@@ -15,7 +15,8 @@ import { fmt } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 type Kind = "goods" | "service";
-const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "" };
+const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, made_to_order: false, reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "",
+  units: [] as { unit: string; factor: string; sale_price: string }[] };
 
 export default function ProductsPage() {
   const { slug, can, context } = useWorkspace();
@@ -34,9 +35,10 @@ export default function ProductsPage() {
   });
   const save = useMutation({
     mutationFn: async () => {
-      const body = { ...form, track_inventory: form.kind === "goods" && form.track_inventory, category_id: form.category_id || null, sale_price: form.sale_price || "0", tax_rate_id: form.tax_rate_id || null, income_account_id: form.income_account_id || null,
+      const body = { ...form, track_inventory: form.kind === "goods" && form.track_inventory && !form.made_to_order, made_to_order: form.kind === "goods" && form.made_to_order, category_id: form.category_id || null, sale_price: form.sale_price || "0", tax_rate_id: form.tax_rate_id || null, income_account_id: form.income_account_id || null,
         opening_quantity: form.track_inventory && form.opening_quantity ? form.opening_quantity : undefined,
-        opening_unit_cost: form.track_inventory && form.opening_quantity && form.opening_unit_cost ? form.opening_unit_cost : undefined };
+        opening_unit_cost: form.track_inventory && form.opening_quantity && form.opening_unit_cost ? form.opening_unit_cost : undefined,
+        units: form.kind === "goods" ? form.units.filter((u) => u.unit && u.factor).map((u) => ({ unit: u.unit, factor: u.factor, sale_price: u.sale_price || null })) : [] };
       if (editing === "new") return unwrap(await api.POST("/api/v1/w/{workspace}/products/", { ...wsPath(slug), body }));
       const id = (editing as Product).id;
       return unwrap(await api.PATCH("/api/v1/w/{workspace}/products/{id}/", { params: { path: { workspace: slug, id } }, body }));
@@ -50,11 +52,12 @@ export default function ProductsPage() {
   });
   function open(p: Product | "new") {
     save.reset();
-    const defaultRate = rates.data?.results.find((r) => r.is_default)?.id ?? "";
-    setForm(p === "new" ? { ...EMPTY, tax_rate_id: defaultRate } : {
-      code: p.code ?? "", name: p.name, kind: (p.kind ?? "goods") as Kind, category_id: p.category_id ?? "", track_inventory: p.track_inventory ?? false, reorder_level: String(Number(p.reorder_level ?? 0)), description: p.description ?? "", unit: p.unit ?? "pcs",
+    // a new product starts on "Workspace default" VAT, so its category's rate can apply
+    setForm(p === "new" ? { ...EMPTY } : {
+      code: p.code ?? "", name: p.name, kind: (p.kind ?? "goods") as Kind, category_id: p.category_id ?? "", track_inventory: p.track_inventory ?? false, made_to_order: p.made_to_order ?? false, reorder_level: String(Number(p.reorder_level ?? 0)), description: p.description ?? "", unit: p.unit ?? "pcs",
       sale_price: String(Number(p.sale_price ?? 0)), cost_price: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? "",
       income_account_id: p.income_account_id ?? "", is_active: p.is_active ?? true, opening_quantity: "", opening_unit_cost: "",
+      units: (p.units ?? []).map((u) => ({ unit: u.unit, factor: String(Number(u.factor)), sale_price: u.sale_price != null ? String(Number(u.sale_price)) : "" })),
     });
     setEditing(p);
   }
@@ -63,7 +66,7 @@ export default function ProductsPage() {
   const current = editing !== "new" && editing !== null ? editing : null;
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Products and services"
         description="What you sell, with its price and VAT. Lines on quotations, invoices and cash sales fill in from here."
@@ -97,7 +100,7 @@ export default function ProductsPage() {
                 <Td className="font-mono text-xs">{p.code || "-"}</Td>
                 <Td className="font-medium">{p.name} {!p.is_active && <Badge>Inactive</Badge>}</Td>
                 <Td className="text-stone-600">{p.category_name ?? "-"}</Td>
-                <Td className="text-right font-mono">{p.stock_on_hand != null ? `${Number(p.stock_on_hand)} ${p.unit}` : "-"}</Td>
+                <Td className="text-right font-mono">{p.stock_on_hand != null ? `${Number(p.stock_on_hand)} ${p.unit}` : p.made_to_order ? <span className="font-sans text-xs text-stone-500">Made to order</span> : "-"}</Td>
                 <Td className="text-right font-mono">{fmt(p.sale_price)}</Td>
                 <Td className="text-stone-500">{p.tax_rate_name ?? "Workspace default"}</Td>
               </tr>
@@ -117,11 +120,15 @@ export default function ProductsPage() {
                 {(units.data?.results ?? []).filter((u) => u.is_active).map((u) => <option key={u.id} value={u.abbreviation}>{u.name} ({u.abbreviation})</option>)}
               </Select>
             </Field>
-            <Field label="Selling price" error={fieldError(save.error, "sale_price")}><Input required inputMode="decimal" value={form.sale_price} onChange={set("sale_price")} /></Field>
+            <Field label="Selling price" error={fieldError(save.error, "sale_price")} hint={editing === "new" ? "Blank: the cost plus the category's markup." : undefined}><Input inputMode="decimal" value={form.sale_price} onChange={set("sale_price")} /></Field>
           </div>
           {form.kind === "goods" && (
             <div className="grid grid-cols-2 items-end gap-3">
-              <label className="flex items-center gap-2 pb-2 text-sm"><input type="checkbox" checked={form.track_inventory} onChange={(e) => setForm((prev) => ({ ...prev, track_inventory: e.target.checked }))} /> Track stock</label>
+              <div className="space-y-1 pb-2">
+                <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.track_inventory} onChange={(e) => setForm((prev) => ({ ...prev, track_inventory: e.target.checked, made_to_order: e.target.checked ? false : prev.made_to_order }))} /> Track stock</label>
+                <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.made_to_order} onChange={(e) => setForm((prev) => ({ ...prev, made_to_order: e.target.checked, track_inventory: e.target.checked ? false : prev.track_inventory }))} /> Made when sold, from a recipe</label>
+              </div>
+              {form.made_to_order && <p className="pb-2 text-xs text-stone-500">For meals, drinks and the like: no stock of its own. Each sale takes its recipe&apos;s ingredients out of stock. Add the recipe in Manufacturing &gt; Recipes.</p>}
               {form.track_inventory && <Field label="Warn when stock falls to" error={fieldError(save.error, "reorder_level")}><Input inputMode="decimal" value={form.reorder_level} onChange={set("reorder_level")} /></Field>}
             </div>
           )}
@@ -138,6 +145,30 @@ export default function ProductsPage() {
           {form.kind === "goods" && form.track_inventory && editing !== "new" && Number((editing as Product | null)?.stock_on_hand ?? 0) !== 0 && (
             <p className="text-xs text-stone-500">In stock: {Number((editing as Product).stock_on_hand)}. To add or remove stock, receive goods on a purchase order or use Inventory &gt; Adjustments.</p>
           )}
+          {form.kind === "goods" && (
+            <div className="space-y-2 rounded-md border border-stone-200 p-3">
+              <div>
+                <p className="text-sm font-medium text-stone-800">Other units</p>
+                <p className="text-xs text-stone-500">Buy or sell it in bigger or smaller units, e.g. a carton of 24 {form.unit}. Stock is always kept in {form.unit}.</p>
+              </div>
+              {form.units.map((u, n) => (
+                <div key={n} className="grid grid-cols-[1fr_1fr_1fr_auto] items-end gap-2">
+                  <Field label={n === 0 ? "Unit" : ""}>
+                    <Select value={u.unit} onChange={(e) => setForm((prev) => ({ ...prev, units: prev.units.map((x, k) => (k === n ? { ...x, unit: e.target.value } : x)) }))}>
+                      <option value="">Choose</option>
+                      {(units.data?.results ?? []).filter((x) => x.is_active && x.abbreviation !== form.unit).map((x) => <option key={x.id} value={x.abbreviation}>{x.name} ({x.abbreviation})</option>)}
+                    </Select>
+                  </Field>
+                  <Field label={n === 0 ? `Holds (${form.unit})` : ""}><Input inputMode="decimal" value={u.factor} placeholder="24" onChange={(e) => setForm((prev) => ({ ...prev, units: prev.units.map((x, k) => (k === n ? { ...x, factor: e.target.value } : x)) }))} /></Field>
+                  <Field label={n === 0 ? "Price (optional)" : ""}><Input inputMode="decimal" value={u.sale_price} placeholder={u.factor && form.sale_price ? String(Number(form.sale_price) * Number(u.factor)) : ""} onChange={(e) => setForm((prev) => ({ ...prev, units: prev.units.map((x, k) => (k === n ? { ...x, sale_price: e.target.value } : x)) }))} /></Field>
+                  <Button type="button" variant="ghost" className="px-2" onClick={() => setForm((prev) => ({ ...prev, units: prev.units.filter((_, k) => k !== n) }))}>Remove</Button>
+                </div>
+              ))}
+              <Button type="button" variant="ghost" className="px-2 py-1" onClick={() => setForm((prev) => ({ ...prev, units: [...prev.units, { unit: "", factor: "", sale_price: "" }] }))}><Plus className="h-4 w-4" /> Add a unit</Button>
+              {fieldError(save.error, "units") && <p className="text-sm text-red-600">{fieldError(save.error, "units")}</p>}
+            </div>
+          )}
+          {fieldError(save.error, "made_to_order") && <p className="text-sm text-red-600">{fieldError(save.error, "made_to_order")}</p>}
           {fieldError(save.error, "track_inventory") && <p className="text-sm text-red-600">{fieldError(save.error, "track_inventory")}</p>}
           <Field label="Category" error={fieldError(save.error, "category_id")}>
             <Select value={form.category_id} onChange={set("category_id")}>

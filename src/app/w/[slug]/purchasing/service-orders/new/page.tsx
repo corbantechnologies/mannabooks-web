@@ -11,7 +11,7 @@ import { useWorkspace } from "@/lib/workspace";
 function NewServiceOrder() {
   const { slug } = useWorkspace();
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/service-orders`} className="text-sm text-stone-500 hover:underline">&larr; Service orders</Link>
       <PageHeader title="New service order" description="Describe the work and agree the price. It is approved before the supplier starts." guide="service-orders" />
       <PurchaseDocForm kind="service" supplierId={useSearchParams().get("supplier") ?? undefined} />

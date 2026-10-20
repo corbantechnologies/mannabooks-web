@@ -25,7 +25,7 @@ export default function StockTakesPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus; void setSearch;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Stock takes" description="Count what is really on the shelves. Differences are posted to Stock adjustments and losses." guide="stock-takes" actions={can("inventory.manage") && <Link href={`/w/${slug}/inventory/stock-takes/new`}><Button><Plus className="h-4 w-4" /> Start a count</Button></Link>} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (

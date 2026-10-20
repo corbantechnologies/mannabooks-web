@@ -29,7 +29,7 @@ export default function InvoicesPage() {
   const rows = list.data?.results ?? [];
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Invoices"
         description="Sales on credit. Drafts can be changed; issuing numbers the invoice, posts it to the books and sends it to KRA eTIMS when signing is on."

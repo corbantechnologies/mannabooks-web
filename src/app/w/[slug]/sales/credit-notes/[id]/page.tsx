@@ -30,7 +30,7 @@ export default function CreditNotePage() {
   if (note.error) return <ErrorState error={note.error} />;
   const c = note.data!;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/credit-notes`} className="text-sm text-stone-500 hover:underline">&larr; Credit notes</Link>
       <PageHeader
         title={`Credit note ${c.number}`}

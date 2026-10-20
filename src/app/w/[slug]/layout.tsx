@@ -190,6 +190,22 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
   { section: "Help", items: [{ href: "/guide", label: "User guides", icon: BookOpen, perm: null }] },
 ];
 
+/** The module a menu item belongs to; switched-off modules leave the menu (their data stays). Null: always shown. */
+function moduleOf(href: string): string | null {
+  // Shared lists every module uses stay on.
+  if (["/sales/customers", "/sales/products", "/purchasing/suppliers"].includes(href)) return null;
+  if (href.startsWith("/sales/loyalty") || href.startsWith("/pos")) return "pos";
+  if (href.startsWith("/sales")) return "sales";
+  if (href.startsWith("/purchasing")) return "purchasing";
+  if (href.startsWith("/manufacturing")) return "manufacturing";
+  if (href.startsWith("/inventory")) return "inventory";
+  if (href.startsWith("/banking")) return "banking";
+  if (href.startsWith("/projects")) return "projects";
+  if (["/accounting/budgets", "/accounting/cost-centres", "/accounting/fixed-assets", "/approvals"].some((p) => href.startsWith(p))) return "control";
+  if (["/me", "/leave", "/payroll", "/work-reports"].some((p) => href === p || href.startsWith(`${p}/`))) return "people";
+  return null;
+}
+
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const slug = useWorkspaceSlug();
   const pathname = usePathname();
@@ -222,8 +238,10 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
   const context = ctx.data;
   const base = `/w/${slug}`;
+  const switchedOn = (context.workspace.modules ?? []) as string[];  // empty: every module is on
   const allowed = (item: NavItem) =>
     (item.href !== "/etims" || context.etims_enabled) && // hidden until KRA approves MannaBooks and signing is switched on
+    (!switchedOn.length || !moduleOf(item.href) || switchedOn.includes(moduleOf(item.href)!)) &&
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)));
   const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0);
 

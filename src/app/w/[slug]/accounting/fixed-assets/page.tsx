@@ -24,7 +24,7 @@ export default function FixedAssetsPage() {
   const rows = list.data?.results ?? [];
   const sum = (k: "cost" | "accumulated_depreciation" | "book_value") => rows.filter((r) => r.status !== "disposed").reduce((a, r) => a + Number(r[k]), 0);
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Fixed assets" guide="fixed-assets"
         description="The register of what the business owns and uses for years: vehicles, computers, furniture, machinery. Depreciation spreads their cost over their life."
         actions={<div className="flex flex-wrap gap-2">

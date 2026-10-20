@@ -36,7 +36,7 @@ export default function NewSupplierPaymentPage() {
   });
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((p) => ({ ...p, [key]: e.target.value }));
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/payments`} className="text-sm text-stone-500 hover:underline">&larr; Supplier payments</Link>
       <PageHeader title="Record a supplier payment" description="For a payment made without a voucher. Withholding tax kept back still settles the bill." guide="supplier-payments" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

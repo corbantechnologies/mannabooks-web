@@ -37,7 +37,7 @@ export default function TrialBalancePage() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader
         title="Trial balance"
         description={`Every account's balance on a date, in ${context.workspace.currency}. Debits always equal credits; if they don't, something is wrong and MannaBooks flags it.`}

@@ -39,11 +39,11 @@ export default function AssetPage() {
   if (asset.isLoading) return <Spinner />;
   if (asset.error) return <ErrorState error={asset.error} />;
   const a = asset.data!;
-  if (editing) return <div className="max-w-5xl"><PageHeader title={`Edit ${a.number}`} guide="fixed-assets" /><AssetForm existing={a} /></div>;
+  if (editing) return <div className="w-full"><PageHeader title={`Edit ${a.number}`} guide="fixed-assets" /><AssetForm existing={a} /></div>;
   const s = schedule.data;
   const manage = can("fixedassets.manage");
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/accounting/fixed-assets`} className="text-sm text-stone-500 hover:underline">&larr; Fixed assets</Link>
       <PageHeader title={`${a.number} ${a.name}`} description={a.serial_number || undefined} guide="fixed-assets"
         actions={manage && <div className="flex flex-wrap gap-2">

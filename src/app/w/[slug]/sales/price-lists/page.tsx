@@ -23,7 +23,7 @@ export default function PriceListsPage() {
   });
   const rows = lists.data?.results ?? [];
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader
         title="Price lists"
         description="Special prices for groups of customers, such as wholesale or contract prices. Give a customer a price list and their sales lines use it."

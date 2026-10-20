@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { SendEmailButton } from "@/components/send-email";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
@@ -35,7 +36,7 @@ export default function DeliveryNotePage() {
   const manage = can("deliverynotes.manage");
   const live = d.status === "draft" || d.status === "dispatched";
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/delivery-notes`} className="text-sm text-stone-500 hover:underline">&larr; Delivery notes</Link>
       <PageHeader
         title={`Delivery note ${d.number}`}
@@ -43,6 +44,7 @@ export default function DeliveryNotePage() {
         guide="delivery-notes"
         actions={
           <div className="flex flex-wrap gap-2">
+            {d.status !== "void" && manage && <SendEmailButton docType="delivery_note" id={d.id} />}
             <Link href={`/w/${slug}/sales/delivery-notes/${d.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
             {manage && live && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Void this delivery note?") && act.mutate("void")}>Void</Button>}
             {manage && d.status === "draft" && <Button variant="secondary" loading={act.isPending} onClick={() => act.mutate("dispatch")}>Mark dispatched</Button>}

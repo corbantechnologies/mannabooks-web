@@ -56,7 +56,7 @@ function OpeningBalanceForm({ initial, accounts }: { initial: OpeningBalance; ac
   });
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <PageHeader
         title="Opening balances"
         description="What each account held on the day before you started using MannaBooks. Any difference between debits and credits goes to Opening balance equity."

@@ -27,7 +27,7 @@ export default function PurchaseOrdersPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Purchase orders" description="Orders (LPOs) sent to suppliers for goods. Approve an order, then receive the goods against it." guide="purchase-orders" actions={can("purchaseorders.create") && <Link href={`/w/${slug}/purchasing/orders/new`}><Button><Plus className="h-4 w-4" /> New order</Button></Link>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(PO_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>

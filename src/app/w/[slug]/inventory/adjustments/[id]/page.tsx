@@ -24,7 +24,7 @@ export default function AdjustmentPage() {
   if (a.error) return <ErrorState error={a.error} />;
   const d = a.data!;
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/inventory/adjustments`} className="text-sm text-stone-500 hover:underline">&larr; Adjustments</Link>
       <PageHeader title={`${d.reason_label} ${d.number}`} description={d.warehouse_name} guide="inventory"
         actions={d.status === "posted" && can("inventory.manage") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Undo this adjustment?") && voidIt.mutate()}>Void</Button>} />

@@ -13,6 +13,7 @@ const REPORTS = [
   { href: "/accounting/reports/aged-receivables", title: "Aged receivables", text: "Who owes you, grouped by how late they are." },
   { href: "/accounting/reports/aged-payables", title: "Aged payables", text: "What you owe suppliers, grouped by how long it has been due." },
   { href: "/accounting/reports/vat", title: "VAT summary", text: "Sales and purchases by VAT rate for your monthly VAT return on iTax." },
+  { href: "/accounting/reports/by-category", title: "Sales and stock by category", text: "Which product categories sell most, and the stock value you hold in each." },
   { href: "/accounting/budgets", title: "Budget vs actual", text: "How each account is doing against the year's plan.", perm: "budgets.view" },
   { href: "/projects", title: "Project profitability", text: "Income, costs and profit for each job or contract.", perm: "projects.view" },
 ];
@@ -20,7 +21,7 @@ const REPORTS = [
 export default function ReportsPage() {
   const { slug, can } = useWorkspace();
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader title="Reports" description="The financial statements and the reports you need for KRA, the bank and running the business." guide="financial-reports" />
       <div className="grid gap-3 sm:grid-cols-2">
         {REPORTS.filter((r) => !r.perm || can(r.perm)).map((r) => (

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 
 import { Button, ErrorState, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
-import { fmt, fmtDate } from "@/lib/format";
+import { fmt, fmtDate, qtyText } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function PrintOrderPage() {
@@ -42,7 +42,7 @@ export default function PrintOrderPage() {
         </section>
         <table className="mt-6 w-full border-collapse">
           <thead><tr className="border-b border-stone-300 text-left text-xs uppercase text-stone-500"><th className="py-2">Description</th><th className="py-2 text-right">Qty</th><th className="py-2 text-right">Unit cost</th><th className="py-2 text-right">Amount</th></tr></thead>
-          <tbody>{(o.lines ?? []).map((l) => <tr key={l.id} className="border-b border-stone-100"><td className="py-2">{l.description}</td><td className="py-2 text-right">{Number(l.quantity)}</td><td className="py-2 text-right">{fmt(l.unit_cost)}</td><td className="py-2 text-right">{fmt(l.total_amount)}</td></tr>)}</tbody>
+          <tbody>{(o.lines ?? []).map((l) => <tr key={l.id} className="border-b border-stone-100"><td className="py-2">{l.description}</td><td className="py-2 text-right">{qtyText(l)}</td><td className="py-2 text-right">{fmt(l.unit_cost)}</td><td className="py-2 text-right">{fmt(l.total_amount)}</td></tr>)}</tbody>
         </table>
         <dl className="ml-auto mt-4 grid w-64 grid-cols-2 gap-y-1">
           <dt className="text-stone-500">Subtotal</dt><dd className="text-right">{fmt(o.subtotal)}</dd>

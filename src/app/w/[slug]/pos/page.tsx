@@ -16,7 +16,7 @@ import { fmt, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 
-interface CartLine { product: Product; quantity: number; price: string }
+interface CartLine { product: Product; quantity: number; price: string; unit?: string }
 
 export default function PosPage() {
   const { slug } = useWorkspace();
@@ -99,10 +99,20 @@ function Till({ shift }: { shift: PosShift }) {
   function add(p: Product) {
     const price = String(Number(prices.data?.[p.id] ?? p.sale_price ?? 0));
     setCart((prev) => {
-      const i = prev.findIndex((l) => l.product.id === p.id);
+      const i = prev.findIndex((l) => l.product.id === p.id && !l.unit);
       if (i >= 0) return prev.map((l, n) => (n === i ? { ...l, quantity: l.quantity + 1 } : l));
       return [...prev, { product: p, quantity: 1, price }];
     });
+  }
+  /** Sell a carton instead of a piece: its own price, else the piece price times the pieces in it. */
+  function setUnit(i: number, unit: string) {
+    setCart((prev) => prev.map((l, n) => {
+      if (n !== i) return l;
+      const base = Number(prices.data?.[l.product.id] ?? l.product.sale_price ?? 0);
+      const other = (l.product.units ?? []).find((u) => u.unit === unit);
+      const price = other ? (other.sale_price != null ? Number(other.sale_price) : base * Number(other.factor)) : base;
+      return { ...l, unit: other ? unit : undefined, price: String(Math.round(price * 10000) / 10000) };
+    }));
   }
   function reset() {
     setCart([]);
@@ -118,7 +128,7 @@ function Till({ shift }: { shift: PosShift }) {
         body: {
           issue_date: todayIso(), shift_id: shift.id, method, payment_reference: reference ?? "", mpesa_transaction_id: mpesaId ?? null,
           customer_id: member?.customer_id ?? null, prices_include_tax: true, redeem_points: redeemPoints,
-          lines: cart.map((l) => ({ product_id: l.product.id, description: l.product.name, quantity: String(l.quantity), unit_price: l.price, discount_percent: "0", discount_amount: "0", tax_rate_id: l.product.tax_rate_id ?? (defaultVat || null) })),
+          lines: cart.map((l) => ({ product_id: l.product.id, description: l.product.name, quantity: String(l.quantity), ...(l.unit ? { unit: l.unit } : {}), unit_price: l.price, discount_percent: "0", discount_amount: "0", tax_rate_id: l.product.tax_rate_id ?? (defaultVat || null) })),
         },
       }));
       return { receipt, change: tendered ? tendered - Number(receipt.total) : 0 };
@@ -166,8 +176,19 @@ function Till({ shift }: { shift: PosShift }) {
           <Customer member={member} setMember={(m) => { setMember(m); setRedeem(""); }} />
           <div className="min-h-0 flex-1 overflow-y-auto">
             {cart.length === 0 ? <p className="p-6 text-center text-sm text-stone-500">Tap a product to add it.</p> : cart.map((l, i) => (
-              <div key={l.product.id} className="flex items-center gap-2 border-b border-stone-100 px-4 py-2 text-sm">
-                <div className="min-w-0 flex-1"><p className="truncate">{l.product.name}</p><p className="font-mono text-xs text-stone-500">{fmt(l.price)}</p></div>
+              <div key={`${l.product.id}-${i}`} className="flex items-center gap-2 border-b border-stone-100 px-4 py-2 text-sm">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate">{l.product.name}</p>
+                  <p className="font-mono text-xs text-stone-500">
+                    {fmt(l.price)}
+                    {(l.product.units ?? []).length > 0 && (
+                      <select aria-label="Unit" className="ml-2 rounded border border-stone-200 px-1 py-0 font-sans text-xs" value={l.unit ?? ""} onChange={(e) => setUnit(i, e.target.value)}>
+                        <option value="">{l.product.unit}</option>
+                        {l.product.units!.map((u) => <option key={u.unit} value={u.unit}>{u.unit} of {Number(u.factor)}</option>)}
+                      </select>
+                    )}
+                  </p>
+                </div>
                 <button aria-label="Less" className="rounded border p-1" onClick={() => setCart((prev) => prev.map((x, n) => (n === i ? { ...x, quantity: Math.max(1, x.quantity - 1) } : x)))}><Minus className="h-3 w-3" /></button>
                 <input aria-label="Quantity" className="w-12 rounded border px-1 py-0.5 text-center" inputMode="decimal" value={l.quantity}
                   onChange={(e) => setCart((prev) => prev.map((x, n) => (n === i ? { ...x, quantity: Number(e.target.value) || 0 } : x)))} />

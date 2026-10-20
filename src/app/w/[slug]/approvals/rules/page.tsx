@@ -50,7 +50,7 @@ export default function ApprovalRulesPage() {
   });
   const list = rules.data ?? [];
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/approvals`} className="text-sm text-stone-500 hover:underline">&larr; Approvals</Link>
       <PageHeader title="Approval rules" guide="approvals"
         description="Who approves what, and in what order. A document that no rule covers is approved directly by anyone whose role allows it."

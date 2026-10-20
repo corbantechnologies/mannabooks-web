@@ -14,7 +14,7 @@ export default function EtimsPage() {
   const device = useQuery({ queryKey: ["etims-device", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/etims/device/", wsPath(slug))) });
   const submissions = useQuery({ queryKey: ["etims-submissions", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/etims/submissions/", wsPath(slug))) });
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <PageHeader title="KRA eTIMS" description="Invoices, cash sales and credit notes are signed by KRA through eTIMS (OSCU, the online system: no physical device needed)." guide="etims" />
       {!context.etims_enabled && (
         <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

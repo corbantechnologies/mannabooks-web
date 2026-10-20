@@ -13,6 +13,16 @@
 | Currency | The currency your books are kept in, usually KES |
 | Financial year starts in | The first month of your financial year, used by reports and year-end |
 
+## Modules
+
+**Modules** decides which parts of MannaBooks appear in the menu: Sales and invoicing, Point of sale, Purchasing, Stock and warehouses, Manufacturing, Cash and banking, Leave and payroll, Projects, and Budgets, approvals and assets.
+
+- **What the business mainly does** ticks the modules that goal needs. You can then tick more, or untick any.
+- Switching a module off only hides it from the menu. Its records stay, and switching it back on brings them back.
+- Accounting, reports, customers, products, suppliers, employees and settings are always on.
+
+Workspaces created before modules existed have everything switched on.
+
 ## Numbering
 
 Each kind of record has its own number series, for example employees **EMP-0001**. A series appears the first time it is used. You can change its prefix, or move the next number **up** (never down), so numbers are never reused.

@@ -28,7 +28,7 @@ export default function IncomePage() {
   if (x.error) return <ErrorState error={x.error} />;
   const r = x.data!;
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/banking/income`} className="text-sm text-stone-500 hover:underline">&larr; Other income</Link>
       <PageHeader title={`Income ${r.number}`} description={r.payer} guide="other-income"
         actions={r.status === "posted" && can("banking.receive") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>} />

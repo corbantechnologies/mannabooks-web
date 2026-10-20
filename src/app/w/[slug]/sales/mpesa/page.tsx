@@ -25,7 +25,7 @@ export default function MpesaPaymentsPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="M-Pesa payments"
         description="Payments seen through your Daraja app. Those paid with an invoice number as the account are recorded automatically; apply the rest to a customer."

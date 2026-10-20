@@ -42,7 +42,7 @@ export default function TaxRatesPage() {
   }
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader
         title="Tax rates"
         description="VAT charged on sales and purchases, and the withholding taxes customers deduct or you deduct from suppliers. The eTIMS code is what KRA receives with each line."

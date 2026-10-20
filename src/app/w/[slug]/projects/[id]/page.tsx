@@ -44,7 +44,7 @@ export default function ProjectPage() {
   const s = summary.data;
   const used = s?.budget_used_percent ? Number(s.budget_used_percent) : null;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/projects`} className="text-sm text-stone-500 hover:underline">&larr; Projects</Link>
       <PageHeader title={`${p.code} ${p.name}`} description={p.description || undefined} guide="projects"
         actions={can("projects.manage") && <div className="flex gap-2">

@@ -1,14 +1,14 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Printer } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
-import { SendEmailButton } from "@/components/send-email";
+import { SendEmailDialog } from "@/components/send-email";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -27,6 +27,7 @@ export default function PurchaseOrderPage() {
   const approval = useApprovalStatus(slug, "purchase_order", id);
   const path = { params: { path: { workspace: slug, id } } };
   const [editing, setEditing] = useState(false);
+  const [emailing, setEmailing] = useState(false);
   const order = useQuery({ queryKey: ["purchase-order", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/purchase-orders/{id}/", path)) });
   const receipts = useQuery({
     queryKey: ["goods-receipts", slug, "order", id],
@@ -40,25 +41,28 @@ export default function PurchaseOrderPage() {
   if (order.isLoading) return <Spinner />;
   if (order.error) return <ErrorState error={order.error} />;
   const o = order.data!;
-  if (editing) return <div className="max-w-6xl"><PageHeader title={`Edit ${o.number}`} guide="purchase-orders" /><PurchaseDocForm kind="order" existing={o} /></div>;
+  if (editing) return <div className="w-full"><PageHeader title={`Edit ${o.number}`} guide="purchase-orders" /><PurchaseDocForm kind="order" existing={o} /></div>;
   const receivable = o.status === "approved" || o.status === "partially_received";
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/orders`} className="text-sm text-stone-500 hover:underline">&larr; Purchase orders</Link>
       <PageHeader title={`Purchase order ${o.number}`} description={o.supplier_name} guide="purchase-orders"
         actions={
           <div className="flex flex-wrap gap-2">
-            {o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create") && <SendEmailButton docType="purchase_order" id={o.id} />}
-            {o.status !== "draft" && <Link href={`/w/${slug}/purchasing/orders/${o.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print LPO</Button></Link>}
-            {o.status === "draft" && can("purchaseorders.create") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
-            {(o.status === "draft" || o.status === "approved") && can("purchaseorders.create") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel order</Button>}
-            {o.status === "partially_received" && can("purchaseorders.create") && <Button variant="secondary" onClick={() => confirm("Stop waiting for the rest?") && act.mutate("close")}>Close</Button>}
             {o.status === "draft" && can("purchaseorders.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate("approve")}>Approve</Button>}
             {receivable && can("goodsreceipts.manage") && <Link href={`/w/${slug}/purchasing/receipts/new?order=${o.id}`}><Button>Receive goods</Button></Link>}
-            {receivable && !(receipts.data?.results ?? []).some((g) => g.status === "posted") && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?order=${o.id}`}><Button variant="secondary">Enter bill</Button></Link>}
+            <ActionMenu actions={[
+              { label: "Send to supplier by email", onClick: () => setEmailing(true), hidden: !(o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create")) },
+              { label: "Print LPO or save as PDF", href: `/w/${slug}/purchasing/orders/${o.id}/print`, hidden: o.status === "draft" },
+              { label: "Edit", onClick: () => setEditing(true), hidden: !(o.status === "draft" && can("purchaseorders.create")) },
+              { label: "Enter the bill", href: `/w/${slug}/purchasing/bills/new?order=${o.id}`, hidden: !(receivable && !(receipts.data?.results ?? []).some((g) => g.status === "posted") && can("bills.create")) },
+              { label: "Close (stop waiting for the rest)", onClick: () => { if (confirm("Stop waiting for the rest?")) act.mutate("close"); }, hidden: !(o.status === "partially_received" && can("purchaseorders.create")) },
+              { label: "Cancel order", danger: true, onClick: () => { if (confirm("Cancel this order?")) act.mutate("cancel"); }, hidden: !((o.status === "draft" || o.status === "approved") && can("purchaseorders.create")) },
+            ]} />
           </div>
         } />
       <RelatedDocuments kind="purchase_order" id={id} />
+      <SendEmailDialog docType="purchase_order" id={o.id} open={emailing} onClose={() => setEmailing(false)} />
       <ApprovalPanel docType="purchase_order" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status"><Badge tone={PO_STATUS[o.status ?? "draft"].tone}>{PO_STATUS[o.status ?? "draft"].label}</Badge></Meta>

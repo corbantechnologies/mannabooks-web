@@ -43,7 +43,7 @@ function NewBill() {
   const source = q.get("receipt") ? { goods_receipt_id: q.get("receipt")! } : q.get("order") ? { purchase_order_id: q.get("order")! }
     : q.get("service") ? { service_order_id: q.get("service")! } : null;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/bills`} className="text-sm text-stone-500 hover:underline">&larr; Bills</Link>
       <PageHeader title="Enter a supplier bill" description="Copy the supplier's invoice. Stock items go to Inventory; everything else to the account you choose." guide="bills" />
       {source ? <FromSource source={source} /> : <PurchaseDocForm kind="bill" supplierId={q.get("supplier") ?? undefined} />}

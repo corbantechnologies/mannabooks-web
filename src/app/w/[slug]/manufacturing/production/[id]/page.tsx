@@ -30,7 +30,7 @@ export default function ProductionOrderPage() {
   const o = order.data!;
   const planned = o.status === "planned" && can("manufacturing.manage");
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/manufacturing/production`} className="text-sm text-stone-500 hover:underline">&larr; Production</Link>
       <PageHeader title={`Production ${o.number}`} description={`${Number(o.quantity)} × ${o.product_name}`} guide="manufacturing"
         actions={planned && (

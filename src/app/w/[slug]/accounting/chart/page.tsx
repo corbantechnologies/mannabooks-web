@@ -48,7 +48,7 @@ export default function ChartOfAccountsPage() {
   const rows = (accounts.data ?? []).filter((a) => showInactive || a.is_active);
 
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <PageHeader
         title="Chart of accounts"
         description={`Every account the business records money in, with its balance today in ${context.workspace.currency}. Click an account to see its entries.`}

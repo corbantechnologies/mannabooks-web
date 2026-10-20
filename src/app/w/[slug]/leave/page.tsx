@@ -29,7 +29,7 @@ export default function LeavePage() {
   void wsPath;
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl space-y-6">
+    <div className="space-y-6">
       <PageHeader title="Leave" description="Requests from your team. Supervisors decide for the people who report to them; department heads for their department." guide="leave" />
       <div className="w-56"><Select value={status} onChange={(e) => setStatus(e.target.value)}><option value="pending">Waiting for approval</option><option value="approved">Approved</option><option value="rejected">Declined</option><option value="">All</option></Select></div>
       <Card>

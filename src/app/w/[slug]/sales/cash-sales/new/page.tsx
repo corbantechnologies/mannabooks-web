@@ -40,7 +40,7 @@ export default function NewCashSalePage() {
   const set = (key: keyof typeof head) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setHead((prev) => ({ ...prev, [key]: e.target.value }));
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/cash-sales`} className="text-sm text-stone-500 hover:underline">&larr; Cash sales</Link>
       <PageHeader title="New cash sale" description="Saving it posts the sale and the money received at once." guide="cash-sales" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>

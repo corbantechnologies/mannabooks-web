@@ -11,12 +11,24 @@ import { useWorkspace } from "@/lib/workspace";
 
 import { Badge, Button, Field, FormError, Input, Modal, Textarea } from "./ui";
 
-export type EmailDocType = "invoice" | "quotation" | "credit_note" | "cash_sale" | "purchase_order";
+export type EmailDocType = "invoice" | "quotation" | "credit_note" | "cash_sale" | "purchase_order" | "payment" | "delivery_note"
+  | "supplier_payment" | "service_order";
 
-/** "Send by email" for a document: To (the customer's or supplier's email, editable), CC, subject and a note, plus what was sent before. */
+/** "Send by email" as a button. Inside a More menu, use SendEmailDialog with your own open state instead. */
 export function SendEmailButton({ docType, id, disabled, label = "Send by email" }: { docType: EmailDocType; id: string; disabled?: boolean; label?: string }) {
-  const { slug } = useWorkspace();
   const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="secondary" disabled={disabled} onClick={() => setOpen(true)}><Mail className="h-4 w-4" /> {label}</Button>
+      <SendEmailDialog docType={docType} id={id} open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
+/** The send form: To (the customer's or supplier's email, editable), CC, subject and a note, plus what was sent before. */
+export function SendEmailDialog({ docType, id, open, onClose }: { docType: EmailDocType; id: string; open: boolean; onClose: () => void }) {
+  const { slug } = useWorkspace();
+  const setOpen = (v: boolean) => { if (!v) onClose(); };
   const [form, setForm] = useState<{ to: string; cc: string; subject: string; message: string } | null>(null);
   const query = { document_type: docType, object_id: id };
   const draft = useQuery({
@@ -34,12 +46,8 @@ export function SendEmailButton({ docType, id, disabled, label = "Send by email"
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/document-emails/", { params: { path: { workspace: slug } }, body: { ...query, ...f! } })),
     onSuccess: (e) => { toast.success(`Sending to ${e.to}`); setOpen(false); setForm(null); },
   });
-  const last = history.data?.[0];
   return (
     <>
-      <Button variant="secondary" disabled={disabled} title={last ? `Last sent to ${last.to}` : undefined} onClick={() => { send.reset(); setOpen(true); }}>
-        <Mail className="h-4 w-4" /> {label}
-      </Button>
       <Modal size="lg" open={open} title="Send by email" onClose={() => setOpen(false)}>
         {!f ? <p className="py-6 text-sm text-stone-500">Preparing...</p> : (
           <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); send.mutate(); }}>

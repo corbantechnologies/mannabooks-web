@@ -28,7 +28,7 @@ export default function JournalsPage() {
   const rows = list.data?.results ?? [];
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Journal entries"
         description="Every entry in the books. Most come from sales, purchases and payroll; record anything else here as a manual entry."

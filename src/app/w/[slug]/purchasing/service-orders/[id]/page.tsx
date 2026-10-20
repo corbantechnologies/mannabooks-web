@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { SendEmailButton } from "@/components/send-email";
 import { RelatedDocuments } from "@/components/related-documents";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
@@ -46,14 +47,15 @@ export default function ServiceOrderPage() {
   if (order.isLoading) return <Spinner />;
   if (order.error) return <ErrorState error={order.error} />;
   const o = order.data!;
-  if (editing) return <div className="max-w-6xl"><PageHeader title={`Edit ${o.number}`} guide="service-orders" /><PurchaseDocForm kind="service" existing={o} /></div>;
+  if (editing) return <div className="w-full"><PageHeader title={`Edit ${o.number}`} guide="service-orders" /><PurchaseDocForm kind="service" existing={o} /></div>;
   const c = completion.data?.results[0];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/service-orders`} className="text-sm text-stone-500 hover:underline">&larr; Service orders</Link>
       <PageHeader title={`Service order ${o.number}`} description={o.supplier_name} guide="service-orders"
         actions={
           <div className="flex flex-wrap gap-2">
+            {o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create") && <SendEmailButton docType="service_order" id={o.id} />}
             {o.status === "draft" && can("purchaseorders.create") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
             {(o.status === "draft" || o.status === "approved") && can("purchaseorders.create") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel order</Button>}
             {o.status === "draft" && can("purchaseorders.approve") && !approval.data?.required && <Button onClick={() => act.mutate("approve")}>Approve</Button>}

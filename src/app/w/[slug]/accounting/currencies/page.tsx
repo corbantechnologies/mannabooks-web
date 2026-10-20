@@ -40,7 +40,7 @@ export default function CurrenciesPage() {
   const list = currencies.data?.results ?? [];
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Currencies and exchange rates"
         description={`Your books are kept in ${context.workspace.currency}. Switch on the other currencies you trade in and record their rates; documents in those currencies are converted at the rate for their date.`}

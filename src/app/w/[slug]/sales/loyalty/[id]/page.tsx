@@ -33,7 +33,7 @@ export default function MemberPage() {
   if (member.error) return <ErrorState error={member.error} />;
   const m = member.data!;
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/loyalty`} className="text-sm text-stone-500 hover:underline">&larr; Loyalty</Link>
       <PageHeader title={m.customer_name} description={`Card ${m.card_number}`} guide="loyalty"
         actions={can("loyalty.manage") && <Button variant="secondary" onClick={() => { adjust.reset(); setAdjusting(true); }}>Adjust points</Button>} />

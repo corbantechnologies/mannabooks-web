@@ -38,7 +38,7 @@ export default function VoucherPage() {
   if (voucher.error) return <ErrorState error={voucher.error} />;
   const v = voucher.data!;
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/purchasing/vouchers`} className="text-sm text-stone-500 hover:underline">&larr; Payment vouchers</Link>
       <PageHeader title={`Payment voucher ${v.number}`} description={v.supplier_name} guide="payment-vouchers"
         actions={

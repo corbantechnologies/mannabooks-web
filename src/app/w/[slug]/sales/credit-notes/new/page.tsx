@@ -42,7 +42,8 @@ function CreditNoteForm({ invoice }: { invoice?: Invoice }) {
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
       <Card className="grid gap-3 p-4 sm:grid-cols-4">
         {invoice ? (
-          <div className="sm:col-span-2 text-sm"><p className="text-stone-500">Crediting invoice</p><p className="font-medium">{invoice.number} · {invoice.customer_name} · balance {fmt(invoice.balance_due)}</p></div>
+          <div className="sm:col-span-2 text-sm"><p className="text-stone-500">Crediting invoice</p><p className="font-medium">{invoice.number} · {invoice.customer_name} · balance {fmt(invoice.balance_due)}</p>
+            {Number(invoice.balance_due) <= 0 && <p className="mt-1 text-xs text-amber-800">This invoice is fully paid, so the credit stays on {invoice.customer_name}&apos;s account: it comes off their next invoice, or you refund it.</p>}</div>
         ) : (
           <div className="sm:col-span-2">
             <Field label="Customer" error={fieldError(save.error, "customer_id")}>
@@ -85,7 +86,7 @@ function NewCreditNote() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/invoices/{id}/", { params: { path: { workspace: slug, id: invoiceId! } } })),
   });
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/credit-notes`} className="text-sm text-stone-500 hover:underline">&larr; Credit notes</Link>
       <PageHeader title="New credit note" description="Issuing it posts it at once and reduces what the customer owes." guide="credit-notes" />
       {invoiceId && invoice.isLoading ? <Spinner /> : <CreditNoteForm invoice={invoice.data} />}

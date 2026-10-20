@@ -46,7 +46,7 @@ export default function FinancialYearsPage() {
   const managePeriods = can("periods.manage");
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Financial years and periods"
         description="Each year has 12 monthly periods. Close a month once its books are final, so nothing can change in it. Closing a year moves its profit to retained earnings."

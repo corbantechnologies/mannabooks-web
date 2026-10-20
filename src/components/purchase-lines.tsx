@@ -13,20 +13,21 @@ import { priceLine } from "./lines-editor";
 import { QuickProductModal } from "./quick-product";
 import { Button, Card, Input, Select } from "./ui";
 
-export interface BuyLine { product_id: string; description: string; quantity: string; unit_cost: string; tax_rate_id: string; account_id: string }
+export interface BuyLine { product_id: string; description: string; quantity: string; unit?: string; unit_cost: string; tax_rate_id: string; account_id: string }
 
 export const blankBuyLine = (vat = ""): BuyLine => ({ product_id: "", description: "", quantity: "1", unit_cost: "", tax_rate_id: vat, account_id: "" });
 
 export function buyLinesFrom(lines: PurchaseLine[]): BuyLine[] {
   return lines.map((l) => ({
-    product_id: l.product_id ?? "", description: l.description ?? "", quantity: String(Number(l.quantity)), unit_cost: String(Number(l.unit_cost ?? 0)),
+    product_id: l.product_id ?? "", description: l.description ?? "", quantity: String(Number(l.quantity)), unit: l.unit ?? "", unit_cost: String(Number(l.unit_cost ?? 0)),
     tax_rate_id: l.tax_rate_id ?? "", account_id: l.account_id ?? "",
   }));
 }
 
 export function buyLinesToRequest(lines: BuyLine[]) {
   return lines.filter((l) => l.product_id || l.description.trim()).map((l) => ({
-    product_id: l.product_id || null, description: l.description, quantity: l.quantity || "1", unit_cost: l.unit_cost || "0",
+    product_id: l.product_id || null, description: l.description, quantity: l.quantity || "1", ...(l.product_id && l.unit ? { unit: l.unit } : {}),
+    unit_cost: l.unit_cost || "0",
     tax_rate_id: l.tax_rate_id || null, account_id: l.account_id || null,
   }));
 }
@@ -48,7 +49,14 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
   function pick(i: number, id: string) {
     if (id === "__new") return setAdding(i);
     const p = (products.data?.results ?? []).find((x) => x.id === id);
-    update(i, p ? { product_id: id, description: p.name, unit_cost: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultVat } : { product_id: "" });
+    update(i, p ? { product_id: id, description: p.name, unit: p.unit ?? "", unit_cost: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? defaultVat } : { product_id: "", unit: "" });
+  }
+  /** Buying a carton: the cost of one piece times the pieces in it. */
+  function pickUnit(i: number, unit: string) {
+    const p = (products.data?.results ?? []).find((x) => x.id === lines[i].product_id);
+    if (!p) return;
+    const factor = Number((p.units ?? []).find((u) => u.unit === unit)?.factor ?? 1);
+    update(i, { unit, unit_cost: String(Math.round(Number(p.cost_price ?? 0) * factor * 10000) / 10000) });
   }
   return (
     <Card className="overflow-x-auto">
@@ -57,7 +65,7 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
           <tr>
             <th className="w-48 px-3 py-2 text-left">Product</th>
             <th className="px-3 py-2 text-left">Description</th>
-            <th className="w-20 px-3 py-2 text-right">Qty</th>
+            <th className="w-24 px-3 py-2 text-right">Qty</th>
             <th className="w-28 px-3 py-2 text-right">Unit cost</th>
             <th className="w-32 px-3 py-2 text-left">VAT</th>
             {accounts && <th className="w-44 px-3 py-2 text-left">Charge to</th>}
@@ -78,7 +86,15 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
                   </Select>
                 </td>
                 <td className="px-2 py-2"><Input value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
-                <td className="px-2 py-2"><Input inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} /></td>
+                <td className="px-2 py-2">
+                  <Input inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} />
+                  {product && (product.units ?? []).length > 0 && (
+                    <Select aria-label="Unit" className="mt-1 py-1 text-xs" value={l.unit || product.unit || ""} onChange={(e) => pickUnit(i, e.target.value)}>
+                      <option value={product.unit ?? ""}>{product.unit}</option>
+                      {product.units!.map((u) => <option key={u.unit} value={u.unit}>{u.unit} of {Number(u.factor)}</option>)}
+                    </Select>
+                  )}
+                </td>
                 <td className="px-2 py-2"><Input inputMode="decimal" className="text-right" value={l.unit_cost} onChange={(e) => update(i, { unit_cost: e.target.value })} /></td>
                 <td className="px-2 py-2">
                   <Select value={l.tax_rate_id} onChange={(e) => update(i, { tax_rate_id: e.target.value })}>

@@ -75,7 +75,7 @@ function NewDeliveryNote() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/invoices/{id}/", { params: { path: { workspace: slug, id: invoiceId! } } })),
   });
   return (
-    <div className="max-w-5xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/delivery-notes`} className="text-sm text-stone-500 hover:underline">&larr; Delivery notes</Link>
       <PageHeader title="New delivery note" guide="delivery-notes" />
       {invoiceId && invoice.isLoading ? <Spinner /> : <Form invoice={invoice.data} />}

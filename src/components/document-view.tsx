@@ -1,6 +1,6 @@
 import type { SalesLine } from "@/lib/api/types";
 import { ETIMS_STATUS, etimsVisible } from "@/lib/api/sales";
-import { fmt } from "@/lib/format";
+import { fmt, qtyText } from "@/lib/format";
 
 import { Badge, Card, Table, Td } from "./ui";
 
@@ -12,7 +12,7 @@ export function DocumentLines({ lines, subtotal, tax, total, currency }: { lines
         {lines.map((l) => (
           <tr key={l.id}>
             <Td>{l.description}<div className="text-xs text-stone-400">{l.account_name}</div></Td>
-            <Td className="text-right font-mono">{Number(l.quantity)}</Td>
+            <Td className="text-right font-mono">{qtyText(l)}</Td>
             <Td className="text-right font-mono">{fmt(l.unit_price)}</Td>
             <Td className="text-right font-mono">{Number(l.discount_percent) || ""}</Td>
             <Td className="text-stone-500">{l.tax_rate_name ?? "No VAT"}</Td>

@@ -25,7 +25,7 @@ export default function AuditLogPage() {
   const rows = logs.data?.results ?? [];
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Audit log" description="Every change made in this workspace: who, what and when. It can't be edited." guide="audit-log" />
       <div className="mb-4 flex flex-wrap gap-2">
         <Select className="max-w-40" value={action} onChange={(e) => setAction(e.target.value)}>

@@ -11,6 +11,19 @@
 
 You can still change the price, VAT or description on any line when you sell; the product only sets the starting values.
 
+## Stock, and products made when sold
+
+For **goods**, choose one of these, or neither:
+
+- **Track stock**: MannaBooks keeps the quantity on hand and its average cost, and posts the cost of sales when you sell. Enter the stock you already have when you add the product.
+- **Made when sold, from a recipe**: for meals, drinks, mixed paint and the like. The product has no stock of its own; each sale takes its recipe's ingredients out of stock instead, and their cost becomes the cost of sales. Add the recipe in **Manufacturing > Recipes**. A sale is refused until the product has an active recipe.
+
+A product can't be both. The products list shows *Made to order* in the stock column for these.
+
+## Other units
+
+If you buy or sell the product in cartons, bags or bottles as well as one by one, add them under **Other units**: the unit, how many of the product's own unit it holds, and its own price if it has one. See the **Categories and units** guide.
+
 A product used on a document can't be deleted. Mark it **inactive** to stop selling it.
 
 ## Pricing tips

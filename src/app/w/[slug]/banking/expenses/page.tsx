@@ -26,7 +26,7 @@ export default function ExpensesPage() {
   const rows = list.data?.results ?? [];
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader title="Expenses" description="Money spent straight from a bank, M-Pesa or cash account: fuel, airtime, rent, bank charges, petty cash." guide="expenses" actions={can("banking.spend") && <Link href={`/w/${slug}/banking/expenses/new`}><Button><Plus className="h-4 w-4" /> Spend money</Button></Link>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search payee or reference" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>

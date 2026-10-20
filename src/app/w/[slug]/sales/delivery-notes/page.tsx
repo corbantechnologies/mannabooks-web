@@ -28,7 +28,7 @@ export default function DeliveryNotesPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Delivery notes"
         description="Goods sent to customers, signed for on delivery. They record quantities only; the invoice carries the money."

@@ -25,7 +25,7 @@ export default function CreditNotesPage() {
   });
   const rows = list.data?.results ?? [];
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       <PageHeader
         title="Credit notes"
         description="Reduce what a customer owes for returned goods, overcharges or discounts given after the sale."
