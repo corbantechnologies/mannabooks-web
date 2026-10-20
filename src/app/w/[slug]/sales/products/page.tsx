@@ -15,7 +15,7 @@ import { fmt } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 type Kind = "goods" | "service";
-const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, made_to_order: false, reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "",
+const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, made_to_order: false, online: false, image_url: "", reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "",
   units: [] as { unit: string; factor: string; sale_price: string }[] };
 
 export default function ProductsPage() {
@@ -54,7 +54,7 @@ export default function ProductsPage() {
     save.reset();
     // a new product starts on "Workspace default" VAT, so its category's rate can apply
     setForm(p === "new" ? { ...EMPTY } : {
-      code: p.code ?? "", name: p.name, kind: (p.kind ?? "goods") as Kind, category_id: p.category_id ?? "", track_inventory: p.track_inventory ?? false, made_to_order: p.made_to_order ?? false, reorder_level: String(Number(p.reorder_level ?? 0)), description: p.description ?? "", unit: p.unit ?? "pcs",
+      code: p.code ?? "", name: p.name, kind: (p.kind ?? "goods") as Kind, category_id: p.category_id ?? "", track_inventory: p.track_inventory ?? false, made_to_order: p.made_to_order ?? false, online: p.online ?? false, image_url: p.image_url ?? "", reorder_level: String(Number(p.reorder_level ?? 0)), description: p.description ?? "", unit: p.unit ?? "pcs",
       sale_price: String(Number(p.sale_price ?? 0)), cost_price: String(Number(p.cost_price ?? 0)), tax_rate_id: p.tax_rate_id ?? "",
       income_account_id: p.income_account_id ?? "", is_active: p.is_active ?? true, opening_quantity: "", opening_unit_cost: "",
       units: (p.units ?? []).map((u) => ({ unit: u.unit, factor: String(Number(u.factor)), sale_price: u.sale_price != null ? String(Number(u.sale_price)) : "" })),
@@ -145,6 +145,10 @@ export default function ProductsPage() {
           {form.kind === "goods" && form.track_inventory && editing !== "new" && Number((editing as Product | null)?.stock_on_hand ?? 0) !== 0 && (
             <p className="text-xs text-stone-500">In stock: {Number((editing as Product).stock_on_hand)}. To add or remove stock, receive goods on a purchase order or use Inventory &gt; Adjustments.</p>
           )}
+          <div className="grid gap-3 sm:grid-cols-[auto_1fr] sm:items-end">
+            <label className="flex items-center gap-2 pb-2 text-sm"><input type="checkbox" checked={form.online} onChange={(e) => setForm((prev) => ({ ...prev, online: e.target.checked }))} /> Sell online</label>
+            {form.online && <Field label="Picture link (optional)" hint="A direct link to a photo (usually ending in .jpg or .png), for example from your website." error={fieldError(save.error, "image_url")}><Input type="url" value={form.image_url} onChange={set("image_url")} placeholder="https://" /></Field>}
+          </div>
           {form.kind === "goods" && (
             <div className="space-y-2 rounded-md border border-stone-200 p-3">
               <div>

@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import {
   Building2,
+  Globe,
   Handshake,
   Inbox,
   Kanban,
@@ -118,6 +119,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/sales/reminders", label: "Payment reminders", icon: MailWarning, perm: ["reminders.view"] },
       { href: "/sales/price-lists", label: "Price lists", icon: Tag, perm: ["products.view"] },
       { href: "/sales/loyalty", label: "Loyalty", icon: Gift, perm: ["loyalty.view"] },
+      { href: "/sales/online-orders", label: "Online orders", icon: Globe, perm: ["onlineorders.view"] },
     ],
   },
   {
@@ -213,6 +215,7 @@ function moduleOf(href: string): string | null {
   // Shared lists every module uses stay on.
   if (["/sales/customers", "/sales/products", "/purchasing/suppliers"].includes(href)) return null;
   if (href.startsWith("/sales/loyalty") || href.startsWith("/pos")) return "pos";
+  if (href.startsWith("/sales/online-orders")) return "store";
   if (href.startsWith("/sales")) return "sales";
   if (href.startsWith("/purchasing")) return "purchasing";
   if (href.startsWith("/manufacturing")) return "manufacturing";
@@ -283,6 +286,9 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
                 )}
               >
                 <Icon className="h-4 w-4" aria-hidden /> {label}
+                {href === "/sales/online-orders" && context.online_orders_new > 0 && (
+                  <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.online_orders_new}</span>
+                )}
                 {href === "/inbox" && context.inbox_new > 0 && (
                   <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.inbox_new}</span>
                 )}

@@ -386,6 +386,71 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/store/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["store_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/store/{slug}/orders/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Place an order. Paying by M-Pesa sends the prompt straight away; if that fails the order still stands and can be paid later. */
+        post: operations["store_orders_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/store/{slug}/orders/{token}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["store_orders_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/store/{slug}/orders/{token}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["store_orders_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/": {
         parameters: {
             query?: never;
@@ -3132,6 +3197,72 @@ export interface paths {
         put?: never;
         /** @description Send an M-Pesa payment prompt (STK push) to a customer's phone. */
         post: operations["w_mpesa_transactions_prompt_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/online-orders/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_online_orders_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/online-orders/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_online_orders_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/online-orders/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_online_orders_action_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7938,6 +8069,12 @@ export interface components {
          * @enum {string}
          */
         FixedAssetStatusEnum: "active" | "fully_depreciated" | "disposed";
+        /**
+         * @description * `pickup` - Pickup
+         *     * `delivery` - Delivery
+         * @enum {string}
+         */
+        FulfilmentEnum: "pickup" | "delivery";
         GoodsReceipt: {
             /** Format: uuid */
             readonly id: string;
@@ -8968,6 +9105,16 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description Show the online shop at /shop/<slug> */
+            store_enabled?: boolean;
+            /** @description A few words at the top of the shop */
+            store_intro?: string;
+            store_allow_pickup?: boolean;
+            store_allow_delivery?: boolean;
+            /** Format: decimal */
+            store_delivery_fee?: string;
+            /** @description Let customers pay when they collect or receive the order */
+            store_pay_on_delivery?: boolean;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
@@ -8975,6 +9122,98 @@ export interface components {
             readonly created_at: string;
             readonly role: string | null;
         };
+        OnlineOrder: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** @description The customer's private link to the order */
+            readonly token: string;
+            readonly customer_name: string;
+            readonly phone: string;
+            /** Format: email */
+            readonly email: string;
+            readonly fulfilment: components["schemas"]["FulfilmentEnum"];
+            /** @description Where to deliver */
+            readonly address: string;
+            /** @description From the customer */
+            readonly notes: string;
+            readonly lines: components["schemas"]["OnlineOrderLine"][];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly delivery_fee: string;
+            /** Format: decimal */
+            readonly total: string;
+            readonly status: components["schemas"]["OnlineOrderStatusEnum"];
+            readonly payment_method: components["schemas"]["OnlinePaymentMethodEnum"];
+            readonly payment_status: string;
+            readonly mpesa_receipt: string;
+            /** Format: uuid */
+            readonly receipt_id: string | null;
+            readonly receipt_number: string;
+            readonly cancel_reason: string;
+            /** Format: date-time */
+            readonly completed_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `confirm` - confirm
+         *     * `ready` - ready
+         *     * `complete` - complete
+         *     * `cancel` - cancel
+         *     * `request_payment` - request_payment
+         * @enum {string}
+         */
+        OnlineOrderActionActionEnum: "confirm" | "ready" | "complete" | "cancel" | "request_payment";
+        /**
+         * @description * `cash` - cash
+         *     * `mpesa` - mpesa
+         *     * `card` - card
+         *     * `bank` - bank
+         * @enum {string}
+         */
+        OnlineOrderActionMethodEnum: "cash" | "mpesa" | "card" | "bank";
+        OnlineOrderActionRequest: {
+            action: components["schemas"]["OnlineOrderActionActionEnum"];
+            /**
+             * @description Complete, when not paid by M-Pesa online: how the customer paid
+             *
+             *     * `cash` - cash
+             *     * `mpesa` - mpesa
+             *     * `card` - card
+             *     * `bank` - bank
+             */
+            method?: components["schemas"]["OnlineOrderActionMethodEnum"];
+            payment_reference?: string;
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            reason?: string;
+        };
+        OnlineOrderLine: {
+            product_id: string;
+            name: string;
+            quantity: string;
+            unit?: string;
+            /** @description With VAT */
+            unit_price: string;
+            total: string;
+        };
+        /**
+         * @description * `new` - New
+         *     * `confirmed` - Confirmed
+         *     * `ready` - Ready
+         *     * `completed` - Completed
+         *     * `cancelled` - Cancelled
+         * @enum {string}
+         */
+        OnlineOrderStatusEnum: "new" | "confirmed" | "ready" | "completed" | "cancelled";
+        /**
+         * @description * `mpesa` - M-Pesa now
+         *     * `on_delivery` - Pay on pickup or delivery
+         * @enum {string}
+         */
+        OnlinePaymentMethodEnum: "mpesa" | "on_delivery";
         /**
          * @description * `open` - Open
          *     * `closed` - Closed
@@ -9675,6 +9914,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MyWorkspace"][];
+        };
+        PaginatedOnlineOrderList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["OnlineOrder"][];
         };
         PaginatedOtherIncomeList: {
             /** @example 123 */
@@ -10737,6 +10991,10 @@ export interface components {
             track_inventory?: boolean;
             /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
             made_to_order?: boolean;
+            /** @description Show it in the online shop */
+            online?: boolean;
+            /** @description A picture for the online shop */
+            image_url?: string;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
@@ -10989,6 +11247,16 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description Show the online shop at /shop/<slug> */
+            store_enabled?: boolean;
+            /** @description A few words at the top of the shop */
+            store_intro?: string;
+            store_allow_pickup?: boolean;
+            store_allow_delivery?: boolean;
+            /** Format: decimal */
+            store_delivery_fee?: string;
+            /** @description Let customers pay when they collect or receive the order */
+            store_pay_on_delivery?: boolean;
         };
         PayItem: {
             name: string;
@@ -11019,6 +11287,10 @@ export interface components {
          * @enum {string}
          */
         PayMethodEnum: "bank" | "mpesa" | "cash";
+        PayOrderRequest: {
+            /** @description Blank: the order's phone */
+            phone?: string;
+        };
         PayRun: {
             /** Format: uuid */
             readonly id: string;
@@ -11410,6 +11682,22 @@ export interface components {
              */
             win_rate: string | null;
         };
+        PlaceLineRequest: {
+            /** Format: uuid */
+            product_id: string;
+            /** Format: decimal */
+            quantity: string;
+        };
+        PlaceOrderRequest: {
+            customer_name: string;
+            phone: string;
+            email?: string;
+            fulfilment: components["schemas"]["FulfilmentEnum"];
+            address?: string;
+            notes?: string;
+            payment_method: components["schemas"]["OnlinePaymentMethodEnum"];
+            lines: components["schemas"]["PlaceLineRequest"][];
+        };
         PortalData: {
             business: {
                 [key: string]: unknown;
@@ -11626,6 +11914,10 @@ export interface components {
             track_inventory?: boolean;
             /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
             made_to_order?: boolean;
+            /** @description Show it in the online shop */
+            online?: boolean;
+            /** @description A picture for the online shop */
+            image_url?: string;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
@@ -11718,6 +12010,10 @@ export interface components {
             track_inventory?: boolean;
             /** @description Made when sold (a meal, a mixed drink): selling it takes its recipe's ingredients out of stock */
             made_to_order?: boolean;
+            /** @description Show it in the online shop */
+            online?: boolean;
+            /** @description A picture for the online shop */
+            image_url?: string;
             /**
              * Format: decimal
              * @description Warn when stock falls to this
@@ -11958,6 +12254,32 @@ export interface components {
             contract_left_to_invoice: string | null;
             by_account: components["schemas"]["ProjectLine"][];
             recent: components["schemas"]["ProjectRecent"][];
+        };
+        /** @description What the customer sees on their order page (no internal details). */
+        PublicOrder: {
+            readonly number: string;
+            /** @description The customer's private link to the order */
+            readonly token: string;
+            readonly shop_name: string;
+            readonly shop_phone: string;
+            readonly customer_name: string;
+            readonly phone: string;
+            readonly fulfilment: components["schemas"]["FulfilmentEnum"];
+            /** @description Where to deliver */
+            readonly address: string;
+            readonly lines: components["schemas"]["OnlineOrderLine"][];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly delivery_fee: string;
+            /** Format: decimal */
+            readonly total: string;
+            readonly status: components["schemas"]["OnlineOrderStatusEnum"];
+            readonly payment_method: components["schemas"]["OnlinePaymentMethodEnum"];
+            readonly payment_status: string;
+            readonly cancel_reason: string;
+            /** Format: date-time */
+            readonly created_at: string;
         };
         /** @description One purchase line. Leave out the cost, VAT or account to use the product's. */
         PurchaseLine: {
@@ -12894,6 +13216,38 @@ export interface components {
          * @enum {string}
          */
         ServiceOrderStatusEnum: "draft" | "approved" | "completed" | "cancelled";
+        Shop: {
+            name: string;
+            intro: string;
+            phone: string;
+            email: string;
+            address: string;
+            logo_url: string;
+            currency: string;
+            allow_pickup: boolean;
+            allow_delivery: boolean;
+            /** Format: decimal */
+            delivery_fee: string;
+            pay_on_delivery: boolean;
+            /** @description Customers can pay by M-Pesa prompt when they order */
+            mpesa: boolean;
+            products: components["schemas"]["ShopProduct"][];
+        };
+        ShopProduct: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            description: string;
+            category: string;
+            unit: string;
+            /**
+             * Format: decimal
+             * @description With VAT
+             */
+            price: string;
+            image_url: string;
+            available: boolean;
+        };
         /**
          * @description * `paybill` - Paybill
          *     * `till` - Till (Buy Goods)
@@ -13659,6 +14013,16 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description Show the online shop at /shop/<slug> */
+            store_enabled?: boolean;
+            /** @description A few words at the top of the shop */
+            store_intro?: string;
+            store_allow_pickup?: boolean;
+            store_allow_delivery?: boolean;
+            /** Format: decimal */
+            store_delivery_fee?: string;
+            /** @description Let customers pay when they collect or receive the order */
+            store_pay_on_delivery?: boolean;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
@@ -13688,6 +14052,8 @@ export interface components {
             unclosed_years: string[];
             /** @description Documents from other businesses waiting in the inbox */
             inbox_new: number;
+            /** @description Online shop orders not yet looked at */
+            online_orders_new: number;
             /** @description Modules that can be switched on: key, label, description */
             module_catalog: {
                 [key: string]: unknown;
@@ -13715,6 +14081,16 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description Show the online shop at /shop/<slug> */
+            store_enabled?: boolean;
+            /** @description A few words at the top of the shop */
+            store_intro?: string;
+            store_allow_pickup?: boolean;
+            store_allow_delivery?: boolean;
+            /** Format: decimal */
+            store_delivery_fee?: string;
+            /** @description Let customers pay when they collect or receive the order */
+            store_pay_on_delivery?: boolean;
         };
     };
     responses: never;
@@ -14400,6 +14776,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortalPaymentStatus"];
+                };
+            };
+        };
+    };
+    store_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Shop"];
+                };
+            };
+        };
+    };
+    store_orders_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlaceOrderRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PlaceOrderRequest"];
+                "multipart/form-data": components["schemas"]["PlaceOrderRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrder"];
+                };
+            };
+        };
+    };
+    store_orders_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrder"];
+                };
+            };
+        };
+    };
+    store_orders_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PayOrderRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PayOrderRequest"];
+                "multipart/form-data": components["schemas"]["PayOrderRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrder"];
                 };
             };
         };
@@ -19842,6 +20316,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MpesaTransaction"];
+                };
+            };
+        };
+    };
+    w_online_orders_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `pickup` - Pickup
+                 *     * `delivery` - Delivery
+                 */
+                fulfilment?: "delivery" | "pickup";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `mpesa` - M-Pesa now
+                 *     * `on_delivery` - Pay on pickup or delivery
+                 */
+                payment_method?: "mpesa" | "on_delivery";
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `new` - New
+                 *     * `confirmed` - Confirmed
+                 *     * `ready` - Ready
+                 *     * `completed` - Completed
+                 *     * `cancelled` - Cancelled
+                 */
+                status?: "cancelled" | "completed" | "confirmed" | "new" | "ready";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOnlineOrderList"];
+                };
+            };
+        };
+    };
+    w_online_orders_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnlineOrder"];
+                };
+            };
+        };
+    };
+    w_online_orders_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OnlineOrderActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OnlineOrderActionRequest"];
+                "multipart/form-data": components["schemas"]["OnlineOrderActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnlineOrder"];
                 };
             };
         };

@@ -19,6 +19,7 @@ export const GUIDES: Guide[] = [
   { slug: "branches", title: "Branches", summary: "The shops, offices and sites you operate from.", section: "Organisation", app: "/branches" },
   { slug: "crm", title: "CRM: leads, deals and follow-ups", summary: "Track who might buy, your pipeline of deals, and every call and meeting.", section: "CRM", app: "/crm" },
   { slug: "business-inbox", title: "Business inbox", summary: "Send invoices, quotes and LPOs straight into other MannaBooks businesses' books.", section: "Sales", app: "/inbox" },
+  { slug: "online-shop", title: "Online shop", summary: "Your own shop page: customers order and pay by M-Pesa, orders become cash sales.", section: "Point of sale", app: "/sales/online-orders" },
   { slug: "company-groups", title: "Company groups", summary: "Several businesses reported together, with sales and loans between them taken out.", section: "Accounting" },
   { slug: "departments", title: "Departments and in-charges", summary: "Group staff, and decide who is in charge of each module.", section: "Organisation", app: "/departments" },
   { slug: "self-service", title: "My leave and pay", summary: "Your leave days, leave requests and payslips.", section: "People", app: "/me" },
