@@ -52,7 +52,7 @@ export default function ProjectsPage() {
           </Table>
         )}
       </Card>
-      <Modal open={creating} title="New project" onClose={() => setCreating(false)}><ProjectForm onDone={() => setCreating(false)} /></Modal>
+      <Modal size="lg" open={creating} title="New project" onClose={() => setCreating(false)}><ProjectForm onDone={() => setCreating(false)} /></Modal>
     </div>
   );
 }

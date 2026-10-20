@@ -9,18 +9,22 @@ export interface ApiErrorBody {
   code: string;
   message: string;
   errors: Record<string, string[]>;
+  data?: Record<string, string>;
 }
 
 export class ApiError extends Error {
   code: string;
   status: number;
   fieldErrors: Record<string, string[]>;
+  /** Details some errors carry for the app to act on, e.g. the date of a closed period. */
+  data: Record<string, string>;
 
   constructor(status: number, body: Partial<ApiErrorBody> | undefined) {
     super(body?.message || "Something went wrong. Please try again.");
     this.status = status;
     this.code = body?.code || "error";
     this.fieldErrors = body?.errors || {};
+    this.data = body?.data || {};
   }
 }
 

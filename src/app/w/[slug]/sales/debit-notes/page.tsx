@@ -10,18 +10,20 @@ import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table
 import { api, unwrap } from "@/lib/api/client";
 import { INVOICE_STATUS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 type Status = keyof typeof INVOICE_STATUS;
 
 export default function DebitNotesPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("issue_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["invoices", slug, "debit_note", search, status],
+    queryKey: [dates,"invoices", slug, "debit_note", search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/invoices/", {
-      params: { path: { workspace: slug }, query: { kind: "debit_note", search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, kind: "debit_note", search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

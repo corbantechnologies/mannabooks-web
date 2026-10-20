@@ -41,6 +41,16 @@ export default function PortalPage() {
           <p className="font-medium">{(p.customer as Record<string, string>).name}</p>
         </div>
       </header>
+      {((p.business as { pay_to?: string[][] }).pay_to ?? []).length > 0 && (
+        <Card className="p-4">
+          <p className="mb-2 text-sm font-semibold text-stone-900">How to pay</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(p.business as { pay_to?: string[][] }).pay_to!.map((lines, i) => (
+              <div key={i} className="text-sm text-stone-700">{lines.map((l) => <p key={l}>{l}</p>)}</div>
+            ))}
+          </div>
+        </Card>
+      )}
       {p.scope === "statement" && (
         <Card className="p-4">
           <p className="text-sm text-stone-500">You owe</p>

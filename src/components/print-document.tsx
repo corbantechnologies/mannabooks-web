@@ -1,7 +1,9 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Printer } from "lucide-react";
 
+import { api, unwrap } from "@/lib/api/client";
 import type { SalesLine, Workspace } from "@/lib/api/types";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 
@@ -21,6 +23,7 @@ export function PrintDocument({
   currency,
   footer,
   etims,
+  howToPay = false,
 }: {
   title: string;
   number: string;
@@ -34,7 +37,15 @@ export function PrintDocument({
   currency: string;
   footer?: string;
   etims?: { status: string; cu?: string; signature?: string };
+  /** Print the business's payment options (invoices, quotations, debit notes). */
+  howToPay?: boolean;
 }) {
+  const options = useQuery({
+    queryKey: ["payment-options", workspace.slug],
+    enabled: howToPay,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/payment-options/", { params: { path: { workspace: workspace.slug } } })),
+  });
+  const payTo = (options.data ?? []).filter((o) => o.show_on_documents);
   return (
     <div className="min-h-screen bg-stone-100 py-6 print:bg-white print:py-0">
       <div className="mx-auto mb-4 flex max-w-[210mm] justify-end gap-2 px-4 print:hidden">
@@ -100,6 +111,16 @@ export function PrintDocument({
             ) : (
               <>Awaiting KRA eTIMS signature.</>
             )}
+          </section>
+        )}
+        {howToPay && payTo.length > 0 && (
+          <section className="mt-8">
+            <p className="text-xs uppercase tracking-wide text-stone-500">How to pay</p>
+            <div className="mt-1 grid grid-cols-2 gap-4">
+              {payTo.map((o) => (
+                <div key={o.id}>{o.lines.map((l) => <p key={l}>{l.replace("the document number", number)}</p>)}</div>
+              ))}
+            </div>
           </section>
         )}
         {footer && <p className="mt-6 whitespace-pre-line text-stone-600">{footer}</p>}

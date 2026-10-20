@@ -67,8 +67,13 @@ export default function EmployeesPage() {
     },
     onSuccess: (emp) => { toast.success(`${emp.full_name} saved`); setEditing(null); },
   });
+  const roles = useQuery({ queryKey: ["roles", slug], enabled: can("invitations.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
+  const [inviteRole, setInviteRole] = useState("");
+  const selfService = (roles.data?.results ?? []).find((r) => r.slug === "self-service")?.id ?? "";
   const invite = useMutation({
-    mutationFn: async (id: string) => unwrap(await api.POST("/api/v1/w/{workspace}/employees/{id}/invite/", { params: { path: { workspace: slug, id } }, body: {} })),
+    mutationFn: async (id: string) => unwrap(await api.POST("/api/v1/w/{workspace}/employees/{id}/invite/", {
+      params: { path: { workspace: slug, id } }, body: { role_id: inviteRole || selfService || null } as never,
+    })),
     onSuccess: (inv) => toast.success(`Invitation sent to ${inv.email}`),
     onError: (e) => toast.error(e.message),
   });
@@ -116,9 +121,9 @@ export default function EmployeesPage() {
         )}
       </Card>
 
-      <Modal open={editing !== null} title={current ? `${current.full_name} (${current.staff_number})` : "New employee"} onClose={() => setEditing(null)}>
+      <Modal size="lg" open={editing !== null} title={current ? `${current.full_name} (${current.staff_number})` : "New employee"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Field label="First name" error={fieldError(save.error, "first_name")}><Input required value={form.first_name} onChange={set("first_name")} /></Field>
             <Field label="Last name" error={fieldError(save.error, "last_name")}><Input required value={form.last_name} onChange={set("last_name")} /></Field>
             <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
@@ -158,7 +163,7 @@ export default function EmployeesPage() {
             <fieldset className="space-y-3 rounded-md border border-stone-200 p-3">
               <legend className="px-1 text-sm font-semibold">Pay</legend>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.on_payroll} onChange={(e) => setForm((p) => ({ ...p, on_payroll: e.target.checked }))} /> Paid through payroll</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Field label="Basic salary (a month)" error={fieldError(save.error, "basic_salary")}><Input inputMode="decimal" value={form.basic_salary} onChange={set("basic_salary")} /></Field>
                 <Field label="Annual leave days"><Input inputMode="decimal" value={form.annual_leave_days} onChange={set("annual_leave_days")} /></Field>
                 <Field label="Paid by"><Select value={form.pay_method} onChange={set("pay_method")}><option value="bank">Bank transfer</option><option value="mpesa">M-Pesa</option><option value="cash">Cash</option></Select></Field>
@@ -175,9 +180,14 @@ export default function EmployeesPage() {
           <FormError error={save.error} />
           <div className="flex flex-wrap justify-between gap-2">
             {current && !current.has_login && can("invitations.manage") ? (
-              <Button type="button" variant="secondary" loading={invite.isPending} disabled={!current.email} title={current.email ? "" : "Add an email first"} onClick={() => invite.mutate(current.id)}>
-                Invite to sign in
-              </Button>
+              <div className="flex items-center gap-2">
+                <Select aria-label="Role to give them" className="w-44" value={inviteRole || selfService} onChange={(e) => setInviteRole(e.target.value)}>
+                  {(roles.data?.results ?? []).filter((r) => r.slug !== "owner").map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </Select>
+                <Button type="button" variant="secondary" loading={invite.isPending} disabled={!current.email} title={current.email ? "Self-service: their own payslips and leave. Pick another role for managers." : "Add an email first"} onClick={() => invite.mutate(current.id)}>
+                  Invite to sign in
+                </Button>
+              </div>
             ) : <span />}
             <div className="flex gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>

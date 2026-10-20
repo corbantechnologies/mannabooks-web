@@ -2775,6 +2775,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/payment-options/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone in the workspace sees them (they print on documents); workspace.manage changes them. */
+        get: operations["w_payment_options_list"];
+        put?: never;
+        /** @description Everyone in the workspace sees them (they print on documents); workspace.manage changes them. */
+        post: operations["w_payment_options_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/payment-options/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone in the workspace sees them (they print on documents); workspace.manage changes them. */
+        get: operations["w_payment_options_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Everyone in the workspace sees them (they print on documents); workspace.manage changes them. */
+        delete: operations["w_payment_options_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Everyone in the workspace sees them (they print on documents); workspace.manage changes them. */
+        patch: operations["w_payment_options_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/payment-vouchers/": {
         parameters: {
             query?: never;
@@ -3016,6 +3053,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_periods_reopen_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/periods/open-for-date/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Open the books for a date in one step: add missing earlier years, or reopen its closed year and month. */
+        post: operations["w_periods_open_for_date_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4248,6 +4302,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         get: operations["w_reports_balance_sheet_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/period/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The dashboard for a month or a financial year: profit, cash, sales, buying, VAT, payroll, balances owed, top sellers. */
+        get: operations["w_reports_period_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7772,6 +7843,13 @@ export interface components {
          * @enum {string}
          */
         OpenClosedStatusEnum: "open" | "closed";
+        OpenForDateRequest: {
+            /** Format: date */
+            date: string;
+        };
+        OpenForDateResult: {
+            message: string;
+        };
         OpeningBalance: {
             /** Format: uuid */
             readonly id: string;
@@ -9278,6 +9356,20 @@ export interface components {
              */
             approval_limit?: string;
         };
+        PatchedPaymentOptionRequest: {
+            kind?: components["schemas"]["PaymentOptionKindEnum"];
+            bank_name?: string;
+            branch?: string;
+            account_name?: string;
+            /** @description Bank account number, or the paybill account number */
+            account_number?: string;
+            swift_code?: string;
+            /** @description Paybill or till number, or the Pochi phone number */
+            number?: string;
+            instructions?: string;
+            show_on_documents?: boolean;
+            sort_order?: number;
+        };
         PatchedPayslipRequest: {
             /** Format: decimal */
             basic_salary?: string;
@@ -9723,6 +9815,48 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        PaymentOption: {
+            /** Format: uuid */
+            readonly id: string;
+            kind: components["schemas"]["PaymentOptionKindEnum"];
+            bank_name?: string;
+            branch?: string;
+            account_name?: string;
+            /** @description Bank account number, or the paybill account number */
+            account_number?: string;
+            swift_code?: string;
+            /** @description Paybill or till number, or the Pochi phone number */
+            number?: string;
+            instructions?: string;
+            show_on_documents?: boolean;
+            sort_order?: number;
+            readonly lines: string[];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `bank` - Bank account
+         *     * `mpesa_paybill` - M-Pesa paybill
+         *     * `mpesa_till` - M-Pesa till (Buy Goods)
+         *     * `pochi` - Pochi la Biashara
+         *     * `other` - Other
+         * @enum {string}
+         */
+        PaymentOptionKindEnum: "bank" | "mpesa_paybill" | "mpesa_till" | "pochi" | "other";
+        PaymentOptionRequest: {
+            kind: components["schemas"]["PaymentOptionKindEnum"];
+            bank_name?: string;
+            branch?: string;
+            account_name?: string;
+            /** @description Bank account number, or the paybill account number */
+            account_number?: string;
+            swift_code?: string;
+            /** @description Paybill or till number, or the Pochi phone number */
+            number?: string;
+            instructions?: string;
+            show_on_documents?: boolean;
+            sort_order?: number;
+        };
         PaymentPromptRequest: {
             phone: string;
             /** Format: decimal */
@@ -9865,6 +9999,70 @@ export interface components {
             readonly pay_method: string;
             /** @description Bank account or M-Pesa number */
             readonly pay_to: string;
+        };
+        PeriodMonth: {
+            /** Format: date */
+            month: string;
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            expenses: string;
+            /** Format: decimal */
+            profit: string;
+        };
+        PeriodSummary: {
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            cost_of_sales: string;
+            /** Format: decimal */
+            expenses: string;
+            /** Format: decimal */
+            gross_profit: string;
+            /** Format: decimal */
+            net_profit: string;
+            /** Format: decimal */
+            cash_in: string;
+            /** Format: decimal */
+            cash_out: string;
+            /** Format: decimal */
+            cash_balance: string;
+            /** Format: decimal */
+            invoiced: string;
+            invoice_count: number;
+            /** Format: decimal */
+            cash_sales: string;
+            cash_sale_count: number;
+            /** Format: decimal */
+            payments_received: string;
+            /** Format: decimal */
+            bills: string;
+            bill_count: number;
+            /** Format: decimal */
+            spent_on_expenses: string;
+            /** Format: decimal */
+            payroll_cost: string;
+            /** Format: decimal */
+            output_vat: string;
+            /** Format: decimal */
+            input_vat: string;
+            /** Format: decimal */
+            net_vat: string;
+            /** Format: decimal */
+            receivables: string;
+            /** Format: decimal */
+            receivables_overdue: string;
+            /** Format: decimal */
+            payables: string;
+            /** Format: decimal */
+            payables_overdue: string;
+            top_customers: components["schemas"]["TopCustomer"][];
+            top_products: components["schemas"]["TopProduct"][];
+            by_month: components["schemas"]["PeriodMonth"][];
         };
         PermissionCatalog: {
             modules: components["schemas"]["PermissionModule"][];
@@ -11789,6 +11987,18 @@ export interface components {
         TokenRefreshRequest: {
             refresh: string;
         };
+        TopCustomer: {
+            name: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        TopProduct: {
+            name: string;
+            /** Format: decimal */
+            quantity: string;
+            /** Format: decimal */
+            amount: string;
+        };
         TransferLine: {
             /** Format: uuid */
             readonly id: string;
@@ -12009,6 +12219,12 @@ export interface components {
             in_charge_of: string[];
             /** @description KRA eTIMS signing is switched on for the platform */
             etims_enabled: boolean;
+            /** @description Every financial year, latest first: id, name, start_date, end_date, status */
+            fiscal_years: {
+                [key: string]: unknown;
+            }[];
+            /** @description Years that have ended but are not closed yet */
+            unclosed_years: string[];
         };
         WorkspaceRequest: {
             name: string;
@@ -17355,6 +17571,130 @@ export interface operations {
             };
         };
     };
+    w_payment_options_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOption"][];
+                };
+            };
+        };
+    };
+    w_payment_options_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentOptionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentOptionRequest"];
+                "multipart/form-data": components["schemas"]["PaymentOptionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOption"];
+                };
+            };
+        };
+    };
+    w_payment_options_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOption"];
+                };
+            };
+        };
+    };
+    w_payment_options_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_payment_options_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPaymentOptionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPaymentOptionRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPaymentOptionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOption"];
+                };
+            };
+        };
+    };
     w_payment_vouchers_list: {
         parameters: {
             query?: {
@@ -17775,6 +18115,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountingPeriod"];
+                };
+            };
+        };
+    };
+    w_periods_open_for_date_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpenForDateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OpenForDateRequest"];
+                "multipart/form-data": components["schemas"]["OpenForDateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpenForDateResult"];
                 };
             };
         };
@@ -20257,6 +20624,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BalanceSheet"];
+                };
+            };
+        };
+    };
+    w_reports_period_retrieve: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PeriodSummary"];
                 };
             };
         };

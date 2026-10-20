@@ -10,16 +10,18 @@ import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner
 import { api, unwrap } from "@/lib/api/client";
 import { PO_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function PurchaseOrdersPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("order_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["purchase-orders", slug, search, status],
+    queryKey: [dates,"purchase-orders", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/purchase-orders/", {
-      params: { path: { workspace: slug }, query: { search: search || undefined, status: (status || undefined) as never, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status || undefined) as never, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

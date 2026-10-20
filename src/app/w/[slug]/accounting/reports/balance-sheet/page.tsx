@@ -9,11 +9,19 @@ import { type StatementItem, StatementTable, sectionCsv } from "@/components/sta
 import { Badge, Button, Card, ErrorState, Field, Input, PageHeader, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { downloadCsv, fmtDate, todayIso } from "@/lib/format";
+import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function BalanceSheetPage() {
   const { slug, context } = useWorkspace();
-  const [asOf, setAsOf] = useState(todayIso());
+  const { to: periodEnd } = usePeriod();
+  const endOf = (end?: string) => (end && end < todayIso() ? end : todayIso());
+  const [asOf, setAsOf] = useState(endOf(periodEnd));
+  const [periodSeen, setPeriodSeen] = useState(periodEnd);
+  if (periodEnd !== periodSeen) { // the header's period changed: show its end
+    setPeriodSeen(periodEnd);
+    setAsOf(endOf(periodEnd));
+  }
   const [compareAsOf, setCompareAsOf] = useState("");
   const bs = useQuery({
     queryKey: ["balance-sheet", slug, asOf, compareAsOf],

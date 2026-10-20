@@ -9,6 +9,7 @@ import { Button, Card, EmptyState, ErrorState, Field, Input, PageHeader, Select,
 import { api, unwrap } from "@/lib/api/client";
 import { datePresets } from "@/lib/api/control";
 import { downloadCsv, fmt, fmtDate } from "@/lib/format";
+import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 type Row = { tax_rate: string; rate: string; net: string; tax: string };
@@ -30,8 +31,14 @@ function RateTable({ title, rows, total }: { title: string; rows: Row[]; total: 
 export default function VatPage() {
   const { slug, context } = useWorkspace();
   const presets = datePresets();
-  const [preset, setPreset] = useState("last_month");
-  const [range, setRange] = useState({ from: presets[1].from, to: presets[1].to });
+  const [preset, setPreset] = useState(usePeriod().from ? "custom" : "last_month");
+  const period = usePeriod();
+  const [range, setRange] = useState(period.from && period.to ? { from: period.from, to: period.to } : { from: presets[1].from, to: presets[1].to });
+  const [periodSeen, setPeriodSeen] = useState(`${period.from}|${period.to}`);
+  if (`${period.from}|${period.to}` !== periodSeen) { // the header's period changed: follow it
+    setPeriodSeen(`${period.from}|${period.to}`);
+    if (period.from && period.to) { setRange({ from: period.from, to: period.to }); setPreset("custom"); }
+  }
   const vat = useQuery({
     queryKey: ["vat-summary", slug, range],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/vat/", { params: { path: { workspace: slug }, query: { from: range.from, to: range.to } } })),

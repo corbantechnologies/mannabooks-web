@@ -57,7 +57,7 @@ export default function SupplierPage() {
           <tr className="bg-stone-50 font-semibold"><Td colSpan={5}>Balance owed</Td><Td className="text-right font-mono">{fmt(closing_balance)}</Td></tr>
         </Table>
       </Card>
-      <Modal open={editing} title={`Edit ${s.name}`} onClose={() => setEditing(false)}>
+      <Modal size="lg" open={editing} title={`Edit ${s.name}`} onClose={() => setEditing(false)}>
         <SupplierForm supplier={s} onSaved={() => { toast.success("Supplier saved"); setEditing(false); }} onCancel={() => setEditing(false)} />
       </Modal>
     </div>

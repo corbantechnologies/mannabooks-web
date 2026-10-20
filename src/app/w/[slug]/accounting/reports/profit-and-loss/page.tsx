@@ -10,13 +10,20 @@ import { Card, ErrorState, Field, Input, PageHeader, Select, Spinner, Button } f
 import { api, unwrap } from "@/lib/api/client";
 import { datePresets, useCostCenters, useProjects } from "@/lib/api/control";
 import { downloadCsv, fmtDate } from "@/lib/format";
+import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function ProfitAndLossPage() {
   const { slug, context } = useWorkspace();
   const presets = datePresets();
-  const [preset, setPreset] = useState("this_year");
-  const [range, setRange] = useState({ from: presets[4].from, to: presets[4].to });
+  const [preset, setPreset] = useState(usePeriod().from ? "custom" : "this_year");
+  const period = usePeriod();
+  const [range, setRange] = useState(period.from && period.to ? { from: period.from, to: period.to } : { from: presets[4].from, to: presets[4].to });
+  const [periodSeen, setPeriodSeen] = useState(`${period.from}|${period.to}`);
+  if (`${period.from}|${period.to}` !== periodSeen) { // the header's period changed: follow it
+    setPeriodSeen(`${period.from}|${period.to}`);
+    if (period.from && period.to) { setRange({ from: period.from, to: period.to }); setPreset("custom"); }
+  }
   const [compare, setCompare] = useState<"none" | "previous_period" | "previous_year">("previous_year");
   const [dims, setDims] = useState({ cost_center: "", project: "", branch: "" });
   const centres = useCostCenters(slug);

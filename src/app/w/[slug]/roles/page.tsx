@@ -69,7 +69,7 @@ export default function RolesPage() {
         )}
       </Card>
 
-      <Modal open={editing !== null} title={editing === "new" ? "New role" : form.name} onClose={() => setEditing(null)}>
+      <Modal size="lg" open={editing !== null} title={editing === "new" ? "New role" : form.name} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           {(editing === "new" || !current?.is_preset) && (
             <Field label="Name" error={fieldError(save.error, "name")}>

@@ -12,12 +12,15 @@ import { todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { EditLine, LinesEditor, blankLine, linesFromDocument, linesToRequest, useDefaultVat } from "./lines-editor";
+import { CustomerForm } from "./customer-form";
 import { TagPickers, tagsBody, tagsOf } from "./tag-pickers";
-import { Button, Card, Field, FormError, Input, Select, Textarea } from "./ui";
+import { Button, Card, Field, FormError, Input, Modal, Select, Textarea } from "./ui";
 
 type Kind = "invoice" | "quotation" | "debit_note";
 
 /** Create or edit a draft invoice, debit note or quotation. A debit note adds to `original` (an issued invoice). */
+const WALK_IN = "Walk-in customer";
+
 export function SalesDocForm({ kind, existing, initialCustomer, original }: { kind: Kind; existing?: Invoice | Quotation; initialCustomer?: string; original?: Invoice }) {
   const billing = kind !== "quotation";
   const { slug, context } = useWorkspace();
@@ -35,6 +38,17 @@ export function SalesDocForm({ kind, existing, initialCustomer, original }: { ki
   });
   const [tags, setTags] = useState(tagsOf(existing));
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
+  const [addingCustomer, setAddingCustomer] = useState(false);
+  const setCustomer = (id: string) => setHead((prev) => ({ ...prev, customer_id: id }));
+  async function pickCustomer(value: string) {
+    if (value === "__new") return setAddingCustomer(true);
+    if (value !== "__walkin") return setCustomer(value);
+    // One shared "Walk-in customer" per workspace, made the first time it's chosen.
+    const found = unwrap(await api.GET("/api/v1/w/{workspace}/customers/", { params: { path: { workspace: slug }, query: { search: WALK_IN, page_size: 5 } } }));
+    const walkIn = found.results.find((c) => c.name === WALK_IN)
+      ?? unwrap(await api.POST("/api/v1/w/{workspace}/customers/", { ...wsPath(slug), body: { name: WALK_IN, kind: "individual" } as never }));
+    setCustomer(walkIn.id);
+  }
   // A new document's first line takes the workspace's default VAT rate, which loads after the form opens.
   const [stored, setStored] = useState<EditLine[] | null>(existing?.lines?.length ? linesFromDocument(existing.lines) : null);
   const lines = stored ?? [blankLine(defaultVat)];
@@ -72,12 +86,15 @@ export function SalesDocForm({ kind, existing, initialCustomer, original }: { ki
   });
 
   return (
+    <>
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(false); }}>
       <Card className="grid gap-3 p-4 sm:grid-cols-4">
         <div className="sm:col-span-2">
           <Field label="Customer" error={fieldError(save.error, "customer_id")}>
-            <Select required disabled={Boolean(original)} value={head.customer_id} onChange={(e) => setHead((prev) => ({ ...prev, customer_id: e.target.value }))}>
+            <Select required disabled={Boolean(original)} value={head.customer_id} onChange={(e) => void pickCustomer(e.target.value)}>
               <option value="">Choose a customer</option>
+              <option value="__new">+ New customer...</option>
+              {!(customers.data?.results ?? []).some((c) => c.name === WALK_IN) && <option value="__walkin">Walk-in customer</option>}
               {(customers.data?.results ?? []).map((c) => <option key={c.id} value={c.id}>{c.name} ({c.number})</option>)}
             </Select>
           </Field>
@@ -99,5 +116,9 @@ export function SalesDocForm({ kind, existing, initialCustomer, original }: { ki
         {billing && <Button type="button" loading={save.isPending && save.variables} onClick={() => save.mutate(true)}>Save and issue</Button>}
       </div>
     </form>
+    <Modal size="lg" open={addingCustomer} title="New customer" onClose={() => setAddingCustomer(false)}>
+      <CustomerForm onSaved={(c) => { setCustomer(c.id); setAddingCustomer(false); }} onCancel={() => setAddingCustomer(false)} />
+    </Modal>
+    </>
   );
 }

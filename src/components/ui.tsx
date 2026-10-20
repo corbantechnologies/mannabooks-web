@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { BookOpen, Loader2, X } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
@@ -58,8 +58,21 @@ export function Field({
 const inputClass =
   "block w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-100";
 
+const NUMERIC = new Set(["number", "decimal", "numeric"]);
+
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={clsx(inputClass, props.className)} />;
+  const numeric = NUMERIC.has(String(props.type ?? "")) || NUMERIC.has(String(props.inputMode ?? ""));
+  return (
+    <input
+      {...props}
+      onFocus={(e) => {
+        // A number box holding 0 gets selected, so typing replaces the 0 instead of adding to it.
+        if (numeric && e.currentTarget.value !== "" && Number(e.currentTarget.value) === 0) e.currentTarget.select();
+        props.onFocus?.(e);
+      }}
+      className={clsx(inputClass, props.className)}
+    />
+  );
 }
 
 export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
@@ -125,7 +138,19 @@ export function Badge({ tone = "stone", children }: { tone?: "stone" | "green" |
   );
 }
 
+/** Clicking anywhere on a row opens the row's first link (Ctrl or Cmd click: a new tab). Buttons and fields keep their own clicks. */
+function openRowLink(e: React.MouseEvent<HTMLTableSectionElement>, push: (href: string) => void) {
+  const target = e.target as HTMLElement;
+  if (target.closest("a, button, input, select, textarea, label, [role=button]")) return;
+  if (window.getSelection()?.toString()) return; // selecting text, not clicking
+  const link = target.closest("tr")?.querySelector<HTMLAnchorElement>("a[href]");
+  if (!link) return;
+  if (e.ctrlKey || e.metaKey) window.open(link.href, "_blank");
+  else push(link.getAttribute("href")!);
+}
+
 export function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
+  const router = useRouter();
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
@@ -138,7 +163,7 @@ export function Table({ head, children }: { head: string[]; children: React.Reac
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-100">{children}</tbody>
+        <tbody className="divide-y divide-stone-100 [&_tr:has(a[href])]:cursor-pointer" onClick={(e) => openRowLink(e, router.push)}>{children}</tbody>
       </table>
     </div>
   );
@@ -152,16 +177,21 @@ export function Td({ className, children, colSpan }: { className?: string; child
   );
 }
 
+const MODAL_WIDTH = { md: "max-w-lg", lg: "max-w-3xl", xl: "max-w-5xl" } as const;
+
 export function Modal({
   open,
   title,
   onClose,
   children,
+  size = "md",
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
   children: React.ReactNode;
+  /** md for short forms; lg for long forms (two or three columns); xl for wide tables. */
+  size?: keyof typeof MODAL_WIDTH;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -176,7 +206,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-lg rounded-lg bg-white shadow-xl"
+        className={clsx("w-full rounded-lg bg-white shadow-xl", MODAL_WIDTH[size])}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-stone-200 px-5 py-3.5">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Printer } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -50,6 +51,7 @@ export default function QuotationPage() {
         guide="quotations"
         actions={
           <div className="flex flex-wrap gap-2">
+            <Link href={`/w/${slug}/sales/quotations/${q.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print or PDF</Button></Link>
             {manage && ["draft", "declined"].includes(q.status) && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this quotation?") && remove.mutate()}>Delete</Button>}
             {manage && ["draft", "sent"].includes(q.status) && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
             {manage && q.status === "draft" && <Button variant="secondary" onClick={() => act.mutate("send")}>Mark sent</Button>}

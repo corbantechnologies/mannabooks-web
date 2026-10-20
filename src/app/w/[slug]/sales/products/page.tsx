@@ -105,7 +105,7 @@ export default function ProductsPage() {
           </Table>
         )}
       </Card>
-      <Modal open={editing !== null} title={current ? current.name : "New product or service"} onClose={() => setEditing(null)}>
+      <Modal size="lg" open={editing !== null} title={current ? current.name : "New product or service"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>

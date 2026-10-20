@@ -45,7 +45,7 @@ export default function SuppliersPage() {
           </Table>
         )}
       </Card>
-      <Modal open={creating} title="New supplier" onClose={() => setCreating(false)}>
+      <Modal size="lg" open={creating} title="New supplier" onClose={() => setCreating(false)}>
         <SupplierForm onSaved={(s) => { toast.success(`${s.name} added`); setCreating(false); router.push(`/w/${slug}/purchasing/suppliers/${s.id}`); }} onCancel={() => setCreating(false)} />
       </Modal>
     </div>

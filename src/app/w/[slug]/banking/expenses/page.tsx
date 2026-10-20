@@ -9,16 +9,18 @@ import { ListFilters } from "@/components/doc-list";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function ExpensesPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("expense_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["expenses", slug, search, status],
+    queryKey: [dates,"expenses", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/expenses/", {
-      params: { path: { workspace: slug }, query: { search: search || undefined, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

@@ -10,16 +10,18 @@ import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table
 import { api, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function PaymentsPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("payment_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["payments", slug, search, status],
+    queryKey: [dates,"payments", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/payments/", {
-      params: { path: { workspace: slug }, query: { search: search || undefined, status: (status || undefined) as "posted" | "void" | undefined, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status || undefined) as "posted" | "void" | undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

@@ -8,13 +8,21 @@ import { Fragment, useState } from "react";
 import { Button, Card, EmptyState, ErrorState, Field, Input, PageHeader, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { downloadCsv, fmt, fmtDate, fmtNonZero, todayIso } from "@/lib/format";
+import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 const BUCKETS = [["current", "Not yet due"], ["days_1_30", "1-30 days"], ["days_31_60", "31-60 days"], ["days_61_90", "61-90 days"], ["over_90", "Over 90 days"]] as const;
 
 export function AgedReport({ kind }: { kind: "receivables" | "payables" }) {
   const { slug, context } = useWorkspace();
-  const [asOf, setAsOf] = useState(todayIso());
+  const { to: periodEnd } = usePeriod();
+  const endOf = (end?: string) => (end && end < todayIso() ? end : todayIso());
+  const [asOf, setAsOf] = useState(endOf(periodEnd));
+  const [periodSeen, setPeriodSeen] = useState(periodEnd);
+  if (periodEnd !== periodSeen) { // the header's period changed: show its end
+    setPeriodSeen(periodEnd);
+    setAsOf(endOf(periodEnd));
+  }
   const [open, setOpen] = useState<string | null>(null);
   const report = useQuery({
     queryKey: ["aged", slug, kind, asOf],

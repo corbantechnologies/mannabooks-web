@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { PaymentOptions } from "@/components/payment-options";
 import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
@@ -70,6 +71,8 @@ export default function SettingsPage() {
           <Button type="submit" loading={save.isPending}>Save settings</Button>
         </form>
       </Card>
+
+      <PaymentOptions />
 
       {can("sequences.view") && (
         <Card>

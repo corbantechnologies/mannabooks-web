@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { GoogleButton } from "@/components/google-button";
 import { Button, Field, FormError, Input } from "@/components/ui";
@@ -15,6 +16,7 @@ export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string
   const joiningByInvitation = callbackUrl.startsWith("/invite/");
   const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "", business_name: "" });
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState("");
   const [error, setError] = useState<unknown>(null);
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -25,15 +27,19 @@ export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string
     setError(null);
     try {
       const body = joiningByInvitation ? { ...form, business_name: "" } : form;
+      setStep(joiningByInvitation ? "Creating your account..." : "Creating your account and business...");
       const created = unwrap(await api.POST("/api/v1/auth/register/", { body }));
+      setStep("Signing you in...");
       const res = await signIn("credentials", { email: form.email, password: form.password, redirect: false });
       if (!res?.ok) throw new Error("Your account was created. Please sign in.");
+      setStep("Opening your workspace...");
+      toast.success(created.workspace_slug ? `Welcome to MannaBooks! ${form.business_name} is ready.` : "Welcome to MannaBooks!", { duration: 6000 });
       router.replace(created.workspace_slug ? `/w/${created.workspace_slug}` : callbackUrl);
       router.refresh();
     } catch (err) {
       setError(err);
-    } finally {
       setLoading(false);
+      setStep("");
     }
   }
 
@@ -73,7 +79,7 @@ export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string
         </Field>
         <FormError error={error} />
         <Button type="submit" className="w-full" loading={loading}>
-          Create account
+          {step || "Create account"}
         </Button>
       </form>
       <p className="text-center text-sm text-stone-600">

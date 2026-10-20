@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Circle } from "lucide-react";
 import Link from "next/link";
 
+import { PeriodDashboard } from "@/components/period-dashboard";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
@@ -27,9 +28,14 @@ export default function OverviewPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/members/", p)),
   });
 
+  const payOptions = useQuery({
+    queryKey: ["payment-options", slug],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/payment-options/", { params: { path: { workspace: slug } } })),
+  });
   const ws = context.workspace;
   const steps = [
     { done: Boolean(ws.kra_pin), label: "Add your KRA PIN and business details", href: "/settings", show: can("workspace.manage") },
+    { done: (payOptions.data ?? []).length > 0, label: "Add how customers pay you (paybill, till or bank)", href: "/settings", show: can("workspace.manage") },
     { done: (departments.data?.count ?? 0) > 0, label: "Create departments and choose their heads", href: "/departments", show: can("departments.manage") },
     { done: (employees.data?.count ?? 0) > 0, label: "Add your employees", href: "/employees", show: can("employees.manage") },
     { done: (members.data?.count ?? 0) > 1, label: "Invite your team", href: "/team", show: can("invitations.manage") },
@@ -37,7 +43,7 @@ export default function OverviewPage() {
   const remaining = steps.filter((s) => !s.done);
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-6xl">
       <PageHeader title={ws.name} description={`You are signed in as ${context.role}.`} guide="getting-started" />
 
       {remaining.length > 0 && (
@@ -58,6 +64,16 @@ export default function OverviewPage() {
           </ul>
         </Card>
       )}
+
+      {context.unclosed_years.length > 0 && can("fiscalyears.manage") && (
+        <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {context.unclosed_years.join(", ")} {context.unclosed_years.length === 1 ? "has" : "have"} ended but {context.unclosed_years.length === 1 ? "is" : "are"} not closed yet.
+          Everything still works; close the year once your accountant has finalised the books.{" "}
+          <Link href={`/w/${slug}/accounting/years`} className="font-medium underline">Financial years</Link>
+        </div>
+      )}
+
+      {can("reports.view") && <div className="mb-8"><PeriodDashboard /></div>}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="p-5">
@@ -81,16 +97,6 @@ export default function OverviewPage() {
         </Card>
       </div>
 
-      <Card className="mt-4 p-5">
-        <h2 className="text-sm font-semibold text-stone-900">Coming next</h2>
-        <p className="mt-2 text-sm text-stone-600">
-          Sales is complete: invoicing, cash sales, the till, M-Pesa, loyalty and customer links all post to the books automatically. Purchasing, stock, manufacturing, banking, leave, payroll, budgets, approval chains, projects, fixed assets, work reports and the financial statements are live too. CRM, online orders and company groups arrive next. Read the{" "}
-          <Link href="/guide" className="text-brand-700 underline">
-            guides
-          </Link>{" "}
-          to see what each module does.
-        </p>
-      </Card>
     </div>
   );
 }

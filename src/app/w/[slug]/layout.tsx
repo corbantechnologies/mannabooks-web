@@ -72,8 +72,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { PeriodFixDialog } from "@/components/period-fix-dialog";
+import { PeriodSwitcher } from "@/components/period-switcher";
 import { TopBar } from "@/components/top-bar";
 import { ErrorState, Spinner } from "@/components/ui";
+import { PeriodProvider } from "@/lib/period";
 import { WorkspaceProvider, grants, useWorkspaceContextQuery, useWorkspaceSlug } from "@/lib/workspace";
 
 type NavItem = { href: string; label: string; icon: typeof Users; perm: string[] | null };
@@ -219,7 +222,9 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
   const context = ctx.data;
   const base = `/w/${slug}`;
-  const allowed = (item: NavItem) => !item.perm || item.perm.some((code) => grants(context.permissions, code));
+  const allowed = (item: NavItem) =>
+    (item.href !== "/etims" || context.etims_enabled) && // hidden until KRA approves MannaBooks and signing is switched on
+    (!item.perm || item.perm.some((code) => grants(context.permissions, code)));
   const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0);
 
   const nav = (
@@ -251,6 +256,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
   return (
     <WorkspaceProvider slug={slug} context={context}>
+      <PeriodProvider slug={slug} context={context}>
       <TopBar>
         <button className="rounded p-1.5 text-stone-600 hover:bg-stone-100 md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
           <Menu className="h-5 w-5" />
@@ -263,12 +269,15 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <span className="max-w-48 truncate">{context.workspace.name}</span>
           <ChevronsUpDown className="h-3.5 w-3.5 text-stone-400" />
         </Link>
+        <PeriodSwitcher />
       </TopBar>
       <div className="flex">
         <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>
         {menuOpen && <aside className="fixed inset-x-0 top-14 z-20 border-b border-stone-200 bg-white shadow md:hidden">{nav}</aside>}
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-8">{children}</main>
+        <PeriodFixDialog />
       </div>
+      </PeriodProvider>
     </WorkspaceProvider>
   );
 }

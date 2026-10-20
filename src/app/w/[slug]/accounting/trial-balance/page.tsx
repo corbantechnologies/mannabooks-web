@@ -8,11 +8,19 @@ import { useState } from "react";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { downloadCsv, fmt, fmtNonZero, todayIso } from "@/lib/format";
+import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function TrialBalancePage() {
   const { slug, context } = useWorkspace();
-  const [asOf, setAsOf] = useState(todayIso());
+  const { to: periodEnd } = usePeriod();
+  const endOf = (end?: string) => (end && end < todayIso() ? end : todayIso());
+  const [asOf, setAsOf] = useState(endOf(periodEnd));
+  const [periodSeen, setPeriodSeen] = useState(periodEnd);
+  if (periodEnd !== periodSeen) { // the header's period changed: show its end
+    setPeriodSeen(periodEnd);
+    setAsOf(endOf(periodEnd));
+  }
   const tb = useQuery({
     queryKey: ["trial-balance", slug, asOf],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/trial-balance/", { params: { path: { workspace: slug }, query: { as_of: asOf } } })),

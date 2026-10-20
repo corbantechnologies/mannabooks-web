@@ -100,7 +100,7 @@ export default function ProjectPage() {
           </div>
         </>
       )}
-      <Modal open={editing} title="Edit project" onClose={() => setEditing(false)}><ProjectForm existing={p} onDone={() => setEditing(false)} /></Modal>
+      <Modal size="lg" open={editing} title="Edit project" onClose={() => setEditing(false)}><ProjectForm existing={p} onDone={() => setEditing(false)} /></Modal>
     </div>
   );
 }

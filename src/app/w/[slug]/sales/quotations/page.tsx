@@ -10,18 +10,20 @@ import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table
 import { api, unwrap } from "@/lib/api/client";
 import { QUOTE_STATUS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 type Status = keyof typeof QUOTE_STATUS;
 
 export default function QuotationsPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("issue_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["quotations", slug, search, status],
+    queryKey: [dates,"quotations", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/quotations/", {
-      params: { path: { workspace: slug }, query: { search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

@@ -81,7 +81,7 @@ export default function CustomerPage() {
         </Table>
       </Card>
       <ShareLinkModal open={sharing} onClose={() => setSharing(false)} customerId={c.id} label="Your statement" />
-      <Modal open={editing} title={`Edit ${c.name}`} onClose={() => setEditing(false)}>
+      <Modal size="lg" open={editing} title={`Edit ${c.name}`} onClose={() => setEditing(false)}>
         <CustomerForm customer={c} onSaved={() => { toast.success("Customer saved"); setEditing(false); }} onCancel={() => setEditing(false)} />
       </Modal>
     </div>

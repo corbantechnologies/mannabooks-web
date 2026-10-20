@@ -10,18 +10,20 @@ import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table
 import { api, unwrap } from "@/lib/api/client";
 import { DELIVERY_STATUS } from "@/lib/api/sales";
 import { fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 type Status = keyof typeof DELIVERY_STATUS;
 
 export default function DeliveryNotesPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("delivery_date");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const list = useQuery({
-    queryKey: ["delivery-notes", slug, search, status],
+    queryKey: [dates,"delivery-notes", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/delivery-notes/", {
-      params: { path: { workspace: slug }, query: { search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status || undefined) as Status | undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];

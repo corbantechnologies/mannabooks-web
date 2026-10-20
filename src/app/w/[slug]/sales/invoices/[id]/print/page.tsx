@@ -38,6 +38,7 @@ export default function PrintInvoicePage() {
         currency={inv!.currency ?? ""}
         footer={inv!.notes}
         etims={{ status: inv!.etims_status ?? "", cu: inv!.etims_cu_invoice_number, signature: inv!.etims_signature }}
+        howToPay={Number(inv!.balance_due) > 0}
       />
     </div>
   );

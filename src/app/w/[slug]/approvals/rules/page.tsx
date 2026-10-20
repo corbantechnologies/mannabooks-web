@@ -72,7 +72,7 @@ export default function ApprovalRulesPage() {
           </Table>
         )}
       </Card>
-      <Modal open={editing !== null} title={editing === "new" ? "New approval rule" : "Edit rule"} onClose={() => setEditing(null)}>
+      <Modal size="lg" open={editing !== null} title={editing === "new" ? "New approval rule" : "Edit rule"} onClose={() => setEditing(null)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <Field label="Name"><Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Orders over 50,000" /></Field>
           <Field label="Applies to"><Select value={form.document_type} onChange={(e) => setForm((f) => ({ ...f, document_type: e.target.value }))}>{DOC_TYPES.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}</Select></Field>

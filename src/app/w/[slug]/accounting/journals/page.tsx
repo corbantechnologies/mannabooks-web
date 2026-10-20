@@ -8,19 +8,21 @@ import { useState } from "react";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
+import { useDateQuery } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
 
 const STATUS_TONE = { draft: "amber", posted: "green", reversed: "stone" } as const;
 
 export default function JournalsPage() {
   const { slug, can } = useWorkspace();
+  const dates = useDateQuery("entry_date");
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const list = useQuery({
-    queryKey: ["journals", slug, status, search],
+    queryKey: [dates,"journals", slug, status, search],
     queryFn: async () =>
       unwrap(await api.GET("/api/v1/w/{workspace}/journals/", {
-        params: { path: { workspace: slug }, query: { status: (status || undefined) as "draft" | "posted" | "reversed" | undefined, search: search || undefined } },
+        params: { path: { workspace: slug }, query: { ...dates, status: (status || undefined) as "draft" | "posted" | "reversed" | undefined, search: search || undefined } },
       })),
   });
   const rows = list.data?.results ?? [];

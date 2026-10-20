@@ -51,7 +51,7 @@ export default function CustomersPage() {
           </Table>
         )}
       </Card>
-      <Modal open={creating} title="New customer" onClose={() => setCreating(false)}>
+      <Modal size="lg" open={creating} title="New customer" onClose={() => setCreating(false)}>
         <CustomerForm onSaved={() => { toast.success("Customer added"); setCreating(false); }} onCancel={() => setCreating(false)} />
       </Modal>
     </div>
