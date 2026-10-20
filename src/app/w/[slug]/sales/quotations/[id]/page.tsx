@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
 import { SendEmailDialog } from "@/components/send-email";
+import { SendToInbox } from "@/components/send-to-inbox";
 import { DocumentLines, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { SalesDocForm } from "@/components/sales-doc-form";
@@ -56,6 +57,7 @@ export default function QuotationPage() {
           <div className="flex flex-wrap gap-2">
             {can("invoices.create") && ["draft", "sent", "accepted"].includes(q.status) && <Button loading={convert.isPending} onClick={() => convert.mutate()}>Convert to invoice</Button>}
             {q.status === "converted" && q.invoice_id && <Link href={`/w/${slug}/sales/invoices/${q.invoice_id}`}><Button>Open invoice</Button></Link>}
+            <SendToInbox kind="quotation" id={q.id} disabled={!["sent", "accepted"].includes(q.status)} />
             <ActionMenu actions={[
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !manage },
               { label: "Print or save as PDF", href: `/w/${slug}/sales/quotations/${q.id}/print` },

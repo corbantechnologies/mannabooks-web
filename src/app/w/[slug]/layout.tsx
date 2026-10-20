@@ -3,6 +3,11 @@
 import clsx from "clsx";
 import {
   Building2,
+  Handshake,
+  Inbox,
+  Kanban,
+  ListTodo,
+  UserPlus,
   FileBarChart,
   ChartPie,
   CheckCheck,
@@ -82,7 +87,20 @@ import { WorkspaceProvider, grants, useWorkspaceContextQuery, useWorkspaceSlug }
 type NavItem = { href: string; label: string; icon: typeof Users; perm: string[] | null };
 
 const NAV: { section: string | null; items: NavItem[] }[] = [
-  { section: null, items: [{ href: "", label: "Overview", icon: LayoutDashboard, perm: null }, { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null }] },
+  { section: null, items: [
+    { href: "", label: "Overview", icon: LayoutDashboard, perm: null },
+    { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null },
+    { href: "/inbox", label: "Business inbox", icon: Inbox, perm: ["inbox.view", "inbox.send"] },
+  ] },
+  {
+    section: "CRM",
+    items: [
+      { href: "/crm", label: "Pipeline", icon: Kanban, perm: ["crm.view"] },
+      { href: "/crm/leads", label: "Leads", icon: UserPlus, perm: ["crm.view"] },
+      { href: "/crm/deals", label: "Deals", icon: Handshake, perm: ["crm.view"] },
+      { href: "/crm/tasks", label: "Follow-ups", icon: ListTodo, perm: ["crm.view"] },
+    ],
+  },
   {
     section: "Sales",
     items: [
@@ -201,6 +219,7 @@ function moduleOf(href: string): string | null {
   if (href.startsWith("/inventory")) return "inventory";
   if (href.startsWith("/banking")) return "banking";
   if (href.startsWith("/projects")) return "projects";
+  if (href.startsWith("/crm")) return "crm";
   if (["/accounting/budgets", "/accounting/cost-centres", "/accounting/fixed-assets", "/approvals"].some((p) => href.startsWith(p))) return "control";
   if (["/me", "/leave", "/payroll", "/work-reports"].some((p) => href === p || href.startsWith(`${p}/`))) return "people";
   return null;
@@ -252,7 +271,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           {section.section && <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400">{section.section}</p>}
           {section.items.map(({ href, label, icon: Icon }) => {
             const target = base + href;
-            const active = href === "" || href === "/pos" || href === "/inventory" || href === "/banking" ? pathname === target || (href === "/inventory" && pathname.startsWith(`${target}/products`)) || (href === "/banking" && /^\/w\/[^/]+\/banking\/(accounts|reconciliations)/.test(pathname)) : pathname.startsWith(target);
+            const active = href === "" || href === "/pos" || href === "/inventory" || href === "/banking" || href === "/crm" ? pathname === target || (href === "/inventory" && pathname.startsWith(`${target}/products`)) || (href === "/banking" && /^\/w\/[^/]+\/banking\/(accounts|reconciliations)/.test(pathname)) : pathname.startsWith(target);
             return (
               <Link
                 key={href}
@@ -264,11 +283,19 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
                 )}
               >
                 <Icon className="h-4 w-4" aria-hidden /> {label}
+                {href === "/inbox" && context.inbox_new > 0 && (
+                  <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.inbox_new}</span>
+                )}
               </Link>
             );
           })}
         </div>
       ))}
+      {context.workspace.group_id && grants(context.permissions, "reports.view") && (
+        <Link href={`/groups/${context.workspace.group_id}`} className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900">
+          <Network className="h-4 w-4" aria-hidden /> Group: {context.workspace.group_name}
+        </Link>
+      )}
     </nav>
   );
 

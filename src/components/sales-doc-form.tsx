@@ -21,7 +21,11 @@ type Kind = "invoice" | "quotation" | "debit_note";
 /** Create or edit a draft invoice, debit note or quotation. A debit note adds to `original` (an issued invoice). */
 const WALK_IN = "Walk-in customer";
 
-export function SalesDocForm({ kind, existing, initialCustomer, original }: { kind: Kind; existing?: Invoice | Quotation; initialCustomer?: string; original?: Invoice }) {
+export function SalesDocForm({ kind, existing, initialCustomer, original, dealId }: {
+  kind: Kind; existing?: Invoice | Quotation; initialCustomer?: string; original?: Invoice;
+  /** A new quotation made from this CRM deal is linked to it. */
+  dealId?: string;
+}) {
   const billing = kind !== "quotation";
   const { slug, context } = useWorkspace();
   const router = useRouter();
@@ -71,6 +75,8 @@ export function SalesDocForm({ kind, existing, initialCustomer, original }: { ki
         const q = existing
           ? unwrap(await api.PATCH("/api/v1/w/{workspace}/quotations/{id}/", { params: { path: { workspace: slug, id: existing.id } }, body }))
           : unwrap(await api.POST("/api/v1/w/{workspace}/quotations/", { ...wsPath(slug), body }));
+        // made from a deal: link it, which moves the deal to Quote sent
+        if (!existing && dealId) unwrap(await api.PATCH("/api/v1/w/{workspace}/deals/{id}/", { params: { path: { workspace: slug, id: dealId } }, body: { quotation_id: q.id } }));
         return { id: q.id, issued: false };
       }
       const saved = existing

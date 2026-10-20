@@ -153,6 +153,155 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/groups/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your company groups. Anyone signed in can start one; they become its owner. */
+        get: operations["groups_list"];
+        put?: never;
+        /** @description Your company groups. Anyone signed in can start one; they become its owner. */
+        post: operations["groups_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["groups_retrieve"];
+        put?: never;
+        post?: never;
+        delete: operations["groups_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["groups_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/companies/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["groups_companies_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/companies/{workspace}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["groups_companies_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/intercompany/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Sales, loans and settlements between the group's companies. Recording one posts both companies' entries. */
+        get: operations["groups_intercompany_list"];
+        put?: never;
+        /** @description Sales, loans and settlements between the group's companies. Recording one posts both companies' entries. */
+        post: operations["groups_intercompany_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/intercompany/{tx}/void/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["groups_intercompany_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/intercompany/balances/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Who owes whom inside the group, from the intercompany transactions. */
+        get: operations["groups_intercompany_balances_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/reports/balance-sheet/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["groups_reports_balance_sheet_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{id}/reports/profit-and-loss/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["groups_reports_profit_and_loss_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invitations/{token}/": {
         parameters: {
             query?: never;
@@ -254,6 +403,68 @@ export interface paths {
         head?: never;
         /** @description The workspace in the URL. Reading needs workspace.view, editing workspace.manage, deleting the Owner. */
         patch: operations["w_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/activities/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_activities_list"];
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_activities_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/activities/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_activities_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_activities_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_activities_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/approval-rules/": {
@@ -1122,6 +1333,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/deals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_deals_list"];
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_deals_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/deals/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_deals_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_deals_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_deals_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/deals/{id}/move/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Move a deal to another pipeline stage. Lost needs a reason. */
+        post: operations["w_deals_move_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/deals/pipeline/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Deals per stage with their value and weighted value; won this month and the win rate. `mine=true` for your own deals. */
+        get: operations["w_deals_pipeline_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/delivery-notes/": {
         parameters: {
             query?: never;
@@ -1905,6 +2212,145 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/inbox/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Documents other MannaBooks businesses sent to this one. */
+        get: operations["w_inbox_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_inbox_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/{id}/accept/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_inbox_accept_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/{id}/decline/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_inbox_decline_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/preview/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Whether a document's customer or supplier is on MannaBooks, so it can go straight to their inbox. */
+        get: operations["w_inbox_preview_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/send/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_inbox_send_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/sent/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Documents this business sent to others, with what they did with them. */
+        get: operations["w_inbox_sent_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/invitations/": {
         parameters: {
             query?: never;
@@ -2147,6 +2593,85 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_journals_reverse_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/leads/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_leads_list"];
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_leads_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/leads/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_leads_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_leads_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_leads_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/leads/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Convert to a customer (and optionally open a deal), mark lost, or reopen. */
+        post: operations["w_leads_action_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5430,6 +5955,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AcceptRequest: {
+            /**
+             * Format: uuid
+             * @description For an invoice: the expense or asset account the bill is recorded in
+             */
+            account_id?: string | null;
+        };
         AcceptedInvitation: {
             workspace_slug: string;
             workspace_name: string;
@@ -5477,6 +6009,70 @@ export interface components {
          * @enum {string}
          */
         AcquisitionEnum: "recorded" | "existing";
+        Activity: {
+            /** Format: uuid */
+            readonly id: string;
+            kind?: components["schemas"]["ActivityKindEnum"];
+            subject: string;
+            notes?: string;
+            /** Format: date-time */
+            due_at?: string | null;
+            /** @description Tick to mark it done (sets done_at); untick to reopen */
+            done?: boolean;
+            /** Format: date-time */
+            readonly done_at: string | null;
+            readonly overdue: boolean;
+            /**
+             * Format: uuid
+             * @description Blank on a new activity: the person adding it
+             */
+            assigned_to_id?: string | null;
+            readonly assigned_to_name: string;
+            /** Format: uuid */
+            lead_id?: string | null;
+            readonly lead_name: string;
+            /** Format: uuid */
+            deal_id?: string | null;
+            readonly deal_title: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            readonly customer_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `call` - Call
+         *     * `meeting` - Meeting
+         *     * `email` - Email
+         *     * `task` - Task
+         *     * `note` - Note
+         * @enum {string}
+         */
+        ActivityKindEnum: "call" | "meeting" | "email" | "task" | "note";
+        ActivityRequest: {
+            kind?: components["schemas"]["ActivityKindEnum"];
+            subject: string;
+            notes?: string;
+            /** Format: date-time */
+            due_at?: string | null;
+            /** @description Tick to mark it done (sets done_at); untick to reopen */
+            done?: boolean;
+            /**
+             * Format: uuid
+             * @description Blank on a new activity: the person adding it
+             */
+            assigned_to_id?: string | null;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /** Format: uuid */
+            deal_id?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
+        };
+        AddCompanyRequest: {
+            /** @description The workspace's slug */
+            workspace: string;
+        };
         AdjustPointsRequest: {
             /** @description Positive to add, negative to remove */
             points: number;
@@ -5759,6 +6355,12 @@ export interface components {
          * @enum {string}
          */
         AuditLogActionEnum: "create" | "update" | "delete" | "other";
+        Balance: {
+            owes: string;
+            to: string;
+            /** Format: decimal */
+            amount: string;
+        };
         BalanceSheet: {
             /** Format: date */
             as_of: string;
@@ -6284,6 +6886,29 @@ export interface components {
             counted_cash: string;
             notes?: string;
         };
+        CompanyGroup: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            /** @description Every company in the group keeps its books in this currency */
+            currency?: string;
+            notes?: string;
+            readonly owner_name: string;
+            readonly is_owner: boolean;
+            readonly companies: components["schemas"]["GroupCompany"][];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CompanyGroupRequest: {
+            name: string;
+            /** @description Every company in the group keeps its books in this currency */
+            currency?: string;
+            notes?: string;
+        };
+        CompanyRef: {
+            slug: string;
+            name: string;
+        };
         Component: {
             /** Format: uuid */
             readonly id: string;
@@ -6303,6 +6928,68 @@ export interface components {
             component_id: string;
             /** Format: decimal */
             quantity: string;
+        };
+        ConsolidatedBS: {
+            group: string;
+            currency: string;
+            /** Format: date */
+            as_of: string;
+            companies: components["schemas"]["CompanyRef"][];
+            groups: components["schemas"]["ConsolidatedSection"][];
+            /** Format: decimal */
+            total_assets: string;
+            /** Format: decimal */
+            total_liabilities: string;
+            /** Format: decimal */
+            total_equity: string;
+            /**
+             * Format: decimal
+             * @description Owed to companies less owed by companies; should be zero
+             */
+            intercompany_difference: string;
+            balanced: boolean;
+        };
+        ConsolidatedPL: {
+            group: string;
+            currency: string;
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            companies: components["schemas"]["CompanyRef"][];
+            sections: components["schemas"]["ConsolidatedSection"][];
+            /** Format: decimal */
+            gross_profit: string;
+            /** Format: decimal */
+            operating_profit: string;
+            /** Format: decimal */
+            net_profit: string;
+            company_net_profit: string[];
+            /** Format: decimal */
+            eliminated_income: string;
+        };
+        ConsolidatedRow: {
+            code: string;
+            name: string;
+            /** @description One per company, in the order of `companies` */
+            amounts: string[];
+            /** Format: decimal */
+            eliminations: string;
+            /**
+             * Format: decimal
+             * @description The group's figure: the companies' amounts less eliminations
+             */
+            total: string;
+        };
+        ConsolidatedSection: {
+            key: string;
+            label: string;
+            rows: components["schemas"]["ConsolidatedRow"][];
+            amounts: string[];
+            /** Format: decimal */
+            eliminations: string;
+            /** Format: decimal */
+            total: string;
         };
         Converted: {
             /** Format: uuid */
@@ -6532,6 +7219,80 @@ export interface components {
             notes?: string;
             is_active?: boolean;
         };
+        Deal: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            title: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            readonly customer_name: string;
+            /** Format: uuid */
+            lead_id?: string | null;
+            readonly lead_name: string;
+            readonly stage: components["schemas"]["DealStageEnum"];
+            /**
+             * Format: decimal
+             * @description Expected value before VAT
+             */
+            value?: string;
+            /** @description Percent; blank: the stage's usual chance */
+            probability?: number | null;
+            /** @description The probability used: the deal's own, else its stage's */
+            readonly chance: number;
+            /** Format: decimal */
+            readonly weighted_value: string;
+            /** Format: date */
+            expected_close_date?: string | null;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            readonly assigned_to_name: string;
+            /** Format: uuid */
+            quotation_id?: string | null;
+            readonly quotation_number: string;
+            readonly quotation_status: string;
+            /** Format: date */
+            readonly closed_at: string | null;
+            readonly lost_reason: string;
+            notes?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        DealMoveRequest: {
+            stage: components["schemas"]["DealStageEnum"];
+            lost_reason?: string;
+        };
+        DealRequest: {
+            title: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Expected value before VAT
+             */
+            value?: string;
+            /** @description Percent; blank: the stage's usual chance */
+            probability?: number | null;
+            /** Format: date */
+            expected_close_date?: string | null;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            /** Format: uuid */
+            quotation_id?: string | null;
+            notes?: string;
+        };
+        /**
+         * @description * `prospect` - Prospect
+         *     * `qualified` - Qualified
+         *     * `proposal` - Quote sent
+         *     * `negotiation` - Negotiation
+         *     * `won` - Won
+         *     * `lost` - Lost
+         * @enum {string}
+         */
+        DealStageEnum: "prospect" | "qualified" | "proposal" | "negotiation" | "won" | "lost";
         /**
          * @description * `approved` - approved
          *     * `rejected` - rejected
@@ -6542,6 +7303,9 @@ export interface components {
             decision: components["schemas"]["DecideDecisionEnum"];
             /** @default  */
             comment: string;
+        };
+        DeclineRequest: {
+            reason: string;
         };
         /**
          * @description * `dispatch` - dispatch
@@ -7255,6 +8019,12 @@ export interface components {
         GoogleLoginRequest: {
             id_token: string;
         };
+        GroupCompany: {
+            slug: string;
+            name: string;
+            kra_pin: string;
+            currency: string;
+        };
         ImportRequest: {
             /** Format: uuid */
             bank_account_id: string;
@@ -7268,6 +8038,78 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        /**
+         * @description * `invoice` - Invoice
+         *     * `quotation` - Quotation
+         *     * `purchase_order` - Purchase order (LPO)
+         * @enum {string}
+         */
+        InboxKindEnum: "invoice" | "quotation" | "purchase_order";
+        InboxLine: {
+            description: string;
+            quantity: string;
+            unit: string;
+            unit_price: string;
+            tax_code: string;
+            net: string;
+            tax: string;
+            total: string;
+        };
+        InboxMessage: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly kind: components["schemas"]["InboxKindEnum"];
+            readonly status: components["schemas"]["InboxStatusEnum"];
+            readonly sender_name: string;
+            readonly sender_kra_pin: string;
+            readonly recipient_name: string;
+            readonly sent_by_name: string;
+            readonly number: string;
+            /** Format: date */
+            readonly document_date: string;
+            /** Format: date */
+            readonly due_date: string | null;
+            readonly currency: string;
+            readonly prices_include_tax: boolean;
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly tax_total: string;
+            /** Format: decimal */
+            readonly total: string;
+            readonly lines: components["schemas"]["InboxLine"][];
+            /** @description A note from the sender */
+            readonly message: string;
+            /** Format: date-time */
+            readonly read_at: string | null;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            readonly decline_reason: string;
+            /** @description What accepting it created: bill, purchase_order or invoice */
+            readonly created_type: string;
+            /** Format: uuid */
+            readonly created_id: string | null;
+            /**
+             * Format: uuid
+             * @description The document in the sender's workspace
+             */
+            readonly source_id: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        InboxSendRequest: {
+            kind: components["schemas"]["InboxKindEnum"];
+            /** Format: uuid */
+            document_id: string;
+            message?: string;
+        };
+        /**
+         * @description * `new` - New
+         *     * `accepted` - Accepted
+         *     * `declined` - Declined
+         * @enum {string}
+         */
+        InboxStatusEnum: "new" | "accepted" | "declined";
         IncomeLine: {
             /** Format: uuid */
             readonly id: string;
@@ -7294,6 +8136,50 @@ export interface components {
             amount: string;
         };
         IncomeVoidRequest: {
+            reason: string;
+        };
+        Intercompany: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            kind: components["schemas"]["IntercompanyKindEnum"];
+            readonly from_company: string;
+            readonly to_company: string;
+            /** Format: date */
+            transaction_date: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            readonly from_account_name: string;
+            readonly to_account_name: string;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+            readonly void_reason: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `sale` - Sale or recharge
+         *     * `loan` - Loan
+         *     * `settlement` - Settlement (paying what is owed)
+         * @enum {string}
+         */
+        IntercompanyKindEnum: "sale" | "loan" | "settlement";
+        IntercompanyRequest: {
+            kind: components["schemas"]["IntercompanyKindEnum"];
+            /** @description Sale: the seller. Loan: the lender. Settlement: the one paying */
+            from_workspace: string;
+            to_workspace: string;
+            /** Format: date */
+            transaction_date: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: uuid */
+            from_account_id: string;
+            /** Format: uuid */
+            to_account_id: string;
+        };
+        IntercompanyVoidRequest: {
             reason: string;
         };
         Invitation: {
@@ -7552,6 +8438,90 @@ export interface components {
          * @enum {string}
          */
         JournalStatusEnum: "draft" | "posted" | "reversed";
+        Lead: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** @description The person */
+            name: string;
+            company?: string;
+            phone?: string;
+            email?: string;
+            source?: components["schemas"]["LeadSourceEnum"];
+            status?: components["schemas"]["LeadStatusEnum"];
+            /** @description What they want */
+            interest?: string;
+            /** Format: decimal */
+            estimated_value?: string;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            readonly assigned_to_name: string;
+            /** Format: uuid */
+            readonly customer_id: string | null;
+            readonly customer_name: string;
+            readonly lost_reason: string;
+            notes?: string;
+            /** @default 0 */
+            readonly open_tasks: number;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `convert` - convert
+         *     * `lose` - lose
+         *     * `reopen` - reopen
+         * @enum {string}
+         */
+        LeadActionActionEnum: "convert" | "lose" | "reopen";
+        LeadActionRequest: {
+            action: components["schemas"]["LeadActionActionEnum"];
+            /**
+             * Format: uuid
+             * @description Convert to this existing customer; blank: a new customer from the lead
+             */
+            customer_id?: string | null;
+            /** @description Also open a deal with this title */
+            deal_title?: string;
+            /** Format: decimal */
+            deal_value?: string | null;
+            reason?: string;
+        };
+        LeadRequest: {
+            /** @description The person */
+            name: string;
+            company?: string;
+            phone?: string;
+            email?: string;
+            source?: components["schemas"]["LeadSourceEnum"];
+            status?: components["schemas"]["LeadStatusEnum"];
+            /** @description What they want */
+            interest?: string;
+            /** Format: decimal */
+            estimated_value?: string;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            notes?: string;
+        };
+        /**
+         * @description * `walk_in` - Walk-in
+         *     * `call` - Phone call
+         *     * `referral` - Referral
+         *     * `website` - Website
+         *     * `social` - Social media
+         *     * `event` - Event or exhibition
+         *     * `other` - Other
+         * @enum {string}
+         */
+        LeadSourceEnum: "walk_in" | "call" | "referral" | "website" | "social" | "event" | "other";
+        /**
+         * @description * `new` - New
+         *     * `contacted` - Contacted
+         *     * `qualified` - Qualified
+         *     * `converted` - Converted
+         *     * `lost` - Lost
+         * @enum {string}
+         */
+        LeadStatusEnum: "new" | "contacted" | "qualified" | "converted" | "lost";
         LeaveBalance: {
             /** Format: uuid */
             employee_id: string;
@@ -7998,6 +8968,9 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** Format: uuid */
+            readonly group_id: string | null;
+            readonly group_name: string;
             /** Format: date-time */
             readonly created_at: string;
             readonly role: string | null;
@@ -8163,6 +9136,21 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
         };
+        PaginatedActivityList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Activity"][];
+        };
         PaginatedApprovalRequestList: {
             /** @example 123 */
             count: number;
@@ -8298,6 +9286,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Budget"][];
         };
+        PaginatedCompanyGroupList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CompanyGroup"][];
+        };
         PaginatedCreditNoteList: {
             /** @example 123 */
             count: number;
@@ -8342,6 +9345,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Customer"][];
+        };
+        PaginatedDealList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Deal"][];
         };
         PaginatedDeliveryNoteList: {
             /** @example 123 */
@@ -8463,6 +9481,36 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["GoodsReceipt"][];
         };
+        PaginatedInboxMessageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["InboxMessage"][];
+        };
+        PaginatedIntercompanyList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Intercompany"][];
+        };
         PaginatedInvitationList: {
             /** @example 123 */
             count: number;
@@ -8507,6 +9555,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["JournalList"][];
+        };
+        PaginatedLeadList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Lead"][];
         };
         PaginatedLeaveRequestList: {
             /** @example 123 */
@@ -9183,6 +10246,26 @@ export interface components {
             /** Format: email */
             email: string;
         };
+        PatchedActivityRequest: {
+            kind?: components["schemas"]["ActivityKindEnum"];
+            subject?: string;
+            notes?: string;
+            /** Format: date-time */
+            due_at?: string | null;
+            /** @description Tick to mark it done (sets done_at); untick to reopen */
+            done?: boolean;
+            /**
+             * Format: uuid
+             * @description Blank on a new activity: the person adding it
+             */
+            assigned_to_id?: string | null;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /** Format: uuid */
+            deal_id?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
+        };
         PatchedApprovalRuleRequest: {
             name?: string;
             document_type?: components["schemas"]["ApprovalDocumentTypeEnum"];
@@ -9267,6 +10350,12 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
+        PatchedCompanyGroupRequest: {
+            name?: string;
+            /** @description Every company in the group keeps its books in this currency */
+            currency?: string;
+            notes?: string;
+        };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         PatchedCostCenterRequest: {
             /** @description Blank: numbered for you (CC-001) */
@@ -9305,6 +10394,27 @@ export interface components {
             credit_limit?: string;
             notes?: string;
             is_active?: boolean;
+        };
+        PatchedDealRequest: {
+            title?: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Expected value before VAT
+             */
+            value?: string;
+            /** @description Percent; blank: the stage's usual chance */
+            probability?: number | null;
+            /** Format: date */
+            expected_close_date?: string | null;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            /** Format: uuid */
+            quotation_id?: string | null;
+            notes?: string;
         };
         PatchedDeliveryNoteRequest: {
             /** Format: uuid */
@@ -9489,6 +10599,22 @@ export interface components {
             description?: string;
             reference?: string;
             lines?: components["schemas"]["JournalLineRequest"][];
+        };
+        PatchedLeadRequest: {
+            /** @description The person */
+            name?: string;
+            company?: string;
+            phone?: string;
+            email?: string;
+            source?: components["schemas"]["LeadSourceEnum"];
+            status?: components["schemas"]["LeadStatusEnum"];
+            /** @description What they want */
+            interest?: string;
+            /** Format: decimal */
+            estimated_value?: string;
+            /** Format: uuid */
+            assigned_to_id?: string | null;
+            notes?: string;
         };
         PatchedLedgerAccountRequest: {
             code?: string;
@@ -10270,6 +11396,20 @@ export interface components {
             job_title?: string;
             readonly department_name: string;
         };
+        Pipeline: {
+            stages: components["schemas"]["Stage"][];
+            /** Format: decimal */
+            open_value: string;
+            /** Format: decimal */
+            weighted_value: string;
+            /** Format: decimal */
+            won_this_month: string;
+            /**
+             * Format: decimal
+             * @description Won of closed deals this month, in percent
+             */
+            win_rate: string | null;
+        };
         PortalData: {
             business: {
                 [key: string]: unknown;
@@ -10405,6 +11545,15 @@ export interface components {
          * @enum {string}
          */
         PositionEnum: "next" | "previous";
+        Preview: {
+            /** @description The customer or supplier's business is on MannaBooks */
+            available: boolean;
+            recipient_name: string;
+            kra_pin: string;
+            last_status: string | null;
+            /** Format: date-time */
+            last_sent_at: string | null;
+        };
         PriceList: {
             /** Format: uuid */
             readonly id: string;
@@ -11751,6 +12900,16 @@ export interface components {
          * @enum {string}
          */
         ShortcodeTypeEnum: "paybill" | "till";
+        Stage: {
+            stage: string;
+            label: string;
+            count: number;
+            /** Format: decimal */
+            value: string;
+            /** Format: decimal */
+            weighted: string;
+            probability: number;
+        };
         Statement: {
             customer: components["schemas"]["Customer"];
             /** Format: decimal */
@@ -12500,6 +13659,9 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** Format: uuid */
+            readonly group_id: string | null;
+            readonly group_name: string;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -12524,6 +13686,8 @@ export interface components {
             }[];
             /** @description Years that have ended but are not closed yet */
             unclosed_years: string[];
+            /** @description Documents from other businesses waiting in the inbox */
+            inbox_new: number;
             /** @description Modules that can be switched on: key, label, description */
             module_catalog: {
                 [key: string]: unknown;
@@ -12801,6 +13965,333 @@ export interface operations {
             };
         };
     };
+    groups_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCompanyGroupList"];
+                };
+            };
+        };
+    };
+    groups_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompanyGroupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CompanyGroupRequest"];
+                "multipart/form-data": components["schemas"]["CompanyGroupRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyGroup"];
+                };
+            };
+        };
+    };
+    groups_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyGroup"];
+                };
+            };
+        };
+    };
+    groups_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    groups_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCompanyGroupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCompanyGroupRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCompanyGroupRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyGroup"];
+                };
+            };
+        };
+    };
+    groups_companies_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddCompanyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AddCompanyRequest"];
+                "multipart/form-data": components["schemas"]["AddCompanyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyGroup"];
+                };
+            };
+        };
+    };
+    groups_companies_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    groups_intercompany_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedIntercompanyList"];
+                };
+            };
+        };
+    };
+    groups_intercompany_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntercompanyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["IntercompanyRequest"];
+                "multipart/form-data": components["schemas"]["IntercompanyRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Intercompany"];
+                };
+            };
+        };
+    };
+    groups_intercompany_void_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                tx: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntercompanyVoidRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["IntercompanyVoidRequest"];
+                "multipart/form-data": components["schemas"]["IntercompanyVoidRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Intercompany"];
+                };
+            };
+        };
+    };
+    groups_intercompany_balances_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Balance"][];
+                };
+            };
+        };
+    };
+    groups_reports_balance_sheet_retrieve: {
+        parameters: {
+            query?: {
+                as_of?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsolidatedBS"];
+                };
+            };
+        };
+    };
+    groups_reports_profit_and_loss_retrieve: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsolidatedPL"];
+                };
+            };
+        };
+    };
     invitations_retrieve: {
         parameters: {
             query?: never;
@@ -12977,6 +14468,152 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Workspace"];
+                };
+            };
+        };
+    };
+    w_activities_list: {
+        parameters: {
+            query?: {
+                assigned_to?: string;
+                customer?: string;
+                deal?: string;
+                /**
+                 * @description * `call` - Call
+                 *     * `meeting` - Meeting
+                 *     * `email` - Email
+                 *     * `task` - Task
+                 *     * `note` - Note
+                 */
+                kind?: "call" | "email" | "meeting" | "note" | "task";
+                lead?: string;
+                /** @description Only activities assigned to you */
+                mine?: boolean;
+                /** @description true: not done yet; false: done */
+                open?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description Open and past their due time */
+                overdue?: boolean;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedActivityList"];
+                };
+            };
+        };
+    };
+    w_activities_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ActivityRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ActivityRequest"];
+                "multipart/form-data": components["schemas"]["ActivityRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
+                };
+            };
+        };
+    };
+    w_activities_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
+                };
+            };
+        };
+    };
+    w_activities_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_activities_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedActivityRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedActivityRequest"];
+                "multipart/form-data": components["schemas"]["PatchedActivityRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Activity"];
                 };
             };
         };
@@ -14714,6 +16351,199 @@ export interface operations {
             };
         };
     };
+    w_deals_list: {
+        parameters: {
+            query?: {
+                assigned_to?: string;
+                customer?: string;
+                expected_close_date__gte?: string;
+                expected_close_date__lte?: string;
+                lead?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `prospect` - Prospect
+                 *     * `qualified` - Qualified
+                 *     * `proposal` - Quote sent
+                 *     * `negotiation` - Negotiation
+                 *     * `won` - Won
+                 *     * `lost` - Lost
+                 */
+                stage?: "lost" | "negotiation" | "proposal" | "prospect" | "qualified" | "won";
+                /** @description Multiple values may be separated by commas. */
+                stage__in?: string[];
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedDealList"];
+                };
+            };
+        };
+    };
+    w_deals_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DealRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DealRequest"];
+                "multipart/form-data": components["schemas"]["DealRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Deal"];
+                };
+            };
+        };
+    };
+    w_deals_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Deal"];
+                };
+            };
+        };
+    };
+    w_deals_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_deals_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedDealRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedDealRequest"];
+                "multipart/form-data": components["schemas"]["PatchedDealRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Deal"];
+                };
+            };
+        };
+    };
+    w_deals_move_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DealMoveRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DealMoveRequest"];
+                "multipart/form-data": components["schemas"]["DealMoveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Deal"];
+                };
+            };
+        };
+    };
+    w_deals_pipeline_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pipeline"];
+                };
+            };
+        };
+    };
     w_delivery_notes_list: {
         parameters: {
             query?: {
@@ -16170,6 +18000,219 @@ export interface operations {
             };
         };
     };
+    w_inbox_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `invoice` - Invoice
+                 *     * `quotation` - Quotation
+                 *     * `purchase_order` - Purchase order (LPO)
+                 */
+                kind?: "invoice" | "purchase_order" | "quotation";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `new` - New
+                 *     * `accepted` - Accepted
+                 *     * `declined` - Declined
+                 */
+                status?: "accepted" | "declined" | "new";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedInboxMessageList"];
+                };
+            };
+        };
+    };
+    w_inbox_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxMessage"];
+                };
+            };
+        };
+    };
+    w_inbox_accept_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AcceptRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AcceptRequest"];
+                "multipart/form-data": components["schemas"]["AcceptRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxMessage"];
+                };
+            };
+        };
+    };
+    w_inbox_decline_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeclineRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DeclineRequest"];
+                "multipart/form-data": components["schemas"]["DeclineRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxMessage"];
+                };
+            };
+        };
+    };
+    w_inbox_preview_retrieve: {
+        parameters: {
+            query: {
+                document_id: string;
+                kind: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preview"];
+                };
+            };
+        };
+    };
+    w_inbox_send_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InboxSendRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["InboxSendRequest"];
+                "multipart/form-data": components["schemas"]["InboxSendRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxMessage"];
+                };
+            };
+        };
+    };
+    w_inbox_sent_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `invoice` - Invoice
+                 *     * `quotation` - Quotation
+                 *     * `purchase_order` - Purchase order (LPO)
+                 */
+                kind?: "invoice" | "purchase_order" | "quotation";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `new` - New
+                 *     * `accepted` - Accepted
+                 *     * `declined` - Declined
+                 */
+                status?: "accepted" | "declined" | "new";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedInboxMessageList"];
+                };
+            };
+        };
+    };
     w_invitations_list: {
         parameters: {
             query?: {
@@ -16658,6 +18701,181 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JournalEntry"];
+                };
+            };
+        };
+    };
+    w_leads_list: {
+        parameters: {
+            query?: {
+                assigned_to?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `walk_in` - Walk-in
+                 *     * `call` - Phone call
+                 *     * `referral` - Referral
+                 *     * `website` - Website
+                 *     * `social` - Social media
+                 *     * `event` - Event or exhibition
+                 *     * `other` - Other
+                 */
+                source?: "call" | "event" | "other" | "referral" | "social" | "walk_in" | "website";
+                /**
+                 * @description * `new` - New
+                 *     * `contacted` - Contacted
+                 *     * `qualified` - Qualified
+                 *     * `converted` - Converted
+                 *     * `lost` - Lost
+                 */
+                status?: "contacted" | "converted" | "lost" | "new" | "qualified";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedLeadList"];
+                };
+            };
+        };
+    };
+    w_leads_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LeadRequest"];
+                "multipart/form-data": components["schemas"]["LeadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lead"];
+                };
+            };
+        };
+    };
+    w_leads_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lead"];
+                };
+            };
+        };
+    };
+    w_leads_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_leads_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedLeadRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedLeadRequest"];
+                "multipart/form-data": components["schemas"]["PatchedLeadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lead"];
+                };
+            };
+        };
+    };
+    w_leads_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LeadActionRequest"];
+                "multipart/form-data": components["schemas"]["LeadActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lead"];
                 };
             };
         };

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
 import { SendEmailDialog } from "@/components/send-email";
+import { SendToInbox } from "@/components/send-to-inbox";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { MpesaPromptModal } from "@/components/mpesa-prompt";
@@ -105,6 +106,7 @@ export default function InvoicePage() {
           <div className="flex flex-wrap gap-2">
             {inv.status === "draft" && can("invoices.issue") && <Button loading={issue.isPending} onClick={() => issue.mutate()}>Issue invoice</Button>}
             {open && can("payments.create") && <Button onClick={openPayment}>Record payment</Button>}
+            {!debit && <SendToInbox kind="invoice" id={inv.id} disabled={!issued} />}
             <ActionMenu actions={[
               { label: "Edit", onClick: () => setEditing(true), hidden: !(inv.status === "draft" && can("invoices.create")) },
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !(issued && can("invoices.create")) },

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
 import { SendEmailDialog } from "@/components/send-email";
+import { SendToInbox } from "@/components/send-to-inbox";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -51,6 +52,7 @@ export default function PurchaseOrderPage() {
           <div className="flex flex-wrap gap-2">
             {o.status === "draft" && can("purchaseorders.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate("approve")}>Approve</Button>}
             {receivable && can("goodsreceipts.manage") && <Link href={`/w/${slug}/purchasing/receipts/new?order=${o.id}`}><Button>Receive goods</Button></Link>}
+            <SendToInbox kind="purchase_order" id={o.id} disabled={o.status === "draft" || o.status === "cancelled"} />
             <ActionMenu actions={[
               { label: "Send to supplier by email", onClick: () => setEmailing(true), hidden: !(o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create")) },
               { label: "Print LPO or save as PDF", href: `/w/${slug}/purchasing/orders/${o.id}/print`, hidden: o.status === "draft" },

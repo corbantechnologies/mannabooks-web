@@ -91,3 +91,7 @@ export type LeaveBalance = S["LeaveBalance"];
 export type PayRun = S["PayRun"];
 export type Payslip = S["Payslip"];
 export type StatutoryRate = S["StatutoryRate"];
+export type Lead = S["Lead"];
+export type Deal = S["Deal"];
+export type Activity = S["Activity"];
+export type InboxMessage = S["InboxMessage"];

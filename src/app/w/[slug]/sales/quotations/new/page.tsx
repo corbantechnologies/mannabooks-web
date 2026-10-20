@@ -15,7 +15,7 @@ function NewQuotation() {
     <div className="w-full">
       <Link href={`/w/${slug}/sales/quotations`} className="text-sm text-stone-500 hover:underline">&larr; Quotations</Link>
       <PageHeader title="New quotation" guide="quotations" />
-      <SalesDocForm kind="quotation" initialCustomer={params.get("customer") ?? undefined} />
+      <SalesDocForm kind="quotation" initialCustomer={params.get("customer") ?? undefined} dealId={params.get("deal") ?? undefined} />
     </div>
   );
 }
