@@ -7,22 +7,15 @@ import { useState } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
+import { FALLBACK_PLANS, MODULE_LABEL, type PublicPlan } from "@/lib/plans";
 
-const MODULE_LABEL: Record<string, string> = {
-  sales: "Quotations, invoices, cash sales, M-Pesa", pos: "Till with shifts and loyalty", store: "Online shop", purchasing: "LPOs, bills and suppliers",
-  inventory: "Stock and warehouses", manufacturing: "Recipes and production", banking: "Bank, M-Pesa and expenses", people: "Payroll and leave",
-  projects: "Projects and job costing", crm: "CRM: leads and deals", control: "Budgets, approvals, fixed assets",
-};
-type Plan = { key: string; name: string; description: string; price_monthly: string; price_yearly: string; modules: unknown; features: unknown; max_users: number | null; max_documents_month: number | null; payroll_per_employee: string; payroll_minimum: string; is_free: boolean };
-
-/** The public pricing page: plans come from the API, so prices set in the MannaBooks admin show here. */
+/** The public pricing page: plans come from the API, so prices set in the MannaBooks admin show here; until it answers, the seeded plans show. */
 export default function PricingPage() {
   const [yearly, setYearly] = useState(false);
   const plans = useQuery({ queryKey: ["public-plans"], queryFn: async () => unwrap(await api.GET("/api/v1/plans/")) });
-  const list = (plans.data ?? []) as Plan[];
+  const list = (plans.data?.length ? plans.data : FALLBACK_PLANS) as PublicPlan[];
   return (
     <div className="min-h-screen bg-white text-stone-800">
       <SiteHeader />
@@ -35,7 +28,7 @@ export default function PricingPage() {
             <button type="button" onClick={() => setYearly(true)} className={`rounded px-4 py-1.5 ${yearly ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600"}`}>Yearly (2 months free)</button>
           </div>
         </div>
-        {plans.isLoading ? <div className="mt-10"><Spinner /></div> : (
+        {(
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {list.map((p) => {
               const modules = (p.modules as string[]) ?? [];

@@ -12,8 +12,8 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
       { href: "/#features", label: "Features" },
       { href: "/pricing", label: "Pricing" },
       { href: "/industries", label: "Industries" },
-      { href: "/signup", label: "Create an account" },
-      { href: "/signin", label: "Sign in" },
+      { href: "/use-cases", label: "Use cases" },
+      { href: "/faq", label: "Questions and answers" },
     ],
   },
   {
@@ -21,9 +21,9 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: "/guide", label: "User guides" },
       { href: "/guide/getting-started", label: "Getting started" },
-      { href: "/guide/invoices", label: "Invoicing and M-Pesa" },
+      { href: "/guide/mpesa", label: "M-Pesa" },
       { href: "/guide/payroll", label: "Kenyan payroll" },
-      { href: "/guide/plan-and-billing", label: "Plans and billing" },
+      { href: "/moving", label: "Moving to the new MannaBooks" },
     ],
   },
   {
@@ -86,8 +86,13 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-stone-200">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs text-stone-500 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {COMPANY.name}. All rights reserved.</p>
+          <nav aria-label="Legal" className="flex gap-4">
+            <Link href="/privacy" className="hover:text-stone-800">Privacy</Link>
+            <Link href="/terms" className="hover:text-stone-800">Terms</Link>
+            <Link href="/signin" className="hover:text-stone-800">Sign in</Link>
+          </nav>
           <p>
             MannaBooks is a product of{" "}
             <a href={COMPANY.url} target="_blank" rel="noopener noreferrer" className="font-medium text-stone-700 hover:text-stone-900">{COMPANY.name}</a>

@@ -11,6 +11,7 @@ import { Logo } from "./logo";
 export const SITE_LINKS = [
   { href: "/#features", label: "Features" },
   { href: "/industries", label: "Industries" },
+  { href: "/use-cases", label: "Use cases" },
   { href: "/pricing", label: "Pricing" },
   { href: "/guide", label: "Guides" },
   { href: "/contact", label: "Contact" },
@@ -35,7 +36,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-stone-200/70 bg-white/85 backdrop-blur supports-[backdrop-filter]:bg-white/75">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
         <Link href="/" aria-label="MannaBooks home" className="shrink-0"><Logo /></Link>
-        <nav aria-label="Main" className="hidden items-center gap-1 text-sm md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-0.5 text-sm lg:flex">
           {SITE_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} aria-current={current(href) ? "page" : undefined}
               className={clsx("rounded-md px-3 py-2 transition-colors", current(href) ? "font-medium text-stone-900" : "text-stone-600 hover:bg-stone-100 hover:text-stone-900")}>
@@ -49,13 +50,13 @@ export function SiteHeader() {
             Get started<ArrowRight className="hidden h-4 w-4 sm:block" aria-hidden />
           </Link>
           <button type="button" onClick={() => { setOpen((o) => !o); setOpenedOn(path); }} aria-expanded={open} aria-controls="site-menu"
-            aria-label={open ? "Close menu" : "Open menu"} className="-mr-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-stone-700 hover:bg-stone-100 md:hidden">
+            aria-label={open ? "Close menu" : "Open menu"} className="-mr-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-stone-700 hover:bg-stone-100 lg:hidden">
             {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
           </button>
         </div>
       </div>
       {open && (
-        <div id="site-menu" className="border-t border-stone-200 bg-white shadow-lg md:hidden">
+        <div id="site-menu" className="border-t border-stone-200 bg-white shadow-lg lg:hidden">
           <nav aria-label="Main" className="mx-auto max-w-6xl px-4 py-3">
             {SITE_LINKS.map(({ href, label }) => (
               <Link key={href} href={href} onClick={() => setOpen(false)} aria-current={current(href) ? "page" : undefined}

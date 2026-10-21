@@ -6,9 +6,12 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { JsonLd } from "@/components/marketing";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { INDUSTRIES } from "@/content/industries";
 import { authOptions } from "@/lib/auth/options";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: "MannaBooks: accounting, stock and payroll for Kenyan businesses" },
@@ -26,6 +29,18 @@ const FEATURES = [
   { icon: Building2, title: "Fixed assets", text: "A register of vehicles, computers and equipment, with monthly depreciation and the gain or loss when you sell." },
 ];
 
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "MannaBooks",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: "Accounting, sales, M-Pesa, stock and payroll for Kenyan businesses.",
+  url: SITE_URL,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "KES" },
+  publisher: { "@type": "Organization", name: "Corban Technologies LTD", url: "https://www.corbantechnologies.org" },
+};
+
 const KENYA = [
   "KRA PIN and VAT on every document, with withholding VAT and income tax",
   "KRA eTIMS signing, switching on once KRA approves MannaBooks",
@@ -38,6 +53,7 @@ export default async function Home() {
   if (session) redirect("/workspaces");
   return (
     <div className="min-h-screen bg-white text-stone-800">
+      <JsonLd data={STRUCTURED_DATA} />
       <SiteHeader />
 
       <main>
@@ -96,6 +112,25 @@ export default async function Home() {
                 <p className="mt-1.5 text-sm text-stone-600">{text}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="border-t border-stone-100">
+          <div className="mx-auto max-w-6xl px-4 py-14">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">Made for your kind of business</h2>
+                <p className="mt-2 max-w-2xl text-stone-600">See a day with MannaBooks and a worked example for your industry.</p>
+              </div>
+              <Link href="/industries" className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">All industries <ArrowRight className="h-4 w-4" aria-hidden /></Link>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {INDUSTRIES.map(({ slug, icon: Icon, name }) => (
+                <Link key={slug} href={`/industries/${slug}`} className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-stone-700 ring-1 ring-stone-200 hover:text-brand-700 hover:ring-brand-300">
+                  <Icon className="h-4 w-4 text-brand-700" aria-hidden />{name}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 
