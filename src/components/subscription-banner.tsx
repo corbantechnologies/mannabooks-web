@@ -21,6 +21,7 @@ export function SubscriptionBanner() {
       </div>
     );
   }
+  if (!sub) return null; // an API older than billing sends no subscription
   if (sub.status === "read_only") {
     return <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">This business is read-only until the subscription is paid: you can see and export everything, but not change it. {billing}</div>;
   }

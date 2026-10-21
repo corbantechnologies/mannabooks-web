@@ -5,7 +5,8 @@ import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Logo } from "@/components/logo";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
@@ -24,17 +25,7 @@ export default function PricingPage() {
   const list = (plans.data ?? []) as Plan[];
   return (
     <div className="min-h-screen bg-white text-stone-800">
-      <header className="border-b border-stone-100">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" aria-label="MannaBooks home"><Logo /></Link>
-          <nav className="flex items-center gap-1 text-sm sm:gap-3">
-            <Link href="/industries" className="hidden rounded-md px-3 py-2 text-stone-600 hover:text-stone-900 sm:inline">Industries</Link>
-            <Link href="/pricing" className="hidden rounded-md px-3 py-2 font-medium text-stone-900 sm:inline">Pricing</Link>
-            <Link href="/signin" className="rounded-md px-3 py-2 text-stone-700 hover:text-stone-900">Sign in</Link>
-            <Link href="/signup" className="rounded-md bg-brand-700 px-3.5 py-2 font-medium text-white hover:bg-brand-600">Get started</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-14">
         <h1 className="text-center text-4xl font-bold tracking-tight text-stone-900">Simple prices in shillings</h1>
         <p className="mx-auto mt-3 max-w-2xl text-center text-stone-600">Start free. Every new business gets 30 days of every feature, then chooses a plan or stays on Free. Pay monthly or yearly by M-Pesa. Prices include VAT.</p>
@@ -77,9 +68,10 @@ export default function PricingPage() {
           <p><strong className="text-stone-900">Your data is always yours.</strong> If a payment is missed, the business stays readable and exportable; nothing is deleted.</p>
           <p><strong className="text-stone-900">Discounts.</strong> 25% for registered NGOs and churches. Accountants who bring clients get free seats in their clients&apos; workspaces.</p>
           <p><strong className="text-stone-900">KRA ready.</strong> VAT, withholding tax, statutory payroll and eTIMS signing (once KRA approves MannaBooks) on every plan that needs them.</p>
-          <p><strong className="text-stone-900">Questions?</strong> Use Help and feedback inside MannaBooks, or <Link className="underline" href="/guide">read the guides</Link>.</p>
+          <p><strong className="text-stone-900">Questions?</strong> <Link className="underline" href="/contact?topic=sales">Talk to us</Link>, use Help and feedback inside MannaBooks, or <Link className="underline" href="/guide">read the guides</Link>.</p>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

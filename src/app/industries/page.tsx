@@ -5,7 +5,8 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Logo } from "@/components/logo";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: { absolute: "Industries: who MannaBooks is for" },
@@ -91,18 +92,7 @@ const SIZES = [
 export default function IndustriesPage() {
   return (
     <div className="min-h-screen bg-white text-stone-800">
-      <header className="border-b border-stone-100">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" aria-label="MannaBooks home"><Logo /></Link>
-          <nav className="flex items-center gap-1 text-sm sm:gap-3">
-            <Link href="/industries" className="hidden rounded-md px-3 py-2 font-medium text-stone-900 sm:inline">Industries</Link>
-            <Link href="/pricing" className="hidden rounded-md px-3 py-2 text-stone-600 hover:text-stone-900 sm:inline">Pricing</Link>
-            <Link href="/guide" className="hidden rounded-md px-3 py-2 text-stone-600 hover:text-stone-900 sm:inline">Guides</Link>
-            <Link href="/signin" className="rounded-md px-3 py-2 text-stone-700 hover:text-stone-900">Sign in</Link>
-            <Link href="/signup" className="rounded-md bg-brand-700 px-3.5 py-2 font-medium text-white hover:bg-brand-600">Get started</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         <section className="bg-gradient-to-b from-brand-50 to-white">
@@ -167,17 +157,7 @@ export default function IndustriesPage() {
         </section>
       </main>
 
-      <footer className="border-t border-stone-100">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between">
-          <span className="flex items-center gap-2"><Logo size="sm" /> <span>© {new Date().getFullYear()} MannaBooks</span></span>
-          <nav className="flex gap-4">
-            <Link href="/" className="hover:text-stone-800">Home</Link>
-            <Link href="/guide" className="hover:text-stone-800">User guides</Link>
-            <Link href="/signin" className="hover:text-stone-800">Sign in</Link>
-            <Link href="/signup" className="hover:text-stone-800">Create an account</Link>
-          </nav>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
