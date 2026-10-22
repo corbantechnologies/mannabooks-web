@@ -28,7 +28,7 @@ export default function LoyaltyPage() {
         description="Customers earn points on what they spend and use them as a discount at the till."
         guide="loyalty"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {can("loyalty.manage") && <Link href={`/w/${slug}/sales/loyalty/settings`}><Button variant="secondary"><Settings className="h-4 w-4" /> Settings and tiers</Button></Link>}
             {can("loyalty.enrol") && <Button onClick={() => setEnrolling(true)} disabled={!program.data?.is_active}><Plus className="h-4 w-4" /> Enrol customer</Button>}
           </div>

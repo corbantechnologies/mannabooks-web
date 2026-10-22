@@ -81,7 +81,7 @@ export default function InboxMessagePage() {
             </Field>
           )}
           <FormError error={accept.error} />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button loading={accept.isPending} disabled={m.kind === "invoice" && !account} onClick={() => accept.mutate()}>Accept</Button>
             <Button variant="secondary" onClick={() => { decline.reset(); setDeclining(true); }}>Decline</Button>
           </div>

@@ -7,14 +7,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { GoogleButton } from "@/components/google-button";
-import { Button, Field, FormError, Input } from "@/components/ui";
+import { Button, Field, FormError, Input, PasswordInput } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 
 export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string; googleEnabled: boolean }) {
   const router = useRouter();
   // Someone accepting an invitation joins an existing workspace, so they don't create one of their own.
   const joiningByInvitation = callbackUrl.startsWith("/invite/");
-  const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "", business_name: "" });
+  const [form, setForm] = useState({ full_name: "", email: "", password: "", business_name: "" });  // phone: later, in My account
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState("");
   const [error, setError] = useState<unknown>(null);
@@ -44,11 +44,11 @@ export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" data-wide>
       <div>
         <h1 className="text-lg font-semibold">Create your account</h1>
         <p className="mt-1 text-sm text-stone-600">
-          {joiningByInvitation ? "Then accept your invitation." : "Your business workspace is set up as soon as you sign up."}
+          {joiningByInvitation ? "Then accept your invitation." : "Every feature free for 30 days. No card needed."}
         </p>
       </div>
       {googleEnabled && (
@@ -59,28 +59,30 @@ export function SignUpForm({ callbackUrl, googleEnabled }: { callbackUrl: string
           </div>
         </>
       )}
-      <form onSubmit={onSubmit} className="space-y-4">
-        <Field label="Full name" error={fieldError(error, "full_name")}>
-          <Input required autoComplete="name" value={form.full_name} onChange={set("full_name")} />
-        </Field>
-        <Field label="Email" error={fieldError(error, "email")}>
-          <Input type="email" required autoComplete="email" value={form.email} onChange={set("email")} />
-        </Field>
-        {!joiningByInvitation && (
-          <Field label="Business name" error={fieldError(error, "business_name")} hint="You can change it, or add more businesses, later.">
-            <Input required autoComplete="organization" value={form.business_name} onChange={set("business_name")} placeholder="Acme Traders Ltd" />
+      <form onSubmit={onSubmit} className="space-y-3.5">
+        <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-4">
+          <Field label="Your name" error={fieldError(error, "full_name")}>
+            <Input required autoComplete="name" value={form.full_name} onChange={set("full_name")} />
           </Field>
-        )}
-        <Field label="Phone (optional)" error={fieldError(error, "phone")}>
-          <Input type="tel" autoComplete="tel" value={form.phone} onChange={set("phone")} placeholder="07..." />
-        </Field>
-        <Field label="Password" error={fieldError(error, "password")} hint="At least 8 characters, not only numbers.">
-          <Input type="password" required autoComplete="new-password" value={form.password} onChange={set("password")} />
-        </Field>
+          <Field label="Email" error={fieldError(error, "email")}>
+            <Input type="email" required autoComplete="email" value={form.email} onChange={set("email")} />
+          </Field>
+          {!joiningByInvitation && (
+            <Field label="Business name" error={fieldError(error, "business_name")}>
+              <Input required autoComplete="organization" value={form.business_name} onChange={set("business_name")} placeholder="e.g. Acme Traders Ltd" />
+            </Field>
+          )}
+          <Field label="Password" error={fieldError(error, "password")} hint="At least 8 characters.">
+            <PasswordInput required autoComplete="new-password" value={form.password} onChange={set("password")} />
+          </Field>
+        </div>
         <FormError error={error} />
         <Button type="submit" className="w-full" loading={loading}>
           {step || "Create account"}
         </Button>
+        <p className="text-center text-xs text-stone-500">
+          By signing up you agree to the <Link href="/terms" className="underline">terms</Link> and <Link href="/privacy" className="underline">privacy policy</Link>.
+        </p>
       </form>
       <p className="text-center text-sm text-stone-600">
         Already have an account?{" "}

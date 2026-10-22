@@ -137,7 +137,7 @@ function Till({ shift }: { shift: PosShift }) {
   });
 
   return (
-    <div className="-mx-4 -my-6 flex h-[calc(100vh-3.5rem)] flex-col sm:-mx-8">
+    <div className="-mx-3 -my-5 flex h-[calc(100dvh-3.5rem)] flex-col sm:-mx-6 sm:-my-6 lg:-mx-8">
       <div className="flex flex-wrap items-center gap-3 border-b border-stone-200 bg-white px-4 py-2 text-sm">
         <span className="font-semibold">{shift.register_name}</span>
         <Badge tone="green">Shift {shift.number}</Badge>
@@ -172,7 +172,7 @@ function Till({ shift }: { shift: PosShift }) {
           </div>
           {shown.length === 0 && <EmptyState title="No products match" />}
         </section>
-        <aside className="flex w-full flex-col border-t border-stone-200 bg-white lg:w-96 lg:border-l lg:border-t-0">
+        <aside className="flex w-full flex-col border-t border-stone-200 bg-white max-lg:max-h-[60%] lg:w-96 lg:border-l lg:border-t-0">
           <Customer member={member} setMember={(m) => { setMember(m); setRedeem(""); }} />
           <div className="min-h-0 flex-1 overflow-y-auto">
             {cart.length === 0 ? <p className="p-6 text-center text-sm text-stone-500">Tap a product to add it.</p> : cart.map((l, i) => (

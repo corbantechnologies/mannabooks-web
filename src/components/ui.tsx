@@ -1,10 +1,10 @@
 "use client";
 
 import clsx from "clsx";
-import { BookOpen, Loader2, X } from "lucide-react";
+import { BookOpen, Eye, EyeOff, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -21,7 +21,7 @@ export function Button({
       {...props}
       disabled={disabled || loading}
       className={clsx(
-        "inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
         variant === "primary" && "bg-brand-700 text-white hover:bg-brand-600",
         variant === "secondary" && "border border-stone-300 bg-white text-stone-800 hover:bg-stone-50",
         variant === "danger" && "bg-red-600 text-white hover:bg-red-700",
@@ -75,6 +75,20 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   );
 }
 
+/** A password box with a button to show or hide what was typed. */
+export function PasswordInput(props: Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">) {
+  const [shown, setShown] = useState(false);
+  return (
+    <div className="relative">
+      <input {...props} type={shown ? "text" : "password"} className={clsx(inputClass, "pr-10", props.className)} />
+      <button type="button" onClick={() => setShown((v) => !v)} aria-label={shown ? "Hide password" : "Show password"} aria-pressed={shown}
+        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-md text-stone-500 hover:text-stone-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-100">
+        {shown ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+      </button>
+    </div>
+  );
+}
+
 export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea rows={3} {...props} className={clsx(inputClass, props.className)} />;
 }
@@ -102,10 +116,10 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="text-xl font-semibold text-stone-900">{title}</h1>
+        <h1 className="text-xl font-semibold text-stone-900 break-words">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-stone-600">{description}</p>}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
         {guide && (
           <Link
             href={workspace ? `/w/${workspace}/guide/${guide}` : `/guide/${guide}`}
@@ -157,7 +171,7 @@ export function Table({ head, children }: { head: string[]; children: React.Reac
         <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
           <tr>
             {head.map((h) => (
-              <th key={h} className="px-4 py-2.5 font-medium">
+              <th key={h} className="whitespace-nowrap px-4 py-2.5 font-medium">
                 {h}
               </th>
             ))}
@@ -201,7 +215,7 @@ export function Modal({
   }, [open, onClose]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/40 p-4 sm:p-10" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/40 p-2 pt-6 sm:p-10" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
@@ -209,13 +223,13 @@ export function Modal({
         className={clsx("w-full rounded-lg bg-white shadow-xl", MODAL_WIDTH[size])}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-stone-200 px-5 py-3.5">
+        <div className="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3.5 sm:px-5">
           <h2 className="text-base font-semibold text-stone-900">{title}</h2>
           <button onClick={onClose} className="rounded p-1 text-stone-500 hover:bg-stone-100" aria-label="Close">
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="px-5 py-4">{children}</div>
+        <div className="px-4 py-4 sm:px-5">{children}</div>
       </div>
     </div>
   );

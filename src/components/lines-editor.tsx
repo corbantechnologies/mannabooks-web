@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useCustomerPrices, useProducts, useVatRates } from "@/lib/api/sales";
 import type { Product, TaxRate } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
+import { stack } from "@/lib/stack";
 
 import { Button, Card, Input, Select } from "./ui";
 import { QuickProductModal } from "./quick-product";
@@ -114,8 +115,8 @@ export function LinesEditor({
 
   return (
     <Card className="overflow-x-auto">
-      <table className="w-full min-w-[760px] text-sm">
-        <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
+      <table className={`${stack.table} md:min-w-[760px]`}>
+        <thead className={stack.head}>
           <tr>
             <th className="w-48 px-3 py-2 text-left">Product</th>
             <th className="px-3 py-2 text-left">Description</th>
@@ -127,18 +128,18 @@ export function LinesEditor({
             <th className="w-10" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-100">
+        <tbody className={stack.body}>
           {lines.map((l, i) => (
-            <tr key={i}>
-              <td className="px-2 py-2">
+            <tr key={i} className={stack.row}>
+              <td data-label="Product" className={`${stack.cell} ${stack.wide}`}>
                 <Select disabled={disabled} value={l.product_id} onChange={(e) => pickProduct(i, e.target.value)}>
                   <option value="">Free text</option>
                   <option value="__new">+ New product...</option>
                   {(products.data?.results ?? []).map((p) => <option key={p.id} value={p.id}>{p.code ? `${p.code} ` : ""}{p.name}</option>)}
                 </Select>
               </td>
-              <td className="px-2 py-2"><Input disabled={disabled} value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
-              <td className="px-2 py-2">
+              <td data-label="Description" className={`${stack.cell} ${stack.wide}`}><Input disabled={disabled} value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
+              <td data-label="Qty" className={stack.cell}>
                 <Input disabled={disabled} inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} />
                 {(productOf(l.product_id)?.units ?? []).length > 0 && (
                   <Select disabled={disabled} aria-label="Unit" className="mt-1 py-1 text-xs" value={l.unit || productOf(l.product_id)?.unit || ""} onChange={(e) => pickUnit(i, e.target.value)}>
@@ -147,16 +148,16 @@ export function LinesEditor({
                   </Select>
                 )}
               </td>
-              <td className="px-2 py-2"><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.unit_price} onChange={(e) => update(i, { unit_price: e.target.value })} /></td>
-              <td className="px-2 py-2"><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.discount_percent} onChange={(e) => update(i, { discount_percent: e.target.value })} /></td>
-              <td className="px-2 py-2">
+              <td data-label="Price" className={stack.cell}><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.unit_price} onChange={(e) => update(i, { unit_price: e.target.value })} /></td>
+              <td data-label="Disc %" className={stack.cell}><Input disabled={disabled} inputMode="decimal" className="text-right" value={l.discount_percent} onChange={(e) => update(i, { discount_percent: e.target.value })} /></td>
+              <td data-label="VAT" className={stack.cell}>
                 <Select disabled={disabled} value={l.tax_rate_id} onChange={(e) => update(i, { tax_rate_id: e.target.value })}>
                   <option value="">No VAT</option>
                   {vat.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                 </Select>
               </td>
-              <td className="px-3 py-2 text-right font-mono">{fmt(priced[i].total)}</td>
-              <td className="px-1">
+              <td data-label="Amount" className={stack.amount}>{fmt(priced[i].total)}</td>
+              <td className={stack.remove}>
                 {!disabled && (
                   <button type="button" className="rounded p-1.5 text-stone-400 hover:bg-stone-100 hover:text-red-600 disabled:opacity-30" disabled={lines.length <= 1}
                     onClick={() => setLines((prev) => prev.filter((_, n) => n !== i))} aria-label="Remove line">

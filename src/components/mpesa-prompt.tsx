@@ -52,7 +52,7 @@ export function MpesaPromptModal({ open, onClose, amount, phone = "", invoiceId,
       {!txId ? (
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); send.mutate(); }}>
           <p className="text-sm text-stone-600">The customer gets a prompt on their phone and enters their M-Pesa PIN. The payment is recorded as soon as Safaricom confirms it.</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Phone number" error={fieldError(send.error, "phone")}><Input required inputMode="tel" placeholder="0712 345 678" value={form.phone} onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))} /></Field>
             <Field label="Amount" error={fieldError(send.error, "amount")} hint="Whole shillings."><Input required inputMode="numeric" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))} /></Field>
           </div>

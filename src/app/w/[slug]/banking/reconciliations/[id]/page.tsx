@@ -39,7 +39,7 @@ export default function ReconciliationPage() {
       <Link href={`/w/${slug}/banking/accounts/${r.bank_account_id}`} className="text-sm text-stone-500 hover:underline">&larr; {r.bank_account_name}</Link>
       <PageHeader title={`Reconcile ${r.bank_account_name}`} description={`Statement of ${fmtDate(r.statement_date)}. Tick each transaction that appears on the statement.`} guide="bank-reconciliation"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {editable && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this reconciliation?") && remove.mutate()}>Delete</Button>}
             {editable && <Button disabled={diff !== 0} loading={act.isPending} onClick={() => act.mutate("complete")}>Finish</Button>}
             {r.status === "completed" && can("banking.reconcile") && <Button variant="secondary" onClick={() => confirm("Reopen? Its transactions can be changed again.") && act.mutate("reopen")}>Reopen</Button>}

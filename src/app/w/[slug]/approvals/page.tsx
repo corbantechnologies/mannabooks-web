@@ -32,10 +32,10 @@ export default function ApprovalsPage() {
     <div className="w-full">
       <PageHeader title="Approvals" description="Orders, vouchers, payroll and budgets that need someone's go-ahead, level by level." guide="approvals"
         actions={can("approvals.view") && <Link href={`/w/${slug}/approvals/rules`}><Button variant="secondary"><Settings2 className="h-4 w-4" /> Rules</Button></Link>} />
-      <div className="mb-4 flex gap-1 border-b border-stone-200">
+      <div className="mb-4 flex gap-1 overflow-x-auto border-b border-stone-200">
         {BOXES.filter((b) => !("perm" in b) || can(b.perm)).map((b) => (
           <button key={b.key} onClick={() => setBox(b.key)}
-            className={clsx("-mb-px border-b-2 px-3 py-2 text-sm", box === b.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>
+            className={clsx("-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", box === b.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>
             {b.label}{b.key === "waiting" && box === "waiting" && rows.length > 0 ? ` (${rows.length})` : ""}
           </button>
         ))}

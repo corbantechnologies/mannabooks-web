@@ -40,7 +40,7 @@ export default function PipelinePage() {
   return (
     <div className="w-full">
       <PageHeader title="Pipeline" description="Every open deal by stage. Move a deal along as it progresses; won and lost close it." guide="crm"
-        actions={<div className="flex gap-2">
+        actions={<div className="flex flex-wrap gap-2">
           <label className="flex items-center gap-2 text-sm text-stone-600"><input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} /> My deals</label>
           {manage && <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New deal</Button>}
         </div>} />

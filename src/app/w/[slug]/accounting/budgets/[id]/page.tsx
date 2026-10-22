@@ -168,7 +168,7 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
       </Card>
       <div className="flex flex-wrap items-end justify-between gap-3">
         {editable ? (
-          <div className="flex items-end gap-2">
+          <div className="flex flex-wrap items-end gap-2">
             <Field label="Add an account">
               <Select value={adding} onChange={(e) => setAdding(e.target.value)}>
                 <option value="">Choose an income or expense account</option>
@@ -182,7 +182,7 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
             <Button variant="secondary" disabled={!adding} onClick={() => { setRows((p) => [...p, { account_id: adding, amounts: Array(12).fill("0") }]); setAdding(""); setDirty(true); }}><Plus className="h-4 w-4" /> Add</Button>
           </div>
         ) : <span className="text-sm text-stone-500">{budget.status === "approved" ? "Reopen the budget to change it." : ""}</span>}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={exportCsv} disabled={!rows.length}><Download className="h-4 w-4" /> CSV</Button>
           {editable && <Button disabled={!dirty} loading={save.isPending} onClick={() => save.mutate()}>Save budget</Button>}
         </div>

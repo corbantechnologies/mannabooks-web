@@ -52,7 +52,7 @@ export default function FinancialYearsPage() {
         description="Each year has 12 monthly periods. Close a month once its books are final, so nothing can change in it. Closing a year moves its profit to retained earnings."
         guide="financial-years"
         actions={manageYears && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="secondary" loading={addYear.isPending && addYear.variables === "previous"} onClick={() => addYear.mutate("previous")}>Add earlier year</Button>
             <Button loading={addYear.isPending && addYear.variables === "next"} onClick={() => addYear.mutate("next")}>Add next year</Button>
           </div>

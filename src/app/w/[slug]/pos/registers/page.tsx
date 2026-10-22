@@ -68,7 +68,7 @@ export default function RegistersPage() {
       </Card>
       <Modal open={editing !== null} title={editing && editing !== "new" ? editing.name : "New till"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} placeholder="Till 1" /></Field>
             <Field label="Branch">
               <Select value={form.branch_id} onChange={set("branch_id")}>

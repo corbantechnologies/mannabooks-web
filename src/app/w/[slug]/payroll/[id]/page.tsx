@@ -113,10 +113,10 @@ export default function PayRunPage() {
       {editing && <EditSlip slip={editing} onClose={() => setEditing(null)} />}
       <Modal open={paying !== null} title={paying === "pay" ? `Net salaries ${fmt(r.net_pay)}` : `${REMITTANCES.find((m) => m.kind === paying)?.label ?? ""} paid`} onClose={() => setPaying(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); act.mutate(paying === "pay" ? { action: "pay", ...payForm, bank_account_id: payForm.bank_account_id || active.find((a) => a.kind === "bank")?.id } : { action: "remit", kind: paying, ...payForm, bank_account_id: payForm.bank_account_id || active.find((a) => a.kind === "bank")?.id }); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Paid from"><Select value={payForm.bank_account_id || active.find((a) => a.kind === "bank")?.id || ""} onChange={(e) => setPayForm((p) => ({ ...p, bank_account_id: e.target.value }))}>{active.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</Select></Field>
             <Field label="Date"><Input type="date" value={payForm.date} onChange={(e) => setPayForm((p) => ({ ...p, date: e.target.value }))} /></Field>
-            {paying !== "pay" && <div className="col-span-2"><Field label="Payment reference" hint="e.g. the KRA payment registration number (PRN)."><Input value={payForm.reference} onChange={(e) => setPayForm((p) => ({ ...p, reference: e.target.value }))} /></Field></div>}
+            {paying !== "pay" && <div className="sm:col-span-2"><Field label="Payment reference" hint="e.g. the KRA payment registration number (PRN)."><Input value={payForm.reference} onChange={(e) => setPayForm((p) => ({ ...p, reference: e.target.value }))} /></Field></div>}
           </div>
           <FormError error={act.error} />
           <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setPaying(null)}>Cancel</Button><Button type="submit" loading={act.isPending}>Record</Button></div>
@@ -139,7 +139,7 @@ function EditSlip({ slip, onClose }: { slip: Payslip; onClose: () => void }) {
   return (
     <Modal open title={`${slip.employee_name}, this month`} onClose={onClose}>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Basic salary"><Input inputMode="decimal" value={form.basic_salary} onChange={(e) => setForm((p) => ({ ...p, basic_salary: e.target.value }))} /></Field>
           <Field label="Unpaid leave days"><Input inputMode="decimal" value={form.unpaid_leave_days} onChange={(e) => setForm((p) => ({ ...p, unpaid_leave_days: e.target.value }))} /></Field>
         </div>

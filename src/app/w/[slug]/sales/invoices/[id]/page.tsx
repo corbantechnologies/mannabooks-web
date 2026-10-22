@@ -161,7 +161,7 @@ export default function InvoicePage() {
 
       <Modal open={paying} title={`Payment for ${inv.number}`} onClose={() => setPaying(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); recordPayment.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Amount received" error={fieldError(recordPayment.error, "amount")} hint={`Balance ${fmt(inv.balance_due)}. Any extra stays as the customer's credit.`}>
               <Input required inputMode="decimal" value={pay.amount} onChange={(e) => setPay((prev) => ({ ...prev, amount: e.target.value }))} />
             </Field>

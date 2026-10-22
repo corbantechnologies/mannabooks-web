@@ -87,7 +87,7 @@ function AskLeave({ onClose }: { onClose: () => void }) {
     <Modal open title="Ask for leave" onClose={onClose}>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); ask.mutate(); }}>
         <Field label="Type"><Select value={form.leave_type} onChange={(e) => setForm((p) => ({ ...p, leave_type: e.target.value }))}>{LEAVE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}</Select></Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="First day"><Input type="date" required value={form.start_date} onChange={(e) => setForm((p) => ({ ...p, start_date: e.target.value }))} /></Field>
           <Field label="Last day"><Input type="date" required value={form.end_date} onChange={(e) => setForm((p) => ({ ...p, end_date: e.target.value }))} /></Field>
         </div>

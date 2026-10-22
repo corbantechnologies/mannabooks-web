@@ -89,7 +89,7 @@ function Categories() {
           </Field>
           <div className="space-y-3 rounded-md bg-stone-50 p-3">
             <p className="text-xs text-stone-600">Defaults for <strong>new</strong> products in this category (and its sub-categories). Blank: the parent category&apos;s, then the workspace&apos;s.</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="VAT rate" error={fieldError(save.error, "tax_rate_id")}>
                 <Select value={form.tax_rate_id} onChange={(e) => setForm((prev) => ({ ...prev, tax_rate_id: e.target.value }))}>
                   <option value="">Not set</option>
@@ -111,7 +111,7 @@ function Categories() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this category?") && remove.mutate(current.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
       </Modal>
@@ -161,7 +161,7 @@ function Units() {
       </Table>
       <Modal open={editing !== null} title={current ? current.name : "New unit"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="Bag" /></Field>
             <Field label="Short form" error={fieldError(save.error, "abbreviation")}><Input required value={form.abbreviation} onChange={(e) => setForm((prev) => ({ ...prev, abbreviation: e.target.value }))} placeholder="bag" /></Field>
           </div>
@@ -172,7 +172,7 @@ function Units() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this unit?") && remove.mutate(current.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
       </Modal>

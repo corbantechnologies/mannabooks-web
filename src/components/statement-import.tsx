@@ -48,7 +48,7 @@ export function StatementImport({ bankAccountId, onClose }: { bankAccountId: str
         <input type="file" accept=".csv,text/csv" onChange={(e) => e.target.files?.[0] && read(e.target.files[0])} />
         {data && cols && (
           <>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               {pick("date", "Date")}
               {pick("description", "Description")}
               {pick("reference", "Reference", true)}

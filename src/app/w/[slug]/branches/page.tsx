@@ -75,8 +75,8 @@ export default function BranchesPage() {
 
       <Modal open={editing !== null} title={editing === "new" ? "New branch" : "Edit branch"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-2">
               <Field label="Name" error={fieldError(save.error, "name")}>
                 <Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
               </Field>
@@ -98,7 +98,7 @@ export default function BranchesPage() {
             {editing !== "new" && editing !== null && !editing.is_default ? (
               <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this branch?") && remove.mutate(editing.id)}>Delete</Button>
             ) : <span />}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
               <Button type="submit" loading={save.isPending}>Save</Button>
             </div>

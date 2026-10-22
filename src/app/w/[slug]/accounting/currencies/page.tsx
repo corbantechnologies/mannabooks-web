@@ -46,7 +46,7 @@ export default function CurrenciesPage() {
         description={`Your books are kept in ${context.workspace.currency}. Switch on the other currencies you trade in and record their rates; documents in those currencies are converted at the rate for their date.`}
         guide="currencies"
         actions={manage && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => { addCurrency.reset(); setAdding(true); }}>Add currency</Button>
             <Button onClick={() => { addRate.reset(); setRateOpen(true); }}>Record a rate</Button>
           </div>

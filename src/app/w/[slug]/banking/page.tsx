@@ -55,7 +55,7 @@ export default function BankingPage() {
       )}
       <Modal open={creating} title="Add an account" onClose={() => setCreating(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name" error={fieldError(create.error, "name")}><Input required value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Equity Bank current" /></Field>
             <Field label="Type"><Select value={form.kind} onChange={(e) => setForm((p) => ({ ...p, kind: e.target.value as typeof form.kind }))}>{ACCOUNT_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}</Select></Field>
             {form.kind !== "cash" && <Field label={form.kind === "mobile" ? "Provider" : "Bank"}><Input value={form.bank_name} onChange={(e) => setForm((p) => ({ ...p, bank_name: e.target.value }))} /></Field>}

@@ -92,11 +92,11 @@ export default function ChartOfAccountsPage() {
 
       <Modal open={editing !== null} title={current ? `${current.code} ${current.name}` : "New account"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Code" error={fieldError(save.error, "code")}><Input required value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} /></Field>
-            <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} /></Field></div>
+            <div className="sm:col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} /></Field></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Type" error={fieldError(save.error, "account_type")}>
               <Select disabled={current?.is_system} value={form.account_type} onChange={(e) => { const t = e.target.value as AccountType; setForm((prev) => ({ ...prev, account_type: t, subtype: SUBTYPES[t][0].value })); }}>
                 {ACCOUNT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -118,7 +118,7 @@ export default function ChartOfAccountsPage() {
             {current && !current.is_system ? (
               <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this account?") && remove.mutate(current.id)}>Delete</Button>
             ) : <span />}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
               <Button type="submit" loading={save.isPending}>Save</Button>
             </div>

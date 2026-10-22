@@ -72,7 +72,7 @@ export default function RemindersPage() {
       </div>
       <Modal open={editing !== null} title={editing?.name ?? ""} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} /></Field>
             <Field label="Days from the due date" hint="-3 before, 0 on the day, 7 after." error={fieldError(save.error, "days")}>
               <Input type="number" value={form.days} onChange={(e) => setForm((prev) => ({ ...prev, days: Number(e.target.value) }))} />

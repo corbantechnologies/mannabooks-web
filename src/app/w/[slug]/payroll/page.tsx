@@ -28,7 +28,7 @@ export default function PayrollPage() {
     <div className="w-full">
       <PageHeader title="Payroll" description="Monthly payroll with PAYE, SHIF, NSSF and the Housing Levy worked out, posted to the books, and payslips for staff." guide="payroll"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Link href={`/w/${slug}/payroll/rates`}><Button variant="secondary"><Settings className="h-4 w-4" /> Statutory rates</Button></Link>
             {can("payroll.manage") && <Button onClick={() => { create.reset(); setCreating(true); }}><Plus className="h-4 w-4" /> Run payroll</Button>}
           </div>
@@ -51,7 +51,7 @@ export default function PayrollPage() {
       </Card>
       <Modal open={creating} title="Run payroll" onClose={() => setCreating(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Month"><Select value={form.month} onChange={(e) => setForm((p) => ({ ...p, month: Number(e.target.value) }))}>{MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</Select></Field>
             <Field label="Year"><Select value={form.year} onChange={(e) => setForm((p) => ({ ...p, year: Number(e.target.value) }))}>{[now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1].map((y) => <option key={y} value={y}>{y}</option>)}</Select></Field>
           </div>

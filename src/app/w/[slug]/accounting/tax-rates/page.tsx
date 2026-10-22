@@ -68,9 +68,9 @@ export default function TaxRatesPage() {
       </Card>
       <Modal open={editing !== null} title={editing === "new" ? "New tax rate" : form.name} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Code" error={fieldError(save.error, "code")}><Input required value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} /></Field>
-            <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} /></Field></div>
+            <div className="sm:col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} /></Field></div>
             <Field label="Kind" error={fieldError(save.error, "kind")}>
               <Select value={form.kind} onChange={(e) => setForm((prev) => ({ ...prev, kind: e.target.value as Kind }))}>{Object.entries(KINDS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</Select>
             </Field>

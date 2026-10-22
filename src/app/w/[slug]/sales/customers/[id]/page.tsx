@@ -44,7 +44,7 @@ export default function CustomerPage() {
         description={`${c.number}${c.city ? ` · ${c.city}` : ""}`}
         guide="customers"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {can("customers.manage") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
             {can("customers.manage") && <Button variant="secondary" onClick={() => setSharing(true)}>Share statement</Button>}
             {can("payments.create") && <Link href={`/w/${slug}/sales/payments/new?customer=${c.id}`}><Button variant="secondary">Record payment</Button></Link>}

@@ -8,6 +8,7 @@ import { usePurchaseAccounts } from "@/lib/api/purchasing";
 import { useProducts, useVatRates } from "@/lib/api/sales";
 import type { PurchaseLine } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
+import { stack } from "@/lib/stack";
 
 import { priceLine } from "./lines-editor";
 import { QuickProductModal } from "./quick-product";
@@ -60,8 +61,8 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
   }
   return (
     <Card className="overflow-x-auto">
-      <table className="w-full min-w-[820px] text-sm">
-        <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
+      <table className={`${stack.table} md:min-w-[820px]`}>
+        <thead className={stack.head}>
           <tr>
             <th className="w-48 px-3 py-2 text-left">Product</th>
             <th className="px-3 py-2 text-left">Description</th>
@@ -73,20 +74,20 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
             <th className="w-10" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-100">
+        <tbody className={stack.body}>
           {lines.map((l, i) => {
             const product = (products.data?.results ?? []).find((p) => p.id === l.product_id);
             return (
-              <tr key={i}>
-                <td className="px-2 py-2">
+              <tr key={i} className={stack.row}>
+                <td data-label="Product" className={`${stack.cell} ${stack.wide}`}>
                   <Select value={l.product_id} onChange={(e) => pick(i, e.target.value)}>
                     <option value="">Free text</option>
                     <option value="__new">+ New product...</option>
                     {(products.data?.results ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </Select>
                 </td>
-                <td className="px-2 py-2"><Input value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
-                <td className="px-2 py-2">
+                <td data-label="Description" className={`${stack.cell} ${stack.wide}`}><Input value={l.description} onChange={(e) => update(i, { description: e.target.value })} /></td>
+                <td data-label="Qty" className={stack.cell}>
                   <Input inputMode="decimal" className="text-right" value={l.quantity} onChange={(e) => update(i, { quantity: e.target.value })} />
                   {product && (product.units ?? []).length > 0 && (
                     <Select aria-label="Unit" className="mt-1 py-1 text-xs" value={l.unit || product.unit || ""} onChange={(e) => pickUnit(i, e.target.value)}>
@@ -95,15 +96,15 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
                     </Select>
                   )}
                 </td>
-                <td className="px-2 py-2"><Input inputMode="decimal" className="text-right" value={l.unit_cost} onChange={(e) => update(i, { unit_cost: e.target.value })} /></td>
-                <td className="px-2 py-2">
+                <td data-label="Unit cost" className={stack.cell}><Input inputMode="decimal" className="text-right" value={l.unit_cost} onChange={(e) => update(i, { unit_cost: e.target.value })} /></td>
+                <td data-label="VAT" className={stack.cell}>
                   <Select value={l.tax_rate_id} onChange={(e) => update(i, { tax_rate_id: e.target.value })}>
                     <option value="">No VAT</option>
                     {vat.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                   </Select>
                 </td>
                 {accounts && (
-                  <td className="px-2 py-2">
+                  <td data-label="Charge to" className={`${stack.cell} ${stack.wide}`}>
                     {product?.track_inventory ? <span className="text-xs text-stone-500">Inventory</span> : (
                       <Select value={l.account_id} onChange={(e) => update(i, { account_id: e.target.value })}>
                         <option value="">{product ? "Cost of goods sold" : "Choose account"}</option>
@@ -112,8 +113,8 @@ export function PurchaseLinesEditor({ slug, lines, setLines, includeTax, setIncl
                     )}
                   </td>
                 )}
-                <td className="px-3 py-2 text-right font-mono">{fmt(priced[i].total)}</td>
-                <td className="px-1">
+                <td data-label="Amount" className={stack.amount}>{fmt(priced[i].total)}</td>
+                <td className={stack.remove}>
                   <button type="button" aria-label="Remove line" disabled={lines.length <= 1} className="rounded p-1.5 text-stone-400 hover:text-red-600 disabled:opacity-30"
                     onClick={() => setLines((prev) => prev.filter((_, n) => n !== i))}><Trash2 className="h-4 w-4" /></button>
                 </td>

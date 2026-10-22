@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { GoogleButton } from "@/components/google-button";
-import { Button, Field, FormError, Input } from "@/components/ui";
+import { Button, Field, FormError, Input, PasswordInput } from "@/components/ui";
 
 export function SignInForm({
   callbackUrl,
@@ -60,7 +60,7 @@ export function SignInForm({
           <Input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
         <Field label="Password">
-          <Input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <PasswordInput autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
         <FormError error={error} />
         <Button type="submit" className="w-full" loading={loading}>

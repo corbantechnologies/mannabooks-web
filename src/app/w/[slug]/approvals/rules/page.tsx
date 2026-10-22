@@ -76,7 +76,7 @@ export default function ApprovalRulesPage() {
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <Field label="Name"><Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Orders over 50,000" /></Field>
           <Field label="Applies to"><Select value={form.document_type} onChange={(e) => setForm((f) => ({ ...f, document_type: e.target.value }))}>{DOC_TYPES.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}</Select></Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="From amount"><Input type="number" min="0" step="0.01" value={form.min_amount} onChange={(e) => setForm((f) => ({ ...f, min_amount: e.target.value }))} /></Field>
             <Field label="Up to" hint="Blank: no upper limit."><Input type="number" min="0" step="0.01" value={form.max_amount} onChange={(e) => setForm((f) => ({ ...f, max_amount: e.target.value }))} /></Field>
           </div>
@@ -106,7 +106,7 @@ export default function ApprovalRulesPage() {
           <FormError error={save.error || remove.error} />
           <div className="flex justify-between gap-2">
             {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this rule? Requests already sent keep their chain.") && remove.mutate(editing.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save rule</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save rule</Button></div>
           </div>
         </form>
       </Modal>

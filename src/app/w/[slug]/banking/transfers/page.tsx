@@ -47,7 +47,7 @@ export default function TransfersPage() {
       </Card>
       <Modal open={open} title="Move money" onClose={() => setOpen(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="From"><Select required value={form.from_account_id} onChange={set("from_account_id")}><option value="">Choose</option>{active.map((a) => <option key={a.id} value={a.id}>{a.name} ({fmt(a.balance)})</option>)}</Select></Field>
             <Field label="To"><Select required value={form.to_account_id} onChange={set("to_account_id")}><option value="">Choose</option>{active.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</Select></Field>
             <Field label="Amount"><Input required inputMode="decimal" value={form.amount} onChange={set("amount")} /></Field>

@@ -77,7 +77,7 @@ export default function ServiceOrderPage() {
       <PurchaseLinesView lines={o.lines ?? []} subtotal={o.subtotal} tax={o.tax_total} total={o.total} />
       <Modal open={completing} title="Confirm the work is done" onClose={() => setCompleting(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); complete.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Finished on"><Input type="date" required value={done.completion_date} onChange={(e) => setDone((p) => ({ ...p, completion_date: e.target.value }))} /></Field>
             <Field label="How well was it done?">
               <Select value={done.rating} onChange={(e) => setDone((p) => ({ ...p, rating: e.target.value }))}>

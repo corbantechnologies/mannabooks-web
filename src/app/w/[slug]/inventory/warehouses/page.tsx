@@ -54,7 +54,7 @@ export default function WarehousesPage() {
       </Card>
       <Modal open={editing !== null} title={editing && editing !== "new" ? editing.name : "New warehouse"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field>
             <Field label="Code" hint="Blank: numbered for you."><Input value={form.code} onChange={set("code")} /></Field>
             <Field label="Branch"><Select value={form.branch_id} onChange={set("branch_id")}><option value="">None</option>{(branches.data?.results ?? []).map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</Select></Field>

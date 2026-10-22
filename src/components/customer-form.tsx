@@ -33,11 +33,11 @@ export function CustomerForm({ customer, onSaved, onCancel }: { customer?: Custo
 
   return (
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-      <div className="grid grid-cols-3 gap-3">
-        <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="sm:col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>
         <Field label="Type"><Select value={form.kind} onChange={set("kind")}><option value="company">Company</option><option value="individual">Individual</option></Select></Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} /></Field>
         <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
         <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")} hint="Needed on invoices to VAT-registered customers."><Input value={form.kra_pin} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" onChange={set("kra_pin")} /></Field>

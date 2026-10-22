@@ -32,9 +32,9 @@ export default function WorkReportsPage() {
       <PageHeader title="Work reports" guide="work-reports"
         description="Reports your manager asks you for, and the ones you ask your team for: weekly sales, site visits, monthly summaries."
         actions={can("workreports.request") && <Link href={`/w/${slug}/work-reports/new`}><Button><Plus className="h-4 w-4" /> Ask for a report</Button></Link>} />
-      <div className="mb-4 flex gap-1 border-b border-stone-200">
+      <div className="mb-4 flex gap-1 overflow-x-auto border-b border-stone-200">
         {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={clsx("-mb-px border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
+          <button key={t.key} onClick={() => setTab(t.key)} className={clsx("-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
         ))}
       </div>
       {tab === "requests" ? (

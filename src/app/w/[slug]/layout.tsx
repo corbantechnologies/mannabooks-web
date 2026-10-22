@@ -74,10 +74,11 @@ import {
   ShieldCheck,
   UserCog,
   Users,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PeriodFixDialog } from "@/components/period-fix-dialog";
 import { PeriodSwitcher } from "@/components/period-switcher";
@@ -239,6 +240,12 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const slug = useWorkspaceSlug();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   const ctx = useWorkspaceContextQuery(slug);
 
   if (ctx.isLoading) {
@@ -316,8 +323,8 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
     <WorkspaceProvider slug={slug} context={context}>
       <PeriodProvider slug={slug} context={context}>
       <TopBar>
-        <button className="rounded p-1.5 text-stone-600 hover:bg-stone-100 md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
-          <Menu className="h-5 w-5" />
+        <button className="rounded p-1.5 text-stone-600 hover:bg-stone-100 md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Menu"} aria-expanded={menuOpen}>
+          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
         <Link
           href="/workspaces"
@@ -331,8 +338,20 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
       </TopBar>
       <div className="flex">
         <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>
-        {menuOpen && <aside className="fixed inset-x-0 top-14 z-20 border-b border-stone-200 bg-white shadow md:hidden">{nav}</aside>}
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-8"><SubscriptionBanner />{children}</main>
+        {menuOpen && (
+          <div className="fixed inset-0 top-14 z-40 md:hidden">
+            <button type="button" aria-label="Close menu" className="absolute inset-0 bg-stone-900/30" onClick={() => setMenuOpen(false)} />
+            <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col overflow-y-auto border-r border-stone-200 bg-white shadow-xl">
+              <Link href="/workspaces" onClick={() => setMenuOpen(false)}
+                className="mx-3 mt-3 flex items-center justify-between gap-2 rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50">
+                <span className="truncate font-medium">{context.workspace.name}</span>
+                <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
+              </Link>
+              {nav}
+            </aside>
+          </div>
+        )}
+        <main className="min-w-0 flex-1 px-3 py-5 sm:px-6 sm:py-6 lg:px-8"><SubscriptionBanner />{children}</main>
         <PeriodFixDialog />
       </div>
       </PeriodProvider>

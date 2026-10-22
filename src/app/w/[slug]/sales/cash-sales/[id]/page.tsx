@@ -37,7 +37,7 @@ export default function CashSalePage() {
         description={r.customer_name || "Walk-in customer"}
         guide="cash-sales"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {r.status === "issued" && can("receipts.create") && <SendEmailButton docType="cash_sale" id={r.id} />}
             <Link href={`/w/${slug}/sales/cash-sales/${r.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
             {r.status === "issued" && can("receipts.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}

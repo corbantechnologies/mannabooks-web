@@ -59,7 +59,7 @@ export default function JournalDetailPage() {
         description={e.description}
         guide="journal-entries"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {e.status === "draft" && can("journals.create") && (
               <>
                 <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this draft?") && remove.mutate()}>Delete</Button>

@@ -37,7 +37,7 @@ export default function CreditNotePage() {
         description={c.customer_name}
         guide="credit-notes"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {c.status === "issued" && can("creditnotes.create") && <SendEmailButton docType="credit_note" id={c.id} />}
             <Link href={`/w/${slug}/sales/credit-notes/${c.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
             {c.status === "issued" && can("creditnotes.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
-import { Button, Field, FormError, Input } from "@/components/ui";
+import { Button, Field, FormError, PasswordInput } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 
 function ResetForm() {
@@ -21,7 +21,7 @@ function ResetForm() {
     try {
       unwrap(
         await api.POST("/api/v1/auth/password/reset/confirm/", {
-          body: { uid: params.get("uid") || "", token: params.get("token") || "", new_password: password },
+          body: { uid: uid ?? "", token: token ?? "", new_password: password },
         }),
       );
       setDone(true);
@@ -32,6 +32,18 @@ function ResetForm() {
     }
   }
 
+  const uid = params.get("uid");
+  const token = params.get("token");
+  if (!uid || !token) {
+    return (
+      <div className="space-y-3">
+        <h1 className="text-lg font-semibold">This link is incomplete</h1>
+        <p className="text-sm text-stone-600">Open the link from the email exactly as it is, or ask for a new one.</p>
+        <Link href="/forgot-password" className="text-sm font-medium text-brand-700 hover:underline">Send me a new reset link</Link>
+      </div>
+    );
+  }
+  const expired = Boolean(fieldError(error, "token"));
   if (done) {
     return (
       <div className="space-y-3">
@@ -45,10 +57,14 @@ function ResetForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <h1 className="text-lg font-semibold">Choose a new password</h1>
-      <Field label="New password" error={fieldError(error, "new_password") || fieldError(error, "token")}>
-        <Input type="password" required autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <Field label="New password" hint="At least 8 characters; not too common." error={fieldError(error, "new_password")}>
+        <PasswordInput required autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
       </Field>
-      <FormError error={error} />
+      {expired ? (
+        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          This reset link has expired or was already used. <Link href="/forgot-password" className="font-medium underline">Send me a new one</Link>.
+        </p>
+      ) : !fieldError(error, "new_password") && <FormError error={error} />}
       <Button type="submit" className="w-full" loading={loading}>
         Save password
       </Button>

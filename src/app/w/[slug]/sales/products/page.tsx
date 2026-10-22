@@ -72,7 +72,7 @@ export default function ProductsPage() {
         description="What you sell, with its price and VAT. Lines on quotations, invoices and cash sales fill in from here."
         guide="products"
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Link href={`/w/${slug}/sales/catalogue`}><Button variant="secondary"><Tags className="h-4 w-4" /> Categories and units</Button></Link>
             {manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New product</Button>}
           </div>
@@ -110,8 +110,8 @@ export default function ProductsPage() {
       </Card>
       <Modal size="lg" open={editing !== null} title={current ? current.name : "New product or service"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-2"><Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field></div>
             <Field label="Code (SKU)" hint="Blank: numbered for you (SKU-00001)." error={fieldError(save.error, "code")}><Input value={form.code} onChange={set("code")} /></Field>
             <Field label="Type"><Select value={form.kind} onChange={set("kind")}><option value="goods">Goods</option><option value="service">Service</option></Select></Field>
             <Field label="Unit" error={fieldError(save.error, "unit")}>
@@ -135,7 +135,7 @@ export default function ProductsPage() {
           {form.kind === "goods" && form.track_inventory && (editing === "new" || Number((editing as Product | null)?.stock_on_hand ?? 0) === 0) && (
             <div className="space-y-2 rounded-md bg-stone-50 p-3">
               <p className="text-sm font-medium text-stone-800">Stock you already have</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Quantity on hand" error={fieldError(save.error, "opening_quantity")}><Input inputMode="decimal" value={form.opening_quantity} onChange={set("opening_quantity")} placeholder="0" /></Field>
                 <Field label="Cost of each" hint="Blank: the cost price." error={fieldError(save.error, "opening_unit_cost")}><Input inputMode="decimal" value={form.opening_unit_cost} onChange={set("opening_unit_cost")} /></Field>
               </div>
@@ -180,7 +180,7 @@ export default function ProductsPage() {
               {(categories.data?.results ?? []).filter((c) => c.is_active).map((c) => <option key={c.id} value={c.id}>{c.parent_name ? `${c.parent_name} › ` : ""}{c.name}</option>)}
             </Select>
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="VAT" error={fieldError(save.error, "tax_rate_id")}>
               <Select value={form.tax_rate_id} onChange={set("tax_rate_id")}>
                 <option value="">Workspace default</option>
@@ -200,7 +200,7 @@ export default function ProductsPage() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this product?") && remove.mutate(current.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
       </Modal>

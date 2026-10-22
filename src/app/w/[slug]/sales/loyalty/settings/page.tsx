@@ -103,7 +103,7 @@ function Tiers() {
       </Card>
       <Modal open={editing !== null} title={editing && editing !== "new" ? editing.name : "New tier"} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="Gold" /></Field>
             <Field label="From points" error={fieldError(save.error, "min_points")}><Input type="number" min={0} value={form.min_points} onChange={(e) => setForm((prev) => ({ ...prev, min_points: Number(e.target.value) }))} /></Field>
             <Field label="Earn rate" hint="1.5 = 50% more." error={fieldError(save.error, "multiplier")}><Input inputMode="decimal" value={form.multiplier} onChange={(e) => setForm((prev) => ({ ...prev, multiplier: e.target.value }))} /></Field>
@@ -112,7 +112,7 @@ function Tiers() {
           <FormError error={save.error ?? remove.error} />
           <div className="flex justify-between gap-2">
             {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this tier?") && remove.mutate(editing.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
       </Modal>

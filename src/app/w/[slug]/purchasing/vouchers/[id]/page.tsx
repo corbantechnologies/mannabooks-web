@@ -69,7 +69,7 @@ export default function VoucherPage() {
       </Card>
       <Modal open={paying} title={`Pay ${fmt(v.net_payable)} to ${v.supplier_name}`} onClose={() => setPaying(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); act.mutate("pay"); }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Paid on"><Input type="date" required value={pay.payment_date} onChange={(e) => setPay((p) => ({ ...p, payment_date: e.target.value }))} /></Field>
             <Field label="Method"><Select value={pay.method} onChange={(e) => setPay((p) => ({ ...p, method: e.target.value, paid_from_id: "" }))}>{PAY_METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
             <Field label="Paid from" error={fieldError(act.error, "paid_from_id")}>

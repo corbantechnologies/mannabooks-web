@@ -115,7 +115,7 @@ export default function BankAccountPage() {
       <Modal open={reconciling} title={`Reconcile ${a.name}`} onClose={() => setReconciling(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); start.mutate(); }}>
           <p className="text-sm text-stone-600">Take the closing balance and date from your bank or M-Pesa statement.</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Statement date"><Input type="date" required value={rec.statement_date} onChange={(e) => setRec((p) => ({ ...p, statement_date: e.target.value }))} /></Field>
             <Field label="Closing balance on the statement"><Input required inputMode="decimal" value={rec.statement_balance} onChange={(e) => setRec((p) => ({ ...p, statement_balance: e.target.value }))} /></Field>
           </div>
@@ -147,7 +147,7 @@ function MatchModal({ line, onClose }: { line: BankStatementLine; onClose: () =>
       <div className="space-y-5">
         <p className="text-sm text-stone-700">{line.description} <span className="font-mono text-xs text-stone-500">{line.reference}</span></p>
         {line.status !== "unmatched" ? (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {line.status === "matched" && <Button variant="secondary" loading={act.isPending} onClick={() => act.mutate({ action: "unmatch" })}>Unmatch</Button>}
             {line.status === "excluded" && <Button variant="secondary" loading={act.isPending} onClick={() => act.mutate({ action: "include" })}>Stop ignoring</Button>}
           </div>
@@ -169,7 +169,7 @@ function MatchModal({ line, onClose }: { line: BankStatementLine; onClose: () =>
             </div>
             <form className="space-y-3 border-t border-stone-200 pt-4" onSubmit={(e) => { e.preventDefault(); act.mutate({ action: "record", account_id: record.account_id, tax_rate_id: record.tax_rate_id || null, description: record.description }); }}>
               <h3 className="text-sm font-semibold">Not in the books: record it as {out ? "an expense" : "other income"}</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Account"><Select required value={record.account_id} onChange={(e) => setRecord((p) => ({ ...p, account_id: e.target.value }))}><option value="">Choose</option><AccountOptions accounts={chart} /></Select></Field>
                 <Field label="VAT"><Select value={record.tax_rate_id} onChange={(e) => setRecord((p) => ({ ...p, tax_rate_id: e.target.value }))}><option value="">No VAT</option>{(rates.data?.results ?? []).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</Select></Field>
               </div>

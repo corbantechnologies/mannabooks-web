@@ -47,7 +47,7 @@ export default function ProjectPage() {
     <div className="w-full">
       <Link href={`/w/${slug}/projects`} className="text-sm text-stone-500 hover:underline">&larr; Projects</Link>
       <PageHeader title={`${p.code} ${p.name}`} description={p.description || undefined} guide="projects"
-        actions={can("projects.manage") && <div className="flex gap-2">
+        actions={can("projects.manage") && <div className="flex flex-wrap gap-2">
           <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this project?") && remove.mutate()}>Delete</Button>
           <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
         </div>} />

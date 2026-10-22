@@ -34,7 +34,7 @@ export default function ProductionOrderPage() {
       <Link href={`/w/${slug}/manufacturing/production`} className="text-sm text-stone-500 hover:underline">&larr; Production</Link>
       <PageHeader title={`Production ${o.number}`} description={`${Number(o.quantity)} × ${o.product_name}`} guide="manufacturing"
         actions={planned && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel</Button>
             <Button loading={act.isPending} onClick={() => act.mutate("complete")}>Complete</Button>
           </div>

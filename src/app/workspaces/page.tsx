@@ -34,9 +34,9 @@ export default function WorkspacesPage() {
           description="A workspace is one business. Open one, or create a new one for another business."
           guide="getting-started"
           actions={
-            <div className="flex gap-2">
-              {workspaces.length > 1 && <Link href="/groups"><Button variant="secondary">Company groups</Button></Link>}
-              <Button onClick={() => setOpen(true)}>
+            <div className="flex w-full gap-2 sm:w-auto">
+              {workspaces.length > 1 && <Link href="/groups" className="flex-1 sm:flex-none"><Button variant="secondary" className="w-full">Company groups</Button></Link>}
+              <Button className="flex-1 sm:flex-none" onClick={() => setOpen(true)}>
                 <Plus className="h-4 w-4" /> New workspace
               </Button>
             </div>

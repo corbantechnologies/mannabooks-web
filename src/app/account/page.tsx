@@ -5,7 +5,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { TopBar } from "@/components/top-bar";
-import { Button, Card, ErrorState, Field, FormError, Input, PageHeader, Spinner } from "@/components/ui";
+import { Button, Card, ErrorState, Field, FormError, Input, PageHeader, PasswordInput, Spinner } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { User } from "@/lib/api/types";
 
@@ -76,11 +76,11 @@ function AccountForms({ user }: { user: User }) {
           {!user.has_password && <p className="text-sm text-stone-600">You sign in with Google. A password lets you sign in with email too.</p>}
           {user.has_password && (
             <Field label="Current password" error={fieldError(changePw.error, "current_password")}>
-              <Input type="password" autoComplete="current-password" value={pw.current_password} onChange={(e) => setPw((prev) => ({ ...prev, current_password: e.target.value }))} />
+              <PasswordInput autoComplete="current-password" value={pw.current_password} onChange={(e) => setPw((prev) => ({ ...prev, current_password: e.target.value }))} />
             </Field>
           )}
           <Field label="New password" error={fieldError(changePw.error, "new_password")}>
-            <Input type="password" autoComplete="new-password" required value={pw.new_password} onChange={(e) => setPw((prev) => ({ ...prev, new_password: e.target.value }))} />
+            <PasswordInput autoComplete="new-password" required value={pw.new_password} onChange={(e) => setPw((prev) => ({ ...prev, new_password: e.target.value }))} />
           </Field>
           <FormError error={changePw.error} />
           <Button type="submit" loading={changePw.isPending}>

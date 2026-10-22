@@ -59,9 +59,9 @@ export default function CostCentresPage() {
       </Card>
       <Modal open={editing !== null} title={editing === "new" ? "New cost centre" : "Edit cost centre"} onClose={() => setEditing(null)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Code" hint="Blank: numbered for you." error={fieldError(save.error, "code")}><Input value={f.code} onChange={(e) => setF((x) => ({ ...x, code: e.target.value }))} placeholder="VAN1" /></Field>
-            <div className="col-span-2"><Field label="Name"><Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} placeholder="Delivery van KDA 123A" /></Field></div>
+            <div className="sm:col-span-2"><Field label="Name"><Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} placeholder="Delivery van KDA 123A" /></Field></div>
           </div>
           <Field label="Department (optional)"><Select value={f.department_id} onChange={(e) => setF((x) => ({ ...x, department_id: e.target.value }))}><option value="">None</option>{(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</Select></Field>
           <Field label="Description"><Input value={f.description} onChange={(e) => setF((x) => ({ ...x, description: e.target.value }))} /></Field>
@@ -69,7 +69,7 @@ export default function CostCentresPage() {
           <FormError error={save.error || remove.error} />
           <div className="flex justify-between gap-2">
             {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this cost centre?") && remove.mutate(editing.id)}>Delete</Button> : <span />}
-            <div className="flex gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+            <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
       </Modal>

@@ -98,7 +98,7 @@ export function PaymentOptions() {
             {editing && editing !== "new"
               ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Remove this payment option?") && remove.mutate(editing.id)}>Remove</Button>
               : <span />}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
               <Button type="submit" loading={save.isPending}>Save</Button>
             </div>

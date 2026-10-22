@@ -69,10 +69,10 @@ export default function BillingPage() {
               <p className="mt-3"><span className="text-2xl font-bold">{p.is_free ? "Free" : `KES ${fmt(p.price_monthly).replace(".00", "")}`}</span>{!p.is_free && <span className="text-sm text-stone-500"> a month</span>}</p>
               {!p.is_free && <p className="text-xs text-stone-500">or KES {fmt(p.price_yearly).replace(".00", "")} a year</p>}
               <ul className="mt-3 flex-1 space-y-1 text-sm text-stone-700">
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{p.max_users ? `${p.max_users} team member${p.max_users === 1 ? "" : "s"}` : "Unlimited team"}, plus free accountant seats</li>
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{p.max_documents_month ? `${p.max_documents_month} documents a month` : "Unlimited documents"}</li>
-                {modules.map((m) => <li key={m} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{MODULE_LABEL[m] ?? m}{m === "people" && Number(p.payroll_per_employee) ? ` (+KES ${Number(p.payroll_per_employee)} per employee)` : ""}</li>)}
-                {((p.features as string[]) ?? []).includes("company_groups") && <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />Company groups</li>}
+                <li className="flex flex-wrap gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{p.max_users ? `${p.max_users} team member${p.max_users === 1 ? "" : "s"}` : "Unlimited team"}, plus free accountant seats</li>
+                <li className="flex flex-wrap gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{p.max_documents_month ? `${p.max_documents_month} documents a month` : "Unlimited documents"}</li>
+                {modules.map((m) => <li key={m} className="flex flex-wrap gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />{MODULE_LABEL[m] ?? m}{m === "people" && Number(p.payroll_per_employee) ? ` (+KES ${Number(p.payroll_per_employee)} per employee)` : ""}</li>)}
+                {((p.features as string[]) ?? []).includes("company_groups") && <li className="flex flex-wrap gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600" />Company groups</li>}
               </ul>
               <div className="mt-4">
                 {p.is_free ? (

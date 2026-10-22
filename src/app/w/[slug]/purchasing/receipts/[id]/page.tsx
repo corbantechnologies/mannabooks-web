@@ -32,7 +32,7 @@ export default function GoodsReceiptPage() {
       <Link href={`/w/${slug}/purchasing/receipts`} className="text-sm text-stone-500 hover:underline">&larr; Goods received</Link>
       <PageHeader title={`Goods received ${g.number}`} description={g.supplier_name} guide="goods-received"
         actions={g.status === "posted" && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {can("goodsreceipts.manage") && <Button variant="ghost" className="text-red-600" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
             {!g.is_billed && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?receipt=${g.id}`}><Button>Enter their bill</Button></Link>}
           </div>

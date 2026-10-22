@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, PageHeader, Select, Spinner } from "@/components/ui";
+import { Badge, Button, Card, ErrorState, Field, FormError, Input, PageHeader, PasswordInput, Select, Spinner } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useDepositAccounts } from "@/lib/api/sales";
 import type { MpesaConnection } from "@/lib/api/types";
@@ -60,9 +60,9 @@ function ConnectionForm({ conn }: { conn: MpesaConnection }) {
           <Field label="Environment"><Select value={form.environment} onChange={set("environment")}><option value="sandbox">Sandbox (testing)</option><option value="production">Production</option></Select></Field>
           <Field label={form.shortcode_type === "till" ? "Store number (head office)" : "Paybill number"} error={fieldError(save.error, "shortcode")}><Input required inputMode="numeric" value={form.shortcode} onChange={set("shortcode")} /></Field>
           {form.shortcode_type === "till" && <Field label="Till number" error={fieldError(save.error, "till_number")}><Input required inputMode="numeric" value={form.till_number} onChange={set("till_number")} /></Field>}
-          <Field label="Consumer key" hint={saved} error={fieldError(save.error, "consumer_key")}><Input type="password" autoComplete="off" value={form.consumer_key} onChange={set("consumer_key")} /></Field>
-          <Field label="Consumer secret" hint={saved} error={fieldError(save.error, "consumer_secret")}><Input type="password" autoComplete="off" value={form.consumer_secret} onChange={set("consumer_secret")} /></Field>
-          <Field label="Passkey (Lipa na M-Pesa Online)" hint={saved} error={fieldError(save.error, "passkey")}><Input type="password" autoComplete="off" value={form.passkey} onChange={set("passkey")} /></Field>
+          <Field label="Consumer key" hint={saved} error={fieldError(save.error, "consumer_key")}><PasswordInput autoComplete="off" value={form.consumer_key} onChange={set("consumer_key")} /></Field>
+          <Field label="Consumer secret" hint={saved} error={fieldError(save.error, "consumer_secret")}><PasswordInput autoComplete="off" value={form.consumer_secret} onChange={set("consumer_secret")} /></Field>
+          <Field label="Passkey (Lipa na M-Pesa Online)" hint={saved} error={fieldError(save.error, "passkey")}><PasswordInput autoComplete="off" value={form.passkey} onChange={set("passkey")} /></Field>
           <Field label="Money lands in" hint="Blank: the M-Pesa account." error={fieldError(save.error, "deposit_account_id")}>
             <Select value={form.deposit_account_id} onChange={set("deposit_account_id")}>
               <option value="">M-Pesa account</option>

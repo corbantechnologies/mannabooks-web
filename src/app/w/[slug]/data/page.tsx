@@ -70,7 +70,7 @@ export default function DataPage() {
           <p className="text-sm text-stone-600">{KINDS.find(([k]) => k === kind)?.[3]} <button type="button" className="text-brand-700 underline" onClick={() => download(`imports/templates/${kind}/`)}>Download the template</button></p>
           <Field label="CSV file"><Input type="file" accept=".csv,text/csv" onChange={(e) => { setFile(e.target.files?.[0] ?? null); setResult(null); }} /></Field>
           <FormError error={send.error} />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="secondary" disabled={!file} loading={send.isPending && send.variables === false} onClick={() => send.mutate(false)}>Check the file</Button>
             <Button disabled={!file || (result !== null && result.status === "failed")} loading={send.isPending && send.variables === true} onClick={() => send.mutate(true)}><Upload className="h-4 w-4" /> Import</Button>
           </div>
