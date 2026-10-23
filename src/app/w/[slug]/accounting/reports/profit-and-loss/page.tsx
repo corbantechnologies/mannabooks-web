@@ -25,14 +25,15 @@ export default function ProfitAndLossPage() {
     if (period.from && period.to) { setRange({ from: period.from, to: period.to }); setPreset("custom"); }
   }
   const [compare, setCompare] = useState<"none" | "previous_period" | "previous_year">("previous_year");
-  const [dims, setDims] = useState({ cost_center: "", project: "", branch: "" });
+  const [dims, setDims] = useState({ department: "", cost_center: "", project: "", branch: "" });
   const centres = useCostCenters(slug);
   const projects = useProjects(slug);
+  const departments = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })) });
   const branches = useQuery({ queryKey: ["branches", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/branches/", { params: { path: { workspace: slug } } })) });
   const pl = useQuery({
     queryKey: ["profit-and-loss", slug, range, compare, dims],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/profit-and-loss/", {
-      params: { path: { workspace: slug }, query: { from: range.from, to: range.to, compare, cost_center: dims.cost_center || undefined, project: dims.project || undefined, branch: dims.branch || undefined } },
+      params: { path: { workspace: slug }, query: { from: range.from, to: range.to, compare, department: dims.department || undefined, cost_center: dims.cost_center || undefined, project: dims.project || undefined, branch: dims.branch || undefined } },
     })),
   });
   const d = pl.data;
@@ -45,7 +46,7 @@ export default function ProfitAndLossPage() {
     { kind: "section", section: d.sections[3] }, { kind: "section", section: d.sections[4] },
     { kind: "total", label: "Net profit", amount: d.net_profit, compare: d.compare_net_profit, strong: true },
   ] : [];
-  const scope = [centres.data?.find((c) => c.id === dims.cost_center)?.name, projects.data?.results.find((p) => p.id === dims.project)?.name,
+  const scope = [(departments.data?.results ?? []).find((x) => x.id === dims.department)?.name, centres.data?.find((c) => c.id === dims.cost_center)?.name, projects.data?.results.find((p) => p.id === dims.project)?.name,
     (branches.data?.results ?? []).find((b) => b.id === dims.branch)?.name].filter(Boolean).join(", ");
   return (
     <div className="w-full">
@@ -62,6 +63,7 @@ export default function ProfitAndLossPage() {
         <Field label="From"><Input type="date" value={range.from} onChange={(e) => { setPreset("custom"); setRange((r) => ({ ...r, from: e.target.value })); }} /></Field>
         <Field label="To"><Input type="date" value={range.to} onChange={(e) => { setPreset("custom"); setRange((r) => ({ ...r, to: e.target.value })); }} /></Field>
         <Field label="Compare with"><Select value={compare} onChange={(e) => setCompare(e.target.value as never)}><option value="none">Nothing</option><option value="previous_period">Previous period</option><option value="previous_year">Same period last year</option></Select></Field>
+        {(departments.data?.results ?? []).length > 1 && !context.limited_department && <Field label="Department"><Select value={dims.department} onChange={(e) => setDims((x) => ({ ...x, department: e.target.value }))}><option value="">All</option>{departments.data!.results.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>}
         {(centres.data ?? []).length > 0 && <Field label="Cost centre"><Select value={dims.cost_center} onChange={(e) => setDims((x) => ({ ...x, cost_center: e.target.value }))}><option value="">All</option>{centres.data!.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>}
         {(projects.data?.results ?? []).length > 0 && <Field label="Project"><Select value={dims.project} onChange={(e) => setDims((x) => ({ ...x, project: e.target.value }))}><option value="">All</option>{projects.data!.results.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</Select></Field>}
         {(branches.data?.results ?? []).length > 1 && <Field label="Branch"><Select value={dims.branch} onChange={(e) => setDims((x) => ({ ...x, branch: e.target.value }))}><option value="">All</option>{branches.data!.results.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</Select></Field>}

@@ -6,9 +6,10 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 import { api, unwrap } from "@/lib/api/client";
+import { MONTHS } from "@/lib/api/people";
 import { useWorkspace } from "@/lib/workspace";
 
-import { Button, Card } from "./ui";
+import { Button, Card, Select } from "./ui";
 
 interface Goal { key: string; label: string; description: string; modules: string[] }
 
@@ -26,7 +27,7 @@ function useCount(slug: string, path: string, enabled = true) {
   });
 }
 
-type Step = { key: string; label: string; href: string; done: boolean };
+type Step = { key: string; label: string; href: string; done: boolean; /** Shown beside the label instead of a link, while not done. */ control?: React.ReactNode };
 
 /**
  * New businesses first choose what they want to do; that switches on the right modules and gives a short
@@ -42,6 +43,11 @@ export function SetupGuide() {
     mutationFn: async (key: string) => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { business_goal: key } as never })),
     onSuccess: (_, key) => toast.success(`Set up for: ${goals.find((g) => g.key === key)?.label}. Change it any time in Settings.`),
   });
+  const setYear = useMutation({
+    mutationFn: async (month: number) => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { fiscal_year_start_month: month } as never })),
+    onSuccess: (_, month) => toast.success(`Your financial year now starts in ${MONTHS[month - 1]}.`),
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Couldn't change the financial year."),
+  });
   const n = {
     payOptions: useCount(slug, "payment-options/", Boolean(goal)),
     customers: useCount(slug, "customers/", ["invoicing", "projects", "everything"].includes(goal)),
@@ -55,32 +61,44 @@ export function SetupGuide() {
     employees: useCount(slug, "employees/", ["payroll", "everything"].includes(goal)),
     payruns: useCount(slug, "pay-runs/", goal === "payroll"),
     members: useCount(slug, "members/", goal === "everything"),
+    journals: useCount(slug, "journals/", Boolean(goal)),  // the start month locks once anything is posted
   };
   const has = (q: { data?: number }) => (q.data ?? 0) > 0;
+  const startMonth = ws.fiscal_year_start_month ?? 1;
+  const year: Step = {
+    key: "year", href: "/settings", done: has(n.journals),
+    label: has(n.journals) ? `Financial year starts in ${MONTHS[startMonth - 1]}` : "Check when your financial year starts (it can't change once you record anything)",
+    control: (
+      <Select aria-label="Financial year starts in" className="w-auto py-1 text-sm" value={startMonth} disabled={setYear.isPending}
+        onChange={(e) => setYear.mutate(Number(e.target.value))}>
+        {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+      </Select>
+    ),
+  };
   const details: Step = { key: "details", label: "Add your KRA PIN and business details", href: "/settings", done: Boolean(ws.kra_pin) };
   const pay: Step = { key: "pay", label: "Add how customers pay you (paybill, till or bank)", href: "/settings", done: has(n.payOptions) };
   const plans: Record<string, Step[]> = {
-    invoicing: [details, pay,
+    invoicing: [year, details, pay,
       { key: "customer", label: "Add your first customer", href: "/sales/customers", done: has(n.customers) },
       { key: "invoice", label: "Create an invoice and send it by email", href: "/sales/invoices/new", done: has(n.invoices) }],
-    shop: [details, pay,
+    shop: [year, details, pay,
       { key: "products", label: "Add your products, with the stock you have", href: "/sales/products", done: has(n.products) },
       { key: "till", label: "Open a till shift and make a sale", href: "/pos", done: has(n.shifts) }],
-    stock: [details,
+    stock: [year, details,
       { key: "products", label: "Add your products, with the stock you have", href: "/sales/products", done: has(n.products) },
       { key: "receive", label: "Record goods received from a supplier", href: "/purchasing/receipts/new", done: has(n.receipts) }],
-    projects: [details, pay,
+    projects: [year, details, pay,
       { key: "customer", label: "Add a client", href: "/sales/customers", done: has(n.customers) },
       { key: "project", label: "Start a project", href: "/projects", done: has(n.projects) },
       { key: "invoice", label: "Invoice the client for the project", href: "/sales/invoices/new", done: has(n.invoices) }],
-    manufacturing: [details,
+    manufacturing: [year, details,
       { key: "products", label: "Add your raw materials and finished products", href: "/sales/products", done: has(n.products) },
       { key: "recipe", label: "Write a recipe for a product", href: "/manufacturing/recipes", done: has(n.recipes) },
       { key: "production", label: "Record your first production", href: "/manufacturing/production", done: has(n.production) }],
-    payroll: [details,
+    payroll: [year, details,
       { key: "employees", label: "Add your staff with their salaries", href: "/employees", done: has(n.employees) },
       { key: "payrun", label: "Run this month's payroll", href: "/payroll", done: has(n.payruns) }],
-    everything: [details, pay,
+    everything: [year, details, pay,
       { key: "invoice", label: "Create your first invoice", href: "/sales/invoices/new", done: has(n.invoices) },
       { key: "employees", label: "Add your staff", href: "/employees", done: has(n.employees) },
       { key: "team", label: "Invite your team", href: "/team", done: (n.members.data ?? 0) > 1 }],
@@ -119,10 +137,18 @@ export function SetupGuide() {
       <ul className="mt-4 space-y-2">
         {steps.map((step) => (
           <li key={step.key}>
-            <Link href={`/w/${slug}${step.href}`} className="flex items-center gap-2.5 text-sm hover:underline">
-              {step.done ? <CheckCircle2 className="h-4 w-4 text-brand-600" /> : <Circle className="h-4 w-4 text-stone-300" />}
-              <span className={step.done ? "text-stone-400 line-through" : "text-stone-800"}>{step.label}</span>
-            </Link>
+            {step.control && !step.done ? (
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm">
+                <Circle className="h-4 w-4 shrink-0 text-stone-300" />
+                <span className="text-stone-800">{step.label}</span>
+                {step.control}
+              </div>
+            ) : (
+              <Link href={`/w/${slug}${step.href}`} className="flex items-center gap-2.5 text-sm hover:underline">
+                {step.done ? <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-600" /> : <Circle className="h-4 w-4 shrink-0 text-stone-300" />}
+                <span className={step.done ? "text-stone-400 line-through" : "text-stone-800"}>{step.label}</span>
+              </Link>
+            )}
           </li>
         ))}
       </ul>
