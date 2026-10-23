@@ -5521,6 +5521,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/reports/profit-and-loss/by/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Profit and loss side by side: a column per department (or cost centre, branch or project), lines not tagged, and the total. */
+        get: operations["w_reports_profit_and_loss_by_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/trial-balance/": {
         parameters: {
             query?: never;
@@ -8872,12 +8889,12 @@ export interface components {
         ImportJob: {
             /** Format: uuid */
             readonly id: string;
-            readonly kind: components["schemas"]["KindC09Enum"];
+            readonly kind: components["schemas"]["Kind3e9Enum"];
             readonly filename: string;
             readonly status: components["schemas"]["ImportJobStatusEnum"];
             readonly total_rows: number;
             readonly imported_rows: number;
-            /** @description Already there (same name or code), left as they were */
+            /** @description Already there (or unchanged), left as they were */
             readonly skipped_rows: number;
             /** @description [{row, message}] */
             readonly errors: unknown;
@@ -8906,7 +8923,7 @@ export interface components {
             amount: string;
         };
         ImportUploadRequest: {
-            kind: components["schemas"]["KindC09Enum"];
+            kind: components["schemas"]["Kind3e9Enum"];
             /** Format: binary */
             file: string;
             /** @default false */
@@ -9322,9 +9339,19 @@ export interface components {
          *     * `suppliers` - Suppliers
          *     * `products` - Products and services
          *     * `opening_balances` - Opening balances
+         *     * `employees` - Employees
+         *     * `leads` - Leads
+         *     * `accounts` - Chart of accounts
+         *     * `fixed_assets` - Fixed assets
+         *     * `product_prices` - Product prices and price lists
+         *     * `product_units` - Product units (cartons, crates)
+         *     * `recipes` - Recipes
+         *     * `stock_counts` - Stock counts
+         *     * `open_invoices` - Unpaid invoices from the previous system
+         *     * `open_bills` - Unpaid bills from the previous system
          * @enum {string}
          */
-        KindC09Enum: "customers" | "suppliers" | "products" | "opening_balances";
+        Kind3e9Enum: "customers" | "suppliers" | "products" | "opening_balances" | "employees" | "leads" | "accounts" | "fixed_assets" | "product_prices" | "product_units" | "recipes" | "stock_counts" | "open_invoices" | "open_bills";
         Lead: {
             /** Format: uuid */
             readonly id: string;
@@ -9550,6 +9577,11 @@ export interface components {
             /** Format: decimal */
             balance: string;
         };
+        Limit: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
         /**
          * @description * `match` - match
          *     * `unmatch` - unmatch
@@ -9743,6 +9775,12 @@ export interface components {
              * @description Documents above this amount go to the module in-charge for approval.
              */
             approval_limit?: string;
+            /**
+             * Format: uuid
+             * @description Sees only this department's documents and reports. Null: the whole business.
+             */
+            limited_department_id?: string | null;
+            readonly limited_department_name: string;
             readonly employee_id: string | null;
             /** Format: date-time */
             readonly created_at: string;
@@ -11796,6 +11834,11 @@ export interface components {
              * @description Documents above this amount go to the module in-charge for approval.
              */
             approval_limit?: string;
+            /**
+             * Format: uuid
+             * @description Sees only this department's documents and reports. Null: the whole business.
+             */
+            limited_department_id?: string | null;
         };
         PatchedPaymentOptionRequest: {
             kind?: components["schemas"]["PaymentOptionKindEnum"];
@@ -13225,6 +13268,20 @@ export interface components {
             /** Format: decimal */
             compare_net_profit: string;
         };
+        ProfitAndLossByDimension: {
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            dimension: string;
+            dimension_label: string;
+            columns: components["schemas"]["SideBySideColumn"][];
+            sections: components["schemas"]["SideBySideSection"][];
+            /** @description One per column, then the total */
+            gross_profit: string[];
+            operating_profit: string[];
+            net_profit: string[];
+        };
         Project: {
             /** Format: uuid */
             readonly id: string;
@@ -14379,6 +14436,32 @@ export interface components {
          * @enum {string}
          */
         ShortcodeTypeEnum: "paybill" | "till";
+        SideBySideColumn: {
+            /**
+             * Format: uuid
+             * @description Null: lines not tagged with any
+             */
+            id: string | null;
+            name: string;
+        };
+        SideBySideRow: {
+            /** Format: uuid */
+            account_id: string;
+            code: string;
+            name: string;
+            /** @description One per column */
+            amounts: string[];
+            /** Format: decimal */
+            total: string;
+        };
+        SideBySideSection: {
+            key: string;
+            label: string;
+            rows: components["schemas"]["SideBySideRow"][];
+            totals: string[];
+            /** Format: decimal */
+            total: string;
+        };
         Stage: {
             stage: string;
             label: string;
@@ -15382,6 +15465,8 @@ export interface components {
             blocked: boolean;
             blocked_reason: string;
             subscription: components["schemas"]["ContextSubscription"];
+            /** @description Set when this person sees only one department's documents and reports */
+            limited_department: components["schemas"]["Limit"] | null;
         };
         WorkspaceRequest: {
             name: string;
@@ -26075,6 +26160,7 @@ export interface operations {
                 branch?: string;
                 compare?: "none" | "previous_period" | "previous_year";
                 cost_center?: string;
+                department?: string;
                 /** @description Default: 1 January */
                 from?: string;
                 project?: string;
@@ -26095,6 +26181,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProfitAndLoss"];
+                };
+            };
+        };
+    };
+    w_reports_profit_and_loss_by_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Default: department */
+                dimension?: "branch" | "cost_center" | "department" | "project";
+                /** @description Default: 1 January */
+                from?: string;
+                /** @description Default: today */
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfitAndLossByDimension"];
                 };
             };
         };

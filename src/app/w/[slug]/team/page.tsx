@@ -10,13 +10,16 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 export default function TeamPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
+  const limitedMe = Boolean(context.limited_department);
   const p = wsPath(slug);
   const [inviting, setInviting] = useState(false);
   const [invite, setInvite] = useState({ email: "", role_id: "" });
 
   const members = useQuery({ queryKey: ["members", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/members/", p)) });
   const roles = useQuery({ queryKey: ["roles", slug], enabled: can("roles.view") || can("members.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
+  const depts = useQuery({ queryKey: ["departments", slug], enabled: can("members.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", p)) });
+  const departments = (depts.data?.results ?? []) as { id: string; name: string }[];
   const invitations = useQuery({
     queryKey: ["invitations", slug],
     enabled: can("invitations.view"),
@@ -24,7 +27,7 @@ export default function TeamPage() {
   });
 
   const update = useMutation({
-    mutationFn: async ({ id, body }: { id: string; body: { role_id?: string; status?: "active" | "suspended" } }) =>
+    mutationFn: async ({ id, body }: { id: string; body: { role_id?: string; status?: "active" | "suspended"; limited_department_id?: string | null } }) =>
       unwrap(await api.PATCH("/api/v1/w/{workspace}/members/{id}/", { params: { path: { workspace: slug, id } }, body })),
     onSuccess: () => toast.success("Member updated"),
     onError: (e) => toast.error(e.message),
@@ -58,7 +61,7 @@ export default function TeamPage() {
       />
       <Card>
         {members.isLoading ? <div className="px-4"><Spinner /></div> : members.error ? <div className="p-4"><ErrorState error={members.error} /></div> : (
-          <Table head={["Name", "Email", "Role", "Status", ""]}>
+          <Table head={["Name", "Email", "Role", "Sees", "Status", ""]}>
             {(members.data?.results ?? []).map((m) => (
               <tr key={m.id}>
                 <Td className="font-medium">{m.user.full_name}</Td>
@@ -69,6 +72,15 @@ export default function TeamPage() {
                       {roleList.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                     </Select>
                   ) : m.role_name}
+                </Td>
+                <Td>
+                  {manage && !limitedMe && m.id !== context.membership_id && m.role_name !== "Owner" && departments.length ? (
+                    <Select className="max-w-44 py-1" value={m.limited_department_id ?? ""} aria-label={`What ${m.user.full_name} sees`}
+                      onChange={(e) => update.mutate({ id: m.id, body: { limited_department_id: e.target.value || null } })}>
+                      <option value="">Whole business</option>
+                      {departments.map((d) => <option key={d.id} value={d.id}>Only {d.name}</option>)}
+                    </Select>
+                  ) : m.limited_department_name ? `Only ${m.limited_department_name}` : "Whole business"}
                 </Td>
                 <Td>{m.status === "active" ? <Badge tone="green">Active</Badge> : <Badge tone="amber">Suspended</Badge>}</Td>
                 <Td className="whitespace-nowrap text-right">

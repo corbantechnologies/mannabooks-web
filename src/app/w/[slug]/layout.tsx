@@ -218,6 +218,9 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
   ] },
 ];
 
+/** Pages about the whole business, hidden from someone limited to one department (the API refuses them too). */
+const WHOLE_BUSINESS = ["/accounting/chart", "/accounting/journals", "/accounting/trial-balance", "/accounting/budgets", "/accounting/opening-balances", "/accounting/years"];
+
 /** The module a menu item belongs to; switched-off modules leave the menu (their data stays). Null: always shown. */
 function moduleOf(href: string): string | null {
   // Shared lists every module uses stay on.
@@ -276,7 +279,8 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const base = `/w/${slug}`;
   const switchedOn = (context.workspace.modules ?? []) as string[];  // empty: every module is on
   const allowed = (item: NavItem) =>
-    (item.href !== "/etims" || context.etims_enabled) && // hidden until KRA approves MannaBooks and signing is switched on
+    (item.href !== "/etims" || context.etims_enabled) &&
+    !(context.limited_department && WHOLE_BUSINESS.includes(item.href)) && // hidden until KRA approves MannaBooks and signing is switched on
     (!switchedOn.length || !moduleOf(item.href) || switchedOn.includes(moduleOf(item.href)!)) &&
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)));
   const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0);
