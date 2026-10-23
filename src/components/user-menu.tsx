@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { LogOut, ShieldCheck, UserRound } from "lucide-react";
+import { Building2, LogOut, ShieldCheck, UserRound } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
@@ -26,12 +26,15 @@ export function UserMenu() {
         <span className="hidden max-w-40 truncate sm:inline">{name}</span>
       </button>
       {open && (
-        <div className="absolute right-0 z-40 mt-1 w-48 rounded-md border border-stone-200 bg-white py-1 shadow-lg" onMouseLeave={() => setOpen(false)}>
-          <Link href="/account" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
+        <div className="absolute right-0 z-40 mt-1 w-52 rounded-md border border-stone-200 bg-white py-1 shadow-lg" onMouseLeave={() => setOpen(false)}>
+          <Link href="/workspaces" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
+            <Building2 className="h-4 w-4" /> Your workspaces
+          </Link>
+          <Link href="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
             <UserRound className="h-4 w-4" /> My account
           </Link>
           {me.data?.is_staff && (
-            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
+            <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-stone-50">
               <ShieldCheck className="h-4 w-4" /> MannaBooks admin
             </Link>
           )}
@@ -40,7 +43,7 @@ export function UserMenu() {
               await fetch("/api/session/logout", { method: "POST" });
               signOut({ callbackUrl: "/signin" });
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-stone-50"
+            className="mt-1 flex w-full items-center gap-2 border-t border-stone-100 px-3 py-2 text-left text-sm hover:bg-stone-50"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
