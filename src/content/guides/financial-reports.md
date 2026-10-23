@@ -8,6 +8,12 @@ Income less costs for a period. Pick a period (this month, last quarter, this ye
 
 The report is laid out as: sales, less **cost of sales**, gives **gross profit**; less operating expenses gives **operating profit**; plus other income and less other expenses gives **net profit**.
 
+## Profit and loss by department
+
+**Accounting > Reports > Profit and loss by department** puts every department side by side, with a column for anything not tagged and the total, so you see which parts of the business make money. Switch the columns to cost centres, branches or projects.
+
+A line belongs to a department when its document is tagged with the department, or with a cost centre that belongs to it. To split your books this way, give each cost centre its department (Accounting > Cost centres), and tag invoices, bills and expenses with a cost centre.
+
 ## Balance sheet
 
 What the business owns (assets) and owes (liabilities) on a date, and the owners' share (equity). The year's profit appears in equity until the year is closed. Total assets always equal liabilities plus equity; a badge confirms it.

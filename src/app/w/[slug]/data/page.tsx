@@ -10,13 +10,28 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-const KINDS: [string, string, string, string][] = [
-  // kind, label, permission, what it does
-  ["customers", "Customers", "customers.manage", "Names, KRA PINs, contacts and payment terms. Customers already here (same name) are skipped."],
-  ["suppliers", "Suppliers", "suppliers.manage", "Names, KRA PINs, contacts, payment terms and bank details."],
-  ["products", "Products and services", "products.manage", "Prices, VAT code, category (made if new), unit, and stock on hand for stock items."],
-  ["opening_balances", "Opening balances", "openingbalances.manage", "Your trial balance by account code. Saved as a draft for you to check and post."],
+const KINDS: [string, string, string, string, string][] = [
+  // kind, label, permission, what it does, group in the picker
+  ["customers", "Customers", "customers.manage", "Names, KRA PINs, contacts and payment terms. Customers already here (same name) are skipped.", "Lists"],
+  ["suppliers", "Suppliers", "suppliers.manage", "Names, KRA PINs, contacts, payment terms and bank details.", "Lists"],
+  ["products", "Products and services", "products.manage", "New products: prices, VAT code, category (made if new), unit, and stock on hand for stock items.", "Lists"],
+  ["employees", "Employees", "employees.manage", "Staff with salary, KRA PIN, NSSF and SHIF numbers, and bank or M-Pesa details. Departments are made if new. Staff already here (same ID number, email or KRA PIN) are skipped.", "Lists"],
+  ["leads", "Leads", "crm.manage", "People from events, ads or contact lists, each with a phone or email. Leads already here (same phone or email) are skipped.", "Lists"],
+  ["fixed_assets", "Fixed assets", "fixedassets.manage", "Assets you already own: cost, purchase date, depreciation method, and depreciation charged so far. Brought into the books against opening balance equity.", "Lists"],
+  ["product_prices", "Update prices and price lists", "products.manage", "Find each product by code or name and set its selling price and/or its price on a price list (made if new). Only changed prices count.", "Products"],
+  ["product_units", "Product units (cartons, crates)", "products.manage", "Another unit a product is sold in: how many pieces it holds, and its own price if it has one. Re-importing updates them.", "Products"],
+  ["recipes", "Recipes", "manufacturing.manage", "One row per ingredient: the product, how many one batch makes, the ingredient and its quantity. Products that already have that recipe are skipped.", "Products"],
+  ["stock_counts", "Stock count", "inventory.manage", "Counted quantities per product (a scanner export works: repeated rows are added up). They go into the warehouse's stock take for you to check and post.", "Products"],
+  ["opening_balances", "Opening balances", "openingbalances.manage", "Your trial balance by account code. Saved as a draft for you to check and post.", "Moving from another system"],
+  ["accounts", "Chart of accounts", "ledgeraccounts.manage", "Your own accounts: code, name, type, subtype and parent. Codes already here are skipped.", "Moving from another system"],
+  ["open_invoices", "Unpaid customer invoices", "invoices.issue", "Invoices still unpaid in your previous system, under their own numbers. They show as owed but aren't counted as new sales or VAT. Leave Accounts receivable out of your opening balances.", "Moving from another system"],
+  ["open_bills", "Unpaid supplier bills", "bills.post", "Supplier invoices you still owe from your previous system. Not counted as new costs or VAT. Leave Accounts payable out of your opening balances.", "Moving from another system"],
 ];
+const AFTER: Record<string, string> = {
+  opening_balances: " Check and post them in Accounting > Opening balances.",
+  stock_counts: " Check the differences and post the count in Inventory > Stock takes.",
+  open_invoices: " Customers can pay them now, by the same invoice numbers.",
+};
 const EXPORTS: [string, string, string, boolean][] = [
   ["customers", "Customers", "customers.view", false], ["suppliers", "Suppliers", "suppliers.view", false], ["products", "Products with stock", "products.view", false],
   ["accounts", "Chart of accounts with balances", "ledgeraccounts.view", false], ["invoices", "Invoices", "invoices.view", true], ["bills", "Supplier bills", "bills.view", true],
@@ -64,7 +79,9 @@ export default function DataPage() {
             <li>Check it: MannaBooks lists any row it can&apos;t take. Nothing is saved until every row is right.</li>
           </ol>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="What"><Select value={kind} onChange={(e) => { setKind(e.target.value); setResult(null); }}>{kinds.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
+            <Field label="What"><Select value={kind} onChange={(e) => { setKind(e.target.value); setResult(null); }}>{[...new Set(kinds.map((x) => x[4]))].map((group) => (
+              <optgroup key={group} label={group}>{kinds.filter((x) => x[4] === group).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</optgroup>
+            ))}</Select></Field>
             {kind === "opening_balances" && <Field label="Balances at" hint="The day before your first day on MannaBooks."><Input type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} /></Field>}
           </div>
           <p className="text-sm text-stone-600">{KINDS.find(([k]) => k === kind)?.[3]} <button type="button" className="text-brand-700 underline" onClick={() => download(`imports/templates/${kind}/`)}>Download the template</button></p>
@@ -78,7 +95,7 @@ export default function DataPage() {
             <div className={`rounded-md p-3 text-sm ${result.status === "failed" ? "bg-red-50 text-red-900" : "bg-brand-50 text-brand-900"}`}>
               {result.status === "failed" ? `${errors.length} row${errors.length === 1 ? "" : "s"} to fix before importing:` :
                 result.status === "checked" ? `All ${result.total_rows} rows are fine: ${result.imported_rows} will be added${result.skipped_rows ? `, ${result.skipped_rows} are already here` : ""}. Choose Import.` :
-                `Imported ${result.imported_rows}${result.skipped_rows ? `; ${result.skipped_rows} were already here` : ""}.${kind === "opening_balances" ? " Check and post them in Accounting > Opening balances." : ""}`}
+                `Imported ${result.imported_rows}${result.skipped_rows ? `; ${result.skipped_rows} were already here` : ""}.${AFTER[kind] ?? ""}`}
               {errors.length > 0 && <ul className="mt-2 max-h-56 space-y-0.5 overflow-y-auto">{errors.map((e, i) => <li key={i}><strong>Row {e.row}:</strong> {e.message}</li>)}</ul>}
             </div>
           )}

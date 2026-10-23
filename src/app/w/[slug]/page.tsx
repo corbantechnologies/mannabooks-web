@@ -25,7 +25,13 @@ export default function OverviewPage() {
         </div>
       )}
 
-      {can("reports.view") && <div className="mb-8"><PeriodDashboard /></div>}
+      {can("reports.view") && !context.limited_department && <div className="mb-8"><PeriodDashboard /></div>}
+      {can("reports.view") && context.limited_department && (
+        <Link href={`/w/${slug}/accounting/reports/by-department`} className="mb-8 block rounded-lg border border-stone-200 bg-white p-4 text-sm hover:border-brand-300">
+          <span className="font-medium text-stone-900">{context.limited_department.name}: profit and loss</span>
+          <span className="mt-1 block text-stone-600">You see {context.limited_department.name}&apos;s documents and reports. Open its profit and loss &rarr;</span>
+        </Link>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="p-5">
