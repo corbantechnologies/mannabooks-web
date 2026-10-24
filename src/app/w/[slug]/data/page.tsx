@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Download, Upload } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -42,7 +43,8 @@ type Job = { id: string; kind: string; filename: string; status: string; total_r
 export default function DataPage() {
   const { slug, can } = useWorkspace();
   const kinds = KINDS.filter(([, , perm]) => can(perm));
-  const [kind, setKind] = useState(kinds[0]?.[0] ?? "customers");
+  const asked = useSearchParams().get("kind"); // e.g. ?kind=products from the Products page
+  const [kind, setKind] = useState(kinds.some(([k]) => k === asked) ? asked! : kinds[0]?.[0] ?? "customers");
   const [file, setFile] = useState<File | null>(null);
   const [asOf, setAsOf] = useState(todayIso());
   const [result, setResult] = useState<Job | null>(null);
