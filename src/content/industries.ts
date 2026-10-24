@@ -105,7 +105,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Duka has buying, stock and warehouses. Choose Kampuni for approvals on LPOs and branch budgets.",
     goal: "Manage stock and warehouses",
-    useCases: ["track-stock", "get-paid-by-mpesa", "recurring-billing", "vat-and-kra", "control-spending"],
+    useCases: ["track-stock", "sell-without-stock", "get-paid-by-mpesa", "recurring-billing", "vat-and-kra", "control-spending"],
     guides: ["price-lists", "inventory", "delivery-notes", "purchase-orders", "reminders", "business-inbox"],
     faqs: [
       { q: "Can customers on MannaBooks receive my invoices directly?", a: "Yes. Send an invoice to their Business inbox and they can accept it as a supplier bill in their own books, with no retyping." },
@@ -221,7 +221,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Projects with buying and service orders are in Duka. Choose Kampuni for approvals and budgets per job.",
     goal: "Run jobs and projects",
-    useCases: ["job-costing", "recurring-billing", "vat-and-kra", "control-spending"],
+    useCases: ["job-costing", "sell-without-stock", "recurring-billing", "vat-and-kra", "control-spending"],
     guides: ["projects", "quotations", "service-orders", "recurring-invoices", "supplier-payments"],
     faqs: [
       { q: "Can I bill a client in stages?", a: "Yes. Raise an invoice for each stage against the same project; the project report adds them up." },
@@ -259,7 +259,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "biashara", planNote: "Sales, CRM, projects and payroll are in Biashara.",
     goal: "Send invoices and get paid",
-    useCases: ["win-more-deals", "recurring-billing", "job-costing", "get-paid-by-mpesa", "vat-and-kra"],
+    useCases: ["win-more-deals", "sell-without-stock", "recurring-billing", "job-costing", "get-paid-by-mpesa", "vat-and-kra"],
     guides: ["crm", "quotations", "invoices", "recurring-invoices", "customer-portal", "work-reports"],
     faqs: [
       { q: "Can my accountant work in my books?", a: "Yes. Invite them with the Accountant role. Accountants don't count towards your plan's team size." },
@@ -409,7 +409,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "kampuni", planNote: "Cost centres and fixed assets are in Kampuni.",
     goal: "Everything",
-    useCases: ["recurring-billing", "control-spending", "run-payroll", "vat-and-kra"],
+    useCases: ["recurring-billing", "sell-without-stock", "control-spending", "run-payroll", "vat-and-kra"],
     guides: ["cost-centres", "fixed-assets", "expenses", "recurring-invoices", "payroll"],
     faqs: [
       { q: "Can I bill a customer in dollars?", a: "Yes. Switch on the currencies you trade in and record their rates; documents are converted for your books at the rate on their date." },
