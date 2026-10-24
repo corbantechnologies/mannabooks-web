@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Plus, Search, Tags } from "lucide-react";
+import { Plus, Rows3, Search, Tags, Upload } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -74,6 +74,8 @@ export default function ProductsPage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href={`/w/${slug}/sales/catalogue`}><Button variant="secondary"><Tags className="h-4 w-4" /> Categories and units</Button></Link>
+            {manage && <Link href={`/w/${slug}/sales/products/bulk`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Add many</Button></Link>}
+            {manage && <Link href={`/w/${slug}/data?kind=products`}><Button variant="secondary"><Upload className="h-4 w-4" /> Import</Button></Link>}
             {manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New product</Button>}
           </div>
         }

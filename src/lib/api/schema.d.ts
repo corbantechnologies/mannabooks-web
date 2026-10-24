@@ -4866,6 +4866,26 @@ export interface paths {
         patch: operations["w_products_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/products/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Up to 50 new products at once, each checked by the same rules as one product. All or nothing: if any row is wrong,
+         *     nothing is saved and `errors` says which rows (by position) and why.
+         */
+        post: operations["w_products_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/projects/": {
         parameters: {
             query?: never;
@@ -13568,6 +13588,10 @@ export interface components {
             is_active?: boolean;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        ProductBulkRequest: {
+            /** @description Up to 50 new products; saved together or not at all */
+            products: components["schemas"]["ProductRequest"][];
         };
         ProductCategory: {
             /** Format: uuid */
@@ -25432,6 +25456,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Product"];
+                };
+            };
+        };
+    };
+    w_products_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProductBulkRequest"];
+                "multipart/form-data": components["schemas"]["ProductBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"][];
                 };
             };
         };

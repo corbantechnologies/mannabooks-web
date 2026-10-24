@@ -11,6 +11,17 @@
 
 You can still change the price, VAT or description on any line when you sell; the product only sets the starting values.
 
+## Adding many at once
+
+**Products > Add many** opens a page with rows to fill in, one product per row: name, code, type, category, unit, selling and cost price, VAT, and opening stock for stock items.
+
+- **Paste from Excel.** Copy the columns *name, code, selling price, cost price* from a spreadsheet and paste them into a **Name** box. Each line fills a row from there down.
+- **Set for every row.** Choose a category, VAT rate or type once at the top and every row takes it. You can still change single rows after.
+- **Saving.** You can add up to 50 at a time. Empty rows are left out. Everything is saved together: if a row has a mistake, nothing is saved, and the rows to fix turn red with the reason.
+- **Codes.** A blank code gets the next number.
+
+For hundreds of products, **Import** a spreadsheet instead (**Data > Import and export**).
+
 ## Stock, and products made when sold
 
 For **goods**, choose one of these, or neither:
