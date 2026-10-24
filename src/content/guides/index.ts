@@ -34,6 +34,7 @@ export const GUIDES: Guide[] = [
   { slug: "audit-log", title: "Audit log", summary: "See who changed what, and when.", section: "Control", app: "/audit-log" },
   { slug: "customers", title: "Customers", summary: "Who you sell to, what they owe, and their statements.", section: "Sales", app: "/sales/customers" },
   { slug: "products", title: "Products and services", summary: "What you sell, at what price and VAT rate.", section: "Sales", app: "/sales/products" },
+  { slug: "catalogues", title: "Catalogues", summary: "Send clients a list of products; they pick, and the quotation writes itself.", section: "Sales", app: "/sales/catalogues" },
   { slug: "quotations", title: "Quotations", summary: "Offer a price, follow it up and turn it into an invoice.", section: "Sales", app: "/sales/quotations" },
   { slug: "invoices", title: "Invoices", summary: "Bill customers on credit, and correct or void invoices.", section: "Sales", app: "/sales/invoices" },
   { slug: "payments", title: "Customer payments", summary: "Record M-Pesa, bank and cash payments against invoices.", section: "Sales", app: "/sales/payments" },
