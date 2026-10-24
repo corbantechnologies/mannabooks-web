@@ -358,11 +358,11 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         </button>
         <Link
           href="/workspaces"
-          className="hidden items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1 text-sm text-stone-700 hover:bg-stone-50 sm:flex"
+          className="hidden min-w-0 items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1 text-sm text-stone-700 hover:bg-stone-50 sm:flex"
           title="Switch workspace"
         >
-          <span className="max-w-48 truncate">{context.workspace.name}</span>
-          <ChevronsUpDown className="h-3.5 w-3.5 text-stone-400" />
+          <span className="min-w-0 max-w-48 truncate">{context.workspace.name}</span>
+          <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </Link>
         <PeriodSwitcher />
       </TopBar>

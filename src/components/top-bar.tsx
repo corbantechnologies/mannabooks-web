@@ -18,7 +18,7 @@ export function TopBar({ children }: { children?: React.ReactNode }) {
         {children}
       </div>
       <div className="flex shrink-0 items-center gap-1">
-        <Link href={workspace ? `/w/${workspace}/guide` : "/guide"} className="rounded-md px-2.5 py-1.5 text-sm text-stone-600 hover:bg-stone-100 max-sm:hidden">
+        <Link href={workspace ? `/w/${workspace}/guide` : "/guide"} className="rounded-md px-2.5 py-1.5 text-sm text-stone-600 hover:bg-stone-100 max-md:hidden">
           Guides
         </Link>
         <UserMenu />

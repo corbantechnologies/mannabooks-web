@@ -23,7 +23,7 @@ export function UserMenu() {
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
           {name.slice(0, 1).toUpperCase()}
         </span>
-        <span className="hidden max-w-40 truncate sm:inline">{name}</span>
+        <span className="hidden max-w-40 truncate lg:inline">{name}</span>
       </button>
       {open && (
         <div className="absolute right-0 z-40 mt-1 w-52 rounded-md border border-stone-200 bg-white py-1 shadow-lg" onMouseLeave={() => setOpen(false)}>
