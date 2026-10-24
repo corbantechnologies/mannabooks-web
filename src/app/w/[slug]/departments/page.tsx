@@ -96,6 +96,7 @@ export default function DepartmentsPage() {
           </Field>
           <fieldset>
             <legend className="text-sm font-medium text-stone-700">Modules this department runs</legend>
+            <p className="mt-0.5 text-xs text-stone-500">Only for the one team in charge of a module company-wide (for example Finance or HR). Each module has one such department. Leave these empty for a division or business unit: its reports and approvals don&apos;t need them.</p>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {Object.entries(moduleLabels).map(([key, label]) => (
                 <label key={key} className="flex items-center gap-2 text-sm">
