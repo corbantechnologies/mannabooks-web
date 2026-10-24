@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { JournalForm } from "@/components/journal-form";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
+import { useCostCenters } from "@/lib/api/control";
 import { fmt, fmtDate, fmtNonZero, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
@@ -17,6 +18,8 @@ const TONE = { draft: "amber", posted: "green", reversed: "stone" } as const;
 
 export default function JournalDetailPage() {
   const { slug, can } = useWorkspace();
+  const centres = useCostCenters(slug);
+  const centreCode = (id?: string | null) => (id ? (centres.data ?? []).find((c) => c.id === id)?.code ?? "" : "");
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -88,7 +91,7 @@ export default function JournalDetailPage() {
           {e.lines.map((l) => (
             <tr key={l.id}>
               <Td><span className="font-mono text-xs text-stone-500">{l.account_code}</span> {l.account_name}</Td>
-              <Td className="text-stone-600">{l.description}</Td>
+              <Td className="text-stone-600">{l.description}{l.cost_center_id && centreCode(l.cost_center_id) && <span className="ml-2 rounded bg-stone-100 px-1.5 py-0.5 text-xs text-stone-700" title="Cost centre">{centreCode(l.cost_center_id)}</span>}</Td>
               <Td className="text-right font-mono">{fmtNonZero(l.debit)}</Td>
               <Td className="text-right font-mono">{fmtNonZero(l.credit)}</Td>
             </tr>

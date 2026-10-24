@@ -9,6 +9,8 @@ Every change to the books is a **journal entry**: a set of lines where the **deb
 3. The totals show at the bottom. **Save draft** keeps it to finish later, even if it doesn't balance yet.
 4. **Post** it when debits equal credits. Posting gives it a number such as **JE-2026-0001** and locks it.
 
+**Cost centre on a line.** If you use cost centres, each line has a **Cost centre** box. Use it for internal recharges between departments and for spreading shared costs. The line then counts in that cost centre's department in *Profit and loss by department*. Lines left blank show under *Not tagged*.
+
 Example: paying KES 25,000 rent from the bank.
 
 | Account | Debit | Credit |
