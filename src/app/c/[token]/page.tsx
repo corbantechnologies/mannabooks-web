@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Minus, Plus, Search, Send, Trash2 } from "lucide-react";
+import { FileDown, MessageSquarePlus, Minus, Plus, Search, Send, Trash2, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -20,10 +20,14 @@ export default function SharedCataloguePage() {
   const [category, setCategory] = useState("");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", company: "", phone: "", email: "", notes: "" });
+  const [wishes, setWishes] = useState<{ description: string; quantity: string }[]>([]);
   const ask = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/shared/catalogues/{token}/quote/", {
       params: { path: { token } },
-      body: { ...form, lines: Object.entries(picks).filter(([, q]) => Number(q) > 0).map(([product_id, quantity]) => ({ product_id, quantity })) },
+      body: {
+        ...form, lines: Object.entries(picks).filter(([, q]) => Number(q) > 0).map(([product_id, quantity]) => ({ product_id, quantity })),
+        wishes: wishes.filter((w) => w.description.trim()).map((w) => ({ description: w.description.trim(), quantity: w.quantity || "1" })),
+      },
     })),
     onSuccess: (r) => router.push(`/q/${r.token}`),
   });
@@ -36,7 +40,11 @@ export default function SharedCataloguePage() {
   const lines = Object.entries(picks).map(([id, q]) => ({ item: c.items.find((i) => i.id === id)!, q: Number(q) })).filter((l) => l.item && l.q > 0);
   const net = lines.reduce((t, l) => t + Number(l.item.price ?? 0) * l.q, 0);
   const vat = lines.reduce((t, l) => t + (Number(l.item.price ?? 0) * l.q * Number(l.item.vat_percent)) / 100, 0);
-  const count = lines.length;
+  const described = wishes.filter((w) => w.description.trim()).length;
+  const count = lines.length + described;
+  const reviewed = c.reviews_first || described > 0; // described items have no price yet
+  const wish = (i: number, k: "description" | "quantity", v: string) => setWishes((w) => w.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  const addWish = () => { setWishes((w) => (w.length < 10 ? [...w, { description: "", quantity: "1" }] : w)); setOpen(true); };
   const setQty = (id: string, q: number | string) => setPicks((p) => {
     const next = { ...p, [id]: String(q) };
     if (q !== "" && Number(q) <= 0) delete next[id];
@@ -54,7 +62,14 @@ export default function SharedCataloguePage() {
             {c.customer_name && <p className="text-sm text-stone-600">Prepared for {c.customer_name}</p>}
           </div>
         </div>
-        <Button onClick={() => setOpen(true)} disabled={!count} className="lg:hidden">Your list ({count})</Button>
+        <div className="flex flex-wrap gap-2">
+          {c.pdf_available && (
+            <a href={`/api/backend/api/v1/shared/catalogues/${token}/pdf/`} target="_blank" rel="noreferrer">
+              <Button variant="secondary"><FileDown className="h-4 w-4" /> Download PDF</Button>
+            </a>
+          )}
+          <Button onClick={() => setOpen(true)} className="lg:hidden">Your list ({count})</Button>
+        </div>
       </header>
       {c.intro && <p className="mb-6 max-w-3xl whitespace-pre-line text-sm text-stone-700">{c.intro}</p>}
       <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
@@ -70,7 +85,12 @@ export default function SharedCataloguePage() {
               </Select>
             )}
           </div>
-          {shown.length === 0 ? <p className="py-10 text-center text-sm text-stone-500">Nothing matches.</p> : (
+          {shown.length === 0 ? (
+            <div className="py-10 text-center text-sm text-stone-500">
+              <p>Nothing matches.</p>
+              <button type="button" className="mt-2 font-medium text-brand-700 hover:underline" onClick={addWish}>Describe what you need instead</button>
+            </div>
+          ) : (
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {shown.map((i) => {
                 const q = picks[i.id];
@@ -107,7 +127,8 @@ export default function SharedCataloguePage() {
         <aside className={open ? "" : "hidden lg:block"}>
           <Card className="sticky top-4 space-y-3 p-4">
             <h2 className="font-semibold">Your list</h2>
-            {lines.length === 0 ? <p className="text-sm text-stone-500">Add what you need, then ask for your quotation.</p> : (
+            {count === 0 && <p className="text-sm text-stone-500">Add what you need, then ask for your quotation.</p>}
+            {lines.length > 0 && (
               <ul className="divide-y divide-stone-100 text-sm">
                 {lines.map(({ item, q }) => (
                   <li key={item.id} className="flex items-center justify-between gap-2 py-1.5">
@@ -118,9 +139,27 @@ export default function SharedCataloguePage() {
                 ))}
               </ul>
             )}
-            {lines.length > 0 && (
+            <div className="space-y-2 border-t border-stone-100 pt-3">
+              <p className="text-sm font-medium">Can&apos;t find it?</p>
+              {wishes.map((w, i) => (
+                <div key={i} className="flex items-start gap-1.5">
+                  <Textarea rows={2} className="min-w-0 flex-1 text-sm" value={w.description} maxLength={200} placeholder="Describe what you need: make, size, model"
+                    onChange={(e) => wish(i, "description", e.target.value)} />
+                  <input aria-label="Quantity" inputMode="decimal" className="w-14 rounded-md border border-stone-300 px-1 py-1.5 text-center text-sm" value={w.quantity}
+                    onChange={(e) => wish(i, "quantity", e.target.value)} />
+                  <button type="button" aria-label="Remove" className="pt-2 text-stone-400 hover:text-red-600" onClick={() => setWishes((x) => x.filter((_, j) => j !== i))}><X className="h-4 w-4" /></button>
+                </div>
+              ))}
+              {wishes.length < 10 && (
+                <button type="button" className="flex items-center gap-1.5 text-sm text-brand-700 hover:underline" onClick={addWish}>
+                  <MessageSquarePlus className="h-4 w-4" /> {wishes.length ? "Describe another" : "Describe what you need"}
+                </button>
+              )}
+              {described > 0 && <p className="text-xs text-stone-500">{c.business.name} will find and price these for you.</p>}
+            </div>
+            {count > 0 && (
               <form className="space-y-3 border-t border-stone-100 pt-3" onSubmit={(e) => { e.preventDefault(); ask.mutate(); }}>
-                {c.show_prices && (
+                {c.show_prices && lines.length > 0 && (
                   <dl className="grid grid-cols-[1fr_auto] gap-y-1 text-sm">
                     <dt className="text-stone-500">Before VAT</dt><dd className="text-right font-mono">{fmt(net)}</dd>
                     <dt className="text-stone-500">VAT</dt><dd className="text-right font-mono">{fmt(vat)}</dd>
@@ -133,8 +172,8 @@ export default function SharedCataloguePage() {
                 <Field label="Email (for your quotation)"><Input type="email" value={form.email} onChange={set("email")} /></Field>
                 <Field label="Anything we should know? (optional)"><Textarea rows={2} value={form.notes} onChange={set("notes")} placeholder="Delivery date, colours, specifications" /></Field>
                 <FormError error={ask.error} />
-                <Button type="submit" className="w-full" loading={ask.isPending}><Send className="h-4 w-4" /> {c.reviews_first ? "Ask for my quotation" : "Get my quotation"}</Button>
-                <p className="text-center text-xs text-stone-500">{c.reviews_first ? `${b.name} will check your list and send the quotation.` : "Your quotation opens straight away."}</p>
+                <Button type="submit" className="w-full" loading={ask.isPending}><Send className="h-4 w-4" /> {reviewed ? "Ask for my quotation" : "Get my quotation"}</Button>
+                <p className="text-center text-xs text-stone-500">{reviewed ? `${b.name} will check your list and send the quotation.` : "Your quotation opens straight away."}</p>
               </form>
             )}
           </Card>

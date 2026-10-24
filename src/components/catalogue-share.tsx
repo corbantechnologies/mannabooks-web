@@ -38,6 +38,7 @@ export function CatalogueShare({ catalogue, open, onClose }: { catalogue: Catalo
         </div>
         <form className="space-y-3 border-t border-stone-100 pt-4" onSubmit={(e) => { e.preventDefault(); send.mutate(); }}>
           <p className="flex items-center gap-2 text-sm font-medium"><Mail className="h-4 w-4" /> Email it</p>
+          {context.pdf_enabled && <p className="text-xs text-stone-500">The catalogue goes as a PDF attachment too, with the link and a QR code in it.</p>}
           <Field label="To"><Input required type="text" value={to} onChange={(e) => setTo(e.target.value)} placeholder="client@example.com" /></Field>
           <Field label="Message"><Textarea rows={6} value={message} onChange={(e) => setMessage(e.target.value)} /></Field>
           <FormError error={send.error} />

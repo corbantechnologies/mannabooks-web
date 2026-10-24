@@ -695,6 +695,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/shared/catalogues/{token}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["shared_catalogues_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/shared/catalogues/{token}/quote/": {
         parameters: {
             query?: never;
@@ -1655,6 +1671,23 @@ export interface paths {
         };
         /** @description The products the catalogue shows right now, as the client sees them. */
         get: operations["w_catalogues_items_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/{id}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The catalogue as a PDF to print or send, with its link and a QR code. */
+        get: operations["w_catalogues_pdf_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5666,6 +5699,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/reports/glance/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business at a glance: sales this month, quotes waiting, money owed and coming due, cash. Parts follow permissions. */
+        get: operations["w_reports_glance_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/period/": {
         parameters: {
             query?: never;
@@ -7901,7 +7951,9 @@ export interface components {
             email?: string;
             /** @default  */
             notes: string;
-            lines: components["schemas"]["CataloguePickRequest"][];
+            lines?: components["schemas"]["CataloguePickRequest"][];
+            /** @description Things the client couldn't find, in their own words */
+            wishes?: components["schemas"]["CatalogueWishRequest"][];
         };
         CatalogueRequest: {
             /** @description For example: Laptops for Acme Ltd */
@@ -7930,6 +7982,14 @@ export interface components {
             times: number;
             quantity: string;
             value: string;
+        };
+        CatalogueWishRequest: {
+            description: string;
+            /**
+             * Format: decimal
+             * @default 1.000
+             */
+            quantity: string;
         };
         /**
          * @description * `question` - Question
@@ -9120,6 +9180,104 @@ export interface components {
          * @enum {string}
          */
         FulfilmentEnum: "pickup" | "delivery";
+        /** @description Each part is null when the person may not see it. */
+        Glance: {
+            /** Format: date */
+            today: string;
+            sales: components["schemas"]["GlanceSales"] | null;
+            quotes: components["schemas"]["GlanceQuotes"] | null;
+            receivables: components["schemas"]["GlanceReceivables"] | null;
+            payables: components["schemas"]["GlancePayables"] | null;
+            cash: components["schemas"]["GlanceCash"] | null;
+        };
+        GlanceCash: {
+            /** Format: decimal */
+            total: string;
+            accounts: components["schemas"]["GlanceCashAccount"][];
+        };
+        GlanceCashAccount: {
+            name: string;
+            /** Format: decimal */
+            balance: string;
+        };
+        GlanceDebtor: {
+            name: string;
+            /** Format: decimal */
+            amount: string;
+            count: number;
+        };
+        GlanceDoc: {
+            id: string;
+            kind: string;
+            number: string;
+            party: string;
+            /** Format: date */
+            date: string;
+            /** @description Days until the date; negative is overdue */
+            days: number;
+            /** Format: decimal */
+            amount: string;
+            currency: string;
+        };
+        GlancePayables: {
+            /** Format: decimal */
+            total: string;
+            count: number;
+            /** Format: decimal */
+            overdue: string;
+            overdue_count: number;
+            /** Format: decimal */
+            due_soon: string;
+            due_soon_count: number;
+            draft_count: number;
+            list: components["schemas"]["GlanceDoc"][];
+            vouchers_waiting: number | null;
+            /** Format: decimal */
+            vouchers_waiting_value: string | null;
+        };
+        GlanceQuotes: {
+            open_count: number;
+            /** Format: decimal */
+            open_value: string;
+            sent_count: number;
+            draft_count: number;
+            to_review_count: number;
+            expiring_count: number;
+            /** Format: decimal */
+            expiring_value: string;
+            accepted_count: number;
+            /** Format: decimal */
+            accepted_value: string;
+            list: components["schemas"]["GlanceDoc"][];
+        };
+        GlanceReceivables: {
+            /** Format: decimal */
+            total: string;
+            count: number;
+            /** Format: decimal */
+            overdue: string;
+            overdue_count: number;
+            /** Format: decimal */
+            due_soon: string;
+            due_soon_count: number;
+            draft_count: number;
+            list: components["schemas"]["GlanceDoc"][];
+            top_overdue: components["schemas"]["GlanceDebtor"][];
+        };
+        GlanceSales: {
+            /** Format: decimal */
+            this_month: string;
+            /** Format: decimal */
+            last_month: string;
+            /** Format: decimal */
+            last_month_to_date: string;
+            /** Format: double */
+            change_percent: number | null;
+            /** Format: decimal */
+            collected: string | null;
+            month_label: string;
+            last_month_label: string;
+        };
         GoodsReceipt: {
             /** Format: uuid */
             readonly id: string;
@@ -13756,6 +13914,7 @@ export interface components {
             reviews_first: boolean;
             /** Format: date */
             expires_on: string | null;
+            pdf_available: boolean;
             items: components["schemas"]["CatalogueItem"][];
         };
         /** @description What the customer sees on their order page (no internal details). */
@@ -17250,6 +17409,27 @@ export interface operations {
             };
         };
     };
+    shared_catalogues_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
     shared_catalogues_quote_create: {
         parameters: {
             query?: never;
@@ -19110,6 +19290,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CatalogueItem"][];
+                };
+            };
+        };
+    };
+    w_catalogues_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };
@@ -26877,6 +27079,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CategoryReport"];
+                };
+            };
+        };
+    };
+    w_reports_glance_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Glance"];
                 };
             };
         };

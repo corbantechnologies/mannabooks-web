@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Share2 } from "lucide-react";
+import { FileDown, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -47,6 +47,11 @@ export default function CataloguePage() {
       <Link href={`/w/${slug}/sales/catalogues`} className="text-sm text-stone-500 hover:underline">&larr; Catalogues</Link>
       <PageHeader title={c.name} description={c.intro || undefined} guide="catalogues"
         actions={<>
+          {context.pdf_enabled && (
+            <Button variant="secondary" onClick={() => window.open(`/api/backend/api/v1/w/${slug}/catalogues/${c.id}/pdf/`, "_blank", "noopener")}>
+              <FileDown className="h-4 w-4" /> Download PDF
+            </Button>
+          )}
           {c.is_open && <Button onClick={() => setSharing(true)}><Share2 className="h-4 w-4" /> Share</Button>}
           {manage && <ActionMenu actions={[
             { label: "Edit", onClick: () => setEditing(true) },

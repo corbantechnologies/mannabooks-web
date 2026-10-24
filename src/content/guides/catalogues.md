@@ -27,7 +27,11 @@ Send a client a list of your products by private link. They pick what they want 
 After saving, **Share** gives you the link (it looks like `…/c/…`):
 
 - **Copy link**, **WhatsApp** or **SMS**;
-- **Email it** from MannaBooks with your message. Replies come to your business email.
+- **Email it** from MannaBooks with your message. Replies come to your business email. The catalogue goes along as a **PDF attachment**.
+
+**Download PDF**, on the catalogue's page, gives you the catalogue as a document to print, attach or hand out. It has your products with pictures and prices, grouped by category, plus the link and a **QR code**. A client who scans it lands on the catalogue page to pick items, get the quotation and accept it.
+
+Products don't need a picture. Without one, the first letter of the name is shown instead.
 
 The catalogue page shows how many times the link has been opened.
 
@@ -36,12 +40,16 @@ The catalogue page shows how many times the link has been opened.
 - Your logo, the catalogue name and your message.
 - Each product with its picture, description, price before VAT and the VAT rate, and stock if you chose to show it. There is a search, and a category filter when there is more than one category.
 - A list where they set quantities, with a running total.
+- **Can't find it?** They can describe up to 10 things that aren't in the catalogue, such as *Laptop bag, 15 inch*, with a quantity.
+- **Download PDF**, to keep a copy of the catalogue.
 - Their name, phone, company and email, and a note (delivery date, colours, specifications).
 
 When they send it, they land on their **quotation page**:
 
 - **Sent at once:** the full quotation with prices, VAT and total. They can **print or save it as a PDF**, and **Accept** or **Decline** it.
 - **Reviewed first:** *We have your list.* The page fills in by itself once you send the quotation, and they also get an email with the link.
+
+If the client described something they couldn't find, the quotation is **always reviewed first**, even in a catalogue that sends quotes at once. Their words come in as an unpriced line ending *(not in the catalogue: price it)*. Price it or remove it, then **Mark as sent**.
 
 ## Who the quotation is for
 

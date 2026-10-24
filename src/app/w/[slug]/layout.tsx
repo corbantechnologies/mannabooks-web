@@ -12,6 +12,7 @@ import {
   UserPlus,
   FileBarChart,
   ChartPie,
+  ChartNoAxesCombined,
   CheckCheck,
   FolderKanban,
   ListChecks,
@@ -94,6 +95,7 @@ type NavItem = { href: string; label: string; icon: typeof Users; perm: string[]
 const NAV: { section: string | null; items: NavItem[] }[] = [
   { section: null, items: [
     { href: "", label: "Overview", icon: LayoutDashboard, perm: null },
+    { href: "/analytics", label: "Analytics", icon: ChartNoAxesCombined, perm: null },
     { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null },
     { href: "/inbox", label: "Business inbox", icon: Inbox, perm: ["inbox.view", "inbox.send"] },
   ] },

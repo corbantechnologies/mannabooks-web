@@ -21,6 +21,7 @@ export const GUIDES: Guide[] = [
   { slug: "business-inbox", title: "Business inbox", summary: "Send invoices, quotes and LPOs straight into other MannaBooks businesses' books.", section: "Sales", app: "/inbox" },
   { slug: "online-shop", title: "Online shop", summary: "Your own shop page: customers order and pay by M-Pesa, orders become cash sales.", section: "Point of sale", app: "/sales/online-orders" },
   { slug: "plan-and-billing", title: "Plan and billing", summary: "The plans, your free trial, paying by M-Pesa, and what happens if a payment is missed.", section: "Organisation", app: "/billing" },
+  { slug: "analytics", title: "Analytics", summary: "What needs attention today: sales against last month, quotes waiting, money owed both ways, cash.", section: "Start here", app: "/analytics" },
   { slug: "help-and-feedback", title: "Help and feedback", summary: "Ask MannaBooks a question, report a problem or send an idea.", section: "Start here", app: "/help" },
   { slug: "import-and-export", title: "Import and export", summary: "Bring in customers, suppliers, products and opening balances from a spreadsheet; export any list.", section: "Organisation", app: "/data" },
   { slug: "company-groups", title: "Company groups", summary: "Several businesses reported together, with sales and loans between them taken out.", section: "Accounting" },
