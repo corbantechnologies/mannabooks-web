@@ -21,6 +21,7 @@ import { useApprovalStatus } from "@/lib/api/control";
 import { PO_STATUS, POSTED_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function PurchaseOrderPage() {
   const { slug, can, context } = useWorkspace();
@@ -59,8 +60,8 @@ export default function PurchaseOrderPage() {
               { label: "Print LPO or save as PDF", href: `/w/${slug}/purchasing/orders/${o.id}/print`, hidden: o.status === "draft" },
               { label: "Edit", onClick: () => setEditing(true), hidden: !(o.status === "draft" && can("purchaseorders.create")) },
               { label: "Enter the bill", href: `/w/${slug}/purchasing/bills/new?order=${o.id}`, hidden: !(receivable && !(receipts.data?.results ?? []).some((g) => g.status === "posted") && can("bills.create")) },
-              { label: "Close (stop waiting for the rest)", onClick: () => { if (confirm("Stop waiting for the rest?")) act.mutate("close"); }, hidden: !(o.status === "partially_received" && can("purchaseorders.create")) },
-              { label: "Cancel order", danger: true, onClick: () => { if (confirm("Cancel this order?")) act.mutate("cancel"); }, hidden: !((o.status === "draft" || o.status === "approved") && can("purchaseorders.create")) },
+              { label: "Close (stop waiting for the rest)", onClick: () => { void ask("Stop waiting for the rest?").then((ok) => { if (ok) act.mutate("close"); }); }, hidden: !(o.status === "partially_received" && can("purchaseorders.create")) },
+              { label: "Cancel order", danger: true, onClick: () => { void ask("Cancel this order?").then((ok) => { if (ok) act.mutate("cancel"); }); }, hidden: !((o.status === "draft" || o.status === "approved") && can("purchaseorders.create")) },
             ]} />
           </div>
         } />

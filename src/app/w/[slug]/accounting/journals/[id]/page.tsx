@@ -11,6 +11,7 @@ import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHe
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, fmtNonZero, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 const TONE = { draft: "amber", posted: "green", reversed: "stone" } as const;
 
@@ -62,7 +63,7 @@ export default function JournalDetailPage() {
           <div className="flex flex-wrap gap-2">
             {e.status === "draft" && can("journals.create") && (
               <>
-                <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this draft?") && remove.mutate()}>Delete</Button>
+                <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this draft?").then((ok) => ok && remove.mutate())}>Delete</Button>
                 <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
               </>
             )}

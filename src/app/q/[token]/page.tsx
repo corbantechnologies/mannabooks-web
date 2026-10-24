@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { Badge, Button, Card, ErrorState, FormError, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
+import { ask } from "@/components/confirm";
 
 /** A quotation the business shared: the client reads it, prints it, and accepts or declines it. No sign-in. */
 export default function SharedQuotePage() {
@@ -93,7 +94,7 @@ export default function SharedQuotePage() {
         </div>
         {q.status === "sent" && !q.is_expired && (
           <div className="flex gap-2">
-            <Button variant="secondary" loading={answer.isPending && answer.variables === "decline"} onClick={() => { if (confirm("Decline this quotation?")) answer.mutate("decline"); }}>Decline</Button>
+            <Button variant="secondary" loading={answer.isPending && answer.variables === "decline"} onClick={() => { void ask("Decline this quotation?").then((ok) => { if (ok) answer.mutate("decline"); }); }}>Decline</Button>
             <Button loading={answer.isPending && answer.variables === "accept"} onClick={() => answer.mutate("accept")}><CheckCircle2 className="h-4 w-4" /> Accept quotation</Button>
           </div>
         )}

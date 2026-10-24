@@ -14,6 +14,7 @@ import { useBankAccounts } from "@/lib/api/banking";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function AssetPage() {
   const { slug, can } = useWorkspace();
@@ -47,10 +48,10 @@ export default function AssetPage() {
       <Link href={`/w/${slug}/accounting/fixed-assets`} className="text-sm text-stone-500 hover:underline">&larr; Fixed assets</Link>
       <PageHeader title={`${a.number} ${a.name}`} description={a.serial_number || undefined} guide="fixed-assets"
         actions={manage && <div className="flex flex-wrap gap-2">
-          {!a.depreciated_to && a.status !== "disposed" && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Remove this asset from the register?") && remove.mutate()}>Remove</Button>}
+          {!a.depreciated_to && a.status !== "disposed" && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Remove this asset from the register?").then((ok) => ok && remove.mutate())}>Remove</Button>}
           <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
           {a.status === "disposed"
-            ? <Button variant="secondary" onClick={() => confirm("Undo the sale or scrapping?") && act.mutate({ action: "undo_disposal" })}>Undo disposal</Button>
+            ? <Button variant="secondary" onClick={() => void ask("Undo the sale or scrapping?").then((ok) => ok && act.mutate({ action: "undo_disposal" }))}>Undo disposal</Button>
             : <Button onClick={() => { act.reset(); setDisposing(true); }}>Sell or scrap</Button>}
         </div>} />
       <div className="mb-4 grid gap-3 sm:grid-cols-3">

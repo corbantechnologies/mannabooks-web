@@ -10,6 +10,7 @@ import type { components } from "@/lib/api/schema";
 import { useWorkspace } from "@/lib/workspace";
 
 import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, Select } from "./ui";
+import { ask } from "@/components/confirm";
 
 type PaymentOption = components["schemas"]["PaymentOption"];
 const KINDS = [
@@ -96,7 +97,7 @@ export function PaymentOptions() {
           <FormError error={save.error || remove.error} />
           <div className="flex justify-between gap-2">
             {editing && editing !== "new"
-              ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Remove this payment option?") && remove.mutate(editing.id)}>Remove</Button>
+              ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => void ask("Remove this payment option?").then((ok) => ok && remove.mutate(editing.id))}>Remove</Button>
               : <span />}
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>

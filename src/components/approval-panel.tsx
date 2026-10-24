@@ -11,6 +11,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { APPROVAL_STATUS, type ApprovalRequest, type DocType, useApprovalStatus } from "@/lib/api/control";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 /** The steps of a request: who approved each level, and where it is now. */
 export function ApprovalChain({ req }: { req: ApprovalRequest }) {
@@ -95,7 +96,7 @@ export function ApprovalPanel({ docType, id }: { docType: DocType; id: string })
             <Button variant="secondary" onClick={() => setDeciding("rejected")}>Don&apos;t approve</Button>
             <Button onClick={() => setDeciding("approved")}>Approve</Button>
           </>}
-          {pending && req!.can_cancel && <Button variant="ghost" loading={cancel.isPending} onClick={() => confirm("Withdraw this request?") && cancel.mutate(req!.id)}>Withdraw</Button>}
+          {pending && req!.can_cancel && <Button variant="ghost" loading={cancel.isPending} onClick={() => void ask("Withdraw this request?").then((ok) => ok && cancel.mutate(req!.id))}>Withdraw</Button>}
           {s.can_submit && <Button loading={submit.isPending} onClick={() => submit.mutate()}>{req?.status === "rejected" ? "Send again" : "Send for approval"}</Button>}
         </div>
       </div>

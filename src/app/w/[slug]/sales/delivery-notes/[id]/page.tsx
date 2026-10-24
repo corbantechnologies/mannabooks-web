@@ -15,6 +15,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { DELIVERY_STATUS } from "@/lib/api/sales";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 type Status = keyof typeof DELIVERY_STATUS;
 
@@ -46,7 +47,7 @@ export default function DeliveryNotePage() {
           <div className="flex flex-wrap gap-2">
             {d.status !== "void" && manage && <SendEmailButton docType="delivery_note" id={d.id} />}
             <Link href={`/w/${slug}/sales/delivery-notes/${d.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
-            {manage && live && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Void this delivery note?") && act.mutate("void")}>Void</Button>}
+            {manage && live && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Void this delivery note?").then((ok) => ok && act.mutate("void"))}>Void</Button>}
             {manage && d.status === "draft" && <Button variant="secondary" loading={act.isPending} onClick={() => act.mutate("dispatch")}>Mark dispatched</Button>}
             {manage && live && <Button onClick={() => { act.reset(); setReceiving(true); }}>Mark delivered</Button>}
           </div>

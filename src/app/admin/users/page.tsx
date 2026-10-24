@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
+import { ask } from "@/components/confirm";
 
 type Action = "block" | "unblock" | "grant_full_access" | "revoke_full_access" | "make_staff" | "remove_staff";
 
@@ -55,11 +56,11 @@ export default function AdminUsersPage() {
                 <Td className="text-stone-500">{u.last_login ? fmtDate(u.last_login) : "-"}</Td>
                 <Td className="whitespace-nowrap text-xs">
                   {u.full_access
-                    ? <button type="button" className="text-stone-700 hover:underline" onClick={() => confirm(`Take back full access from ${u.full_name}? Their businesses go back to normal billing.`) && act.mutate({ id: u.id, action: "revoke_full_access" })}>End full access</button>
+                    ? <button type="button" className="text-stone-700 hover:underline" onClick={() => void ask(`Take back full access from ${u.full_name}? Their businesses go back to normal billing.`).then((ok) => ok && act.mutate({ id: u.id, action: "revoke_full_access" }))}>End full access</button>
                     : <button type="button" className="text-brand-700 hover:underline" onClick={() => setGranting({ id: u.id, name: u.full_name })}>Give full access</button>}
                   {" · "}
                   {u.is_active
-                    ? <button type="button" className="text-red-600 hover:underline" onClick={() => confirm(`Block ${u.full_name} from signing in?`) && act.mutate({ id: u.id, action: "block" })}>Block</button>
+                    ? <button type="button" className="text-red-600 hover:underline" onClick={() => void ask(`Block ${u.full_name} from signing in?`).then((ok) => ok && act.mutate({ id: u.id, action: "block" }))}>Block</button>
                     : <button type="button" className="text-brand-700 hover:underline" onClick={() => act.mutate({ id: u.id, action: "unblock" })}>Unblock</button>}
                   {" · "}
                   <button type="button" className="text-stone-600 hover:underline" onClick={() => act.mutate({ id: u.id, action: u.is_staff ? "remove_staff" : "make_staff" })}>{u.is_staff ? "Remove staff" : "Make staff"}</button>

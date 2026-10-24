@@ -10,6 +10,7 @@ import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHe
 import { api, unwrap } from "@/lib/api/client";
 import { PAYMENT_STATUS, SUB_STATUS, TICKET_STATUS } from "@/lib/api/platform";
 import { fmt, fmtDate } from "@/lib/format";
+import { ask } from "@/components/confirm";
 
 type Action = "block" | "change_plan" | "extend_trial" | "set_discount" | "record_payment" | "note" | "set_complimentary";
 type Payment = { id: string; paid_at: string | null; created_at: string; plan_name: string; cycle: string; amount: string; method: string; reference: string; status: string; recorded_by_name: string | null; note: string };
@@ -61,10 +62,10 @@ export default function AdminBusinessPage() {
         <Button variant="ghost" onClick={() => setDialog("extend_trial")}>Extend trial</Button>
         <Button variant="ghost" onClick={() => setDialog("set_discount")}>Set discount</Button>
         {b.complimentary
-          ? <Button variant="ghost" onClick={() => confirm("End the free access? The business gets a short trial, then normal billing.") && act.mutate({ action: "set_complimentary", complimentary: false })}>End free access</Button>
+          ? <Button variant="ghost" onClick={() => void ask("End the free access? The business gets a short trial, then normal billing.").then((ok) => ok && act.mutate({ action: "set_complimentary", complimentary: false }))}>End free access</Button>
           : <Button variant="ghost" onClick={() => setDialog("set_complimentary")}>Give full access (free)</Button>}
         <Button variant="ghost" onClick={() => act.mutate({ action: "send_reminder" })}>Send payment reminder</Button>
-        <Button variant="ghost" onClick={() => confirm("Move this business to the Free plan?") && act.mutate({ action: "move_to_free" })}>Move to Free</Button>
+        <Button variant="ghost" onClick={() => void ask("Move this business to the Free plan?").then((ok) => ok && act.mutate({ action: "move_to_free" }))}>Move to Free</Button>
         <Button variant="ghost" onClick={() => setDialog("note")}>Notes</Button>
       </div>
       {b.notes && <Card className="mb-4 whitespace-pre-line p-4 text-sm text-stone-700">{b.notes}</Card>}
@@ -78,7 +79,7 @@ export default function AdminBusinessPage() {
                 <Td>{m.role}</Td>
                 <Td className="text-stone-500">{m.last_login ? fmtDate(m.last_login) : "-"}</Td>
                 <Td>{m.user_active
-                  ? <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => confirm(`Block ${m.name} from signing in anywhere?`) && userAct.mutate({ id: m.user_id, action: "block" })}>Block user</button>
+                  ? <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => void ask(`Block ${m.name} from signing in anywhere?`).then((ok) => ok && userAct.mutate({ id: m.user_id, action: "block" }))}>Block user</button>
                   : <button type="button" className="text-xs text-brand-700 hover:underline" onClick={() => userAct.mutate({ id: m.user_id, action: "unblock" })}>Unblock user</button>}</Td>
               </tr>
             ))}

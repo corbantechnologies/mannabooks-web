@@ -13,6 +13,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { TAKE_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function StockTakePage() {
   const { slug, can } = useWorkspace();
@@ -46,9 +47,9 @@ export default function StockTakePage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print count sheet</Button>
-            {counting && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this count?") && act.mutate("cancel")}>Cancel</Button>}
+            {counting && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Cancel this count?").then((ok) => ok && act.mutate("cancel"))}>Cancel</Button>}
             {counting && <Button variant="secondary" loading={save.isPending} disabled={!Object.keys(counts).length} onClick={() => save.mutate()}>Save counts</Button>}
-            {counting && <Button loading={act.isPending} onClick={() => confirm("Post the count? Stock moves to the counted quantities.") && act.mutate("post")}>Post</Button>}
+            {counting && <Button loading={act.isPending} onClick={() => void ask("Post the count? Stock moves to the counted quantities.").then((ok) => ok && act.mutate("post"))}>Post</Button>}
           </div>
         } />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">

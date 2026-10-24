@@ -9,6 +9,7 @@ import { Button, Card, EmptyState, ErrorState, Field, FormError, Input, PageHead
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 function lastMonth(): string {
   const d = new Date();
@@ -48,7 +49,7 @@ export default function DepreciationPage() {
       <Card className="mb-4 space-y-3 p-4">
         <div className="flex flex-wrap items-end gap-3">
           <Field label="Depreciate up to the end of"><Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} /></Field>
-          {can("fixedassets.depreciate") && <Button disabled={!rows.length} loading={run.isPending} onClick={() => confirm(`Post depreciation of ${fmt(total)} up to ${label(day)}?`) && run.mutate()}>Run depreciation</Button>}
+          {can("fixedassets.depreciate") && <Button disabled={!rows.length} loading={run.isPending} onClick={() => void ask(`Post depreciation of ${fmt(total)} up to ${label(day)}?`).then((ok) => ok && run.mutate())}>Run depreciation</Button>}
         </div>
         <FormError error={run.error} />
         {preview.isLoading ? <Spinner /> : preview.error ? <ErrorState error={preview.error} /> : rows.length === 0 ? (
@@ -67,7 +68,7 @@ export default function DepreciationPage() {
           <Table head={["Month", "Assets", "Total", ""]}>
             {history.map((r, i) => (
               <tr key={r.run_month}><Td>{label(r.run_month)}</Td><Td>{r.assets}</Td><Td className="text-right font-mono">{fmt(r.total)}</Td>
-                <Td className="text-right">{i === 0 && can("fixedassets.depreciate") && <Button variant="ghost" loading={undo.isPending} onClick={() => confirm(`Undo the ${label(r.run_month)} run? Its journal is removed.`) && undo.mutate(r.run_month)}>Undo</Button>}</Td></tr>
+                <Td className="text-right">{i === 0 && can("fixedassets.depreciate") && <Button variant="ghost" loading={undo.isPending} onClick={() => void ask(`Undo the ${label(r.run_month)} run? Its journal is removed.`).then((ok) => ok && undo.mutate(r.run_month))}>Undo</Button>}</Td></tr>
             ))}
           </Table>
         )}

@@ -12,6 +12,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useCategories, useUnits, useVatRates } from "@/lib/api/sales";
 import type { ProductCategory, Unit } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function CataloguePage() {
   const { slug } = useWorkspace();
@@ -110,7 +111,7 @@ function Categories() {
           {current && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))} /> Active</label>}
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
-            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this category?") && remove.mutate(current.id)}>Delete</Button> : <span />}
+            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this category?").then((ok) => ok && remove.mutate(current.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>
@@ -171,7 +172,7 @@ function Units() {
           {current && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))} /> Active</label>}
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
-            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this unit?") && remove.mutate(current.id)}>Delete</Button> : <span />}
+            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this unit?").then((ok) => ok && remove.mutate(current.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>

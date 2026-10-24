@@ -10399,6 +10399,8 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Someone checked the start month (ticks it on the setup checklist) */
+            fiscal_year_confirmed?: boolean;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -12756,6 +12758,8 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Someone checked the start month (ticks it on the setup checklist) */
+            fiscal_year_confirmed?: boolean;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -16013,6 +16017,8 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Someone checked the start month (ticks it on the setup checklist) */
+            fiscal_year_confirmed?: boolean;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -16089,6 +16095,8 @@ export interface components {
             address?: string;
             logo_url?: string;
             fiscal_year_start_month?: number;
+            /** @description Someone checked the start month (ticks it on the setup checklist) */
+            fiscal_year_confirmed?: boolean;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */

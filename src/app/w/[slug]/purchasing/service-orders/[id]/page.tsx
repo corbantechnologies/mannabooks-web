@@ -19,6 +19,7 @@ import { useApprovalStatus } from "@/lib/api/control";
 import { SO_STATUS } from "@/lib/api/purchasing";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function ServiceOrderPage() {
   const { slug, can } = useWorkspace();
@@ -57,7 +58,7 @@ export default function ServiceOrderPage() {
           <div className="flex flex-wrap gap-2">
             {o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create") && <SendEmailButton docType="service_order" id={o.id} />}
             {o.status === "draft" && can("purchaseorders.create") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
-            {(o.status === "draft" || o.status === "approved") && can("purchaseorders.create") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel order</Button>}
+            {(o.status === "draft" || o.status === "approved") && can("purchaseorders.create") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Cancel this order?").then((ok) => ok && act.mutate("cancel"))}>Cancel order</Button>}
             {o.status === "draft" && can("purchaseorders.approve") && !approval.data?.required && <Button onClick={() => act.mutate("approve")}>Approve</Button>}
             {o.status === "approved" && can("purchaseorders.create") && <Button onClick={() => setCompleting(true)}>Confirm work done</Button>}
             {o.status !== "draft" && o.status !== "cancelled" && can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?service=${o.id}`}><Button variant="secondary">Enter bill</Button></Link>}

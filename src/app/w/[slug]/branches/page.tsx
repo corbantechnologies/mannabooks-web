@@ -9,6 +9,7 @@ import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, M
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { Branch } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 const EMPTY = { name: "", code: "", phone: "", address: "", is_default: false, is_active: true };
 
@@ -96,7 +97,7 @@ export default function BranchesPage() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {editing !== "new" && editing !== null && !editing.is_default ? (
-              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this branch?") && remove.mutate(editing.id)}>Delete</Button>
+              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this branch?").then((ok) => ok && remove.mutate(editing.id))}>Delete</Button>
             ) : <span />}
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
