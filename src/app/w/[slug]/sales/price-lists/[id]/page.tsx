@@ -13,6 +13,7 @@ import { useProducts } from "@/lib/api/sales";
 import type { PriceList } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function PriceListPage() {
   const { slug } = useWorkspace();
@@ -46,7 +47,7 @@ function Editor({ list }: { list: PriceList }) {
     <div className="w-full">
       <Link href={`/w/${slug}/sales/price-lists`} className="text-sm text-stone-500 hover:underline">&larr; Price lists</Link>
       <PageHeader title={list.name} description={`Used by ${list.customer_count ?? 0} customer(s).`} guide="price-lists"
-        actions={manage && <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this price list?") && remove.mutate()}>Delete</Button>} />
+        actions={manage && <Button variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this price list?").then((ok) => ok && remove.mutate())}>Delete</Button>} />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <fieldset disabled={!manage} className="space-y-4">
           <Card className="grid gap-3 p-4 sm:grid-cols-3">

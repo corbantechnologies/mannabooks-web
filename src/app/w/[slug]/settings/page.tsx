@@ -11,6 +11,7 @@ import { StoreSettings } from "@/components/store-settings";
 import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -108,7 +109,7 @@ export default function SettingsPage() {
         <Card className="border-red-200 p-5">
           <h2 className="font-semibold text-red-700">Delete workspace</h2>
           <p className="mt-1 text-sm text-stone-600">Removes {ws.name} for everyone. The records are kept for audit but nobody can open it.</p>
-          <Button variant="danger" className="mt-3" loading={destroy.isPending} onClick={() => prompt(`Type ${ws.name} to delete it.`) === ws.name && destroy.mutate()}>
+          <Button variant="danger" className="mt-3" loading={destroy.isPending} onClick={() => void ask(`Delete ${ws.name} and everything in it? This can't be undone.`, { typeToConfirm: ws.name, confirmLabel: "Delete workspace" }).then((ok) => ok && destroy.mutate())}>
             Delete {ws.name}
           </Button>
         </Card>

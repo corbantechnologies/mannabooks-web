@@ -16,6 +16,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { BILL_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function BillPage() {
   const { slug, can } = useWorkspace();
@@ -49,7 +50,7 @@ export default function BillPage() {
       <PageHeader title={`Bill ${b.supplier_invoice_number || "(draft)"}`} description={`${b.supplier_name}${b.number ? ` · ${b.number}` : ""}`} guide="bills"
         actions={
           <div className="flex flex-wrap gap-2">
-            {b.status === "draft" && can("bills.create") && <><Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this draft?") && remove.mutate()}>Delete</Button><Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button></>}
+            {b.status === "draft" && can("bills.create") && <><Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this draft?").then((ok) => ok && remove.mutate())}>Delete</Button><Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button></>}
             {b.status === "draft" && can("bills.post") && <Button loading={post.isPending} onClick={() => post.mutate()}>Post bill</Button>}
             {b.status === "posted" && can("bills.void") && <Button variant="ghost" className="text-red-600" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
             {open && can("paymentvouchers.create") && <Link href={`/w/${slug}/purchasing/vouchers/new?supplier=${b.supplier_id}&bill=${b.id}`}><Button>Pay</Button></Link>}

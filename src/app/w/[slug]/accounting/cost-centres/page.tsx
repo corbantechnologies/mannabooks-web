@@ -9,6 +9,7 @@ import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, M
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { type CostCenter, useCostCenters } from "@/lib/api/control";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function CostCentresPage() {
   const { slug, can } = useWorkspace();
@@ -68,7 +69,7 @@ export default function CostCentresPage() {
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={f.is_active} onChange={(e) => setF((x) => ({ ...x, is_active: e.target.checked }))} /> Active (offered on new documents)</label>
           <FormError error={save.error || remove.error} />
           <div className="flex justify-between gap-2">
-            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this cost centre?") && remove.mutate(editing.id)}>Delete</Button> : <span />}
+            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => void ask("Delete this cost centre?").then((ok) => ok && remove.mutate(editing.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>

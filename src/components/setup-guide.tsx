@@ -44,8 +44,9 @@ export function SetupGuide() {
     onSuccess: (_, key) => toast.success(`Set up for: ${goals.find((g) => g.key === key)?.label}. Change it any time in Settings.`),
   });
   const setYear = useMutation({
+    // sending the month (even the same one) also marks it checked
     mutationFn: async (month: number) => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { fiscal_year_start_month: month } as never })),
-    onSuccess: (_, month) => toast.success(`Your financial year now starts in ${MONTHS[month - 1]}.`),
+    onSuccess: (_, month) => toast.success(`Your financial year starts in ${MONTHS[month - 1]}.`),
     onError: (err) => toast.error(err instanceof Error ? err.message : "Couldn't change the financial year."),
   });
   const n = {
@@ -65,14 +66,20 @@ export function SetupGuide() {
   };
   const has = (q: { data?: number }) => (q.data ?? 0) > 0;
   const startMonth = ws.fiscal_year_start_month ?? 1;
+  const yearDone = has(n.journals) || Boolean(ws.fiscal_year_confirmed);
   const year: Step = {
-    key: "year", href: "/settings", done: has(n.journals),
-    label: has(n.journals) ? `Financial year starts in ${MONTHS[startMonth - 1]}` : "Check when your financial year starts (it can't change once you record anything)",
+    key: "year", href: "/settings", done: yearDone,
+    label: yearDone ? `Financial year starts in ${MONTHS[startMonth - 1]}` : "Check when your financial year starts (it can't change once you record anything)",
     control: (
-      <Select aria-label="Financial year starts in" className="w-auto py-1 text-sm" value={startMonth} disabled={setYear.isPending}
-        onChange={(e) => setYear.mutate(Number(e.target.value))}>
-        {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
-      </Select>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="w-40">
+          <Select aria-label="Financial year starts in" className="py-1 text-sm" value={startMonth} disabled={setYear.isPending}
+            onChange={(e) => setYear.mutate(Number(e.target.value))}>
+            {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+          </Select>
+        </div>
+        <Button variant="secondary" className="py-1" loading={setYear.isPending} onClick={() => setYear.mutate(startMonth)}>{MONTHS[startMonth - 1]} is right</Button>
+      </div>
     ),
   };
   const details: Step = { key: "details", label: "Add your KRA PIN and business details", href: "/settings", done: Boolean(ws.kra_pin) };

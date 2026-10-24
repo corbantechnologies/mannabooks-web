@@ -16,6 +16,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { QUOTE_STATUS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function CataloguePage() {
   const { slug, can, context } = useWorkspace();
@@ -56,7 +57,7 @@ export default function CataloguePage() {
           {manage && <ActionMenu actions={[
             { label: "Edit", onClick: () => setEditing(true) },
             { label: "Preview as the client", href: c.url },
-            { label: "Delete", danger: true, onClick: () => { if (confirm("Delete this catalogue? Its link stops working; quotations made from it stay.")) remove.mutate(); } },
+            { label: "Delete", danger: true, onClick: () => { void ask("Delete this catalogue? Its link stops working; quotations made from it stay.").then((ok) => { if (ok) remove.mutate(); }); } },
           ]} />}
         </>} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">

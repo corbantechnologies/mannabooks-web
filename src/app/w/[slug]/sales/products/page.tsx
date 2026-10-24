@@ -13,6 +13,7 @@ import { useCategories, useUnits, useVatRates } from "@/lib/api/sales";
 import type { Product } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 type Kind = "goods" | "service";
 const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", track_inventory: true, made_to_order: false, online: false, image_url: "", reorder_level: "0", description: "", unit: "pcs", sale_price: "", cost_price: "0", tax_rate_id: "", income_account_id: "", is_active: true, opening_quantity: "", opening_unit_cost: "",
@@ -201,7 +202,7 @@ export default function ProductsPage() {
           {current && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))} /> Active</label>}
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
-            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this product?") && remove.mutate(current.id)}>Delete</Button> : <span />}
+            {current ? <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this product?").then((ok) => ok && remove.mutate(current.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>

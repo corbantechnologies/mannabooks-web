@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function TeamPage() {
   const { slug, can, context } = useWorkspace();
@@ -89,7 +90,7 @@ export default function TeamPage() {
                       <Button variant="ghost" className="px-2 py-1" onClick={() => update.mutate({ id: m.id, body: { status: m.status === "active" ? "suspended" : "active" } })}>
                         {m.status === "active" ? "Suspend" : "Reactivate"}
                       </Button>
-                      <Button variant="ghost" className="px-2 py-1 text-red-600" onClick={() => confirm(`Remove ${m.user.full_name} from this workspace?`) && removeMember.mutate(m.id)}>
+                      <Button variant="ghost" className="px-2 py-1 text-red-600" onClick={() => void ask(`Remove ${m.user.full_name} from this workspace?`).then((ok) => ok && removeMember.mutate(m.id))}>
                         Remove
                       </Button>
                     </>

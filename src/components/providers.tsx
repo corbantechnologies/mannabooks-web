@@ -5,6 +5,7 @@ import { SessionProvider, signOut } from "next-auth/react";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
+import { ConfirmHost } from "@/components/confirm";
 import { ApiError } from "@/lib/api/client";
 
 /** A save hit a missing earlier year or a closed month: the workspace layout offers to open the books for that date. */
@@ -45,6 +46,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={client}>
         {children}
         <Toaster position="top-right" />
+        <ConfirmHost />
       </QueryClientProvider>
     </SessionProvider>
   );

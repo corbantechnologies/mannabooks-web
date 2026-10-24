@@ -11,6 +11,7 @@ import { REPORT_FREQUENCIES, REPORT_STATUS, downloadFile } from "@/lib/api/asset
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function ReportRequestPage() {
   const { slug } = useWorkspace();
@@ -43,7 +44,7 @@ export default function ReportRequestPage() {
       <PageHeader title={r.title} description={`${REPORT_FREQUENCIES.find((f) => f.value === r.frequency)?.label}, from ${r.assignee_names.join(", ")}`} guide="work-reports"
         actions={<div className="flex flex-wrap gap-2">
           {r.has_template && <Button variant="secondary" onClick={() => downloadFile(`/api/v1/w/${slug}/report-requests/${id}/template/`, r.template_name ?? "template").catch((e) => toast.error(e.message))}><Download className="h-4 w-4" /> Template</Button>}
-          <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this request?") && remove.mutate()}>Delete</Button>
+          <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this request?").then((ok) => ok && remove.mutate())}>Delete</Button>
           {r.status === "active" ? <Button variant="secondary" onClick={() => update.mutate("closed")}>Close</Button> : <Button variant="secondary" onClick={() => update.mutate("active")}>Reopen</Button>}
         </div>} />
       {r.instructions && <Card className="mb-4 p-4"><p className="whitespace-pre-line text-sm text-stone-700">{r.instructions}</p></Card>}

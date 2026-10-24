@@ -20,6 +20,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { INVOICE_STATUS, METHODS, useDepositAccounts } from "@/lib/api/sales";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 interface AppliedRow { kind: string; id: string; number: string; date: string; amount: string }
 
@@ -119,7 +120,7 @@ export default function InvoicePage() {
               { label: "Debit note (charge more)", href: `/w/${slug}/sales/debit-notes/new?invoice=${inv.id}`, hidden: !(issued && !debit && can("invoices.create")) },
               { label: "Delivery note", href: `/w/${slug}/sales/delivery-notes/new?invoice=${inv.id}`, hidden: !(issued && can("deliverynotes.manage")) },
               { label: "Void invoice", danger: true, onClick: () => { voidIt.reset(); setVoiding(true); }, hidden: !(open && can("invoices.void") && Number(inv.amount_paid) === 0) },
-              { label: "Delete draft", danger: true, onClick: () => { if (confirm("Delete this draft?")) remove.mutate(); }, hidden: !(inv.status === "draft" && can("invoices.create")) },
+              { label: "Delete draft", danger: true, onClick: () => { void ask("Delete this draft?").then((ok) => { if (ok) remove.mutate(); }); }, hidden: !(inv.status === "draft" && can("invoices.create")) },
             ]} />
           </div>
         }

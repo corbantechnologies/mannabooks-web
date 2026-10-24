@@ -12,6 +12,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { LedgerAccount } from "@/lib/api/types";
 import { fmt } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 type AccountType = "asset" | "liability" | "equity" | "income" | "expense";
 const EMPTY = { code: "", name: "", account_type: "expense" as AccountType, subtype: "expense", description: "", is_active: true };
@@ -116,7 +117,7 @@ export default function ChartOfAccountsPage() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {current && !current.is_system ? (
-              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this account?") && remove.mutate(current.id)}>Delete</Button>
+              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this account?").then((ok) => ok && remove.mutate(current.id))}>Delete</Button>
             ) : <span />}
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>

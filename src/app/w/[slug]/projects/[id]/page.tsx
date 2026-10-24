@@ -14,6 +14,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { PROJECT_STATUS } from "@/lib/api/control";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 function Stat({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: "red" | "green" }) {
   return (
@@ -48,7 +49,7 @@ export default function ProjectPage() {
       <Link href={`/w/${slug}/projects`} className="text-sm text-stone-500 hover:underline">&larr; Projects</Link>
       <PageHeader title={`${p.code} ${p.name}`} description={p.description || undefined} guide="projects"
         actions={can("projects.manage") && <div className="flex flex-wrap gap-2">
-          <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this project?") && remove.mutate()}>Delete</Button>
+          <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this project?").then((ok) => ok && remove.mutate())}>Delete</Button>
           <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
         </div>} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">

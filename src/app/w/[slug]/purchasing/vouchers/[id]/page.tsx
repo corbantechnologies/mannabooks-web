@@ -17,6 +17,7 @@ import { PAY_METHODS, PV_STATUS, usePayingAccounts } from "@/lib/api/purchasing"
 import { depositFor } from "@/lib/api/sales";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function VoucherPage() {
   const { slug, can } = useWorkspace();
@@ -44,7 +45,7 @@ export default function VoucherPage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href={`/w/${slug}/purchasing/vouchers/${v.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
-            {(v.status === "draft" || v.status === "approved") && can("paymentvouchers.create") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this voucher?") && act.mutate("cancel")}>Cancel</Button>}
+            {(v.status === "draft" || v.status === "approved") && can("paymentvouchers.create") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Cancel this voucher?").then((ok) => ok && act.mutate("cancel"))}>Cancel</Button>}
             {v.status === "draft" && can("paymentvouchers.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate("approve")}>Approve</Button>}
             {v.status === "approved" && can("supplierpayments.create") && <Button onClick={() => { act.reset(); setPaying(true); }}>Record payment</Button>}
           </div>

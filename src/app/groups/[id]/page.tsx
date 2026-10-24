@@ -12,6 +12,7 @@ import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, M
 import { AccountOptions, useAccounts } from "@/lib/api/accounting";
 import { api, unwrap } from "@/lib/api/client";
 import { downloadCsv, fmt, fmtDate, todayIso } from "@/lib/format";
+import { ask } from "@/components/confirm";
 
 type Tab = "pl" | "bs" | "ic" | "companies";
 type Section = { key: string; label: string; rows: { code: string; name: string; amounts: string[]; eliminations: string; total: string }[]; amounts: string[]; eliminations: string; total: string };
@@ -302,7 +303,7 @@ function Companies({ id, isOwner, companies }: { id: string; isOwner: boolean; c
               <Td><Link href={`/w/${c.slug}`} className="font-medium hover:underline">{c.name}</Link></Td>
               <Td className="font-mono text-xs">{c.kra_pin || "-"}</Td>
               <Td>{c.currency}</Td>
-              <Td>{isOwner && <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => confirm(`Remove ${c.name} from the group?`) && remove.mutate(c.slug)}>Remove</button>}</Td>
+              <Td>{isOwner && <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => void ask(`Remove ${c.name} from the group?`).then((ok) => ok && remove.mutate(c.slug))}>Remove</button>}</Td>
             </tr>
           ))}
           {companies.length === 0 && <tr><Td colSpan={4} className="text-stone-500">No companies yet.</Td></tr>}
@@ -320,7 +321,7 @@ function Companies({ id, isOwner, companies }: { id: string; isOwner: boolean; c
           </form>
           <FormError error={add.error} />
           <div className="border-t border-stone-100 pt-3">
-            <Button variant="danger" loading={deleteGroup.isPending} onClick={() => confirm("Delete this group? The companies and their books stay as they are.") && deleteGroup.mutate()}>Delete group</Button>
+            <Button variant="danger" loading={deleteGroup.isPending} onClick={() => void ask("Delete this group? The companies and their books stay as they are.").then((ok) => ok && deleteGroup.mutate())}>Delete group</Button>
           </div>
         </Card>
       ) : <p className="text-sm text-stone-500">Only the group&apos;s owner can add or remove companies.</p>}

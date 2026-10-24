@@ -10,6 +10,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { pickedPerson, usePeoplePicker } from "@/lib/api/people";
 import type { Department } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 const EMPTY = { name: "", code: "", description: "", head_id: "" as string, modules: [] as string[], is_active: true };
 
@@ -116,7 +117,7 @@ export default function DepartmentsPage() {
           <FormError error={save.error} />
           <div className="flex justify-between gap-2">
             {editing !== "new" && editing !== null ? (
-              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this department?") && remove.mutate(editing.id)}>Delete</Button>
+              <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this department?").then((ok) => ok && remove.mutate(editing.id))}>Delete</Button>
             ) : <span />}
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>

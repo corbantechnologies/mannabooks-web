@@ -17,6 +17,7 @@ import { PayItem, REMITTANCES, RUN_STATUS } from "@/lib/api/people";
 import type { Payslip } from "@/lib/api/types";
 import { downloadCsv, fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function PayRunPage() {
   const { slug, can } = useWorkspace();
@@ -64,9 +65,9 @@ export default function PayRunPage() {
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={exportBank}>Bank / M-Pesa list</Button>
             <Button variant="secondary" onClick={exportStatutory}>Statutory schedule</Button>
-            {draft && can("payroll.manage") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this payroll?") && remove.mutate()}>Delete</Button>}
+            {draft && can("payroll.manage") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this payroll?").then((ok) => ok && remove.mutate())}>Delete</Button>}
             {draft && can("payroll.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
-            {r.status === "approved" && can("payroll.approve") && <Button variant="secondary" onClick={() => confirm("Reopen to change payslips?") && act.mutate({ action: "reopen" })}>Reopen</Button>}
+            {r.status === "approved" && can("payroll.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change payslips?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
             {r.status === "approved" && can("payroll.manage") && <Button onClick={() => { act.reset(); setPaying("pay"); }}>Record salaries paid</Button>}
           </div>
         } />

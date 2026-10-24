@@ -9,6 +9,7 @@ import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHe
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { Role } from "@/lib/api/types";
 import { grants, useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function RolesPage() {
   const { slug, can } = useWorkspace();
@@ -109,7 +110,7 @@ export default function RolesPage() {
           {manage && (
             <div className="flex justify-between gap-2">
               {current && !current.is_preset ? (
-                <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => confirm("Delete this role?") && remove.mutate(current.id)}>Delete</Button>
+                <Button type="button" variant="ghost" className="text-red-600" loading={remove.isPending} onClick={() => void ask("Delete this role?").then((ok) => ok && remove.mutate(current.id))}>Delete</Button>
               ) : <span />}
               <div className="flex flex-wrap gap-2">
                 <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>

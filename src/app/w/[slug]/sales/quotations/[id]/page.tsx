@@ -18,6 +18,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { QUOTE_STATUS } from "@/lib/api/sales";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function QuotationPage() {
   const { slug, can, context } = useWorkspace();
@@ -73,7 +74,7 @@ export default function QuotationPage() {
               { label: "Customer accepted", onClick: () => act.mutate("accept"), hidden: !(manage && ["draft", "sent"].includes(q.status)) },
               { label: "Customer declined", onClick: () => act.mutate("decline"), hidden: !(manage && ["draft", "sent"].includes(q.status)) },
               { label: "Reopen", onClick: () => act.mutate("reopen"), hidden: !(manage && ["accepted", "declined"].includes(q.status)) },
-              { label: "Delete", danger: true, onClick: () => { if (confirm("Delete this quotation?")) remove.mutate(); }, hidden: !(manage && ["draft", "declined"].includes(q.status)) },
+              { label: "Delete", danger: true, onClick: () => { void ask("Delete this quotation?").then((ok) => { if (ok) remove.mutate(); }); }, hidden: !(manage && ["draft", "declined"].includes(q.status)) },
             ]} />
           </div>
         }

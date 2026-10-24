@@ -12,6 +12,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { MO_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function ProductionOrderPage() {
   const { slug, can } = useWorkspace();
@@ -35,7 +36,7 @@ export default function ProductionOrderPage() {
       <PageHeader title={`Production ${o.number}`} description={`${Number(o.quantity)} × ${o.product_name}`} guide="manufacturing"
         actions={planned && (
           <div className="flex flex-wrap gap-2">
-            <Button variant="ghost" className="text-red-600" onClick={() => confirm("Cancel this order?") && act.mutate("cancel")}>Cancel</Button>
+            <Button variant="ghost" className="text-red-600" onClick={() => void ask("Cancel this order?").then((ok) => ok && act.mutate("cancel"))}>Cancel</Button>
             <Button loading={act.isPending} onClick={() => act.mutate("complete")}>Complete</Button>
           </div>
         )} />

@@ -10,6 +10,7 @@ import { useBankAccounts } from "@/lib/api/banking";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function TransfersPage() {
   const { slug, can } = useWorkspace();
@@ -39,7 +40,7 @@ export default function TransfersPage() {
               <tr key={t.id}>
                 <Td>{fmtDate(t.transfer_date)}</Td><Td className="font-mono text-xs">{t.number}</Td><Td>{t.from_account_name}</Td><Td>{t.to_account_name}</Td>
                 <Td className="text-right font-mono">{fmt(t.amount)}</Td><Td className="text-right font-mono">{Number(t.fee) ? fmt(t.fee) : ""}</Td>
-                <Td>{t.status === "void" ? <Badge>Void</Badge> : can("banking.transfer") && <Button variant="ghost" className="px-2 py-1 text-red-600" onClick={() => confirm("Void this transfer?") && voidIt.mutate(t.id)}>Void</Button>}</Td>
+                <Td>{t.status === "void" ? <Badge>Void</Badge> : can("banking.transfer") && <Button variant="ghost" className="px-2 py-1 text-red-600" onClick={() => void ask("Void this transfer?").then((ok) => ok && voidIt.mutate(t.id))}>Void</Button>}</Td>
               </tr>
             ))}
           </Table>

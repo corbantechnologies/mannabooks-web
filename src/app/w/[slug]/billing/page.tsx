@@ -9,6 +9,7 @@ import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHe
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 const STATUS: Record<string, [string, "green" | "amber" | "red" | "blue" | "stone"]> = {
   trialing: ["Free trial", "blue"], active: ["Active", "green"], past_due: ["Payment due", "amber"], read_only: ["Read only", "red"], cancelled: ["Cancelled", "stone"],
@@ -76,7 +77,7 @@ export default function BillingPage() {
               </ul>
               <div className="mt-4">
                 {p.is_free ? (
-                  !current && !sub.complimentary && <Button variant="secondary" className="w-full" loading={toFree.isPending} onClick={() => confirm("Move to the Free plan now? Parts outside it become read-only.") && toFree.mutate()}>Move to Free</Button>
+                  !current && !sub.complimentary && <Button variant="secondary" className="w-full" loading={toFree.isPending} onClick={() => void ask("Move to the Free plan now? Parts outside it become read-only.").then((ok) => ok && toFree.mutate())}>Move to Free</Button>
                 ) : (
                   !sub.complimentary && <Button className="w-full" variant={current ? "secondary" : "primary"} onClick={() => setPaying(p)}>{current ? "Pay or renew" : "Choose"}</Button>
                 )}

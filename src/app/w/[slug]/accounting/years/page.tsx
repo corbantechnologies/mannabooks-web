@@ -8,6 +8,7 @@ import { Badge, Button, Card, ErrorState, PageHeader, Spinner, Table, Td } from 
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function FinancialYearsPage() {
   const { slug, can } = useWorkspace();
@@ -70,7 +71,7 @@ export default function FinancialYearsPage() {
                 <Td>{y.status === "open" ? <Badge tone="green">Open</Badge> : <Badge>Closed</Badge>}</Td>
                 <Td className="text-right">
                   {manageYears && (y.status === "open" ? (
-                    <Button variant="ghost" className="px-2 py-1" loading={yearAction.isPending} onClick={() => confirm(`Close ${y.name}? Its profit moves to retained earnings and every month is locked.`) && yearAction.mutate({ id: y.id, action: "close" })}>Close year</Button>
+                    <Button variant="ghost" className="px-2 py-1" loading={yearAction.isPending} onClick={() => void ask(`Close ${y.name}? Its profit moves to retained earnings and every month is locked.`).then((ok) => ok && yearAction.mutate({ id: y.id, action: "close" }))}>Close year</Button>
                   ) : (
                     <Button variant="ghost" className="px-2 py-1" onClick={() => yearAction.mutate({ id: y.id, action: "reopen" })}>Reopen</Button>
                   ))}

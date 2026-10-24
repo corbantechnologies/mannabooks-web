@@ -9,6 +9,7 @@ import { Badge, Button, Card, ErrorState, FormError, PageHeader, Spinner, Table,
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function ReconciliationPage() {
   const { slug, can } = useWorkspace();
@@ -40,9 +41,9 @@ export default function ReconciliationPage() {
       <PageHeader title={`Reconcile ${r.bank_account_name}`} description={`Statement of ${fmtDate(r.statement_date)}. Tick each transaction that appears on the statement.`} guide="bank-reconciliation"
         actions={
           <div className="flex flex-wrap gap-2">
-            {editable && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this reconciliation?") && remove.mutate()}>Delete</Button>}
+            {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this reconciliation?").then((ok) => ok && remove.mutate())}>Delete</Button>}
             {editable && <Button disabled={diff !== 0} loading={act.isPending} onClick={() => act.mutate("complete")}>Finish</Button>}
-            {r.status === "completed" && can("banking.reconcile") && <Button variant="secondary" onClick={() => confirm("Reopen? Its transactions can be changed again.") && act.mutate("reopen")}>Reopen</Button>}
+            {r.status === "completed" && can("banking.reconcile") && <Button variant="secondary" onClick={() => void ask("Reopen? Its transactions can be changed again.").then((ok) => ok && act.mutate("reopen"))}>Reopen</Button>}
           </div>
         } />
       <Card className="sticky top-14 z-10 mb-4 grid gap-4 p-4 sm:grid-cols-4">

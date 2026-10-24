@@ -15,6 +15,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { BUDGET_STATUS, type Budget, monthLabel, useApprovalStatus } from "@/lib/api/control";
 import { downloadCsv, fmt, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 type Row = { account_id: string; amounts: string[] };
 const sum = (xs: (string | number)[]) => xs.reduce<number>((a, b) => a + (Number(b) || 0), 0);
@@ -57,10 +58,10 @@ export default function BudgetPage() {
       <Link href={`/w/${slug}/accounting/budgets`} className="text-sm text-stone-500 hover:underline">&larr; Budgets</Link>
       <PageHeader title={b.name} description={`${b.fiscal_year_name}, ${b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
         actions={<div className="flex flex-wrap gap-2">
-          {editable && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Delete this budget?") && remove.mutate()}>Delete</Button>}
+          {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this budget?").then((ok) => ok && remove.mutate())}>Delete</Button>}
           {editable && <Button variant="secondary" onClick={() => { act.reset(); setFilling(true); }}>Copy last year</Button>}
           {draft && can("budgets.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
-          {!draft && can("budgets.approve") && <Button variant="secondary" onClick={() => confirm("Reopen to change the figures?") && act.mutate({ action: "reopen" })}>Reopen</Button>}
+          {!draft && can("budgets.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change the figures?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
         </div>} />
       <ApprovalPanel docType="budget" id={id} />
       <div className="mb-4 flex flex-wrap items-center gap-3">

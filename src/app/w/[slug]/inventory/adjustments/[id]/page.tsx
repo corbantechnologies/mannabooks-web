@@ -10,6 +10,7 @@ import { Badge, Button, Card, ErrorState, PageHeader, Spinner, Table, Td } from 
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function AdjustmentPage() {
   const { slug, can } = useWorkspace();
@@ -27,7 +28,7 @@ export default function AdjustmentPage() {
     <div className="w-full">
       <Link href={`/w/${slug}/inventory/adjustments`} className="text-sm text-stone-500 hover:underline">&larr; Adjustments</Link>
       <PageHeader title={`${d.reason_label} ${d.number}`} description={d.warehouse_name} guide="inventory"
-        actions={d.status === "posted" && can("inventory.manage") && <Button variant="ghost" className="text-red-600" onClick={() => confirm("Undo this adjustment?") && voidIt.mutate()}>Void</Button>} />
+        actions={d.status === "posted" && can("inventory.manage") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Undo this adjustment?").then((ok) => ok && voidIt.mutate())}>Void</Button>} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-3">
         <Meta label="Date">{fmtDate(d.adjustment_date)}</Meta><Meta label="Value">{fmt(d.total_value)}</Meta><Meta label="Status">{d.status === "void" ? <Badge>Void</Badge> : <Badge tone="green">Posted</Badge>}</Meta>
         {d.notes && <Meta label="Notes">{d.notes}</Meta>}

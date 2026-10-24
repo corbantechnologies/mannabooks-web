@@ -13,6 +13,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { FREQUENCIES, RECURRING_STATUS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function RecurringInvoicePage() {
   const { slug, can } = useWorkspace();
@@ -46,7 +47,7 @@ export default function RecurringInvoicePage() {
         guide="recurring-invoices"
         actions={manage && r.status !== "ended" && (
           <div className="flex flex-wrap gap-2">
-            <Button variant="ghost" className="text-red-600" onClick={() => confirm("End this schedule? It can't be restarted.") && act.mutate("end")}>End</Button>
+            <Button variant="ghost" className="text-red-600" onClick={() => void ask("End this schedule? It can't be restarted.").then((ok) => ok && act.mutate("end"))}>End</Button>
             {r.status === "active" ? <Button variant="secondary" onClick={() => act.mutate("pause")}>Pause</Button> : <Button variant="secondary" onClick={() => act.mutate("resume")}>Resume</Button>}
             <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>
             {r.status === "active" && <Button loading={act.isPending && act.variables === "run"} onClick={() => act.mutate("run")}>Raise next invoice now</Button>}

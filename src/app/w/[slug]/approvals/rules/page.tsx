@@ -11,6 +11,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { DOC_TYPES, LEVEL_KINDS, type ApprovalRule } from "@/lib/api/control";
 import { fmt } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 type Level = { kind: string; role_id?: string | null; membership_id?: string | null };
 const blank = { name: "", document_type: "purchase_order", min_amount: "0", max_amount: "", is_active: true, levels: [{ kind: "supervisor" }] as Level[] };
@@ -105,7 +106,7 @@ export default function ApprovalRulesPage() {
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))} /> Rule is on</label>
           <FormError error={save.error || remove.error} />
           <div className="flex justify-between gap-2">
-            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this rule? Requests already sent keep their chain.") && remove.mutate(editing.id)}>Delete</Button> : <span />}
+            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => void ask("Delete this rule? Requests already sent keep their chain.").then((ok) => ok && remove.mutate(editing.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save rule</Button></div>
           </div>
         </form>

@@ -10,6 +10,7 @@ import { Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, P
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { LoyaltyProgram, LoyaltyTier } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 export default function LoyaltySettingsPage() {
   const { slug } = useWorkspace();
@@ -111,7 +112,7 @@ function Tiers() {
           <Field label="Perks (shown to staff)"><Input value={form.perks} onChange={(e) => setForm((prev) => ({ ...prev, perks: e.target.value }))} placeholder="Free delivery" /></Field>
           <FormError error={save.error ?? remove.error} />
           <div className="flex justify-between gap-2">
-            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => confirm("Delete this tier?") && remove.mutate(editing.id)}>Delete</Button> : <span />}
+            {editing && editing !== "new" ? <Button type="button" variant="ghost" className="text-red-600" onClick={() => void ask("Delete this tier?").then((ok) => ok && remove.mutate(editing.id))}>Delete</Button> : <span />}
             <div className="flex flex-wrap gap-2"><Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
           </div>
         </form>

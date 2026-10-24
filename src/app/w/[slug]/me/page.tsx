@@ -11,6 +11,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { LEAVE_STATUS, LEAVE_TYPES } from "@/lib/api/people";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { ask } from "@/components/confirm";
 
 /** Employee self-service: my leave and my payslips. Built for phones first. */
 export default function MePage() {
@@ -51,7 +52,7 @@ export default function MePage() {
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <Badge tone={LEAVE_STATUS[r.status ?? "pending"].tone}>{LEAVE_STATUS[r.status ?? "pending"].label}</Badge>
-                {(r.status === "pending" || (r.status === "approved" && r.start_date > todayIso())) && <button className="text-xs text-stone-500 underline" onClick={() => confirm("Cancel this request?") && cancel.mutate(r.id)}>Cancel</button>}
+                {(r.status === "pending" || (r.status === "approved" && r.start_date > todayIso())) && <button className="text-xs text-stone-500 underline" onClick={() => void ask("Cancel this request?").then((ok) => ok && cancel.mutate(r.id))}>Cancel</button>}
               </div>
             </Card>
           ))}
