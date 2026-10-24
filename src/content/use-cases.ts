@@ -3,7 +3,7 @@
  * INDUSTRIES[].useCases, so the two lists can't drift apart.
  */
 import {
-  BadgePercent, Boxes, ChefHat, Globe, Handshake, Network, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet, type LucideIcon,
+  BadgePercent, Boxes, ChefHat, Globe, Handshake, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet, type LucideIcon,
 } from "lucide-react";
 
 import { INDUSTRIES } from "./industries";
@@ -80,6 +80,19 @@ export const USE_CASES: UseCase[] = [
       { title: "Share payslips", text: "Staff open their payslips and ask for leave on their phones." },
     ],
     outcomes: ["Deductions at the current rates", "Remittance schedules ready for each authority", "Leave balances kept for you"],
+  },
+  {
+    slug: "sell-without-stock", icon: PackageOpen, title: "Sell without keeping stock", module: "sales", guide: "catalogues",
+    summary: "Quote first, buy from your supplier once the client says yes, then invoice, and see what each order made.",
+    problem: "You source what clients ask for, or sell your time, so there is no shelf to count. Stock software gets in the way, quotes take hours, and you only learn what an order made when the month closes.",
+    steps: [
+      { title: "Add what you sell, with stock off", text: "Products with Track stock unticked have a price, VAT and a picture, but never a stock count. Services work the same way. A one-off item goes straight on a quotation as a free-text line." },
+      { title: "Let the client choose", text: "Send a catalogue link or PDF. Their picks become a quotation, which they accept on the same link. Or write the quotation yourself." },
+      { title: "Buy on order", text: "Once it is accepted, send your supplier a purchase order (LPO) and record their bill. Tag both, and the client's invoice, to a project for this order." },
+      { title: "Invoice and get paid", text: "Convert the quotation to an invoice in one click. The client pays by M-Pesa prompt, paybill or bank." },
+      { title: "See the margin", text: "The project shows what you sold for, what it cost and what you made. Analytics shows what is owed on both sides." },
+    ],
+    outcomes: ["No stock counts to keep", "Profit on every order, not just every month", "Quotations in minutes", "What clients owe you and what you owe suppliers, side by side"],
   },
   {
     slug: "job-costing", icon: Receipt, title: "Cost every job", module: "projects", guide: "projects",

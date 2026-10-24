@@ -29,6 +29,8 @@ async function forward(req: NextRequest): Promise<Response> {
     const out = new Headers();
     const resType = res.headers.get("content-type");
     if (resType) out.set("Content-Type", resType);
+    const disposition = res.headers.get("content-disposition"); // keeps a PDF's file name
+    if (disposition) out.set("Content-Disposition", disposition);
     return new Response(res.status === 204 ? null : res.body, { status: res.status, headers: out });
   } catch {
     return Response.json(

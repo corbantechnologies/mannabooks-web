@@ -95,3 +95,6 @@ export type Lead = S["Lead"];
 export type Deal = S["Deal"];
 export type Activity = S["Activity"];
 export type InboxMessage = S["InboxMessage"];
+
+export type Catalogue = S["Catalogue"];
+export type CatalogueItem = S["CatalogueItem"];

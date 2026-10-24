@@ -40,9 +40,15 @@ export default function PrintDeliveryNotePage() {
           <div><p className="text-xs uppercase text-stone-400">Deliver to</p><p className="font-medium">{d.customer_name}</p><p className="whitespace-pre-line">{d.delivery_address}</p>{d.contact_person && <p>{d.contact_person} {d.contact_phone}</p>}</div>
           <div className="text-right">{d.invoice_number && <p>Invoice {d.invoice_number}</p>}{d.vehicle && <p>Vehicle {d.vehicle}</p>}{d.driver && <p>Driver {d.driver}</p>}</div>
         </section>
-        <table className="mt-6 w-full border-collapse">
-          <thead><tr className="border-b border-stone-300 text-left text-xs uppercase text-stone-500"><th className="py-2">Description</th><th className="py-2 text-right">Qty</th><th className="py-2 pl-4">Unit</th><th className="py-2 pl-4">Checked</th></tr></thead>
-          <tbody>{(d.lines ?? []).map((l) => <tr key={l.id} className="border-b border-stone-100"><td className="py-2">{l.description}</td><td className="py-2 text-right">{Number(l.quantity)}</td><td className="py-2 pl-4">{l.unit}</td><td className="py-2 pl-4">☐</td></tr>)}</tbody>
+        <table className="mt-6 w-full border-collapse text-left tabular-nums">
+          <colgroup><col className="w-8" /><col /><col className="w-20" /><col className="w-20" /><col className="w-20" /></colgroup>
+          <thead><tr className="border-y border-stone-300 text-xs uppercase tracking-wide text-stone-500"><th className="py-2 pr-2 font-medium">#</th><th className="py-2 pr-4 font-medium">Description</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Qty</th><th className="whitespace-nowrap py-2 pl-4 font-medium">Unit</th><th className="whitespace-nowrap py-2 pl-4 text-center font-medium">Checked</th></tr></thead>
+          <tbody>{(d.lines ?? []).map((l, i) => (
+            <tr key={l.id} className="break-inside-avoid border-b border-stone-200 align-top">
+              <td className="py-2.5 pr-2 text-stone-500">{i + 1}</td><td className="py-2.5 pr-4">{l.description}</td>
+              <td className="whitespace-nowrap py-2.5 pl-4 text-right">{Number(l.quantity)}</td><td className="whitespace-nowrap py-2.5 pl-4">{l.unit}</td><td className="py-2.5 pl-4 text-center">☐</td>
+            </tr>
+          ))}</tbody>
         </table>
         {d.notes && <p className="mt-4 whitespace-pre-line">{d.notes}</p>}
         <section className="mt-16 grid grid-cols-2 gap-10 text-xs">

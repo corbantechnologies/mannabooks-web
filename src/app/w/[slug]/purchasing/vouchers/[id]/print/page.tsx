@@ -31,11 +31,17 @@ export default function PrintVoucherPage() {
         <p className="mt-4"><span className="text-stone-500">Pay:</span> <span className="font-medium">{v.supplier_name}</span></p>
         {v.supplier_bank_details && <p className="whitespace-pre-line text-stone-600">{v.supplier_bank_details}</p>}
         {v.notes && <p className="mt-2">{v.notes}</p>}
-        <table className="mt-6 w-full border-collapse">
-          <thead><tr className="border-b border-stone-300 text-left text-xs uppercase text-stone-500"><th className="py-2">Their invoice</th><th className="py-2">Date</th><th className="py-2 text-right">Amount</th></tr></thead>
-          <tbody>{v.lines.map((l) => <tr key={l.bill_id} className="border-b border-stone-100"><td className="py-2">{l.bill_number}</td><td className="py-2">{fmtDate(l.bill_date)}</td><td className="py-2 text-right">{fmt(l.amount)}</td></tr>)}</tbody>
+        <table className="mt-6 w-full border-collapse text-left tabular-nums">
+          <colgroup><col className="w-8" /><col /><col className="w-36" /><col className="w-36" /></colgroup>
+          <thead><tr className="border-y border-stone-300 text-xs uppercase tracking-wide text-stone-500"><th className="py-2 pr-2 font-medium">#</th><th className="py-2 pr-4 font-medium">Their invoice</th><th className="whitespace-nowrap py-2 pl-4 font-medium">Date</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Amount</th></tr></thead>
+          <tbody>{v.lines.map((l, i) => (
+            <tr key={l.bill_id} className="break-inside-avoid border-b border-stone-200 align-top">
+              <td className="py-2.5 pr-2 text-stone-500">{i + 1}</td><td className="py-2.5 pr-4">{l.bill_number}</td>
+              <td className="whitespace-nowrap py-2.5 pl-4">{fmtDate(l.bill_date)}</td><td className="whitespace-nowrap py-2.5 pl-4 text-right font-medium">{fmt(l.amount)}</td>
+            </tr>
+          ))}</tbody>
         </table>
-        <dl className="ml-auto mt-4 grid w-72 grid-cols-2 gap-y-1">
+        <dl className="ml-auto mt-4 grid w-72 grid-cols-[1fr_auto] gap-x-6 gap-y-1 tabular-nums">
           <dt className="text-stone-500">Bills</dt><dd className="text-right">{fmt(v.total)}</dd>
           <dt className="text-stone-500">Less withholding tax</dt><dd className="text-right">{fmt(v.withholding_amount)}</dd>
           <dt className="border-t border-stone-300 pt-1 font-bold">To pay</dt><dd className="border-t border-stone-300 pt-1 text-right font-bold">{fmt(v.net_payable)}</dd>

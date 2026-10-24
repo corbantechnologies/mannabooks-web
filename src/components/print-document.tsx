@@ -78,27 +78,32 @@ export function PrintDocument({
             ))}
           </dl>
         </section>
-        <table className="mt-6 w-full border-collapse text-left">
+        <table className="mt-6 w-full border-collapse text-left tabular-nums">
+          <colgroup>
+            <col className="w-8" /><col /><col className="w-20" /><col className="w-32" /><col className="w-28" /><col className="w-32" />
+          </colgroup>
           <thead>
             <tr className="border-y border-stone-300 text-xs uppercase tracking-wide text-stone-500">
-              <th className="py-2 pr-2">Description</th><th className="py-2 text-right">Qty</th><th className="py-2 text-right">Price</th>
-              <th className="py-2 text-right">VAT</th><th className="py-2 text-right">Amount</th>
+              <th className="py-2 pr-2 font-medium">#</th><th className="py-2 pr-4 font-medium">Description</th>
+              <th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Qty</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Unit price</th>
+              <th className="whitespace-nowrap py-2 pl-4 text-right font-medium">VAT</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Amount</th>
             </tr>
           </thead>
           <tbody>
-            {lines.map((l) => (
-              <tr key={l.id} className="border-b border-stone-200">
-                <td className="py-2 pr-2">{l.description}{Number(l.discount_percent) ? <span className="text-stone-500"> (less {Number(l.discount_percent)}%)</span> : null}</td>
-                <td className="py-2 text-right">{qtyText(l)}</td>
-                <td className="py-2 text-right">{fmt(l.unit_price)}</td>
-                <td className="py-2 text-right">{fmt(l.tax_amount)}</td>
-                <td className="py-2 text-right">{fmt(l.total_amount)}</td>
+            {lines.map((l, i) => (
+              <tr key={l.id} className="break-inside-avoid border-b border-stone-200 align-top">
+                <td className="py-2.5 pr-2 text-stone-500">{i + 1}</td>
+                <td className="py-2.5 pr-4">{l.description}{Number(l.discount_percent) ? <span className="text-stone-500"> (less {Number(l.discount_percent)}%)</span> : null}</td>
+                <td className="whitespace-nowrap py-2.5 pl-4 text-right">{qtyText(l)}</td>
+                <td className="whitespace-nowrap py-2.5 pl-4 text-right">{fmt(l.unit_price)}</td>
+                <td className="whitespace-nowrap py-2.5 pl-4 text-right">{Number(l.tax_amount) ? fmt(l.tax_amount) : <span className="text-stone-400">-</span>}</td>
+                <td className="whitespace-nowrap py-2.5 pl-4 text-right font-medium">{fmt(l.total_amount)}</td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-4 flex justify-end">
-          <dl className="grid w-64 grid-cols-2 gap-y-1">
+          <dl className="grid w-72 grid-cols-[1fr_auto] gap-x-6 gap-y-1 tabular-nums">
             <dt className="text-stone-500">Subtotal</dt><dd className="text-right">{fmt(subtotal)}</dd>
             <dt className="text-stone-500">VAT</dt><dd className="text-right">{fmt(tax)}</dd>
             <dt className="border-t border-stone-300 pt-1 font-bold">Total {currency}</dt><dd className="border-t border-stone-300 pt-1 text-right font-bold">{fmt(total)}</dd>
