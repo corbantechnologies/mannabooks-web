@@ -68,6 +68,8 @@ import {
   LayoutDashboard,
   ListTree,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Network,
   NotebookPen,
   Percent,
@@ -80,7 +82,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { PeriodFixDialog } from "@/components/period-fix-dialog";
 import { PeriodSwitcher } from "@/components/period-switcher";
@@ -243,10 +245,26 @@ function moduleOf(href: string): string | null {
   return null;
 }
 
+// Hiding the sidebar on wider screens is remembered in this browser.
+const SIDEBAR_KEY = "mannabooks.sidebar-hidden";
+const sidebarListeners = new Set<() => void>();
+function readSidebarHidden() {
+  try { return localStorage.getItem(SIDEBAR_KEY) === "1"; } catch { return false; }
+}
+function setSidebarHidden(hidden: boolean) {
+  try { localStorage.setItem(SIDEBAR_KEY, hidden ? "1" : "0"); } catch { /* private window: just for now */ }
+  sidebarListeners.forEach((l) => l());
+}
+function subscribeSidebar(listener: () => void) {
+  sidebarListeners.add(listener);
+  return () => { sidebarListeners.delete(listener); };
+}
+
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const slug = useWorkspaceSlug();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const sidebarHidden = useSyncExternalStore(subscribeSidebar, readSidebarHidden, () => false);
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
@@ -334,6 +352,10 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         <button className="rounded p-1.5 text-stone-600 hover:bg-stone-100 md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Menu"} aria-expanded={menuOpen}>
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
+        <button className="hidden rounded p-1.5 text-stone-600 hover:bg-stone-100 md:inline-flex" onClick={() => setSidebarHidden(!sidebarHidden)}
+          aria-label={sidebarHidden ? "Show the menu" : "Hide the menu"} title={sidebarHidden ? "Show the menu" : "Hide the menu"} aria-expanded={!sidebarHidden}>
+          {sidebarHidden ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+        </button>
         <Link
           href="/workspaces"
           className="hidden items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1 text-sm text-stone-700 hover:bg-stone-50 sm:flex"
@@ -345,7 +367,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         <PeriodSwitcher />
       </TopBar>
       <div className="flex">
-        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>
+        {!sidebarHidden && <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>}
         {menuOpen && (
           <div className="fixed inset-0 top-14 z-40 md:hidden">
             <button type="button" aria-label="Close menu" className="absolute inset-0 bg-stone-900/30" onClick={() => setMenuOpen(false)} />
