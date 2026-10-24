@@ -12,6 +12,7 @@ import {
   UserPlus,
   FileBarChart,
   ChartPie,
+  ChartNoAxesCombined,
   CheckCheck,
   FolderKanban,
   ListChecks,
@@ -51,6 +52,7 @@ import {
   Truck,
   Banknote,
   BookOpen,
+  BookImage,
   BookOpenCheck,
   FileMinus,
   FileText,
@@ -93,6 +95,7 @@ type NavItem = { href: string; label: string; icon: typeof Users; perm: string[]
 const NAV: { section: string | null; items: NavItem[] }[] = [
   { section: null, items: [
     { href: "", label: "Overview", icon: LayoutDashboard, perm: null },
+    { href: "/analytics", label: "Analytics", icon: ChartNoAxesCombined, perm: null },
     { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null },
     { href: "/inbox", label: "Business inbox", icon: Inbox, perm: ["inbox.view", "inbox.send"] },
   ] },
@@ -111,6 +114,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/sales/customers", label: "Customers", icon: Store, perm: ["customers.view"] },
       { href: "/sales/products", label: "Products", icon: Package, perm: ["products.view"] },
       { href: "/sales/quotations", label: "Quotations", icon: ScrollText, perm: ["quotations.view"] },
+      { href: "/sales/catalogues", label: "Catalogues", icon: BookImage, perm: ["quotations.view"] },
       { href: "/sales/invoices", label: "Invoices", icon: FileText, perm: ["invoices.view"] },
       { href: "/sales/payments", label: "Payments", icon: Banknote, perm: ["payments.view"] },
       { href: "/sales/cash-sales", label: "Cash sales", icon: ReceiptText, perm: ["receipts.view"] },

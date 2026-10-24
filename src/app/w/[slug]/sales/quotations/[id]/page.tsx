@@ -36,6 +36,11 @@ export default function QuotationPage() {
     onSuccess: (r) => { toast.success("Draft invoice created"); router.push(`/w/${slug}/sales/invoices/${r.invoice_id}`); },
     onError: (e) => toast.error(e.message),
   });
+  const share = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/quotations/{id}/share/", path)),
+    onSuccess: (r) => { void navigator.clipboard.writeText(r.url); toast.success("Link copied. The customer can see and accept the quotation there."); },
+    onError: (e) => toast.error(e.message),
+  });
   const remove = useMutation({
     mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/quotations/{id}/", path)),
     onSuccess: () => { toast.success("Quotation deleted"); router.replace(`/w/${slug}/sales/quotations`); },
@@ -61,6 +66,7 @@ export default function QuotationPage() {
             <ActionMenu actions={[
               { label: "Download PDF", onClick: () => openPdf(slug, "quotation", q.id), hidden: !context.pdf_enabled || q.status === "draft" },
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !manage },
+              { label: "Copy link for the customer", onClick: () => share.mutate(), hidden: !manage },
               { label: "Print or save as PDF", href: `/w/${slug}/sales/quotations/${q.id}/print` },
               { label: "Edit", onClick: () => setEditing(true), hidden: !(manage && ["draft", "sent"].includes(q.status)) },
               { label: "Mark as sent", onClick: () => act.mutate("send"), hidden: !(manage && q.status === "draft") },
@@ -80,7 +86,13 @@ export default function QuotationPage() {
         <Meta label="Valid until">{fmtDate(q.valid_until)}</Meta>
         <Meta label="Customer's reference">{q.reference || "-"}</Meta>
         <TagsMeta doc={q} />
+        {q.catalogue_id && <Meta label="From catalogue"><Link href={`/w/${slug}/sales/catalogues/${q.catalogue_id}`} className="hover:underline">{q.catalogue_name}</Link></Meta>}
       </Card>
+      {q.catalogue_id && q.status === "draft" && manage && (
+        <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          A client wrote this from the catalogue. Check the prices and quantities, edit if needed, then Mark as sent: they get an email with the link to accept it.
+        </div>
+      )}
       <DocumentLines lines={q.lines ?? []} subtotal={q.subtotal} tax={q.tax_total} total={q.total} currency={q.currency ?? ""} />
       {q.notes && <p className="mt-4 whitespace-pre-line text-sm text-stone-600">{q.notes}</p>}
     </div>

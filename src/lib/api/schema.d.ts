@@ -679,6 +679,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/shared/catalogues/{token}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["shared_catalogues_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/shared/catalogues/{token}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["shared_catalogues_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/shared/catalogues/{token}/quote/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["shared_catalogues_quote_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/shared/quotes/{token}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["shared_quotes_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/shared/quotes/{token}/answer/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["shared_quotes_answer_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/store/{slug}/": {
         parameters: {
             query?: never;
@@ -1522,6 +1602,126 @@ export interface paths {
         };
         /** @description What's left in the approved budget for an expense account (shown while entering a purchase). */
         get: operations["w_budgets_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Product lists shared by private link. A client's picks become a quotation. */
+        get: operations["w_catalogues_list"];
+        put?: never;
+        /** @description Product lists shared by private link. A client's picks become a quotation. */
+        post: operations["w_catalogues_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_catalogues_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_catalogues_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_catalogues_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/{id}/items/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The products the catalogue shows right now, as the client sees them. */
+        get: operations["w_catalogues_items_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/{id}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The catalogue as a PDF to print or send, with its link and a QR code. */
+        get: operations["w_catalogues_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/{id}/send/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Email the link to the client. */
+        post: operations["w_catalogues_send_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/catalogues/analytics/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Views, quote requests and wins per catalogue, and the products clients ask for most. */
+        get: operations["w_catalogues_analytics_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4883,6 +5083,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/quotations/{id}/share/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A private link where the customer sees the quotation and accepts or declines it. */
+        post: operations["w_quotations_share_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/quotations/{id}/status/": {
         parameters: {
             query?: never;
@@ -5474,6 +5691,23 @@ export interface paths {
         };
         /** @description Stock value now and sales in the period, per product category. */
         get: operations["w_reports_by_category_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/glance/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business at a glance: sales this month, quotes waiting, money owed and coming due, cash. Parts follow permissions. */
+        get: operations["w_reports_glance_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7610,6 +7844,153 @@ export interface components {
             money_out: string;
             cleared: boolean;
         };
+        Catalogue: {
+            /** Format: uuid */
+            readonly id: string;
+            /** @description For example: Laptops for Acme Ltd */
+            name: string;
+            /** @description A few words at the top of the catalogue */
+            intro?: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            readonly customer_name: string;
+            /** Format: uuid */
+            price_list_id?: string | null;
+            readonly price_list_name: string;
+            category_ids?: string[];
+            product_ids?: string[];
+            excluded_product_ids?: string[];
+            quote_mode?: components["schemas"]["CatalogueQuoteModeEnum"];
+            /** @description Off: prices on request, and every quote is reviewed first */
+            show_prices?: boolean;
+            /** @description Show In stock or Out of stock (never the numbers) */
+            show_stock?: boolean;
+            /** Format: date */
+            expires_on?: string | null;
+            is_active?: boolean;
+            readonly url: string;
+            readonly view_count: number;
+            /** Format: date-time */
+            readonly last_viewed_at: string | null;
+            readonly product_count: number;
+            readonly quote_count: number;
+            readonly is_open: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CatalogueAnalytics: {
+            totals: components["schemas"]["CatalogueAnalyticsTotals"];
+            catalogues: components["schemas"]["CatalogueAnalyticsRow"][];
+            top_products: components["schemas"]["CatalogueTopProduct"][];
+        };
+        CatalogueAnalyticsRow: {
+            id: string;
+            name: string;
+            customer_name: string | null;
+            is_active: boolean;
+            views: number;
+            requests: number;
+            accepted: number;
+            requested_value: string;
+            accepted_value: string;
+            /** Format: double */
+            request_rate: number;
+            /** Format: double */
+            win_rate: number;
+        };
+        CatalogueAnalyticsTotals: {
+            catalogues: number;
+            views: number;
+            requests: number;
+            accepted: number;
+            requested_value: string;
+            accepted_value: string;
+            /** Format: double */
+            win_rate: number;
+        };
+        CatalogueBusiness: {
+            name: string;
+            phone: string;
+            email: string;
+            address: string;
+            logo_url: string;
+            currency: string;
+        };
+        CatalogueItem: {
+            id: string;
+            name: string;
+            code: string;
+            description: string;
+            category: string;
+            unit: string;
+            image_url: string;
+            price: string | null;
+            vat_percent: string;
+            in_stock: boolean | null;
+        };
+        CataloguePickRequest: {
+            product_id: string;
+            /** Format: decimal */
+            quantity: string;
+        };
+        CatalogueQuoteLink: {
+            token: string;
+            status: string;
+        };
+        /**
+         * @description * `auto` - Send the quote at once
+         *     * `review` - Review before sending
+         * @enum {string}
+         */
+        CatalogueQuoteModeEnum: "auto" | "review";
+        CatalogueQuoteRequestRequest: {
+            name: string;
+            /** @default  */
+            company: string;
+            phone: string;
+            email?: string;
+            /** @default  */
+            notes: string;
+            lines?: components["schemas"]["CataloguePickRequest"][];
+            /** @description Things the client couldn't find, in their own words */
+            wishes?: components["schemas"]["CatalogueWishRequest"][];
+        };
+        CatalogueRequest: {
+            /** @description For example: Laptops for Acme Ltd */
+            name: string;
+            /** @description A few words at the top of the catalogue */
+            intro?: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** Format: uuid */
+            price_list_id?: string | null;
+            category_ids?: string[];
+            product_ids?: string[];
+            excluded_product_ids?: string[];
+            quote_mode?: components["schemas"]["CatalogueQuoteModeEnum"];
+            /** @description Off: prices on request, and every quote is reviewed first */
+            show_prices?: boolean;
+            /** @description Show In stock or Out of stock (never the numbers) */
+            show_stock?: boolean;
+            /** Format: date */
+            expires_on?: string | null;
+            is_active?: boolean;
+        };
+        CatalogueTopProduct: {
+            product_id: string;
+            name: string;
+            times: number;
+            quantity: string;
+            value: string;
+        };
+        CatalogueWishRequest: {
+            description: string;
+            /**
+             * Format: decimal
+             * @default 1.000
+             */
+            quantity: string;
+        };
         /**
          * @description * `question` - Question
          *     * `problem` - Something isn't working
@@ -8799,6 +9180,104 @@ export interface components {
          * @enum {string}
          */
         FulfilmentEnum: "pickup" | "delivery";
+        /** @description Each part is null when the person may not see it. */
+        Glance: {
+            /** Format: date */
+            today: string;
+            sales: components["schemas"]["GlanceSales"] | null;
+            quotes: components["schemas"]["GlanceQuotes"] | null;
+            receivables: components["schemas"]["GlanceReceivables"] | null;
+            payables: components["schemas"]["GlancePayables"] | null;
+            cash: components["schemas"]["GlanceCash"] | null;
+        };
+        GlanceCash: {
+            /** Format: decimal */
+            total: string;
+            accounts: components["schemas"]["GlanceCashAccount"][];
+        };
+        GlanceCashAccount: {
+            name: string;
+            /** Format: decimal */
+            balance: string;
+        };
+        GlanceDebtor: {
+            name: string;
+            /** Format: decimal */
+            amount: string;
+            count: number;
+        };
+        GlanceDoc: {
+            id: string;
+            kind: string;
+            number: string;
+            party: string;
+            /** Format: date */
+            date: string;
+            /** @description Days until the date; negative is overdue */
+            days: number;
+            /** Format: decimal */
+            amount: string;
+            currency: string;
+        };
+        GlancePayables: {
+            /** Format: decimal */
+            total: string;
+            count: number;
+            /** Format: decimal */
+            overdue: string;
+            overdue_count: number;
+            /** Format: decimal */
+            due_soon: string;
+            due_soon_count: number;
+            draft_count: number;
+            list: components["schemas"]["GlanceDoc"][];
+            vouchers_waiting: number | null;
+            /** Format: decimal */
+            vouchers_waiting_value: string | null;
+        };
+        GlanceQuotes: {
+            open_count: number;
+            /** Format: decimal */
+            open_value: string;
+            sent_count: number;
+            draft_count: number;
+            to_review_count: number;
+            expiring_count: number;
+            /** Format: decimal */
+            expiring_value: string;
+            accepted_count: number;
+            /** Format: decimal */
+            accepted_value: string;
+            list: components["schemas"]["GlanceDoc"][];
+        };
+        GlanceReceivables: {
+            /** Format: decimal */
+            total: string;
+            count: number;
+            /** Format: decimal */
+            overdue: string;
+            overdue_count: number;
+            /** Format: decimal */
+            due_soon: string;
+            due_soon_count: number;
+            draft_count: number;
+            list: components["schemas"]["GlanceDoc"][];
+            top_overdue: components["schemas"]["GlanceDebtor"][];
+        };
+        GlanceSales: {
+            /** Format: decimal */
+            this_month: string;
+            /** Format: decimal */
+            last_month: string;
+            /** Format: decimal */
+            last_month_to_date: string;
+            /** Format: double */
+            change_percent: number | null;
+            /** Format: decimal */
+            collected: string | null;
+            month_label: string;
+            last_month_label: string;
+        };
         GoodsReceipt: {
             /** Format: uuid */
             readonly id: string;
@@ -10345,6 +10824,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Business"][];
         };
+        PaginatedCatalogueList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Catalogue"][];
+        };
         PaginatedCompanyGroupList: {
             /** @example 123 */
             count: number;
@@ -11514,6 +12008,27 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
+        PatchedCatalogueRequest: {
+            /** @description For example: Laptops for Acme Ltd */
+            name?: string;
+            /** @description A few words at the top of the catalogue */
+            intro?: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** Format: uuid */
+            price_list_id?: string | null;
+            category_ids?: string[];
+            product_ids?: string[];
+            excluded_product_ids?: string[];
+            quote_mode?: components["schemas"]["CatalogueQuoteModeEnum"];
+            /** @description Off: prices on request, and every quote is reviewed first */
+            show_prices?: boolean;
+            /** @description Show In stock or Out of stock (never the numbers) */
+            show_stock?: boolean;
+            /** Format: date */
+            expires_on?: string | null;
+            is_active?: boolean;
+        };
         PatchedCompanyGroupRequest: {
             name?: string;
             /** @description Every company in the group keeps its books in this currency */
@@ -12050,6 +12565,8 @@ export interface components {
             project_id?: string | null;
             /** Format: date */
             valid_until?: string;
+            /** @description Where the client asked for the quote to go */
+            contact_email?: string;
         };
         PatchedRecurringInvoiceRequest: {
             name?: string;
@@ -13387,6 +13904,19 @@ export interface components {
             by_account: components["schemas"]["ProjectLine"][];
             recent: components["schemas"]["ProjectRecent"][];
         };
+        PublicCatalogue: {
+            name: string;
+            intro: string;
+            business: components["schemas"]["CatalogueBusiness"];
+            customer_name: string | null;
+            show_prices: boolean;
+            show_stock: boolean;
+            reviews_first: boolean;
+            /** Format: date */
+            expires_on: string | null;
+            pdf_available: boolean;
+            items: components["schemas"]["CatalogueItem"][];
+        };
         /** @description What the customer sees on their order page (no internal details). */
         PublicOrder: {
             readonly number: string;
@@ -13564,6 +14094,12 @@ export interface components {
             valid_until?: string;
             readonly is_expired: boolean;
             readonly invoice_id: string | null;
+            /** Format: uuid */
+            readonly catalogue_id: string | null;
+            readonly catalogue_name: string;
+            readonly public_url: string | null;
+            /** @description Where the client asked for the quote to go */
+            contact_email?: string;
         };
         /**
          * @description * `send` - send
@@ -13594,6 +14130,8 @@ export interface components {
             project_id?: string | null;
             /** Format: date */
             valid_until?: string;
+            /** @description Where the client asked for the quote to go */
+            contact_email?: string;
         };
         /**
          * @description * `draft` - Draft
@@ -14259,6 +14797,10 @@ export interface components {
             /** Format: decimal */
             closing: string;
         };
+        SendCatalogueRequest: {
+            to: string[];
+            message: string;
+        };
         /**
          * @description * `invoice` - invoice
          *     * `quotation` - quotation
@@ -14398,6 +14940,47 @@ export interface components {
          * @enum {string}
          */
         ServiceOrderStatusEnum: "draft" | "approved" | "completed" | "cancelled";
+        ShareLink: {
+            url: string;
+        };
+        SharedQuote: {
+            business: components["schemas"]["CatalogueBusiness"];
+            customer: {
+                [key: string]: string;
+            };
+            number: string;
+            status: string;
+            ready: boolean;
+            /** Format: date */
+            issue_date: string;
+            /** Format: date */
+            valid_until: string;
+            is_expired: boolean;
+            currency: string;
+            prices_include_tax: boolean;
+            catalogue_token: string | null;
+            subtotal: string | null;
+            tax_total: string | null;
+            total: string | null;
+            lines: components["schemas"]["SharedQuoteLine"][];
+        };
+        /**
+         * @description * `accept` - accept
+         *     * `decline` - decline
+         * @enum {string}
+         */
+        SharedQuoteAnswerActionEnum: "accept" | "decline";
+        SharedQuoteAnswerRequest: {
+            action: components["schemas"]["SharedQuoteAnswerActionEnum"];
+        };
+        SharedQuoteLine: {
+            description: string;
+            quantity: string;
+            unit: string;
+            unit_price: string | null;
+            tax_rate_name: string | null;
+            total_amount: string | null;
+        };
         Shop: {
             name: string;
             intro: string;
@@ -16805,6 +17388,123 @@ export interface operations {
             };
         };
     };
+    shared_catalogues_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCatalogue"];
+                };
+            };
+        };
+    };
+    shared_catalogues_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    shared_catalogues_quote_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogueQuoteRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CatalogueQuoteRequestRequest"];
+                "multipart/form-data": components["schemas"]["CatalogueQuoteRequestRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogueQuoteLink"];
+                };
+            };
+        };
+    };
+    shared_quotes_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharedQuote"];
+                };
+            };
+        };
+    };
+    shared_quotes_answer_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SharedQuoteAnswerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SharedQuoteAnswerRequest"];
+                "multipart/form-data": components["schemas"]["SharedQuoteAnswerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharedQuote"];
+                };
+            };
+        };
+    };
     store_retrieve: {
         parameters: {
             query?: never;
@@ -18433,6 +19133,236 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BudgetCheck"];
+                };
+            };
+        };
+    };
+    w_catalogues_list: {
+        parameters: {
+            query?: {
+                customer?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCatalogueList"];
+                };
+            };
+        };
+    };
+    w_catalogues_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogueRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CatalogueRequest"];
+                "multipart/form-data": components["schemas"]["CatalogueRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Catalogue"];
+                };
+            };
+        };
+    };
+    w_catalogues_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Catalogue"];
+                };
+            };
+        };
+    };
+    w_catalogues_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_catalogues_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCatalogueRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCatalogueRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCatalogueRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Catalogue"];
+                };
+            };
+        };
+    };
+    w_catalogues_items_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogueItem"][];
+                };
+            };
+        };
+    };
+    w_catalogues_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    w_catalogues_send_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendCatalogueRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SendCatalogueRequest"];
+                "multipart/form-data": components["schemas"]["SendCatalogueRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_catalogues_analytics_retrieve: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogueAnalytics"];
                 };
             };
         };
@@ -24837,6 +25767,7 @@ export interface operations {
     w_quotations_list: {
         parameters: {
             query?: {
+                catalogue?: string;
                 customer?: string;
                 issue_date__gte?: string;
                 issue_date__lte?: string;
@@ -24991,6 +25922,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Converted"];
+                };
+            };
+        };
+    };
+    w_quotations_share_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShareLink"];
                 };
             };
         };
@@ -26126,6 +27079,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CategoryReport"];
+                };
+            };
+        };
+    };
+    w_reports_glance_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Glance"];
                 };
             };
         };

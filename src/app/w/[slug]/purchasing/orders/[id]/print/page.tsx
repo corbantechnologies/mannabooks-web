@@ -40,11 +40,17 @@ export default function PrintOrderPage() {
           <div><p className="text-xs uppercase text-stone-400">Supplier</p><p className="font-medium">{o.supplier_name}</p></div>
           <div className="text-right">{o.expected_date && <p>Deliver by {fmtDate(o.expected_date)}</p>}{o.warehouse_name && <p>Deliver to {o.warehouse_name}</p>}{o.reference && <p>Ref. {o.reference}</p>}</div>
         </section>
-        <table className="mt-6 w-full border-collapse">
-          <thead><tr className="border-b border-stone-300 text-left text-xs uppercase text-stone-500"><th className="py-2">Description</th><th className="py-2 text-right">Qty</th><th className="py-2 text-right">Unit cost</th><th className="py-2 text-right">Amount</th></tr></thead>
-          <tbody>{(o.lines ?? []).map((l) => <tr key={l.id} className="border-b border-stone-100"><td className="py-2">{l.description}</td><td className="py-2 text-right">{qtyText(l)}</td><td className="py-2 text-right">{fmt(l.unit_cost)}</td><td className="py-2 text-right">{fmt(l.total_amount)}</td></tr>)}</tbody>
+        <table className="mt-6 w-full border-collapse text-left tabular-nums">
+          <colgroup><col className="w-8" /><col /><col className="w-20" /><col className="w-32" /><col className="w-32" /></colgroup>
+          <thead><tr className="border-y border-stone-300 text-xs uppercase tracking-wide text-stone-500"><th className="py-2 pr-2 font-medium">#</th><th className="py-2 pr-4 font-medium">Description</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Qty</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Unit cost</th><th className="whitespace-nowrap py-2 pl-4 text-right font-medium">Amount</th></tr></thead>
+          <tbody>{(o.lines ?? []).map((l, i) => (
+            <tr key={l.id} className="break-inside-avoid border-b border-stone-200 align-top">
+              <td className="py-2.5 pr-2 text-stone-500">{i + 1}</td><td className="py-2.5 pr-4">{l.description}</td>
+              <td className="whitespace-nowrap py-2.5 pl-4 text-right">{qtyText(l)}</td><td className="whitespace-nowrap py-2.5 pl-4 text-right">{fmt(l.unit_cost)}</td><td className="whitespace-nowrap py-2.5 pl-4 text-right font-medium">{fmt(l.total_amount)}</td>
+            </tr>
+          ))}</tbody>
         </table>
-        <dl className="ml-auto mt-4 grid w-64 grid-cols-2 gap-y-1">
+        <dl className="ml-auto mt-4 grid w-72 grid-cols-[1fr_auto] gap-x-6 gap-y-1 tabular-nums">
           <dt className="text-stone-500">Subtotal</dt><dd className="text-right">{fmt(o.subtotal)}</dd>
           <dt className="text-stone-500">VAT</dt><dd className="text-right">{fmt(o.tax_total)}</dd>
           <dt className="border-t border-stone-300 pt-1 font-bold">Total</dt><dd className="border-t border-stone-300 pt-1 text-right font-bold">{fmt(o.total)}</dd>
