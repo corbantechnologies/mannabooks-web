@@ -65,7 +65,7 @@ export default function QuotationPage() {
             {q.status === "converted" && q.invoice_id && <Link href={`/w/${slug}/sales/invoices/${q.invoice_id}`}><Button>Open invoice</Button></Link>}
             <SendToInbox kind="quotation" id={q.id} disabled={!["sent", "accepted"].includes(q.status)} />
             <ActionMenu actions={[
-              { label: "Download PDF", onClick: () => openPdf(slug, "quotation", q.id), hidden: !context.pdf_enabled || q.status === "draft" },
+              { label: "Download PDF", onClick: () => openPdf(slug, "quotation", q.id), hidden: !context.pdf_enabled },
               { label: "Send by email", onClick: () => setEmailing(true), hidden: !manage },
               { label: "Copy link for the customer", onClick: () => share.mutate(), hidden: !manage },
               { label: "Print or save as PDF", href: `/w/${slug}/sales/quotations/${q.id}/print` },

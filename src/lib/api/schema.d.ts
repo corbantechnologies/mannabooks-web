@@ -759,6 +759,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/shared/quotes/{token}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The quotation as a PDF, for the customer to download from their link. */
+        get: operations["shared_quotes_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/store/{slug}/": {
         parameters: {
             query?: never;
@@ -14987,6 +15004,7 @@ export interface components {
             currency: string;
             prices_include_tax: boolean;
             catalogue_token: string | null;
+            pdf_available: boolean;
             subtotal: string | null;
             tax_total: string | null;
             total: string | null;
@@ -17533,6 +17551,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SharedQuote"];
+                };
+            };
+        };
+    };
+    shared_quotes_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };

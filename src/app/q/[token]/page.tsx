@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Clock, Printer, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileDown, Printer, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -89,7 +89,11 @@ export default function SharedQuotePage() {
       <FormError error={answer.error} />
       <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
         <div className="flex flex-wrap gap-2">
-          {q.ready && <Button variant="secondary" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print or save as PDF</Button>}
+          {q.pdf_available ? (
+            <a href={`/api/backend/api/v1/shared/quotes/${token}/pdf/`} target="_blank" rel="noreferrer">
+              <Button variant="secondary"><FileDown className="h-4 w-4" /> Download PDF</Button>
+            </a>
+          ) : q.ready && <Button variant="secondary" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print or save as PDF</Button>}
           {q.catalogue_token && <Link href={`/c/${q.catalogue_token}`}><Button variant="ghost">Back to the catalogue</Button></Link>}
         </div>
         {q.status === "sent" && !q.is_expired && (
