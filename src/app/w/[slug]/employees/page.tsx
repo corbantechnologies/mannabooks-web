@@ -15,9 +15,12 @@ import { useWorkspace, wsPath } from "@/lib/workspace";
 const EMPTY = {
   first_name: "", last_name: "", other_names: "", email: "", phone: "", national_id: "", kra_pin: "",
   job_title: "", department_id: "", branch_id: "", reports_to_id: "", hire_date: "", status: "active" as "active" | "on_leave" | "exited",
-  on_payroll: false, basic_salary: "", pay_method: "bank" as "bank" | "mpesa" | "cash", bank_name: "", bank_account_number: "", mpesa_phone: "",
+  on_payroll: false, pay_type: "salary" as "salary" | "daily" | "hourly", basic_salary: "", pay_rate: "",
+  pay_method: "bank" as "bank" | "mpesa" | "cash", bank_name: "", bank_account_number: "", mpesa_phone: "",
   nssf_number: "", shif_number: "", annual_leave_days: "21", recurring_items: [] as PayItem[],
+  deduct_paye: true, deduct_nssf: true, deduct_shif: true, deduct_housing_levy: true,
 };
+const DEDUCTIONS = [["deduct_paye", "PAYE"], ["deduct_nssf", "NSSF"], ["deduct_shif", "SHIF"], ["deduct_housing_levy", "Housing Levy"]] as const;
 type Form = typeof EMPTY;
 
 function toForm(e: Employee): Form {
@@ -25,7 +28,9 @@ function toForm(e: Employee): Form {
     first_name: e.first_name, last_name: e.last_name, other_names: e.other_names ?? "", email: e.email ?? "", phone: e.phone ?? "",
     national_id: e.national_id ?? "", kra_pin: e.kra_pin ?? "", job_title: e.job_title ?? "", department_id: e.department_id ?? "",
     branch_id: e.branch_id ?? "", reports_to_id: e.reports_to_id ?? "", hire_date: e.hire_date ?? "", status: e.status ?? "active",
-    on_payroll: e.on_payroll ?? false, basic_salary: e.basic_salary ? String(Number(e.basic_salary)) : "", pay_method: e.pay_method ?? "bank",
+    on_payroll: e.on_payroll ?? false, pay_type: e.pay_type ?? "salary", basic_salary: e.basic_salary ? String(Number(e.basic_salary)) : "",
+    pay_rate: e.pay_rate && Number(e.pay_rate) ? String(Number(e.pay_rate)) : "", pay_method: e.pay_method ?? "bank",
+    deduct_paye: e.deduct_paye ?? true, deduct_nssf: e.deduct_nssf ?? true, deduct_shif: e.deduct_shif ?? true, deduct_housing_levy: e.deduct_housing_levy ?? true,
     bank_name: e.bank_name ?? "", bank_account_number: e.bank_account_number ?? "", mpesa_phone: e.mpesa_phone ?? "", nssf_number: e.nssf_number ?? "",
     shif_number: e.shif_number ?? "", annual_leave_days: String(Number(e.annual_leave_days ?? 21)), recurring_items: (e.recurring_items as PayItem[] | undefined) ?? [],
   };
@@ -59,7 +64,11 @@ export default function EmployeesPage() {
         ...pickedPerson(form.reports_to_id, "reports_to_id", "reports_to_membership_id"),
         hire_date: form.hire_date || null,
         basic_salary: form.basic_salary || "0",
-        ...(can("payroll.manage") ? {} : { on_payroll: undefined, basic_salary: undefined, recurring_items: undefined, pay_method: undefined, annual_leave_days: undefined }),
+        pay_rate: form.pay_rate || "0",
+        ...(can("payroll.manage") ? {} : {
+          on_payroll: undefined, pay_type: undefined, basic_salary: undefined, pay_rate: undefined, recurring_items: undefined, pay_method: undefined,
+          annual_leave_days: undefined, deduct_paye: undefined, deduct_nssf: undefined, deduct_shif: undefined, deduct_housing_levy: undefined,
+        }),
       } as never;
       if (editing === "new") return unwrap(await api.POST("/api/v1/w/{workspace}/employees/", { ...p, body }));
       const id = (editing as Employee).id;
@@ -162,9 +171,19 @@ export default function EmployeesPage() {
           {can("payroll.manage") && (
             <fieldset className="space-y-3 rounded-md border border-stone-200 p-3">
               <legend className="px-1 text-sm font-semibold">Pay</legend>
-              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.on_payroll} onChange={(e) => setForm((p) => ({ ...p, on_payroll: e.target.checked }))} /> Paid through payroll</label>
+              <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={form.on_payroll} onChange={(e) => setForm((p) => ({ ...p, on_payroll: e.target.checked }))} />
+                <span>On the monthly payroll<span className="block text-xs text-stone-500">Leave it off for casuals paid now and then: pay them with Casual pay on the Payroll page.</span></span></label>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                <Field label="Basic salary (a month)" error={fieldError(save.error, "basic_salary")}><Input inputMode="decimal" value={form.basic_salary} onChange={set("basic_salary")} /></Field>
+                <Field label="Paid as">
+                  <Select value={form.pay_type} onChange={(e) => setForm((p) => ({ ...p, pay_type: e.target.value as Form["pay_type"] }))}>
+                    <option value="salary">A monthly salary</option><option value="daily">A daily wage</option><option value="hourly">An hourly wage</option>
+                  </Select>
+                </Field>
+                {form.pay_type === "salary"
+                  ? <Field label="Basic salary (a month)" error={fieldError(save.error, "basic_salary")}><Input inputMode="decimal" value={form.basic_salary} onChange={set("basic_salary")} /></Field>
+                  : <Field label={form.pay_type === "daily" ? "Rate a day" : "Rate an hour"} hint="Days or hours are entered on each payslip." error={fieldError(save.error, "pay_rate")}>
+                      <Input inputMode="decimal" value={form.pay_rate} onChange={set("pay_rate")} />
+                    </Field>}
                 <Field label="Annual leave days"><Input inputMode="decimal" value={form.annual_leave_days} onChange={set("annual_leave_days")} /></Field>
                 <Field label="Paid by"><Select value={form.pay_method} onChange={set("pay_method")}><option value="bank">Bank transfer</option><option value="mpesa">M-Pesa</option><option value="cash">Cash</option></Select></Field>
                 {form.pay_method === "bank" && <Field label="Bank"><Input value={form.bank_name} onChange={set("bank_name")} /></Field>}
@@ -172,6 +191,15 @@ export default function EmployeesPage() {
                 {form.pay_method === "mpesa" && <Field label="M-Pesa number"><Input value={form.mpesa_phone} onChange={set("mpesa_phone")} /></Field>}
                 <Field label="NSSF number"><Input value={form.nssf_number} onChange={set("nssf_number")} /></Field>
                 <Field label="SHIF number"><Input value={form.shif_number} onChange={set("shif_number")} /></Field>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-stone-700">Statutory deductions</p>
+                <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+                  {DEDUCTIONS.map(([key, label]) => (
+                    <label key={key} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form[key]} onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.checked }))} /> {label}</label>
+                  ))}
+                </div>
+                <p className="mt-1 text-xs text-stone-500">Untick what this person doesn&apos;t pay, for example a casual with no NSSF, SHIF or Housing Levy. Employer shares follow the same ticks.</p>
               </div>
               <PayItemsEditor items={form.recurring_items} onChange={(items) => setForm((p) => ({ ...p, recurring_items: items }))} hint="Every month, e.g. house allowance, SACCO." />
               {fieldError(save.error, "recurring_items") && <p className="text-sm text-red-600">{fieldError(save.error, "recurring_items")}</p>}

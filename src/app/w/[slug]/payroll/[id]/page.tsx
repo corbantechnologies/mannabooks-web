@@ -43,6 +43,17 @@ export default function PayRunPage() {
     mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/pay-runs/{id}/", path)),
     onSuccess: () => { toast.success("Payroll deleted"); router.replace(`/w/${slug}/payroll`); },
   });
+  const [adding, setAdding] = useState(false);
+  const [addId, setAddId] = useState("");
+  const staff = useQuery({
+    queryKey: ["employees", slug, "for-pay"], enabled: adding,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { page_size: 200 } } })),
+  });
+  const dropSlip = useMutation({
+    mutationFn: async (slipId: string) => unwrap(await api.DELETE("/api/v1/w/{workspace}/payslips/{id}/", { params: { path: { workspace: slug, id: slipId } } })),
+    onSuccess: () => toast.success("Taken out of this payroll"),
+    onError: (e) => toast.error(e.message),
+  });
   if (run.isLoading) return <Spinner />;
   if (run.error) return <ErrorState error={run.error} />;
   const r = run.data!;
@@ -60,11 +71,13 @@ export default function PayRunPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/payroll`} className="text-sm text-stone-500 hover:underline">&larr; Payroll</Link>
-      <PageHeader title={`Payroll ${r.name}`} description={`Pay date ${fmtDate(r.pay_date)} · ${r.employees} staff`} guide="payroll"
+      <PageHeader title={r.kind === "casual" ? r.name : `Payroll ${r.name}`} guide="payroll"
+        description={`${r.kind === "casual" ? "Casual pay" : "Monthly payroll"} · pay date ${fmtDate(r.pay_date)} · ${r.employees} staff${r.apply_statutory ? "" : " · no statutory deductions"}`}
         actions={
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={exportBank}>Bank / M-Pesa list</Button>
             <Button variant="secondary" onClick={exportStatutory}>Statutory schedule</Button>
+            {draft && can("payroll.manage") && <Button variant="secondary" onClick={() => { act.reset(); setAddId(""); setAdding(true); }}>Add someone</Button>}
             {draft && can("payroll.manage") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this payroll?").then((ok) => ok && remove.mutate())}>Delete</Button>}
             {draft && can("payroll.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
             {r.status === "approved" && can("payroll.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change payslips?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
@@ -78,6 +91,7 @@ export default function PayRunPage() {
         <Meta label="Net pay">{fmt(r.net_pay)}</Meta>
         <Meta label="Cost to the business">{fmt(r.employer_cost)}</Meta>
       </Card>
+      {(r.apply_statutory || REMITTANCES.some((m) => Number((r as Record<string, unknown>)[m.total]))) && <>
       <h2 className="mb-2 text-sm font-semibold">Statutory deductions</h2>
       <Card className="mb-6">
         <Table head={["", "Amount", "Pay to", "Paid"]}>
@@ -91,11 +105,12 @@ export default function PayRunPage() {
           ))}
         </Table>
       </Card>
+      </>}
       <Card className="overflow-x-auto">
         <Table head={["Employee", "Gross", "PAYE", "SHIF", "NSSF", "Housing", "Other", "Net pay", ""]}>
           {rows.map((s) => (
             <tr key={s.id}>
-              <Td><span className="font-medium">{s.employee_name}</span><div className="text-xs text-stone-500">{s.staff_number}{Number(s.unpaid_leave_days) ? ` · ${Number(s.unpaid_leave_days)} unpaid days` : ""}</div></Td>
+              <Td><span className="font-medium">{s.employee_name}</span><div className="text-xs text-stone-500">{s.staff_number}{wageText(s)}{Number(s.unpaid_leave_days) ? ` · ${Number(s.unpaid_leave_days)} unpaid days` : ""}</div></Td>
               <Td className="text-right font-mono">{fmt(s.gross_pay)}</Td>
               <Td className="text-right font-mono">{fmt(s.paye)}</Td>
               <Td className="text-right font-mono">{fmt(s.shif)}</Td>
@@ -105,13 +120,28 @@ export default function PayRunPage() {
               <Td className="text-right font-mono font-semibold">{fmt(s.net_pay)}</Td>
               <Td className="whitespace-nowrap">
                 {draft && can("payroll.manage") && <Button variant="ghost" className="px-2 py-1" onClick={() => setEditing(s)}>Edit</Button>}
+                {draft && can("payroll.manage") && <Button variant="ghost" className="px-2 py-1 text-red-600"
+                  onClick={() => void ask(`Take ${s.employee_name} out of this payroll?`, { confirmLabel: "Take out" }).then((ok) => ok && dropSlip.mutate(s.id))}>Remove</Button>}
                 <Link href={`/w/${slug}/payroll/payslips/${s.id}`} className="ml-1 text-sm text-brand-700 hover:underline">Payslip</Link>
               </Td>
             </tr>
           ))}
         </Table>
       </Card>
-      {editing && <EditSlip slip={editing} onClose={() => setEditing(null)} />}
+      {editing && <EditSlip slip={editing} casual={r.kind === "casual"} statutory={r.apply_statutory ?? true} onClose={() => setEditing(null)} />}
+      <Modal open={adding} title="Add someone to this payroll" onClose={() => setAdding(false)}>
+        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (addId) act.mutate({ action: "add_employee", employee_id: addId }, { onSuccess: () => setAdding(false) }); }}>
+          <Field label="Employee">
+            <Select required value={addId} onChange={(e) => setAddId(e.target.value)}>
+              <option value="">Choose</option>
+              {(staff.data?.results ?? []).filter((e) => e.status !== "exited" && !rows.some((s) => s.employee === e.id)).map((e) => <option key={e.id} value={e.id}>{e.full_name}</option>)}
+            </Select>
+          </Field>
+          <p className="text-xs text-stone-500">Anyone active can be added, on the monthly payroll or not. Enter their days, hours or amount next.</p>
+          <FormError error={act.error} />
+          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setAdding(false)}>Cancel</Button><Button type="submit" loading={act.isPending}>Add</Button></div>
+        </form>
+      </Modal>
       <Modal open={paying !== null} title={paying === "pay" ? `Net salaries ${fmt(r.net_pay)}` : `${REMITTANCES.find((m) => m.kind === paying)?.label ?? ""} paid`} onClose={() => setPaying(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); act.mutate(paying === "pay" ? { action: "pay", ...payForm, bank_account_id: payForm.bank_account_id || active.find((a) => a.kind === "bank")?.id } : { action: "remit", kind: paying, ...payForm, bank_account_id: payForm.bank_account_id || active.find((a) => a.kind === "bank")?.id }); }}>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -127,24 +157,57 @@ export default function PayRunPage() {
   );
 }
 
-function EditSlip({ slip, onClose }: { slip: Payslip; onClose: () => void }) {
+const UNIT = { daily: ["Days worked", "Rate a day", "day"], hourly: ["Hours worked", "Rate an hour", "hour"] } as Record<string, [string, string, string]>;
+const DEDUCTIONS = [["deduct_paye", "PAYE"], ["deduct_nssf", "NSSF"], ["deduct_shif", "SHIF"], ["deduct_housing_levy", "Housing Levy"]] as const;
+
+function wageText(s: Payslip): string {
+  const unit = s.pay_type ? UNIT[s.pay_type] : undefined;
+  return unit ? ` · ${Number(s.units)} ${unit[2]}${Number(s.units) === 1 ? "" : "s"} × ${fmt(s.rate ?? "0")}` : "";
+}
+
+function EditSlip({ slip, casual, statutory, onClose }: { slip: Payslip; casual: boolean; statutory: boolean; onClose: () => void }) {
   const { slug } = useWorkspace();
-  const [form, setForm] = useState({ basic_salary: String(Number(slip.basic_salary)), unpaid_leave_days: String(Number(slip.unpaid_leave_days)), items: (slip.items ?? []) as PayItem[] });
+  const wage = slip.pay_type ? UNIT[slip.pay_type] : undefined;
+  const [form, setForm] = useState({
+    basic_salary: String(Number(slip.basic_salary)), unpaid_leave_days: String(Number(slip.unpaid_leave_days)), items: (slip.items ?? []) as PayItem[],
+    units: String(Number(slip.units ?? 0)), rate: String(Number(slip.rate ?? 0)),
+    deduct_paye: slip.deduct_paye ?? true, deduct_nssf: slip.deduct_nssf ?? true, deduct_shif: slip.deduct_shif ?? true, deduct_housing_levy: slip.deduct_housing_levy ?? true,
+  });
   const save = useMutation({
     mutationFn: async () => unwrap(await api.PATCH("/api/v1/w/{workspace}/payslips/{id}/", {
       params: { path: { workspace: slug, id: slip.id } },
-      body: { basic_salary: form.basic_salary, unpaid_leave_days: form.unpaid_leave_days, items: form.items.filter((i) => i.name && Number(i.amount)).map((i) => ({ ...i, amount: String(i.amount), taxable: i.taxable ?? true })) },
+      body: {
+        ...(wage ? { units: form.units || "0", rate: form.rate || "0" } : { basic_salary: form.basic_salary || "0", unpaid_leave_days: form.unpaid_leave_days || "0" }),
+        deduct_paye: form.deduct_paye, deduct_nssf: form.deduct_nssf, deduct_shif: form.deduct_shif, deduct_housing_levy: form.deduct_housing_levy,
+        items: form.items.filter((i) => i.name && Number(i.amount)).map((i) => ({ ...i, amount: String(i.amount), taxable: i.taxable ?? true })),
+      } as never,
     })),
     onSuccess: (s) => { toast.success(`${s.employee_name}: net pay ${fmt(s.net_pay)}`); onClose(); },
   });
   return (
-    <Modal open title={`${slip.employee_name}, this month`} onClose={onClose}>
+    <Modal open title={`${slip.employee_name}, ${casual ? "this pay" : "this month"}`} onClose={onClose}>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Basic salary"><Input inputMode="decimal" value={form.basic_salary} onChange={(e) => setForm((p) => ({ ...p, basic_salary: e.target.value }))} /></Field>
-          <Field label="Unpaid leave days"><Input inputMode="decimal" value={form.unpaid_leave_days} onChange={(e) => setForm((p) => ({ ...p, unpaid_leave_days: e.target.value }))} /></Field>
+          {wage ? <>
+            <Field label={wage[0]}><Input inputMode="decimal" autoFocus value={form.units} onChange={(e) => setForm((p) => ({ ...p, units: e.target.value }))} /></Field>
+            <Field label={wage[1]}><Input inputMode="decimal" value={form.rate} onChange={(e) => setForm((p) => ({ ...p, rate: e.target.value }))} /></Field>
+            <p className="text-sm text-stone-600 sm:col-span-2">Pay: <span className="font-mono">{fmt((Number(form.units) || 0) * (Number(form.rate) || 0))}</span></p>
+          </> : <>
+            <Field label={casual ? "Amount" : "Basic salary"}><Input inputMode="decimal" autoFocus={casual} value={form.basic_salary} onChange={(e) => setForm((p) => ({ ...p, basic_salary: e.target.value }))} /></Field>
+            {!casual && <Field label="Unpaid leave days"><Input inputMode="decimal" value={form.unpaid_leave_days} onChange={(e) => setForm((p) => ({ ...p, unpaid_leave_days: e.target.value }))} /></Field>}
+          </>}
         </div>
-        <PayItemsEditor items={form.items} onChange={(items) => setForm((p) => ({ ...p, items }))} hint="This month only: overtime, bonus, advance." />
+        <div>
+          <p className="text-sm font-medium text-stone-700">Statutory deductions</p>
+          {statutory ? (
+            <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+              {DEDUCTIONS.map(([key, label]) => (
+                <label key={key} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form[key]} onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.checked }))} /> {label}</label>
+              ))}
+            </div>
+          ) : <p className="mt-1 text-sm text-stone-500">None: this pay run is paid without statutory deductions.</p>}
+        </div>
+        <PayItemsEditor items={form.items} onChange={(items) => setForm((p) => ({ ...p, items }))} hint={casual ? "Extras for this pay: overtime, transport, an advance taken off." : "This month only: overtime, bonus, advance."} />
         <FormError error={save.error} />
         <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>Save and recalculate</Button></div>
       </form>
