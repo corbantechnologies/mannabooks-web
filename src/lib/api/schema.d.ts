@@ -4074,10 +4074,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Payrolls by month. Creating one makes a payslip for every employee on payroll. */
+        /** @description Monthly payrolls, and casual or wage pay for any period. Creating one makes a payslip for each person paid. */
         get: operations["w_pay_runs_list"];
         put?: never;
-        /** @description Payrolls by month. Creating one makes a payslip for every employee on payroll. */
+        /** @description Monthly payrolls, and casual or wage pay for any period. Creating one makes a payslip for each person paid. */
         post: operations["w_pay_runs_create"];
         delete?: never;
         options?: never;
@@ -4122,7 +4122,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description approve (payroll.approve), reopen, pay (net salaries) or remit (a statutory deduction). */
+        /** @description approve (payroll.approve), reopen, pay (net pay), remit (a statutory deduction), or add_employee to a draft. */
         post: operations["w_pay_runs_action_create"];
         delete?: never;
         options?: never;
@@ -4337,14 +4337,24 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description PATCH (draft payroll only): basic salary, unpaid leave days, allowances and deductions; everything else is recalculated. */
+        /**
+         * @description PATCH (draft payroll only): basic salary or the days/hours and rate of a wage, unpaid leave days, allowances and deductions,
+         *     and which statutory deductions apply; everything else is recalculated. DELETE: take the person out of this draft payroll.
+         */
         get: operations["w_payslips_retrieve"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * @description PATCH (draft payroll only): basic salary or the days/hours and rate of a wage, unpaid leave days, allowances and deductions,
+         *     and which statutory deductions apply; everything else is recalculated. DELETE: take the person out of this draft payroll.
+         */
+        delete: operations["w_payslips_destroy"];
         options?: never;
         head?: never;
-        /** @description PATCH (draft payroll only): basic salary, unpaid leave days, allowances and deductions; everything else is recalculated. */
+        /**
+         * @description PATCH (draft payroll only): basic salary or the days/hours and rate of a wage, unpaid leave days, allowances and deductions,
+         *     and which statutory deductions apply; everything else is recalculated. DELETE: take the person out of this draft payroll.
+         */
         patch: operations["w_payslips_partial_update"];
         trace?: never;
     };
@@ -8777,13 +8787,19 @@ export interface components {
             status?: components["schemas"]["EmployeeStatusEnum"];
             /** Format: date-time */
             readonly created_at: string;
-            /** @description Paid through MannaBooks payroll */
+            /** @description Included in the monthly payroll */
             on_payroll?: boolean;
+            pay_type?: components["schemas"]["PayTypeEnum"];
             /**
              * Format: decimal
-             * @description Monthly
+             * @description Monthly, for a salary
              */
             basic_salary?: string;
+            /**
+             * Format: decimal
+             * @description A day or an hour, for a wage
+             */
+            pay_rate?: string;
             /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
@@ -8799,6 +8815,14 @@ export interface components {
             annual_leave_days?: string;
             /** Format: date */
             exit_date?: string | null;
+            /** @description Deduct PAYE */
+            deduct_paye?: boolean;
+            /** @description Deduct NSSF (employee and employer) */
+            deduct_nssf?: boolean;
+            /** @description Deduct SHIF */
+            deduct_shif?: boolean;
+            /** @description Deduct the Housing Levy (employee and employer) */
+            deduct_housing_levy?: boolean;
         };
         /** @description Give an employee a login: an invitation to their email, with the Self-service role by default. */
         EmployeeInviteRequest: {
@@ -8830,13 +8854,19 @@ export interface components {
             /** Format: date */
             hire_date?: string | null;
             status?: components["schemas"]["EmployeeStatusEnum"];
-            /** @description Paid through MannaBooks payroll */
+            /** @description Included in the monthly payroll */
             on_payroll?: boolean;
+            pay_type?: components["schemas"]["PayTypeEnum"];
             /**
              * Format: decimal
-             * @description Monthly
+             * @description Monthly, for a salary
              */
             basic_salary?: string;
+            /**
+             * Format: decimal
+             * @description A day or an hour, for a wage
+             */
+            pay_rate?: string;
             /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
@@ -8852,6 +8882,14 @@ export interface components {
             annual_leave_days?: string;
             /** Format: date */
             exit_date?: string | null;
+            /** @description Deduct PAYE */
+            deduct_paye?: boolean;
+            /** @description Deduct NSSF (employee and employer) */
+            deduct_nssf?: boolean;
+            /** @description Deduct SHIF */
+            deduct_shif?: boolean;
+            /** @description Deduct the Housing Levy (employee and employer) */
+            deduct_housing_levy?: boolean;
         };
         /**
          * @description * `active` - Active
@@ -12209,13 +12247,19 @@ export interface components {
             /** Format: date */
             hire_date?: string | null;
             status?: components["schemas"]["EmployeeStatusEnum"];
-            /** @description Paid through MannaBooks payroll */
+            /** @description Included in the monthly payroll */
             on_payroll?: boolean;
+            pay_type?: components["schemas"]["PayTypeEnum"];
             /**
              * Format: decimal
-             * @description Monthly
+             * @description Monthly, for a salary
              */
             basic_salary?: string;
+            /**
+             * Format: decimal
+             * @description A day or an hour, for a wage
+             */
+            pay_rate?: string;
             /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
@@ -12231,6 +12275,14 @@ export interface components {
             annual_leave_days?: string;
             /** Format: date */
             exit_date?: string | null;
+            /** @description Deduct PAYE */
+            deduct_paye?: boolean;
+            /** @description Deduct NSSF (employee and employer) */
+            deduct_nssf?: boolean;
+            /** @description Deduct SHIF */
+            deduct_shif?: boolean;
+            /** @description Deduct the Housing Levy (employee and employer) */
+            deduct_housing_levy?: boolean;
         };
         PatchedExchangeRateRequest: {
             /** Format: uuid */
@@ -12409,7 +12461,28 @@ export interface components {
             sort_order?: number;
         };
         PatchedPayslipRequest: {
-            /** Format: decimal */
+            /**
+             * Format: decimal
+             * @description Days or hours worked, for a wage
+             */
+            units?: string;
+            /**
+             * Format: decimal
+             * @description A day or an hour, for a wage
+             */
+            rate?: string;
+            /** @description Deduct PAYE */
+            deduct_paye?: boolean;
+            /** @description Deduct NSSF (employee and employer) */
+            deduct_nssf?: boolean;
+            /** @description Deduct SHIF */
+            deduct_shif?: boolean;
+            /** @description Deduct the Housing Levy (employee and employer) */
+            deduct_housing_levy?: boolean;
+            /**
+             * Format: decimal
+             * @description For a wage: units x rate
+             */
             basic_salary?: string;
             /** Format: decimal */
             unpaid_leave_days?: string;
@@ -12837,8 +12910,17 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             readonly name: string;
-            year: number;
-            month: number;
+            kind?: components["schemas"]["PayRunKindEnum"];
+            /** @description For casual pay, e.g. Site casuals week 45 */
+            title?: string;
+            /** Format: date */
+            period_start?: string | null;
+            /** Format: date */
+            period_end?: string | null;
+            /** @description Off: nobody in this run has PAYE, NSSF, SHIF or Housing Levy deducted */
+            apply_statutory?: boolean | null;
+            year?: number;
+            month?: number;
             /** Format: date */
             pay_date?: string;
             readonly status: components["schemas"]["PayRunStatusEnum"];
@@ -12884,9 +12966,10 @@ export interface components {
          *     * `reopen` - reopen
          *     * `pay` - pay
          *     * `remit` - remit
+         *     * `add_employee` - add_employee
          * @enum {string}
          */
-        PayRunActionActionEnum: "approve" | "reopen" | "pay" | "remit";
+        PayRunActionActionEnum: "approve" | "reopen" | "pay" | "remit" | "add_employee";
         /**
          * @description * `paye` - paye
          *     * `shif` - shif
@@ -12898,17 +12981,36 @@ export interface components {
         PayRunActionRequest: {
             action: components["schemas"]["PayRunActionActionEnum"];
             /** Format: uuid */
+            employee_id?: string;
+            /** Format: uuid */
             bank_account_id?: string;
             /** Format: date */
             date?: string;
             kind?: components["schemas"]["PayRunActionKindEnum"];
             reference?: string;
         };
+        /**
+         * @description * `monthly` - Monthly payroll
+         *     * `casual` - Casual and wage pay
+         * @enum {string}
+         */
+        PayRunKindEnum: "monthly" | "casual";
         PayRunRequest: {
-            year: number;
-            month: number;
+            kind?: components["schemas"]["PayRunKindEnum"];
+            /** @description For casual pay, e.g. Site casuals week 45 */
+            title?: string;
+            /** Format: date */
+            period_start?: string | null;
+            /** Format: date */
+            period_end?: string | null;
+            /** @description Off: nobody in this run has PAYE, NSSF, SHIF or Housing Levy deducted */
+            apply_statutory?: boolean | null;
+            year?: number;
+            month?: number;
             /** Format: date */
             pay_date?: string;
+            /** @description Who to pay; blank: everyone on payroll (monthly) or everyone on a wage (casual) */
+            employee_ids?: string[];
         };
         /**
          * @description * `draft` - Draft
@@ -12917,6 +13019,13 @@ export interface components {
          * @enum {string}
          */
         PayRunStatusEnum: "draft" | "approved" | "paid";
+        /**
+         * @description * `salary` - Monthly salary
+         *     * `daily` - Daily wage
+         *     * `hourly` - Hourly wage
+         * @enum {string}
+         */
+        PayTypeEnum: "salary" | "daily" | "hourly";
         Payment: {
             /** Format: uuid */
             readonly id: string;
@@ -13106,7 +13215,29 @@ export interface components {
             readonly job_title: string;
             readonly nssf_number: string;
             readonly shif_number: string;
-            /** Format: decimal */
+            readonly pay_type: string;
+            /**
+             * Format: decimal
+             * @description Days or hours worked, for a wage
+             */
+            units?: string;
+            /**
+             * Format: decimal
+             * @description A day or an hour, for a wage
+             */
+            rate?: string;
+            /** @description Deduct PAYE */
+            deduct_paye?: boolean;
+            /** @description Deduct NSSF (employee and employer) */
+            deduct_nssf?: boolean;
+            /** @description Deduct SHIF */
+            deduct_shif?: boolean;
+            /** @description Deduct the Housing Levy (employee and employer) */
+            deduct_housing_levy?: boolean;
+            /**
+             * Format: decimal
+             * @description For a wage: units x rate
+             */
             basic_salary?: string;
             /** Format: decimal */
             unpaid_leave_days?: string;
@@ -23932,7 +24063,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
                 "application/json": components["schemas"]["PayRunRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PayRunRequest"];
@@ -24462,6 +24593,27 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Payslip"];
                 };
+            };
+        };
+    };
+    w_payslips_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
