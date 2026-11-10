@@ -9697,12 +9697,16 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             /** Format: email */
-            email: string;
+            email?: string;
             /** Format: uuid */
             role_id: string;
             readonly role_name: string;
-            /** Format: uuid */
-            readonly employee_id: string | null;
+            /**
+             * Format: uuid
+             * @description An existing staff record to link this login to; its email is used if none is given
+             */
+            employee_id?: string | null;
+            readonly employee_name: string;
             readonly status: components["schemas"]["InvitationStatusEnum"];
             readonly is_expired: boolean;
             /** Format: date-time */
@@ -9723,9 +9727,14 @@ export interface components {
         };
         InvitationRequest: {
             /** Format: email */
-            email: string;
+            email?: string;
             /** Format: uuid */
             role_id: string;
+            /**
+             * Format: uuid
+             * @description An existing staff record to link this login to; its email is used if none is given
+             */
+            employee_id?: string | null;
         };
         /**
          * @description * `pending` - Pending
