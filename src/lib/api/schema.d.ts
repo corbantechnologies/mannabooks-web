@@ -2422,6 +2422,23 @@ export interface paths {
         patch: operations["w_employees_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/employees/{id}/changes/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description HR approves or rejects the details an employee asked to change. */
+        post: operations["w_employees_changes_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/{id}/invite/": {
         parameters: {
             query?: never;
@@ -2437,6 +2454,30 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/employees/me/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description The signed-in person's own staff record. PATCH: contact details change at once; ID numbers and where pay goes
+         *     are sent to HR, and the employee is emailed about any pay change.
+         */
+        get: operations["w_employees_me_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * @description The signed-in person's own staff record. PATCH: contact details change at once; ID numbers and where pay goes
+         *     are sent to HR, and the employee is emailed about any pay change.
+         */
+        patch: operations["w_employees_me_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/etims/device/": {
@@ -8565,6 +8606,17 @@ export interface components {
          */
         DealStageEnum: "prospect" | "qualified" | "proposal" | "negotiation" | "won" | "lost";
         /**
+         * @description * `approve` - approve
+         *     * `reject` - reject
+         * @enum {string}
+         */
+        DecideChangesActionEnum: "approve" | "reject";
+        DecideChangesRequest: {
+            action: components["schemas"]["DecideChangesActionEnum"];
+            /** @default  */
+            note: string;
+        };
+        /**
          * @description * `approved` - approved
          *     * `rejected` - rejected
          * @enum {string}
@@ -8768,6 +8820,11 @@ export interface components {
             readonly full_name: string;
             email?: string;
             phone?: string;
+            emergency_contact_name?: string;
+            emergency_contact_phone?: string;
+            /** @description This person's own working days, 0 Monday to 6 Sunday; empty: the company's week */
+            working_days?: unknown;
+            readonly pending_changes: unknown;
             national_id?: string;
             kra_pin?: string;
             job_title?: string;
@@ -8835,6 +8892,10 @@ export interface components {
             other_names?: string;
             email?: string;
             phone?: string;
+            emergency_contact_name?: string;
+            emergency_contact_phone?: string;
+            /** @description This person's own working days, 0 Monday to 6 Sunday; empty: the company's week */
+            working_days?: unknown;
             national_id?: string;
             kra_pin?: string;
             job_title?: string;
@@ -10456,6 +10517,10 @@ export interface components {
             fiscal_year_start_month?: number;
             /** @description Someone checked the start month (ticks it on the setup checklist) */
             fiscal_year_confirmed?: boolean;
+            /** @description Weekdays worked, 0 Monday to 6 Sunday; empty: Monday to Friday */
+            working_days?: unknown;
+            /** @description [{"date": "YYYY-MM-DD", "name": "..."}] */
+            public_holidays?: unknown;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -12228,6 +12293,10 @@ export interface components {
             other_names?: string;
             email?: string;
             phone?: string;
+            emergency_contact_name?: string;
+            emergency_contact_phone?: string;
+            /** @description This person's own working days, 0 Monday to 6 Sunday; empty: the company's week */
+            working_days?: unknown;
             national_id?: string;
             kra_pin?: string;
             job_title?: string;
@@ -12445,6 +12514,21 @@ export interface components {
              * @description Sees only this department's documents and reports. Null: the whole business.
              */
             limited_department_id?: string | null;
+        };
+        /** @description What an employee may change on their own record. Contact details apply at once; the rest waits for HR. */
+        PatchedMyDetailsRequest: {
+            phone?: string;
+            email?: string;
+            emergency_contact_name?: string;
+            emergency_contact_phone?: string;
+            national_id?: string;
+            kra_pin?: string;
+            nssf_number?: string;
+            shif_number?: string;
+            pay_method?: components["schemas"]["PayMethodEnum"];
+            bank_name?: string;
+            bank_account_number?: string;
+            mpesa_phone?: string;
         };
         PatchedPaymentOptionRequest: {
             kind?: components["schemas"]["PaymentOptionKindEnum"];
@@ -12850,6 +12934,10 @@ export interface components {
             fiscal_year_start_month?: number;
             /** @description Someone checked the start month (ticks it on the setup checklist) */
             fiscal_year_confirmed?: boolean;
+            /** @description Weekdays worked, 0 Monday to 6 Sunday; empty: Monday to Friday */
+            working_days?: unknown;
+            /** @description [{"date": "YYYY-MM-DD", "name": "..."}] */
+            public_holidays?: unknown;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -16168,6 +16256,10 @@ export interface components {
             fiscal_year_start_month?: number;
             /** @description Someone checked the start month (ticks it on the setup checklist) */
             fiscal_year_confirmed?: boolean;
+            /** @description Weekdays worked, 0 Monday to 6 Sunday; empty: Monday to Friday */
+            working_days?: unknown;
+            /** @description [{"date": "YYYY-MM-DD", "name": "..."}] */
+            public_holidays?: unknown;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -16246,6 +16338,10 @@ export interface components {
             fiscal_year_start_month?: number;
             /** @description Someone checked the start month (ticks it on the setup checklist) */
             fiscal_year_confirmed?: boolean;
+            /** @description Weekdays worked, 0 Monday to 6 Sunday; empty: Monday to Friday */
+            working_days?: unknown;
+            /** @description [{"date": "YYYY-MM-DD", "name": "..."}] */
+            public_holidays?: unknown;
             /** @description Switched-on modules (keys of APP_MODULES); empty means all */
             modules?: unknown;
             /** @description What the business chose to do first */
@@ -20936,6 +21032,34 @@ export interface operations {
             };
         };
     };
+    w_employees_changes_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideChangesRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DecideChangesRequest"];
+                "multipart/form-data": components["schemas"]["DecideChangesRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Employee"];
+                };
+            };
+        };
+    };
     w_employees_invite_create: {
         parameters: {
             query?: never;
@@ -20960,6 +21084,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Invitation"];
+                };
+            };
+        };
+    };
+    w_employees_me_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Employee"];
+                };
+            };
+        };
+    };
+    w_employees_me_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMyDetailsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMyDetailsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMyDetailsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Employee"];
                 };
             };
         };

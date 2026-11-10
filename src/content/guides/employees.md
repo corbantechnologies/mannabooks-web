@@ -18,7 +18,16 @@ Staff can sign in to see their own record, and later their payslips, P9 and leav
 2. Open their record and choose **Invite to sign in**.
 3. They get an email; when they accept, their login is linked to their record with the **Self-service** role.
 
-Self-service staff see **only their own record** and can't change it; they ask HR to correct details.
+Self-service staff see **only their own record**. Under **My details** on their own page they can update it:
+
+- **Phone, email and emergency contact:** saved at once.
+- **ID numbers** (national ID, KRA PIN, NSSF, SHIF) **and where their pay goes** (bank or M-Pesa): sent to HR to check first.
+
+A change to where pay goes also emails the person at the address already on file, so a change they didn't make is noticed.
+
+HR sees **Changes to check** beside the person in the staff list. Open their record to **Approve** or **Reject**. A change to where pay goes needs someone who runs payroll, and nobody decides on their own changes.
+
+ID numbers show in full only to payroll staff and the person themself; others see the last three characters (••••678).
 
 ## Who can do this
 

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { ModuleSettings } from "@/components/module-settings";
 import { PaymentOptions } from "@/components/payment-options";
 import { StoreSettings } from "@/components/store-settings";
+import { WorkingWeekCard } from "@/components/working-week";
 import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
@@ -78,6 +79,8 @@ export default function SettingsPage() {
       <PaymentOptions />
 
       <ModuleSettings />
+
+      <WorkingWeekCard />
 
       <StoreSettings />
 
