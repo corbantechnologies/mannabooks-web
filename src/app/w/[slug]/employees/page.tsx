@@ -6,6 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { PayItemsEditor } from "@/components/pay-items";
+import { DayPicker, MON_TO_FRI } from "@/components/working-week";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { type PayItem, pickedPerson, usePeoplePicker } from "@/lib/api/people";
@@ -19,6 +20,7 @@ const EMPTY = {
   pay_method: "bank" as "bank" | "mpesa" | "cash", bank_name: "", bank_account_number: "", mpesa_phone: "",
   nssf_number: "", shif_number: "", annual_leave_days: "21", recurring_items: [] as PayItem[],
   deduct_paye: true, deduct_nssf: true, deduct_shif: true, deduct_housing_levy: true,
+  own_week: false, working_days: [] as number[], emergency_contact_name: "", emergency_contact_phone: "",
 };
 const DEDUCTIONS = [["deduct_paye", "PAYE"], ["deduct_nssf", "NSSF"], ["deduct_shif", "SHIF"], ["deduct_housing_levy", "Housing Levy"]] as const;
 type Form = typeof EMPTY;
@@ -31,6 +33,8 @@ function toForm(e: Employee): Form {
     on_payroll: e.on_payroll ?? false, pay_type: e.pay_type ?? "salary", basic_salary: e.basic_salary ? String(Number(e.basic_salary)) : "",
     pay_rate: e.pay_rate && Number(e.pay_rate) ? String(Number(e.pay_rate)) : "", pay_method: e.pay_method ?? "bank",
     deduct_paye: e.deduct_paye ?? true, deduct_nssf: e.deduct_nssf ?? true, deduct_shif: e.deduct_shif ?? true, deduct_housing_levy: e.deduct_housing_levy ?? true,
+    own_week: Boolean((e.working_days as number[] | null)?.length), working_days: (e.working_days as number[] | null) ?? [],
+    emergency_contact_name: e.emergency_contact_name ?? "", emergency_contact_phone: e.emergency_contact_phone ?? "",
     bank_name: e.bank_name ?? "", bank_account_number: e.bank_account_number ?? "", mpesa_phone: e.mpesa_phone ?? "", nssf_number: e.nssf_number ?? "",
     shif_number: e.shif_number ?? "", annual_leave_days: String(Number(e.annual_leave_days ?? 21)), recurring_items: (e.recurring_items as PayItem[] | undefined) ?? [],
   };
@@ -38,8 +42,42 @@ function toForm(e: Employee): Form {
 
 const STATUS_TONE = { active: "green", on_leave: "amber", exited: "stone" } as const;
 
+const CHANGE_LABEL: Record<string, string> = {
+  national_id: "National ID", kra_pin: "KRA PIN", nssf_number: "NSSF number", shif_number: "SHIF number",
+  pay_method: "Paid by", bank_name: "Bank", bank_account_number: "Bank account number", mpesa_phone: "M-Pesa number",
+};
+
+/** Details the employee asked to change themselves, waiting for HR. */
+function PendingChanges({ employee, onDone }: { employee: Employee; onDone: () => void }) {
+  const { slug } = useWorkspace();
+  const pending = Object.entries((employee.pending_changes ?? {}) as Record<string, string>).filter(([k]) => k !== "requested_at");
+  const decide = useMutation({
+    mutationFn: async (action: "approve" | "reject") => unwrap(await api.POST("/api/v1/w/{workspace}/employees/{id}/changes/", {
+      params: { path: { workspace: slug, id: employee.id } }, body: { action } as never,
+    })),
+    onSuccess: (_, action) => { toast.success(action === "approve" ? "Changes applied" : "Changes rejected"); onDone(); },
+    onError: (e) => toast.error(e.message),
+  });
+  if (!pending.length) return null;
+  return (
+    <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
+      <p className="font-medium text-amber-900">{employee.first_name} asked to change these details</p>
+      <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+        {pending.map(([k, v]) => (
+          <div key={k} className="contents"><dt className="text-amber-900">{CHANGE_LABEL[k] ?? k}</dt><dd className="font-mono">{String(v) || "(blank)"}</dd></div>
+        ))}
+      </dl>
+      <p className="mt-2 text-xs text-amber-900">Check them with {employee.first_name} before approving, above all a new bank account or M-Pesa number. They were emailed when they asked.</p>
+      <div className="mt-2 flex justify-end gap-2">
+        <Button type="button" variant="secondary" loading={decide.isPending && decide.variables === "reject"} onClick={() => decide.mutate("reject")}>Reject</Button>
+        <Button type="button" loading={decide.isPending && decide.variables === "approve"} onClick={() => decide.mutate("approve")}>Approve</Button>
+      </div>
+    </div>
+  );
+}
+
 export default function EmployeesPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const p = wsPath(slug);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Employee | "new" | null>(null);
@@ -65,6 +103,8 @@ export default function EmployeesPage() {
         hire_date: form.hire_date || null,
         basic_salary: form.basic_salary || "0",
         pay_rate: form.pay_rate || "0",
+        own_week: undefined,
+        working_days: form.own_week && form.working_days.length ? form.working_days : null,
         ...(can("payroll.manage") ? {} : {
           on_payroll: undefined, pay_type: undefined, basic_salary: undefined, pay_rate: undefined, recurring_items: undefined, pay_method: undefined,
           annual_leave_days: undefined, deduct_paye: undefined, deduct_nssf: undefined, deduct_shif: undefined, deduct_housing_levy: undefined,
@@ -118,7 +158,7 @@ export default function EmployeesPage() {
             {rows.map((e) => (
               <tr key={e.id} className={manage ? "cursor-pointer hover:bg-stone-50" : ""} onClick={() => manage && open(e)}>
                 <Td className="font-mono text-xs">{e.staff_number}</Td>
-                <Td className="font-medium">{e.full_name}</Td>
+                <Td className="font-medium">{e.full_name}{Boolean(e.pending_changes) && manage ? <span className="ml-2"><Badge tone="amber">Changes to check</Badge></span> : null}</Td>
                 <Td>{e.job_title || "-"}</Td>
                 <Td>{e.department_name || "-"}</Td>
                 <Td>{e.reports_to_name || "-"}</Td>
@@ -167,7 +207,18 @@ export default function EmployeesPage() {
                 <option value="exited">Exited</option>
               </Select>
             </Field>
+            <Field label="Emergency contact"><Input value={form.emergency_contact_name} onChange={set("emergency_contact_name")} placeholder="Name" /></Field>
+            <Field label="Emergency contact phone"><Input value={form.emergency_contact_phone} onChange={set("emergency_contact_phone")} /></Field>
           </div>
+          <div className="space-y-2 rounded-md border border-stone-200 p-3">
+            <label className="flex items-start gap-2 text-sm">
+              <input type="checkbox" className="mt-1" checked={form.own_week}
+                onChange={(e) => setForm((p) => ({ ...p, own_week: e.target.checked, working_days: p.working_days.length ? p.working_days : ((context.workspace.working_days as number[] | null) ?? MON_TO_FRI) }))} />
+              <span>Works different days from the company<span className="block text-xs text-stone-500">For example off on Wednesdays only, or working weekends. Leave and unpaid-leave pay follow these days.</span></span>
+            </label>
+            {form.own_week && <DayPicker value={form.working_days} onChange={(days) => setForm((p) => ({ ...p, working_days: days }))} />}
+          </div>
+          {current && Boolean(current.pending_changes) && manage && <PendingChanges employee={current} onDone={() => setEditing(null)} />}
           {can("payroll.manage") && (
             <fieldset className="space-y-3 rounded-md border border-stone-200 p-3">
               <legend className="px-1 text-sm font-semibold">Pay</legend>

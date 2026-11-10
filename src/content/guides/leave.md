@@ -4,7 +4,7 @@ Staff ask for leave from **My leave and pay**, on their phone or computer. Their
 
 ## Asking for leave
 
-Choose the type (annual, sick, maternity, paternity, compassionate, study or unpaid), the first and last day, and a reason. Weekends aren't counted. Annual leave can't go over the days left for the year.
+Choose the type (annual, sick, maternity, paternity, compassionate, study or unpaid), the first and last day, and a reason. Only the person's **working days** are counted: days off and public holidays aren't. Annual leave can't go over the days left for the year.
 
 ## Deciding
 
@@ -16,4 +16,12 @@ Open **People > Leave** to see requests waiting, approve or decline them, and se
 
 Each employee has a number of **annual leave days** a year (21 working days is the legal minimum in Kenya). Approved **unpaid leave** is taken off that month's basic pay.
 
-Public holidays are not taken off the day count yet; adjust the dates if leave spans one.
+## Working days and public holidays
+
+Set the company's working week and its public holidays in **Settings > Working week and public holidays**. Monday to Friday is the starting point.
+
+- A business open on Saturdays ticks Saturday, and leave counts it.
+- **Kenya's fixed holidays** can be added for this year and next in one click. Add Good Friday, Easter Monday, Idd-ul-Fitr and any special holidays each year as they are gazetted.
+- Someone who works different days, for example off on Wednesdays only, gets their own days on their employee record under **Works different days from the company**.
+
+The same days are used for a day of **unpaid leave**: it costs basic pay divided by the person's working days that month.

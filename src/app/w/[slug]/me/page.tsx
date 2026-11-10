@@ -10,6 +10,7 @@ import { Badge, Button, Card, Field, FormError, Input, Modal, Select, Spinner, T
 import { api, unwrap } from "@/lib/api/client";
 import { LEAVE_STATUS, LEAVE_TYPES } from "@/lib/api/people";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
+import { MyDetails } from "@/components/my-details";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
@@ -30,7 +31,7 @@ export default function MePage() {
   const b = balance.data?.[0];
   return (
     <div className="mx-auto max-w-md space-y-5">
-      <h1 className="text-xl font-semibold">My leave and pay</h1>
+      <h1 className="text-xl font-semibold">My leave, pay and details</h1>
       <Card className="p-4">
         {balance.isLoading ? <Spinner /> : b && (
           <div className="flex items-end justify-between">
@@ -73,6 +74,7 @@ export default function MePage() {
         </div>
       </section>
       {asking && <AskLeave onClose={() => setAsking(false)} />}
+      <MyDetails />
     </div>
   );
 }
