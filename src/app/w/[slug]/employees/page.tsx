@@ -110,14 +110,27 @@ export default function EmployeesPage() {
           annual_leave_days: undefined, deduct_paye: undefined, deduct_nssf: undefined, deduct_shif: undefined, deduct_housing_levy: undefined,
         }),
       } as never;
-      if (editing === "new") return unwrap(await api.POST("/api/v1/w/{workspace}/employees/", { ...p, body }));
+      if (editing === "new") {
+        const made = unwrap(await api.POST("/api/v1/w/{workspace}/employees/", { ...p, body }));
+        if (inviteNew && form.email) {  // the invitation is linked to this record, so accepting it links their login
+          unwrap(await api.POST("/api/v1/w/{workspace}/employees/{id}/invite/", {
+            params: { path: { workspace: slug, id: made.id } }, body: { role_id: inviteRole || selfService || null } as never,
+          }));
+          return { ...made, invited: true };
+        }
+        return made;
+      }
       const id = (editing as Employee).id;
       return unwrap(await api.PATCH("/api/v1/w/{workspace}/employees/{id}/", { params: { path: { workspace: slug, id } }, body }));
     },
-    onSuccess: (emp) => { toast.success(`${emp.full_name} saved`); setEditing(null); },
+    onSuccess: (emp) => {
+      toast.success("invited" in emp ? `${emp.full_name} saved and invited to sign in` : `${emp.full_name} saved`);
+      setEditing(null);
+    },
   });
   const roles = useQuery({ queryKey: ["roles", slug], enabled: can("invitations.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
   const [inviteRole, setInviteRole] = useState("");
+  const [inviteNew, setInviteNew] = useState(false);
   const selfService = (roles.data?.results ?? []).find((r) => r.slug === "self-service")?.id ?? "";
   const invite = useMutation({
     mutationFn: async (id: string) => unwrap(await api.POST("/api/v1/w/{workspace}/employees/{id}/invite/", {
@@ -218,6 +231,19 @@ export default function EmployeesPage() {
             </label>
             {form.own_week && <DayPicker value={form.working_days} onChange={(days) => setForm((p) => ({ ...p, working_days: days }))} />}
           </div>
+          {editing === "new" && can("invitations.manage") && (
+            <div className="flex flex-wrap items-center gap-3 rounded-md border border-stone-200 p-3">
+              <label className="flex items-start gap-2 text-sm">
+                <input type="checkbox" className="mt-1" checked={inviteNew} disabled={!form.email} onChange={(e) => setInviteNew(e.target.checked)} />
+                <span>Invite them to sign in<span className="block text-xs text-stone-500">{form.email ? `An email goes to ${form.email}; their login is linked to this record.` : "Add their email address first."}</span></span>
+              </label>
+              {inviteNew && form.email && (
+                <Select aria-label="Role to give them" className="w-48" value={inviteRole || selfService} onChange={(e) => setInviteRole(e.target.value)}>
+                  {(roles.data?.results ?? []).filter((r) => r.slug !== "owner").map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </Select>
+              )}
+            </div>
+          )}
           {current && Boolean(current.pending_changes) && manage && <PendingChanges employee={current} onDone={() => setEditing(null)} />}
           {can("payroll.manage") && (
             <fieldset className="space-y-3 rounded-md border border-stone-200 p-3">

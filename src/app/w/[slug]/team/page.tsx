@@ -15,7 +15,13 @@ export default function TeamPage() {
   const limitedMe = Boolean(context.limited_department);
   const p = wsPath(slug);
   const [inviting, setInviting] = useState(false);
-  const [invite, setInvite] = useState({ email: "", role_id: "" });
+  const [invite, setInvite] = useState({ email: "", role_id: "", employee_id: "" });
+  // staff records without a login yet: inviting one of them links the login to the record
+  const staff = useQuery({
+    queryKey: ["employees", slug, "no-login"], enabled: inviting && can("employees.view"),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { page_size: 200 } } })),
+  });
+  const unlinked = (staff.data?.results ?? []).filter((e) => !e.has_login && e.status !== "exited");
 
   const members = useQuery({ queryKey: ["members", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/members/", p)) });
   const roles = useQuery({ queryKey: ["roles", slug], enabled: can("roles.view") || can("members.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
@@ -39,8 +45,10 @@ export default function TeamPage() {
     onError: (e) => toast.error(e.message),
   });
   const send = useMutation({
-    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/invitations/", { ...p, body: invite })),
-    onSuccess: (inv) => { toast.success(`Invitation sent to ${inv.email}`); setInviting(false); setInvite({ email: "", role_id: "" }); },
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/invitations/", {
+      ...p, body: { ...invite, employee_id: invite.employee_id || null } as never,
+    })),
+    onSuccess: (inv) => { toast.success(`Invitation sent to ${inv.email}`); setInviting(false); setInvite({ email: "", role_id: "", employee_id: "" }); },
   });
   const revoke = useMutation({
     mutationFn: async (id: string) => unwrap(await api.DELETE("/api/v1/w/{workspace}/invitations/{id}/", { params: { path: { workspace: slug, id } } })),
@@ -112,7 +120,7 @@ export default function TeamPage() {
               <Table head={["Email", "Role", "Invited by", "Expires", ""]}>
                 {pending.map((inv) => (
                   <tr key={inv.id}>
-                    <Td>{inv.email} {inv.is_expired && <Badge tone="red">Expired</Badge>}</Td>
+                    <Td>{inv.email}{inv.employee_name ? <span className="text-xs text-stone-500"> · {inv.employee_name}</span> : null} {inv.is_expired && <Badge tone="red">Expired</Badge>}</Td>
                     <Td>{inv.role_name}</Td>
                     <Td>{inv.invited_by || "-"}</Td>
                     <Td>{new Date(inv.expires_at).toLocaleDateString("en-KE")}</Td>
@@ -134,6 +142,17 @@ export default function TeamPage() {
 
       <Modal open={inviting} title="Invite someone" onClose={() => setInviting(false)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); send.mutate(); }}>
+          {unlinked.length > 0 && (
+            <Field label="An employee already on record (optional)" error={fieldError(send.error, "employee_id")}>
+              <Select value={invite.employee_id} onChange={(e) => {
+                const emp = unlinked.find((x) => x.id === e.target.value);
+                setInvite((prev) => ({ ...prev, employee_id: e.target.value, email: emp?.email || (e.target.value ? prev.email : "") }));
+              }}>
+                <option value="">Someone new</option>
+                {unlinked.map((e) => <option key={e.id} value={e.id}>{e.full_name}{e.job_title ? `, ${e.job_title}` : ""}</option>)}
+              </Select>
+            </Field>
+          )}
           <Field label="Email" error={fieldError(send.error, "email")}>
             <Input type="email" required value={invite.email} onChange={(e) => setInvite((prev) => ({ ...prev, email: e.target.value }))} />
           </Field>
@@ -143,7 +162,7 @@ export default function TeamPage() {
               {roleList.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
             </Select>
           </Field>
-          <p className="text-xs text-stone-500">They get an email with a link that works for 7 days. To give an employee self-service, use Invite to sign in on their employee record instead, so the login is linked to it.</p>
+          <p className="text-xs text-stone-500">They get an email with a link that works for 7 days. Choosing an employee links their login to that staff record, so their leave, payslips and details are theirs when they sign in.</p>
           <FormError error={send.error} />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setInviting(false)}>Cancel</Button>
