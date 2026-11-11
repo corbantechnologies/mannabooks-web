@@ -11,6 +11,14 @@ Managers and supervisors can ask the people below them for a report (weekly sale
 
 You can ask only people below you in the reporting line. HR managers and owners can ask anyone.
 
+**Setting one up for someone else.** Anyone who manages work reports (HR managers, admins and owners) sees **Who it's for** at the top. Choose the person, such as the CEO, and the request becomes theirs:
+
+- *Everyone who reports to them* means their reporting line, not yours.
+- Reports, overdue notices and reviews go to them.
+- The request shows them as the one who asked, and you as the one who set it up.
+
+This lets an admin set up the reporting for managers who don't use the system much.
+
 ## What happens next
 
 - Everyone asked gets an email, and the report appears under **My reports**.

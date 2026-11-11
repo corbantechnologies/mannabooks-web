@@ -2235,6 +2235,23 @@ export interface paths {
         patch: operations["w_departments_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/departments/mine/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description For a department head: each department they head, with its people, leave waiting, money and late reports. */
+        get: operations["w_departments_mine_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/depreciation/": {
         parameters: {
             query?: never;
@@ -7693,6 +7710,9 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
             readonly project_name: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            readonly department_name: string;
             readonly status: components["schemas"]["BudgetStatusEnum"];
             notes?: string;
             readonly approved_by_name: string;
@@ -7762,6 +7782,8 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
@@ -10506,6 +10528,18 @@ export interface components {
          * @enum {string}
          */
         MpesaTransactionStatusEnum: "pending" | "completed" | "failed" | "cancelled";
+        MyDepartment: {
+            id: string;
+            name: string;
+            members: components["schemas"]["_Member"][];
+            leave_waiting: components["schemas"]["_Leave"][];
+            month: components["schemas"]["_Money"];
+            year: components["schemas"]["_Money"] | null;
+            year_name: string | null;
+            budget: components["schemas"]["_DeptBudget"] | null;
+            reports_late: components["schemas"]["_LateReport"][];
+            reports_due_soon: number;
+        };
         /** @description A workspace in the caller's list, with their role in it. */
         MyWorkspace: {
             /** Format: uuid */
@@ -12156,6 +12190,8 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
@@ -14841,7 +14877,9 @@ export interface components {
             first_due_date: string;
             remind_days_before?: number;
             status?: components["schemas"]["ReportRequestStatusEnum"];
-            readonly requested_by_name: string;
+            readonly requested_by_name: string | null;
+            /** @description Who set it up, when that was someone else on the owner's behalf. */
+            readonly set_up_by_name: string | null;
             readonly has_template: boolean;
             readonly template_name: string;
             readonly counts: {
@@ -14862,6 +14900,11 @@ export interface components {
             first_due_date: string;
             remind_days_before?: number;
             status?: components["schemas"]["ReportRequestStatusEnum"];
+            /**
+             * Format: uuid
+             * @description Set it up for this team member: the reports go to them
+             */
+            requested_for_membership_id?: string | null;
             /** Format: binary */
             template_file?: string;
         };
@@ -16302,6 +16345,10 @@ export interface components {
             employee_id: string | null;
             department: string | null;
             in_charge_of: string[];
+            /** @description Departments this person heads: [{id, name}] */
+            headed_departments: {
+                [key: string]: string;
+            }[];
             /** @description KRA eTIMS signing is switched on for the platform */
             etims_enabled: boolean;
             /** @description Every financial year, latest first: id, name, start_date, end_date, status */
@@ -16365,6 +16412,52 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+        };
+        _DeptBudget: {
+            id: string;
+            name: string;
+            /** Format: decimal */
+            income_ytd_budget: string;
+            /** Format: decimal */
+            costs_ytd_budget: string;
+            /** Format: decimal */
+            income_year_budget: string;
+            /** Format: decimal */
+            costs_year_budget: string;
+        };
+        _LateReport: {
+            id: string;
+            employee: string;
+            title: string;
+            /** Format: date */
+            due_date: string;
+        };
+        _Leave: {
+            id: string;
+            employee: string;
+            leave_type: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** Format: decimal */
+            days: string;
+        };
+        _Member: {
+            id: string;
+            name: string;
+            job_title: string;
+            has_login: boolean;
+            /** Format: date */
+            away_until: string | null;
+        };
+        _Money: {
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            costs: string;
+            /** Format: decimal */
+            net: string;
         };
     };
     responses: never;
@@ -19232,6 +19325,7 @@ export interface operations {
         parameters: {
             query?: {
                 cost_center?: string;
+                department?: string;
                 fiscal_year?: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -20690,6 +20784,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    w_departments_mine_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyDepartment"][];
                 };
             };
         };
