@@ -98,6 +98,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
   { section: null, items: [
     { href: "", label: "Overview", icon: LayoutDashboard, perm: null },
     { href: "/analytics", label: "Analytics", icon: ChartNoAxesCombined, perm: null },
+    { href: "/my-department", label: "My department", icon: Network, perm: null },
     { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null },
     { href: "/inbox", label: "Business inbox", icon: Inbox, perm: ["inbox.view", "inbox.send"] },
   ] },
@@ -302,6 +303,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const switchedOn = (context.workspace.modules ?? []) as string[];  // empty: every module is on
   const allowed = (item: NavItem) =>
     (item.href !== "/etims" || context.etims_enabled) &&
+    (item.href !== "/my-department" || (context.headed_departments ?? []).length > 0) && // only for department heads
     !(context.limited_department && WHOLE_BUSINESS.includes(item.href)) && // hidden until KRA approves MannaBooks and signing is switched on
     (!switchedOn.length || !moduleOf(item.href) || switchedOn.includes(moduleOf(item.href)!)) &&
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)));

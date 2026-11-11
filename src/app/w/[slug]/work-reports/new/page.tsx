@@ -12,8 +12,17 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function NewWorkReportPage() {
-  const { slug } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const router = useRouter();
+  const manage = can("workreports.manage");
+  // admins can set a request up for someone else (the CEO, a manager): it is then theirs
+  const members = useQuery({
+    queryKey: ["members", slug, "active"], enabled: manage,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/members/", { params: { path: { workspace: slug }, query: { status: "active", page_size: 200 } as never } })),
+  });
+  const [forId, setForId] = useState("");
+  const forOther = Boolean(forId) && forId !== context.membership_id;
+  const forName = (members.data?.results ?? []).find((m) => m.id === forId)?.user.full_name ?? "them";
   const people = useQuery({ queryKey: ["report-people", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/people/", { params: { path: { workspace: slug } } })) });
   const departments = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })) });
   const [f, setF] = useState({ title: "", instructions: "", audience: "team", department_id: "", frequency: "weekly", first_due_date: "", remind_days_before: "1" });
@@ -26,6 +35,7 @@ export default function NewWorkReportPage() {
       Object.entries(f).forEach(([k, v]) => { if (v !== "" && !(k === "department_id" && f.audience !== "department")) form.append(k, v); });
       if (f.audience === "people") chosen.forEach((id) => form.append("people_ids", id));
       if (template) form.append("template_file", template);
+      if (forOther) form.append("requested_for_membership_id", forId);
       return sendForm<ReportRequest>(`/api/v1/w/${slug}/report-requests/`, form);
     },
     onSuccess: (r) => { toast.success(`Asked ${r.assignee_names.length} ${r.assignee_names.length === 1 ? "person" : "people"}`); router.push(`/w/${slug}/work-reports/requests/${r.id}`); },
@@ -44,8 +54,15 @@ export default function NewWorkReportPage() {
           </Field>
         </Card>
         <Card className="space-y-3 p-4">
+          {manage && (members.data?.results ?? []).length > 1 && (
+            <Field label="Who it's for" hint={forOther ? `${forName} receives and reviews the reports. You are shown as having set it up.` : "Set it up for someone else, such as the CEO, and the reports go to them."}>
+              <Select value={forId || context.membership_id} onChange={(e) => setForId(e.target.value)}>
+                {(members.data?.results ?? []).map((m) => <option key={m.id} value={m.id}>{m.id === context.membership_id ? `Me (${m.user.full_name})` : m.user.full_name}</option>)}
+              </Select>
+            </Field>
+          )}
           <Field label="Who"><Select value={f.audience} onChange={set("audience")}>
-            <option value="team">Everyone who reports to me</option><option value="department">A department</option><option value="people">People I choose</option></Select></Field>
+            <option value="team">{forOther ? `Everyone who reports to ${forName}` : "Everyone who reports to me"}</option><option value="department">A department</option><option value="people">People I choose</option></Select></Field>
           {f.audience === "department" && <Field label="Department"><Select required value={f.department_id} onChange={set("department_id")}><option value="">Choose</option>{(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</Select></Field>}
           {f.audience === "people" && (
             <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
@@ -58,7 +75,7 @@ export default function NewWorkReportPage() {
               ))}
             </div>
           )}
-          {f.audience === "team" && <p className="text-xs text-stone-500">{list.length ? `${list.length} people can be asked.` : "Nobody reports to you yet."}</p>}
+          {f.audience === "team" && <p className="text-xs text-stone-500">{forOther ? `Everyone in ${forName}'s reporting line, from "Reports to" on employee records.` : list.length ? `${list.length} people can be asked.` : "Nobody reports to you yet."}</p>}
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="How often"><Select value={f.frequency} onChange={set("frequency")}>{REPORT_FREQUENCIES.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}</Select></Field>
             <Field label={f.frequency === "once" ? "Due on" : "First due on"} error={fieldError(save.error, "first_due_date")}><Input type="date" required value={f.first_due_date} onChange={set("first_due_date")} /></Field>

@@ -24,10 +24,15 @@ export default function BudgetsPage() {
   const [creating, setCreating] = useState(false);
   const [f, setF] = useState({ name: "Operating budget", fiscal_year_id: "" });
   const [tags, setTags] = useState<Tags>({ cost_center_id: "", project_id: "" });
+  const [departmentId, setDepartmentId] = useState("");
+  const departments = useQuery({
+    queryKey: ["departments", slug], enabled: creating,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })),
+  });
   const yearId = f.fiscal_year_id || (years.data?.find((y) => y.status === "open")?.id ?? "");
   const create = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/budgets/", {
-      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, ...tagsBody(tags), lines: [] } as never,
+      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, ...(departmentId ? { department_id: departmentId } : tagsBody(tags)), lines: [] } as never,
     })),
     onSuccess: (b) => router.push(`/w/${slug}/accounting/budgets/${b.id}`),
   });
@@ -35,7 +40,7 @@ export default function BudgetsPage() {
   return (
     <div className="w-full">
       <PageHeader title="Budgets" guide="budgets"
-        description="Plan the year's income and spending month by month, for the whole business or one cost centre or project, then watch the actual figures against it."
+        description="Plan the year's income and spending month by month, for the whole business, a department, a cost centre or a project, then watch the actual figures against it."
         actions={can("budgets.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New budget</Button>} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
@@ -46,7 +51,7 @@ export default function BudgetsPage() {
               <tr key={b.id} className="hover:bg-stone-50">
                 <Td><Link className="font-medium hover:underline" href={`/w/${slug}/accounting/budgets/${b.id}`}>{b.name}</Link></Td>
                 <Td>{b.fiscal_year_name}</Td>
-                <Td>{b.cost_center_name ?? b.project_name ?? "Whole business"}</Td>
+                <Td>{b.department_name ?? b.cost_center_name ?? b.project_name ?? "Whole business"}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_income)}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_expense)}</Td>
                 <Td><Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge></Td>
@@ -59,8 +64,18 @@ export default function BudgetsPage() {
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
           <Field label="Name"><Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} /></Field>
           <Field label="Financial year"><Select required value={yearId} onChange={(e) => setF((x) => ({ ...x, fiscal_year_id: e.target.value }))}>{(years.data ?? []).map((y) => <option key={y.id} value={y.id}>{y.name}</option>)}</Select></Field>
-          <p className="text-xs text-stone-500">Leave cost centre and project empty for a budget of the whole business.</p>
-          <div className="grid gap-3 sm:grid-cols-2"><TagPickers value={tags} onChange={setTags} /></div>
+          <Field label="Department (optional)">
+            <Select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}>
+              <option value="">None</option>
+              {(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </Select>
+          </Field>
+          {departmentId ? (
+            <p className="text-xs text-stone-500">Covers everything tagged with this department or one of its cost centres, as in profit and loss by department.</p>
+          ) : <>
+            <p className="text-xs text-stone-500">Or choose one cost centre or project. Leave all empty for a budget of the whole business.</p>
+            <div className="grid gap-3 sm:grid-cols-2"><TagPickers value={tags} onChange={setTags} /></div>
+          </>}
           <FormError error={create.error} />
           <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setCreating(false)}>Cancel</Button><Button type="submit" loading={create.isPending}>Create and plan</Button></div>
         </form>

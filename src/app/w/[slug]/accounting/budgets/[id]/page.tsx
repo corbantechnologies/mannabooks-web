@@ -56,7 +56,7 @@ export default function BudgetPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/accounting/budgets`} className="text-sm text-stone-500 hover:underline">&larr; Budgets</Link>
-      <PageHeader title={b.name} description={`${b.fiscal_year_name}, ${b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
+      <PageHeader title={b.name} description={`${b.fiscal_year_name}, ${b.department_name ?? b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
         actions={<div className="flex flex-wrap gap-2">
           {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this budget?").then((ok) => ok && remove.mutate())}>Delete</Button>}
           {editable && <Button variant="secondary" onClick={() => { act.reset(); setFilling(true); }}>Copy last year</Button>}
