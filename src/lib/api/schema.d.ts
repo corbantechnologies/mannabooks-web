@@ -1516,20 +1516,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         get: operations["w_budgets_list"];
         put?: never;
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         post: operations["w_budgets_create"];
         delete?: never;
         options?: never;
@@ -1544,30 +1534,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         get: operations["w_budgets_retrieve"];
         put?: never;
         post?: never;
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         delete: operations["w_budgets_destroy"];
         options?: never;
         head?: never;
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         patch: operations["w_budgets_partial_update"];
         trace?: never;
     };
@@ -1580,7 +1555,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description approve (budgets.approve, or through the approval chain), reopen (budgets.approve) or fill_from_last_year. */
+        /**
+         * @description approve (budgets.approve, or through the approval chain), reopen (budgets.approve), submit (a head sends a draft
+         *     for approval) or fill_from_last_year.
+         */
         post: operations["w_budgets_action_create"];
         delete?: never;
         options?: never;
@@ -1595,13 +1573,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * @description Mixin for generic views on a `WorkspaceModel`.
-         *
-         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
-         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
-         */
+        /** @description Finance sees and manages every budget; department heads their own department's drafts (budgets/access.py). */
         get: operations["w_budgets_versus_actual_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/budgets/accounts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Income and expense accounts to plan against: names only, no balances, so heads can draft without seeing the books. */
+        get: operations["w_budgets_accounts_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7718,6 +7708,12 @@ export interface components {
             readonly approved_by_name: string;
             /** Format: date-time */
             readonly approved_at: string | null;
+            readonly submitted_by_name: string;
+            /**
+             * Format: date-time
+             * @description When a head sent the draft for approval
+             */
+            readonly submitted_at: string | null;
             readonly total_income: string;
             readonly total_expense: string;
             readonly months: string[];
@@ -7725,13 +7721,22 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        BudgetAccount: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            account_type: string;
+            is_active: boolean;
+        };
         /**
          * @description * `approve` - approve
          *     * `reopen` - reopen
+         *     * `submit` - submit
          *     * `fill_from_last_year` - fill_from_last_year
          * @enum {string}
          */
-        BudgetActionActionEnum: "approve" | "reopen" | "fill_from_last_year";
+        BudgetActionActionEnum: "approve" | "reopen" | "submit" | "fill_from_last_year";
         BudgetActionRequest: {
             action: components["schemas"]["BudgetActionActionEnum"];
             /**
@@ -19507,6 +19512,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BudgetVersusActual"];
+                };
+            };
+        };
+    };
+    w_budgets_accounts_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetAccount"][];
                 };
             };
         };

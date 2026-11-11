@@ -10,10 +10,9 @@ import toast from "react-hot-toast";
 
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
-import { useAccounts } from "@/lib/api/accounting";
 import { api, unwrap } from "@/lib/api/client";
 import { BUDGET_STATUS, type Budget, monthLabel, useApprovalStatus } from "@/lib/api/control";
-import { downloadCsv, fmt, todayIso } from "@/lib/format";
+import { downloadCsv, fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
@@ -28,7 +27,7 @@ function spread(total: number): string[] {
 }
 
 export default function BudgetPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const path = { params: { path: { workspace: slug, id } } };
@@ -36,9 +35,9 @@ export default function BudgetPage() {
   const approval = useApprovalStatus(slug, "budget", id);
   const [tab, setTab] = useState<"plan" | "actual">("plan");
   const act = useMutation({
-    mutationFn: async (body: { action: "approve" | "reopen" | "fill_from_last_year"; uplift_percent?: string }) =>
+    mutationFn: async (body: { action: "approve" | "reopen" | "submit" | "fill_from_last_year"; uplift_percent?: string }) =>
       unwrap(await api.POST("/api/v1/w/{workspace}/budgets/{id}/action/", { ...path, body: body as never })),
-    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); },
+    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : v.action === "submit" ? "Sent for approval" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); },
     onError: (e) => { if (!filling) toast.error(e.message); },
   });
   const remove = useMutation({
@@ -52,7 +51,9 @@ export default function BudgetPage() {
   if (budget.error) return <ErrorState error={budget.error} />;
   const b = budget.data!;
   const draft = b.status === "draft";
-  const editable = draft && can("budgets.manage");
+  // heads draft their own department's budget; finance (budgets.approve) decides
+  const heads = (context.headed_departments ?? []).some((d) => d.id === b.department_id);
+  const editable = draft && ((can("budgets.manage") && (!context.limited_department || context.limited_department.id === b.department_id)) || heads);
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/accounting/budgets`} className="text-sm text-stone-500 hover:underline">&larr; Budgets</Link>
@@ -60,6 +61,9 @@ export default function BudgetPage() {
         actions={<div className="flex flex-wrap gap-2">
           {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this budget?").then((ok) => ok && remove.mutate())}>Delete</Button>}
           {editable && <Button variant="secondary" onClick={() => { act.reset(); setFilling(true); }}>Copy last year</Button>}
+          {draft && editable && !can("budgets.approve") && (
+            <Button loading={act.isPending} disabled={!(b.lines ?? []).length} onClick={() => act.mutate({ action: "submit" })}>{b.submitted_at ? "Send again" : "Submit for approval"}</Button>
+          )}
           {draft && can("budgets.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
           {!draft && can("budgets.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change the figures?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
         </div>} />
@@ -67,6 +71,7 @@ export default function BudgetPage() {
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge>
         {b.approved_by_name && <span className="text-sm text-stone-500">by {b.approved_by_name}</span>}
+        {draft && b.submitted_at && <span className="text-sm text-stone-500">Sent for approval by {b.submitted_by_name ?? "someone"}, {fmtDate(b.submitted_at)}</span>}
         <div className="ml-auto flex gap-1 rounded-md border border-stone-200 p-0.5">
           {(["plan", "actual"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)} className={clsx("rounded px-3 py-1.5 text-sm", tab === t ? "bg-brand-700 text-white" : "text-stone-600 hover:bg-stone-100")}>
@@ -90,7 +95,10 @@ export default function BudgetPage() {
 
 function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
   const { slug } = useWorkspace();
-  const accounts = useAccounts(slug);
+  const accounts = useQuery({  // names only, so a department head can plan without seeing the books
+    queryKey: ["budget-accounts", slug],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/budgets/accounts/", { params: { path: { workspace: slug } } })),
+  });
   const [rows, setRows] = useState<Row[]>(() => (budget.lines ?? []).map((l) => ({ account_id: l.account_id, amounts: l.amounts.map(String) })));
   const [dirty, setDirty] = useState(false);
   const [adding, setAdding] = useState("");
