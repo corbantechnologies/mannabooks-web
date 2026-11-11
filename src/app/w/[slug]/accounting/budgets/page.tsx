@@ -9,14 +9,18 @@ import { useState } from "react";
 import { TagPickers, type Tags, tagsBody } from "@/components/tag-pickers";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
-import { BUDGET_STATUS, useFiscalYears } from "@/lib/api/control";
+import { BUDGET_STATUS } from "@/lib/api/control";
 import { fmt } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function BudgetsPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const router = useRouter();
-  const years = useFiscalYears(slug);
+  const years = { data: context.fiscal_years as { id: string; name: string; status: string }[] };  // a head may not read financial years
+  // Someone limited to a department, or a head without budget rights, may only budget their own department(s)
+  const own: { id: string; name: string }[] | null = context.limited_department ? [context.limited_department]
+    : !can("budgets.manage") ? (context.headed_departments ?? []).map((d) => ({ id: d.id, name: d.name })) : null;
+  const mayCreate = own ? own.length > 0 : can("budgets.manage");
   const list = useQuery({
     queryKey: ["budgets", slug],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/budgets/", { params: { path: { workspace: slug }, query: { page_size: 100 } } })),
@@ -26,13 +30,15 @@ export default function BudgetsPage() {
   const [tags, setTags] = useState<Tags>({ cost_center_id: "", project_id: "" });
   const [departmentId, setDepartmentId] = useState("");
   const departments = useQuery({
-    queryKey: ["departments", slug], enabled: creating,
+    queryKey: ["departments", slug], enabled: creating && !own,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })),
   });
+  const deptChoices = own ?? departments.data?.results ?? [];
+  const deptId = own ? departmentId || own[0]?.id || "" : departmentId;
   const yearId = f.fiscal_year_id || (years.data?.find((y) => y.status === "open")?.id ?? "");
   const create = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/budgets/", {
-      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, ...(departmentId ? { department_id: departmentId } : tagsBody(tags)), lines: [] } as never,
+      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, ...(deptId ? { department_id: deptId } : tagsBody(tags)), lines: [] } as never,
     })),
     onSuccess: (b) => router.push(`/w/${slug}/accounting/budgets/${b.id}`),
   });
@@ -41,7 +47,7 @@ export default function BudgetsPage() {
     <div className="w-full">
       <PageHeader title="Budgets" guide="budgets"
         description="Plan the year's income and spending month by month, for the whole business, a department, a cost centre or a project, then watch the actual figures against it."
-        actions={can("budgets.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New budget</Button>} />
+        actions={mayCreate && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New budget</Button>} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No budgets yet">Start one for this financial year. You can copy last year&apos;s figures and add a percentage.</EmptyState>
@@ -64,13 +70,15 @@ export default function BudgetsPage() {
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
           <Field label="Name"><Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} /></Field>
           <Field label="Financial year"><Select required value={yearId} onChange={(e) => setF((x) => ({ ...x, fiscal_year_id: e.target.value }))}>{(years.data ?? []).map((y) => <option key={y.id} value={y.id}>{y.name}</option>)}</Select></Field>
-          <Field label="Department (optional)">
-            <Select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}>
-              <option value="">None</option>
-              {(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+          <Field label={own ? "Department" : "Department (optional)"}>
+            <Select required={!!own} value={deptId} onChange={(e) => setDepartmentId(e.target.value)}>
+              {!own && <option value="">None</option>}
+              {deptChoices.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </Select>
           </Field>
-          {departmentId ? (
+          {own ? (
+            <p className="text-xs text-stone-500">You can budget only your own department. {can("budgets.approve") ? "" : "When it's ready, submit it and finance approves it."}</p>
+          ) : deptId ? (
             <p className="text-xs text-stone-500">Covers everything tagged with this department or one of its cost centres, as in profit and loss by department.</p>
           ) : <>
             <p className="text-xs text-stone-500">Or choose one cost centre or project. Leave all empty for a budget of the whole business.</p>

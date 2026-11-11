@@ -23,6 +23,14 @@ Every budget is planned **month by month**, so each month's figure is the monthl
 
 When the plan is ready, choose **Approve** (or **Send for approval** if an approval rule covers budgets). Only one approved budget can cover a given year and scope. To change an approved budget, **Reopen** it.
 
+## Who sees which budgets
+
+- **Finance and admins** see and manage every budget.
+- **Someone limited to a department** sees only that department's budgets (and its cost centres'). When they create one, only their department is offered.
+- **A department's head** can draft their department's budget, even without budget rights of their own. They open **Budgets** from the menu, plan the months, then choose **Submit for approval**. If an approval rule covers budgets it follows that chain; otherwise everyone who can approve budgets (finance, the CEO) gets an email. The head can't approve it themselves.
+
+Heads plan against account names only; they don't see the books' balances. Once approved, the budget shows on their **My department** page as the figure they're measured against.
+
 ## Budget vs actual
 
 The **Budget vs actual** tab shows, for each account, the budget and the actual figure from the start of the year to the month you choose, and the difference. Green means better than planned (more income, or less spending); red means worse. The bar shows how much of the year's budget has been used.
