@@ -64,6 +64,23 @@ export function linesFromDocument(lines: { product_id?: string | null; descripti
   }));
 }
 
+/** A discount on the whole document, applied once on save: the API spreads it over the lines (eTIMS records discounts per line). */
+export interface WholeDiscount { kind: "percent" | "amount"; value: string }
+export const noWholeDiscount: WholeDiscount = { kind: "percent", value: "" };
+
+export function wholeDiscountBody(w: WholeDiscount | undefined) {
+  const v = Number(w?.value) || 0;
+  if (!w || v <= 0) return {};
+  return w.kind === "percent" ? { whole_discount_percent: String(v) } : { whole_discount_amount: String(v) };
+}
+
+/** What the discount takes off a total (an estimate; the saved document is exact to the cent). */
+export function wholeDiscountOff(w: WholeDiscount | undefined, total: number): number {
+  const v = Number(w?.value) || 0;
+  if (!w || v <= 0) return 0;
+  return Math.min(round2(w.kind === "percent" ? (total * v) / 100 : v), total);
+}
+
 export function LinesEditor({
   slug,
   lines,
@@ -73,6 +90,8 @@ export function LinesEditor({
   currency,
   disabled,
   customerId,
+  whole,
+  setWhole,
 }: {
   slug: string;
   lines: EditLine[];
@@ -83,6 +102,9 @@ export function LinesEditor({
   disabled?: boolean;
   /** Prices come from this customer's price list. */
   customerId?: string;
+  /** Offer a discount on the whole document. */
+  whole?: WholeDiscount;
+  setWhole?: (w: WholeDiscount) => void;
 }) {
   const products = useProducts(slug);
   const prices = useCustomerPrices(slug, customerId);
@@ -175,11 +197,26 @@ export function LinesEditor({
           <label className="flex items-center gap-2 text-stone-600">
             <input type="checkbox" disabled={disabled} checked={includeTax} onChange={(e) => setIncludeTax(e.target.checked)} /> Prices include VAT
           </label>
+          {whole && setWhole && !disabled && (
+            <div className="flex flex-wrap items-center gap-2 text-stone-600">
+              <span>Discount on the whole document</span>
+              <Input inputMode="decimal" className="w-24 text-right" value={whole.value} placeholder="0" aria-label="Discount on the whole document"
+                onChange={(e) => setWhole({ ...whole, value: e.target.value })} />
+              <select className="rounded-md border border-stone-300 bg-white px-2 py-1.5 text-sm" value={whole.kind} aria-label="Discount as"
+                onChange={(e) => setWhole({ ...whole, kind: e.target.value as WholeDiscount["kind"] })}>
+                <option value="percent">%</option><option value="amount">{currency}</option>
+              </select>
+            </div>
+          )}
         </div>
         <dl className="grid grid-cols-[auto_8rem] gap-x-6 gap-y-1 text-right">
           <dt className="text-stone-500">Subtotal</dt><dd className="font-mono">{fmt(totals.net)}</dd>
           <dt className="text-stone-500">VAT</dt><dd className="font-mono">{fmt(totals.tax)}</dd>
-          <dt className="font-semibold">Total {currency}</dt><dd className="font-mono font-semibold">{fmt(totals.total)}</dd>
+          {wholeDiscountOff(whole, totals.total) > 0 ? <>
+            <dt className="text-stone-500">Before discount</dt><dd className="font-mono">{fmt(totals.total)}</dd>
+            <dt className="text-stone-500">Discount{whole?.kind === "percent" ? ` ${Number(whole.value)}%` : ""}</dt><dd className="font-mono text-red-700">-{fmt(wholeDiscountOff(whole, totals.total))}</dd>
+            <dt className="font-semibold">Total {currency}</dt><dd className="font-mono font-semibold">{fmt(round2(totals.total - wholeDiscountOff(whole, totals.total)))}</dd>
+          </> : <><dt className="font-semibold">Total {currency}</dt><dd className="font-mono font-semibold">{fmt(totals.total)}</dd></>}
         </dl>
       </div>
       <QuickProductModal open={adding !== null} onClose={() => setAdding(null)} onCreated={(p) => {

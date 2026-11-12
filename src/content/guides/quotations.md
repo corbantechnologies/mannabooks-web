@@ -9,6 +9,8 @@ A **quotation** is a price you offer before the customer commits. It does not to
 3. Add the lines: pick a product or type a description, then quantity, price, discount and VAT.
 4. Save it, then **Print** or save it as PDF to send to the customer.
 
+**Discount on the whole document.** Under the lines, enter a percentage or an amount off the whole document, for example 10% or KES 500. On saving, MannaBooks spreads it over the lines as line discounts, in proportion to each line's value, because KRA eTIMS records discounts line by line. Each line then shows its share, and the box starts empty again. A fixed amount comes off the total including VAT.
+
 ## Following it up
 
 Mark the quotation **Sent**, then **Accepted** or **Declined** when you hear back. Quotations past their valid-until date show as expired.

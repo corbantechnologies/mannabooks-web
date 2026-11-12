@@ -13,6 +13,12 @@
 | Currency | The currency your books are kept in, usually KES |
 | Financial year starts in | The first month of your financial year, used by reports and year-end |
 
+## Logo
+
+Under **Logo**, choose **Upload logo** and pick a PNG, JPG or WebP picture under 1 MB. It shows straight away on your quotations, invoices, receipts and their PDFs, on the online shop, and on the links customers open (catalogues, quotes, statements). A wide logo on a white or clear background prints best.
+
+**Change logo** replaces it; **Remove** takes it off, and documents show your business name instead. Only someone who can manage the workspace's settings can change it.
+
 ## Modules
 
 **Modules** decides which parts of MannaBooks appear in the menu: Sales and invoicing, Point of sale, Purchasing, Stock and warehouses, Manufacturing, Cash and banking, Leave and payroll, Projects, and Budgets, approvals and assets.

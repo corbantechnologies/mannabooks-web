@@ -49,7 +49,8 @@ function NewPayment() {
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/payments/", {
       ...wsPath(slug),
       body: {
-        ...form, method: form.method as "mpesa", deposit_account_id: form.deposit_account_id || depositFor(deposits.data, form.method),
+        ...form, method: form.method as "mpesa",
+        ...(form.method === "voucher" ? { deposit_account_id: undefined } : { deposit_account_id: form.deposit_account_id || depositFor(deposits.data, form.method) }),
         allocations: Object.entries(applied).filter(([, v]) => Number(v) > 0).map(([invoice_id, v]) => ({ invoice_id, amount: v })),
       },
     })),
@@ -76,12 +77,15 @@ function NewPayment() {
             <Input required inputMode="decimal" value={form.amount} onChange={set("amount")} onBlur={() => appliedTotal === 0 && amount > 0 && autoApply(amount)} />
           </Field>
           <Field label="Method"><Select value={form.method} onChange={(e) => setForm((prev) => ({ ...prev, method: e.target.value, deposit_account_id: "" }))}>{METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
-          <Field label={form.method === "mpesa" ? "M-Pesa code" : "Reference"} error={fieldError(save.error, "reference")}><Input required={form.method === "mpesa"} value={form.reference} onChange={set("reference")} /></Field>
-          <Field label="Received into" error={fieldError(save.error, "deposit_account_id")}>
+          <Field label={form.method === "mpesa" ? "M-Pesa code" : form.method === "voucher" ? "Voucher code" : "Reference"} error={fieldError(save.error, "reference")}
+            hint={form.method === "voucher" ? "The amount comes off the voucher; no money is received." : undefined}>
+            <Input required={form.method === "mpesa" || form.method === "voucher"} value={form.reference} className={form.method === "voucher" ? "font-mono uppercase" : undefined} onChange={set("reference")} />
+          </Field>
+          {form.method !== "voucher" && <Field label="Received into" error={fieldError(save.error, "deposit_account_id")}>
             <Select value={form.deposit_account_id || depositFor(deposits.data, form.method)} onChange={set("deposit_account_id")}>
               {deposits.data.map((a) => <option key={a.id} value={a.id}>{a.code} {a.name}</option>)}
             </Select>
-          </Field>
+          </Field>}
           <div className="sm:col-span-2"><Field label="Notes"><Textarea rows={1} value={form.notes} onChange={set("notes")} /></Field></div>
         </Card>
         {form.customer_id && (

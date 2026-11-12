@@ -336,6 +336,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/logos/{workspace_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A business's uploaded logo, for anyone: it shows on the online shop, customer links, PDFs and emails. */
+        get: operations["logos_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plans/": {
         parameters: {
             query?: never;
@@ -2892,6 +2909,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/gift-vouchers/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Vouchers sold or given. Selling needs giftvouchers.sell; giving one away free needs giftvouchers.manage. */
+        get: operations["w_gift_vouchers_list"];
+        put?: never;
+        /** @description Vouchers sold or given. Selling needs giftvouchers.sell; giving one away free needs giftvouchers.manage. */
+        post: operations["w_gift_vouchers_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/gift-vouchers/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_gift_vouchers_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/gift-vouchers/{id}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The voucher as a PDF to print or send to the person it is for. */
+        get: operations["w_gift_vouchers_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/gift-vouchers/{id}/void/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_gift_vouchers_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/gift-vouchers/check/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description What is left on a voucher, for the till or a payment. Anyone who can take money can check one. */
+        get: operations["w_gift_vouchers_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/goods-receipts/": {
         parameters: {
             query?: never;
@@ -3586,6 +3699,24 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/logo/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Upload the business's logo (POST, multipart `file`) or remove it (DELETE). Needs workspace.manage. */
+        post: operations["w_logo_create"];
+        /** @description Upload the business's logo (POST, multipart `file`) or remove it (DELETE). Needs workspace.manage. */
+        delete: operations["w_logo_destroy"];
         options?: never;
         head?: never;
         patch?: never;
@@ -9106,7 +9237,7 @@ export interface components {
             /** Format: uuid */
             supplier_id?: string | null;
             readonly supplier_name: string;
-            method?: components["schemas"]["Method240Enum"];
+            method?: components["schemas"]["ExpenseMethodEnum"];
             reference?: string;
             /** @description eTIMS CU number on the receipt, to claim its VAT */
             supplier_etims_number?: string;
@@ -9130,6 +9261,15 @@ export interface components {
             project_id?: string | null;
             readonly project_name: string;
         };
+        /**
+         * @description * `cash` - Cash
+         *     * `mpesa` - M-Pesa
+         *     * `bank` - Bank transfer
+         *     * `card` - Card
+         *     * `cheque` - Cheque
+         * @enum {string}
+         */
+        ExpenseMethodEnum: "cash" | "mpesa" | "bank" | "card" | "cheque";
         ExpenseRequest: {
             /** Format: date */
             expense_date?: string;
@@ -9138,7 +9278,7 @@ export interface components {
             payee?: string;
             /** Format: uuid */
             supplier_id?: string | null;
-            method?: components["schemas"]["Method240Enum"];
+            method?: components["schemas"]["ExpenseMethodEnum"];
             reference?: string;
             /** @description eTIMS CU number on the receipt, to claim its VAT */
             supplier_etims_number?: string;
@@ -9343,6 +9483,111 @@ export interface components {
          * @enum {string}
          */
         FulfilmentEnum: "pickup" | "delivery";
+        GiftVoucher: {
+            /** Format: uuid */
+            readonly id: string;
+            /** @description Blank: MannaBooks makes one */
+            code?: string;
+            kind?: components["schemas"]["GiftVoucherKindEnum"];
+            /** Format: decimal */
+            value: string;
+            /** Format: decimal */
+            readonly balance: string;
+            /** Format: date */
+            issue_date?: string;
+            /** Format: date */
+            expires_on?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
+            readonly customer_name: string;
+            /** @description Who it is for */
+            recipient_name?: string;
+            method?: components["schemas"]["Method126Enum"] | components["schemas"]["BlankEnum"];
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            readonly deposit_account_name: string;
+            payment_reference?: string;
+            notes?: string;
+            readonly status: components["schemas"]["GiftVoucherStatusEnum"];
+            readonly void_reason: string;
+            readonly entries: components["schemas"]["GiftVoucherEntry"][];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        GiftVoucherCheck: {
+            code: string;
+            /** Format: decimal */
+            balance: string;
+            /** Format: date */
+            expires_on: string | null;
+            recipient_name: string;
+        };
+        GiftVoucherEntry: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date */
+            readonly entry_date: string;
+            readonly kind: components["schemas"]["GiftVoucherEntryKindEnum"];
+            /**
+             * Format: decimal
+             * @description Always positive; the kind says which way
+             */
+            readonly amount: string;
+            /** @description receipt or payment */
+            readonly document_type: string;
+            /** Format: uuid */
+            readonly document_id: string | null;
+            readonly document_number: string;
+            readonly created_by_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `issue` - Issued
+         *     * `spend` - Spent
+         *     * `refund` - Given back
+         *     * `expire` - Expired
+         *     * `void` - Voided
+         * @enum {string}
+         */
+        GiftVoucherEntryKindEnum: "issue" | "spend" | "refund" | "expire" | "void";
+        /**
+         * @description * `sold` - Sold
+         *     * `free` - Given free
+         * @enum {string}
+         */
+        GiftVoucherKindEnum: "sold" | "free";
+        GiftVoucherRequest: {
+            /** @description Blank: MannaBooks makes one */
+            code?: string;
+            kind?: components["schemas"]["GiftVoucherKindEnum"];
+            /** Format: decimal */
+            value: string;
+            /** Format: date */
+            issue_date?: string;
+            /** Format: date */
+            expires_on?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** @description Who it is for */
+            recipient_name?: string;
+            method?: components["schemas"]["Method126Enum"] | components["schemas"]["BlankEnum"];
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            payment_reference?: string;
+            notes?: string;
+        };
+        /**
+         * @description * `active` - Active
+         *     * `spent` - Spent
+         *     * `expired` - Expired
+         *     * `void` - Void
+         * @enum {string}
+         */
+        GiftVoucherStatusEnum: "active" | "spent" | "expired" | "void";
+        GiftVoucherVoidRequest: {
+            reason: string;
+        };
         /** @description Each part is null when the person may not see it. */
         Glance: {
             /** Format: date */
@@ -9770,6 +10015,7 @@ export interface components {
          * @enum {string}
          */
         InvitationStatusEnum: "pending" | "accepted" | "revoked";
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         Invoice: {
             /** Format: uuid */
             readonly id: string;
@@ -9851,6 +10097,7 @@ export interface components {
          * @enum {string}
          */
         InvoiceKindEnum: "invoice" | "debit_note";
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         InvoiceRequest: {
             /** Format: uuid */
             customer_id: string;
@@ -9867,6 +10114,16 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Percent off the whole document
+             */
+            whole_discount_percent?: string;
+            /**
+             * Format: decimal
+             * @description Amount off the document's total, VAT included
+             */
+            whole_discount_amount?: string;
             /**
              * @description A debit note charges more against an earlier invoice; KRA treats it as a sale
              *
@@ -10257,6 +10514,13 @@ export interface components {
             email: string;
             password: string;
         };
+        LogoUploadRequest: {
+            /**
+             * Format: binary
+             * @description PNG, JPG or WebP, up to 1 MB
+             */
+            file: string;
+        };
         LogoutRequest: {
             refresh: string;
         };
@@ -10443,14 +10707,13 @@ export interface components {
          */
         MembershipStatusEnum: "active" | "suspended";
         /**
-         * @description * `cash` - Cash
-         *     * `mpesa` - M-Pesa
-         *     * `bank` - Bank transfer
-         *     * `card` - Card
-         *     * `cheque` - Cheque
+         * @description * `cash` - cash
+         *     * `mpesa` - mpesa
+         *     * `bank` - bank
+         *     * `card` - card
          * @enum {string}
          */
-        Method240Enum: "cash" | "mpesa" | "bank" | "card" | "cheque";
+        Method126Enum: "cash" | "mpesa" | "bank" | "card";
         MpesaConnection: {
             /** Format: uuid */
             readonly id: string;
@@ -10634,14 +10897,6 @@ export interface components {
          * @enum {string}
          */
         OnlineOrderActionActionEnum: "confirm" | "ready" | "complete" | "cancel" | "request_payment";
-        /**
-         * @description * `cash` - cash
-         *     * `mpesa` - mpesa
-         *     * `card` - card
-         *     * `bank` - bank
-         * @enum {string}
-         */
-        OnlineOrderActionMethodEnum: "cash" | "mpesa" | "card" | "bank";
         OnlineOrderActionRequest: {
             action: components["schemas"]["OnlineOrderActionActionEnum"];
             /**
@@ -10652,7 +10907,7 @@ export interface components {
              *     * `card` - card
              *     * `bank` - bank
              */
-            method?: components["schemas"]["OnlineOrderActionMethodEnum"];
+            method?: components["schemas"]["Method126Enum"];
             payment_reference?: string;
             /** Format: uuid */
             deposit_account_id?: string | null;
@@ -11223,6 +11478,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["FixedAsset"][];
+        };
+        PaginatedGiftVoucherList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["GiftVoucher"][];
         };
         PaginatedGoodsReceiptList: {
             /** @example 123 */
@@ -12470,6 +12740,7 @@ export interface components {
             depreciated_to?: string | null;
             notes?: string;
         };
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedInvoiceRequest: {
             /** Format: uuid */
             customer_id?: string;
@@ -12486,6 +12757,16 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Percent off the whole document
+             */
+            whole_discount_percent?: string;
+            /**
+             * Format: decimal
+             * @description Amount off the document's total, VAT included
+             */
+            whole_discount_amount?: string;
             /**
              * @description A debit note charges more against an earlier invoice; KRA treats it as a sale
              *
@@ -12793,6 +13074,7 @@ export interface components {
             /** Format: uuid */
             warehouse_id?: string | null;
         };
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedQuotationRequest: {
             /** Format: uuid */
             customer_id?: string;
@@ -12809,6 +13091,16 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Percent off the whole document
+             */
+            whole_discount_percent?: string;
+            /**
+             * Format: decimal
+             * @description Amount off the document's total, VAT included
+             */
+            whole_discount_amount?: string;
             /** Format: date */
             valid_until?: string;
             /** @description Where the client asked for the quote to go */
@@ -13175,11 +13467,14 @@ export interface components {
             payment_date: string;
             /** Format: decimal */
             amount: string;
-            method: components["schemas"]["Method240Enum"];
+            method: components["schemas"]["PaymentMethodEnum"];
             /** @description M-Pesa code, cheque or bank reference */
             reference?: string;
-            /** Format: uuid */
-            deposit_account_id: string;
+            /**
+             * Format: uuid
+             * @description Leave out when paid with a gift voucher (its code goes in reference)
+             */
+            deposit_account_id?: string;
             readonly deposit_account_name: string;
             notes?: string;
             readonly status: components["schemas"]["PaymentStatusEnum"];
@@ -13203,6 +13498,16 @@ export interface components {
             reference?: string;
             note?: string;
         };
+        /**
+         * @description * `cash` - Cash
+         *     * `mpesa` - M-Pesa
+         *     * `bank` - Bank transfer
+         *     * `cheque` - Cheque
+         *     * `card` - Card
+         *     * `voucher` - Gift voucher
+         * @enum {string}
+         */
+        PaymentMethodEnum: "cash" | "mpesa" | "bank" | "cheque" | "card" | "voucher";
         PaymentOption: {
             /** Format: uuid */
             readonly id: string;
@@ -13260,11 +13565,14 @@ export interface components {
             payment_date: string;
             /** Format: decimal */
             amount: string;
-            method: components["schemas"]["Method240Enum"];
+            method: components["schemas"]["PaymentMethodEnum"];
             /** @description M-Pesa code, cheque or bank reference */
             reference?: string;
-            /** Format: uuid */
-            deposit_account_id: string;
+            /**
+             * Format: uuid
+             * @description Leave out when paid with a gift voucher (its code goes in reference)
+             */
+            deposit_account_id?: string;
             notes?: string;
             allocations?: components["schemas"]["AllocationRequest"][];
         };
@@ -14368,6 +14676,7 @@ export interface components {
          * @enum {string}
          */
         PurchaseOrderStatusEnum: "draft" | "approved" | "partially_received" | "received" | "closed" | "cancelled";
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         Quotation: {
             /** Format: uuid */
             readonly id: string;
@@ -14426,6 +14735,7 @@ export interface components {
         QuotationActionRequest: {
             action: components["schemas"]["QuotationActionActionEnum"];
         };
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         QuotationRequest: {
             /** Format: uuid */
             customer_id: string;
@@ -14442,6 +14752,16 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Percent off the whole document
+             */
+            whole_discount_percent?: string;
+            /**
+             * Format: decimal
+             * @description Amount off the document's total, VAT included
+             */
+            whole_discount_amount?: string;
             /** Format: date */
             valid_until?: string;
             /** @description Where the client asked for the quote to go */
@@ -14496,6 +14816,7 @@ export interface components {
          * @enum {string}
          */
         ReasonEnum: "opening" | "damaged" | "expired" | "theft" | "found" | "own_use" | "correction";
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         Receipt: {
             /** Format: uuid */
             readonly id: string;
@@ -14551,6 +14872,12 @@ export interface components {
             branch_id?: string | null;
             /** Format: uuid */
             shift_id?: string | null;
+            readonly voucher_display: string;
+            /**
+             * Format: decimal
+             * @description How much the voucher paid; the rest came by the method above
+             */
+            readonly voucher_amount: string;
         };
         /**
          * @description * `cash` - Cash
@@ -14560,6 +14887,7 @@ export interface components {
          * @enum {string}
          */
         ReceiptMethodEnum: "cash" | "mpesa" | "bank" | "card";
+        /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         ReceiptRequest: {
             /** Format: uuid */
             customer_id?: string | null;
@@ -14577,6 +14905,16 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+            /**
+             * Format: decimal
+             * @description Percent off the whole document
+             */
+            whole_discount_percent?: string;
+            /**
+             * Format: decimal
+             * @description Amount off the document's total, VAT included
+             */
+            whole_discount_amount?: string;
             /** @description Walk-in customer's KRA PIN, if they want it on the receipt */
             customer_pin?: string;
             method: components["schemas"]["ReceiptMethodEnum"];
@@ -14597,6 +14935,8 @@ export interface components {
              * @default 0
              */
             redeem_points: number;
+            /** @description A gift voucher that pays for the sale, or as much of it as it holds */
+            voucher_code?: string;
         };
         ReceiptVoidRequest: {
             reason: string;
@@ -17078,6 +17418,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AcceptedInvitation"];
+                };
+            };
+        };
+    };
+    logos_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
                 };
             };
         };
@@ -22014,6 +22375,171 @@ export interface operations {
             };
         };
     };
+    w_gift_vouchers_list: {
+        parameters: {
+            query?: {
+                customer?: string;
+                /**
+                 * @description * `sold` - Sold
+                 *     * `free` - Given free
+                 */
+                kind?: "free" | "sold";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `active` - Active
+                 *     * `spent` - Spent
+                 *     * `expired` - Expired
+                 *     * `void` - Void
+                 */
+                status?: "active" | "expired" | "spent" | "void";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedGiftVoucherList"];
+                };
+            };
+        };
+    };
+    w_gift_vouchers_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftVoucherRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GiftVoucherRequest"];
+                "multipart/form-data": components["schemas"]["GiftVoucherRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftVoucher"];
+                };
+            };
+        };
+    };
+    w_gift_vouchers_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftVoucher"];
+                };
+            };
+        };
+    };
+    w_gift_vouchers_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    w_gift_vouchers_void_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftVoucherVoidRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GiftVoucherVoidRequest"];
+                "multipart/form-data": components["schemas"]["GiftVoucherVoidRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftVoucher"];
+                };
+            };
+        };
+    };
+    w_gift_vouchers_check_retrieve: {
+        parameters: {
+            query: {
+                code: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftVoucherCheck"];
+                };
+            };
+        };
+    };
     w_goods_receipts_list: {
         parameters: {
             query?: {
@@ -23403,6 +23929,52 @@ export interface operations {
             };
         };
     };
+    w_logo_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["LogoUploadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Workspace"];
+                };
+            };
+        };
+    };
+    w_logo_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Workspace"];
+                };
+            };
+        };
+    };
     w_loyalty_members_list: {
         parameters: {
             query?: {
@@ -24733,8 +25305,9 @@ export interface operations {
                  *     * `bank` - Bank transfer
                  *     * `cheque` - Cheque
                  *     * `card` - Card
+                 *     * `voucher` - Gift voucher
                  */
-                method?: "bank" | "card" | "cash" | "cheque" | "mpesa";
+                method?: "bank" | "card" | "cash" | "cheque" | "mpesa" | "voucher";
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */

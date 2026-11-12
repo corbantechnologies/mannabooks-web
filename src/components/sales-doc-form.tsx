@@ -11,7 +11,7 @@ import type { Invoice, Quotation } from "@/lib/api/types";
 import { todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
-import { EditLine, LinesEditor, blankLine, linesFromDocument, linesToRequest, useDefaultVat } from "./lines-editor";
+import { EditLine, LinesEditor, WholeDiscount, blankLine, linesFromDocument, linesToRequest, noWholeDiscount, useDefaultVat, wholeDiscountBody } from "./lines-editor";
 import { CustomerForm } from "./customer-form";
 import { TagPickers, tagsBody, tagsOf } from "./tag-pickers";
 import { Button, Card, Field, FormError, Input, Modal, Select, Textarea } from "./ui";
@@ -42,6 +42,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
   });
   const [tags, setTags] = useState(tagsOf(existing));
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
+  const [whole, setWhole] = useState<WholeDiscount>(noWholeDiscount);
   const [addingCustomer, setAddingCustomer] = useState(false);
   const setCustomer = (id: string) => setHead((prev) => ({ ...prev, customer_id: id }));
   async function pickCustomer(value: string) {
@@ -67,6 +68,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
         notes: head.notes,
         prices_include_tax: includeTax,
         lines: linesToRequest(lines),
+        ...wholeDiscountBody(whole),
         ...tagsBody(tags),
         ...(head.second_date ? (billing ? { due_date: head.second_date } : { valid_until: head.second_date }) : {}),
         ...(kind === "debit_note" && !existing ? { kind: "debit_note" as const, original_invoice_id: original?.id ?? null } : {}),
@@ -113,7 +115,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
         <div className="sm:col-span-2"><Field label="Customer's reference (LPO or order no.)"><Input value={head.reference} onChange={(e) => setHead((prev) => ({ ...prev, reference: e.target.value }))} /></Field></div>
         <TagPickers value={tags} onChange={setTags} />
       </Card>
-      <LinesEditor slug={slug} customerId={head.customer_id} lines={lines} setLines={setLines} includeTax={includeTax} setIncludeTax={setIncludeTax} currency={context.workspace.currency ?? "KES"} />
+      <LinesEditor slug={slug} customerId={head.customer_id} lines={lines} setLines={setLines} includeTax={includeTax} setIncludeTax={setIncludeTax} currency={context.workspace.currency ?? "KES"} whole={whole} setWhole={setWhole} />
       <Field label="Notes printed on the document"><Textarea value={head.notes} onChange={(e) => setHead((prev) => ({ ...prev, notes: e.target.value }))} /></Field>
       <FormError error={save.error} />
       <div className="flex justify-end gap-2">

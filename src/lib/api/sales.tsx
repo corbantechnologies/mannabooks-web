@@ -49,6 +49,7 @@ export const METHODS = [
   { value: "bank", label: "Bank transfer" },
   { value: "card", label: "Card" },
   { value: "cheque", label: "Cheque" },
+  { value: "voucher", label: "Gift voucher" },
 ] as const;
 
 export const INVOICE_STATUS = {

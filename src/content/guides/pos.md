@@ -18,6 +18,13 @@ A manager adds the **tills** (**Point of sale > Tills**): a name, the branch, an
    - **Card**: optionally enter the slip number.
 5. **Print slip** for an 80 mm receipt printer, or go straight to the next sale.
 
+**Discounts and gift vouchers.** Tap **Discount or gift voucher** under the cart:
+
+- **Discount:** a percentage or an amount off the whole sale. It is shared over the items, as KRA eTIMS needs.
+- **Gift voucher:** enter the code and choose **Check**. It pays as much as it holds; take the rest by cash, M-Pesa or card, or choose **Paid by the voucher: finish sale** if it covers everything.
+
+On the shift's report, what vouchers paid shows as its own line, **Gift voucher**, so the cash count isn't thrown off.
+
 ## Closing the shift
 
 Choose **Close shift** and count the drawer. MannaBooks compares it with what it expected (float plus cash sales). A difference is posted to **Cash over and short**, so the books match the drawer. **Shifts** shows every shift with its takings by payment method.

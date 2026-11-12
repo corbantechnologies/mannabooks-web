@@ -49,6 +49,7 @@ export const GUIDES: Guide[] = [
   { slug: "catalogue", title: "Categories and units", summary: "Group products, set category defaults, and buy and sell in cartons, bags or shots.", section: "Sales", app: "/sales/catalogue" },
   { slug: "price-lists", title: "Price lists", summary: "Wholesale, staff and contract prices for groups of customers.", section: "Sales", app: "/sales/price-lists" },
   { slug: "pos", title: "Point of sale", summary: "Sell at the till, run shifts and count the cash.", section: "Point of sale", app: "/pos" },
+  { slug: "gift-vouchers", title: "Gift vouchers", summary: "Sell or give vouchers, spend them at the till or on invoices, and what happens when they expire.", section: "Sales", app: "/sales/gift-vouchers" },
   { slug: "loyalty", title: "Loyalty", summary: "Points, tiers and rewards for returning customers.", section: "Point of sale", app: "/sales/loyalty" },
   { slug: "mpesa", title: "M-Pesa (Daraja)", summary: "Connect your paybill or till for prompts and automatic matching.", section: "Point of sale", app: "/mpesa" },
   { slug: "etims", title: "KRA eTIMS", summary: "How documents get signed by KRA, and setting up your device.", section: "Sales", app: "/etims" },
