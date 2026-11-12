@@ -3,7 +3,8 @@
  * INDUSTRIES[].useCases, so the two lists can't drift apart.
  */
 import {
-  BadgePercent, Boxes, ChefHat, Globe, Handshake, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet, type LucideIcon,
+  BadgePercent, Boxes, Building2, ChefHat, Gift, Globe, HandCoins, Handshake, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet,
+  type LucideIcon,
 } from "lucide-react";
 
 import { INDUSTRIES } from "./industries";
@@ -80,6 +81,42 @@ export const USE_CASES: UseCase[] = [
       { title: "Share payslips", text: "Staff open their payslips and ask for leave on their phones." },
     ],
     outcomes: ["Deductions at the current rates", "Remittance schedules ready for each authority", "Leave balances kept for you"],
+  },
+  {
+    slug: "reward-customers", icon: Gift, title: "Reward and bring back customers", module: "pos", guide: "gift-vouchers",
+    summary: "Gift vouchers, loyalty points and discounts that keep regulars coming back, with the books kept right.",
+    problem: "Paper vouchers get copied or lost, nobody knows how much is still owed on them, and discounts are given by eye at the till with no record of what they cost.",
+    steps: [
+      { title: "Sell gift vouchers", text: "Sell a voucher for any amount, or give one away as a promotion. Each has a code that is hard to guess, an expiry date if you want one, and a PDF with a QR code to print or send." },
+      { title: "Let them spend it", text: "At the till or against an invoice, the voucher pays what it holds and the rest is paid by cash or M-Pesa. It can be spent in parts until nothing is left." },
+      { title: "Reward regulars", text: "Loyalty members earn points as they buy, move up tiers, and spend points at the till as a discount." },
+      { title: "Give discounts that are recorded", text: "A percentage or an amount off a line or off the whole sale. MannaBooks shares it over the lines, so KRA sees it on each one." },
+    ],
+    outcomes: ["What is still owed on vouchers, always in the balance sheet", "Expired vouchers turned into income automatically", "Every discount recorded, not guessed", "Regulars with a reason to come back"],
+  },
+  {
+    slug: "pay-casual-workers", icon: HandCoins, title: "Pay casual and daily workers", module: "people", guide: "payroll",
+    summary: "Casuals paid by the day or the hour, on their own pay runs, with only the deductions that apply to them.",
+    problem: "Casual labour is paid from petty cash with a list in a notebook, so wages never reach the books properly and the deductions are a guess.",
+    steps: [
+      { title: "Add each worker once", text: "Paid by the month, the day or the hour, with their rate. Tick which of PAYE, NSSF, SHIF and the Housing Levy apply to them." },
+      { title: "Run a casual pay run", text: "For any period: a week of harvesting, a month on site. Enter the days or hours worked and the pay is worked out." },
+      { title: "Approve and pay", text: "The run is approved like monthly payroll, then posts to the books with any deductions due." },
+      { title: "Monthly casuals too", text: "Casuals kept on all year can sit on the monthly payroll with everyone else, paid by the day." },
+    ],
+    outcomes: ["Wages in the books, not in a notebook", "The right deductions for each worker", "Payslips casuals can open on their phones", "Labour cost per site, crop or job with cost centres"],
+  },
+  {
+    slug: "run-departments", icon: Building2, title: "Give every department its own numbers", module: "control", guide: "departments",
+    summary: "Department budgets that heads draft and finance approves, a page for each head, and access limited to their department.",
+    problem: "Heads of department are measured against numbers they never see, budgets are an annual spreadsheet, and anyone with access sees every department's figures.",
+    steps: [
+      { title: "Set up departments", text: "Departments with their heads and cost centres. Documents and journal lines are tagged to them." },
+      { title: "Heads draft their budget", text: "Month by month, for the financial year. They send it for approval; finance or the CEO approves it through the approval chain." },
+      { title: "Each head has My department", text: "Their people and who is on leave, leave waiting for them, the department's income and costs against its budget, and late work reports." },
+      { title: "Limit what people see", text: "Someone who works for one department sees only its documents, reports and budgets." },
+    ],
+    outcomes: ["Heads own the number they are measured against", "Profit and loss by department every month", "Spending checked against the department's budget", "Nobody sees another department's figures by accident"],
   },
   {
     slug: "sell-without-stock", icon: PackageOpen, title: "Sell without keeping stock", module: "sales", guide: "catalogues",

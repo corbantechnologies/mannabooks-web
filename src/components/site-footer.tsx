@@ -9,7 +9,7 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
   {
     title: "Product",
     links: [
-      { href: "/#features", label: "Features" },
+      { href: "/features", label: "Features" },
       { href: "/pricing", label: "Pricing" },
       { href: "/industries", label: "Industries" },
       { href: "/use-cases", label: "Use cases" },
