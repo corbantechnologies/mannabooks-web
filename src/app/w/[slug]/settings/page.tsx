@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { LogoSettings } from "@/components/logo-settings";
 import { ModuleSettings } from "@/components/module-settings";
 import { PaymentOptions } from "@/components/payment-options";
 import { StoreSettings } from "@/components/store-settings";
@@ -75,6 +76,8 @@ export default function SettingsPage() {
           <Button type="submit" loading={save.isPending}>Save settings</Button>
         </form>
       </Card>
+
+      <LogoSettings />
 
       <PaymentOptions />
 

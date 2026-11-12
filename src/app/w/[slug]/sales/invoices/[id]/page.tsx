@@ -66,7 +66,7 @@ export default function InvoicePage() {
         params: { path: { workspace: slug } },
         body: {
           customer_id: inv.customer_id, payment_date: pay.payment_date, amount: pay.amount, method: pay.method as "mpesa",
-          reference: pay.reference, deposit_account_id: pay.deposit_account_id,
+          reference: pay.reference, ...(pay.method === "voucher" ? {} : { deposit_account_id: pay.deposit_account_id }),
           allocations: [{ invoice_id: inv.id, amount: String(Math.min(Number(pay.amount) || 0, Number(inv.balance_due))) }],
         },
       }));
@@ -168,13 +168,15 @@ export default function InvoicePage() {
             </Field>
             <Field label="Date"><Input type="date" required value={pay.payment_date} onChange={(e) => setPay((prev) => ({ ...prev, payment_date: e.target.value }))} /></Field>
             <Field label="Method"><Select value={pay.method} onChange={(e) => setPay((prev) => ({ ...prev, method: e.target.value }))}>{METHODS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
-            <Field label={pay.method === "mpesa" ? "M-Pesa code" : "Reference"}><Input required={pay.method === "mpesa"} value={pay.reference} onChange={(e) => setPay((prev) => ({ ...prev, reference: e.target.value }))} /></Field>
+            <Field label={pay.method === "mpesa" ? "M-Pesa code" : pay.method === "voucher" ? "Voucher code" : "Reference"}><Input required={pay.method === "mpesa" || pay.method === "voucher"} value={pay.reference} onChange={(e) => setPay((prev) => ({ ...prev, reference: e.target.value }))} /></Field>
           </div>
-          <Field label="Received into" error={fieldError(recordPayment.error, "deposit_account_id")}>
-            <Select required value={pay.deposit_account_id} onChange={(e) => setPay((prev) => ({ ...prev, deposit_account_id: e.target.value }))}>
-              {deposits.data.map((a) => <option key={a.id} value={a.id}>{a.code} {a.name}</option>)}
-            </Select>
-          </Field>
+          {pay.method === "voucher" ? <p className="text-xs text-stone-500">The amount comes off the gift voucher; no money is received.</p> : (
+            <Field label="Received into" error={fieldError(recordPayment.error, "deposit_account_id")}>
+              <Select required value={pay.deposit_account_id} onChange={(e) => setPay((prev) => ({ ...prev, deposit_account_id: e.target.value }))}>
+                {deposits.data.map((a) => <option key={a.id} value={a.id}>{a.code} {a.name}</option>)}
+              </Select>
+            </Field>
+          )}
           <FormError error={recordPayment.error} />
           <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setPaying(false)}>Cancel</Button><Button type="submit" loading={recordPayment.isPending}>Record payment</Button></div>
         </form>

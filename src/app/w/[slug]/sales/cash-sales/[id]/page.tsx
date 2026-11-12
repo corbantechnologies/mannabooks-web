@@ -12,7 +12,7 @@ import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
-import { fmtDate } from "@/lib/format";
+import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
 export default function CashSalePage() {
@@ -47,6 +47,7 @@ export default function CashSalePage() {
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Date">{fmtDate(r.issue_date)}</Meta>
         <Meta label="Paid by">{METHODS.find((m) => m.value === r.method)?.label} {r.payment_reference && <span className="font-mono text-xs">{r.payment_reference}</span>}</Meta>
+        {Number(r.voucher_amount ?? 0) > 0 && <Meta label="Gift voucher"><span className="font-mono">{r.voucher_display}</span> paid {fmt(r.voucher_amount)}</Meta>}
         <Meta label="Received into">{r.deposit_account_name}</Meta>
         <EtimsMeta status={r.etims_status} cu={r.etims_cu_invoice_number} />
         {r.status === "void" && <Meta label="Void because">{r.void_reason}</Meta>}

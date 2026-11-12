@@ -9,6 +9,8 @@ An **invoice** asks a customer to pay for goods or services you supplied on cred
 3. Add the lines. Tick **Prices include VAT** if the prices you type already include VAT.
 4. **Save draft** to keep working on it, or **Save and issue**.
 
+**Discount on the whole document.** Under the lines, enter a percentage or an amount off the whole document, for example 10% or KES 500. On saving, MannaBooks spreads it over the lines as line discounts, in proportion to each line's value, because KRA eTIMS records discounts line by line. Each line then shows its share, and the box starts empty again. A fixed amount comes off the total including VAT.
+
 A draft can be changed or deleted freely and is not in the books. **Issuing** gives it its number (INV-00001), records what the customer owes, the sale and the VAT you owe KRA, and sends it to KRA eTIMS when eTIMS is switched on.
 
 ## After issuing

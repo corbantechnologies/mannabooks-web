@@ -90,7 +90,7 @@ export default function OnlineOrderPage() {
           {paid ? <p className="text-sm text-brand-700">Paid by M-Pesa ({o.mpesa_receipt}); the payment is used for the sale.</p> : (
             <>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="How they paid"><Select value={pay.method} onChange={(e) => setPay((p) => ({ ...p, method: e.target.value, deposit_account_id: depositFor(deposits.data, e.target.value) }))}>{METHODS.filter((m) => m.value !== "cheque").map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
+                <Field label="How they paid"><Select value={pay.method} onChange={(e) => setPay((p) => ({ ...p, method: e.target.value, deposit_account_id: depositFor(deposits.data, e.target.value) }))}>{METHODS.filter((m) => m.value !== "cheque" && m.value !== "voucher").map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
                 <Field label="Received into"><Select value={pay.deposit_account_id} onChange={(e) => setPay((p) => ({ ...p, deposit_account_id: e.target.value }))}>{deposits.data.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</Select></Field>
               </div>
               {pay.method !== "cash" && <Field label={pay.method === "mpesa" ? "M-Pesa code" : "Reference"}><Input required={pay.method === "mpesa"} value={pay.payment_reference} onChange={(e) => setPay((p) => ({ ...p, payment_reference: e.target.value.toUpperCase() }))} /></Field>}

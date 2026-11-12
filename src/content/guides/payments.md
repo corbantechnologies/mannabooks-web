@@ -12,6 +12,8 @@ Record money a customer pays you against their invoices.
 
 Saving posts the payment: the money goes into the account you chose and the customer owes less.
 
+**Paid with a gift voucher.** Choose the method **Gift voucher** and type its code. There is no account to choose: the amount comes off the voucher, up to what is left on it. Voiding the payment gives it back. See [Gift vouchers](gift-vouchers).
+
 ## Mistakes and bounced cheques
 
 Open the payment and choose **Void** with a reason. The invoices it paid become unpaid again and the money comes out of the account.

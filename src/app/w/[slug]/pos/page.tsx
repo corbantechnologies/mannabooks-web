@@ -6,9 +6,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
-import { priceLine } from "@/components/lines-editor";
+import { WholeDiscount, noWholeDiscount, priceLine, wholeDiscountBody, wholeDiscountOff } from "@/components/lines-editor";
 import { usePromptStatus } from "@/components/mpesa-prompt";
 import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
+import { CheckedVoucher, VoucherField } from "@/components/voucher-field";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { type ShiftTotals, useCategories, useCustomerPrices, useProducts, useVatRates } from "@/lib/api/sales";
 import type { LoyaltyMember, PosShift, Product, Receipt } from "@/lib/api/types";
@@ -78,6 +79,9 @@ function Till({ shift }: { shift: PosShift }) {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [member, setMember] = useState<LoyaltyMember | null>(null);
   const [redeem, setRedeem] = useState("");
+  const [whole, setWhole] = useState<WholeDiscount>(noWholeDiscount);
+  const [voucher, setVoucher] = useState<CheckedVoucher | null>(null);
+  const [extras, setExtras] = useState(false);
   const [paying, setPaying] = useState<"cash" | "mpesa" | "card" | null>(null);
   const [closing, setClosing] = useState(false);
   const [done, setDone] = useState<{ receipt: Receipt; change: number } | null>(null);
@@ -94,7 +98,10 @@ function Till({ shift }: { shift: PosShift }) {
   const total = priced.reduce((s, p) => s + p.total, 0);
   const redeemPoints = Math.floor(Math.min(Number(redeem) || 0, member?.points_balance ?? 0));
   const redeemValue = redeemPoints * Number(program.data?.point_value ?? 1);
-  const toPay = Math.max(total - redeemValue, 0);
+  const discountOff = wholeDiscountOff(whole, total);
+  const afterDiscounts = Math.max(total - discountOff - redeemValue, 0);
+  const voucherPays = voucher ? Math.min(Number(voucher.balance), afterDiscounts) : 0;
+  const toPay = Math.max(Math.round((afterDiscounts - voucherPays) * 100) / 100, 0);
 
   function add(p: Product) {
     const price = String(Number(prices.data?.[p.id] ?? p.sale_price ?? 0));
@@ -118,6 +125,9 @@ function Till({ shift }: { shift: PosShift }) {
     setCart([]);
     setMember(null);
     setRedeem("");
+    setWhole(noWholeDiscount);
+    setVoucher(null);
+    setExtras(false);
     setPaying(null);
   }
 
@@ -128,10 +138,11 @@ function Till({ shift }: { shift: PosShift }) {
         body: {
           issue_date: todayIso(), shift_id: shift.id, method, payment_reference: reference ?? "", mpesa_transaction_id: mpesaId ?? null,
           customer_id: member?.customer_id ?? null, prices_include_tax: true, redeem_points: redeemPoints,
+          ...wholeDiscountBody(whole), ...(voucher ? { voucher_code: voucher.code } : {}),
           lines: cart.map((l) => ({ product_id: l.product.id, description: l.product.name, quantity: String(l.quantity), ...(l.unit ? { unit: l.unit } : {}), unit_price: l.price, discount_percent: "0", discount_amount: "0", tax_rate_id: l.product.tax_rate_id ?? (defaultVat || null) })),
-        },
+        } as never,
       }));
-      return { receipt, change: tendered ? tendered - Number(receipt.total) : 0 };
+      return { receipt, change: tendered ? tendered - (Number(receipt.total) - Number(receipt.voucher_amount ?? 0)) : 0 };
     },
     onSuccess: (result) => { setDone(result); reset(); queryClient.invalidateQueries({ queryKey: ["pos-shift-current", slug] }); },
   });
@@ -206,13 +217,34 @@ function Till({ shift }: { shift: PosShift }) {
                 <span className="text-xs text-stone-500">of {member.points_balance}</span>
               </div>
             )}
+            {cart.length > 0 && !extras && !discountOff && !voucher && (
+              <button className="text-xs text-brand-700 hover:underline" onClick={() => setExtras(true)}>Discount or gift voucher</button>
+            )}
+            {(extras || discountOff > 0 || voucher) && cart.length > 0 && (
+              <div className="space-y-2 rounded-md bg-stone-50 p-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-stone-600">Discount</span>
+                  <Input className="w-20 text-right" inputMode="decimal" placeholder="0" value={whole.value} onChange={(e) => setWhole({ ...whole, value: e.target.value })} aria-label="Discount on the sale" />
+                  <select className="rounded-md border border-stone-300 bg-white px-2 py-1.5 text-sm" value={whole.kind} aria-label="Discount as"
+                    onChange={(e) => setWhole({ ...whole, kind: e.target.value as WholeDiscount["kind"] })}>
+                    <option value="percent">%</option><option value="amount">{context.workspace.currency}</option>
+                  </select>
+                </div>
+                <div><span className="text-xs text-stone-600">Gift voucher</span><VoucherField slug={slug} value={voucher} onChange={setVoucher} payable={afterDiscounts} /></div>
+              </div>
+            )}
+            {discountOff > 0 && <p className="flex justify-between text-stone-600"><span>Discount</span><span className="font-mono">-{fmt(discountOff)}</span></p>}
             {redeemValue > 0 && <p className="flex justify-between text-stone-600"><span>Points discount</span><span className="font-mono">-{fmt(redeemValue)}</span></p>}
+            {voucherPays > 0 && <p className="flex justify-between text-stone-600"><span>Gift voucher {voucher?.code}</span><span className="font-mono">-{fmt(voucherPays)}</span></p>}
             <p className="flex justify-between text-lg font-semibold"><span>To pay</span><span className="font-mono">{context.workspace.currency} {fmt(toPay)}</span></p>
-            <div className="grid grid-cols-3 gap-2">
+            {voucher && toPay === 0 ? (
+              <Button className="w-full" loading={sell.isPending} onClick={() => sell.mutate({ method: "cash" })}>Paid by the voucher: finish sale</Button>
+            ) : <div className="grid grid-cols-3 gap-2">
               <Button disabled={!cart.length} onClick={() => { sell.reset(); setPaying("cash"); }}>Cash</Button>
               <Button disabled={!cart.length} onClick={() => { sell.reset(); setPaying("mpesa"); }}>M-Pesa</Button>
               <Button disabled={!cart.length} variant="secondary" onClick={() => { sell.reset(); setPaying("card"); }}>Card</Button>
-            </div>
+            </div>}
+            {voucher && toPay === 0 && <FormError error={sell.error} />}
             {cart.length > 0 && <button className="w-full text-center text-xs text-stone-500 hover:text-red-600" onClick={reset}>Clear sale</button>}
           </div>
         </aside>
