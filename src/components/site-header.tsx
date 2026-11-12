@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "./logo";
 
 export const SITE_LINKS = [
-  { href: "/#features", label: "Features" },
+  { href: "/features", label: "Features" },
   { href: "/industries", label: "Industries" },
   { href: "/use-cases", label: "Use cases" },
   { href: "/pricing", label: "Pricing" },

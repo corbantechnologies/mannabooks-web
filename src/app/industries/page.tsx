@@ -62,7 +62,7 @@ export default function IndustriesPage() {
               </div>
             ))}
           </div>
-          <p className="mt-6 text-sm text-stone-600">Every business gets KRA PIN and VAT on its documents, withholding tax on supplier payments, statutory payroll (PAYE, SHIF, NSSF and Housing Levy), and KRA eTIMS signing once KRA approves MannaBooks.</p>
+          <p className="mt-6 text-sm text-stone-600">Every business gets KRA PIN and VAT on its documents, withholding tax on supplier payments, statutory payroll (PAYE, SHIF, NSSF and Housing Levy), and KRA eTIMS signing once KRA approves MannaBooks. <Link href="/features" className="font-medium text-brand-700 hover:underline">See every feature</Link>.</p>
         </div>
       </section>
 

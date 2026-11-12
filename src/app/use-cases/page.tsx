@@ -8,7 +8,7 @@ import { USE_CASES, industriesFor } from "@/content/use-cases";
 
 export const metadata: Metadata = {
   title: { absolute: "Use cases: what Kenyan businesses do with MannaBooks" },
-  description: "Get paid by M-Pesa, sell at the till, keep stock, cost recipes, run payroll, cost jobs, control spending and report on a group of companies.",
+  description: "Get paid by M-Pesa, sell at the till, reward customers with gift vouchers, keep stock, pay casual workers, give departments their own budgets, cost jobs and report on a group of companies.",
   alternates: { canonical: "/use-cases" },
 };
 
@@ -44,7 +44,7 @@ export default function UseCasesPage() {
           })}
         </div>
         <p className="mt-10 text-center text-sm text-stone-600">
-          Looking for your kind of business? <Link href="/industries" className="font-medium text-brand-700 hover:underline">See MannaBooks by industry</Link>.
+          Looking for your kind of business? <Link href="/industries" className="font-medium text-brand-700 hover:underline">See MannaBooks by industry</Link>, or <Link href="/features" className="font-medium text-brand-700 hover:underline">every feature</Link>.
         </p>
       </section>
 

@@ -39,7 +39,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Accounting and stock for Kenyan shops",
     intro: "Ring up sales at the till, take M-Pesa without checking your phone, and watch stock go down as you sell. Every sale lands in your books with its VAT, so the day's profit is there when you close.",
     who: ["Supermarkets and minimarts", "Hardware stores", "Chemists and pharmacies", "Agrovets", "Electronics and phone shops", "Boutiques and cosmetics", "Bookshops and stationers"],
-    uses: ["Till with shifts and cash counts", "M-Pesa prompts and automatic matching", "Stock at average cost, with low-stock warnings", "Sell in cartons or pieces", "Loyalty points", "Online shop"],
+    uses: ["Till with shifts and cash counts", "M-Pesa prompts and automatic matching", "Stock at average cost, with low-stock warnings", "Sell in cartons or pieces", "Gift vouchers and discounts", "Loyalty points", "Online shop"],
     problems: [
       { title: "Cash that doesn't add up", text: "Each cashier opens a shift with a float and counts the drawer at the end. MannaBooks shows what should be there, by cash and M-Pesa, so a shortage shows the same day." },
       { title: "M-Pesa messages to check by hand", text: "Send a payment prompt to the customer's phone from the till. When they enter their PIN the sale is marked paid; no screenshots, no reading SMS." },
@@ -66,7 +66,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "The till, stock, buying and the online shop are all in Duka.",
     goal: "Run a shop with a till",
-    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "track-stock", "sell-online", "vat-and-kra"],
+    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "track-stock", "reward-customers", "sell-online", "vat-and-kra"],
     guides: ["pos", "mpesa", "inventory", "goods-received", "stock-takes", "loyalty"],
     faqs: [
       { q: "Can I sell in cartons and in pieces?", a: "Yes. Give a product extra units, such as a carton of 12, each with its own price. Stock is kept in the base unit, so selling a carton takes out 12 pieces." },
@@ -80,7 +80,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Accounting for distributors and wholesalers in Kenya",
     intro: "Sell on credit at the right price for each customer, move stock between warehouses, and collect what you are owed. MannaBooks keeps orders, stock, invoices and statements in one place.",
     who: ["Distributors and stockists", "FMCG wholesalers", "Building materials suppliers", "Importers", "Spare parts dealers"],
-    uses: ["Price lists for wholesale and contract customers", "LPOs, goods received and supplier bills", "Several warehouses and transfers", "Delivery notes", "Customer statements and reminders", "Business inbox for customers on MannaBooks"],
+    uses: ["Price lists for wholesale and contract customers", "LPOs, goods received and supplier bills", "Several warehouses and transfers", "Delivery notes", "Catalogues customers order from", "Customer statements and reminders", "Business inbox for customers on MannaBooks"],
     problems: [
       { title: "The wrong price on the invoice", text: "Put wholesale, retail and contract customers on their own price lists. The invoice picks the customer's price for you." },
       { title: "Money stuck with customers", text: "See who owes you and for how long. Send statements and reminders, and let customers pay by paybill with the invoice number." },
@@ -143,7 +143,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Recipes, the till, stock and online orders are all in Duka.",
     goal: "Run a shop with a till",
-    useCases: ["cost-recipes", "sell-at-the-till", "sell-online", "get-paid-by-mpesa", "track-stock"],
+    useCases: ["cost-recipes", "sell-at-the-till", "reward-customers", "sell-online", "get-paid-by-mpesa", "track-stock", "pay-casual-workers"],
     guides: ["manufacturing", "pos", "online-shop", "products", "stock-takes"],
     faqs: [
       { q: "Do I have to make each dish in advance?", a: "No. Mark a dish as made to order and its ingredients come out of stock when it is sold. Use production orders only for things you make in batches, like bread." },
@@ -182,7 +182,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Recipes and production orders are in Duka. Choose Kampuni for approvals, budgets and fixed assets such as machinery.",
     goal: "Make products",
-    useCases: ["cost-recipes", "track-stock", "control-spending", "vat-and-kra", "run-payroll"],
+    useCases: ["cost-recipes", "track-stock", "control-spending", "vat-and-kra", "run-payroll", "pay-casual-workers", "run-departments"],
     guides: ["manufacturing", "inventory", "purchase-orders", "goods-received", "stock-takes"],
     faqs: [
       { q: "What if a raw material's price changes?", a: "Stock is kept at average cost, so new deliveries move the cost, and the recipe shows the new cost of making a unit straight away." },
@@ -195,7 +195,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Job costing for contractors and property managers",
     intro: "Run every job as a project with its own income and costs, from the quotation to the final invoice. Property managers bill rent and service charge every month without retyping.",
     who: ["Building and civil contractors", "Electrical and plumbing contractors", "Interior fit-out", "Property managers", "Real estate agents"],
-    uses: ["Projects with income, costs and profit per job", "Quotations into invoices", "Service orders to subcontractors", "Withholding tax on supplier payments", "Recurring invoices for rent and service charge"],
+    uses: ["Projects with income, costs and profit per job", "Quotations into invoices", "Service orders to subcontractors", "Casual labourers paid by the day", "Withholding tax on supplier payments", "Recurring invoices for rent and service charge"],
     problems: [
       { title: "Not knowing which jobs make money", text: "Tag invoices, bills and expenses to a project and see its profit as the job goes, not after." },
       { title: "Subcontractors and withholding tax", text: "Give subcontractors service orders, record their bills and keep back withholding tax when you pay." },
@@ -221,7 +221,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Projects with buying and service orders are in Duka. Choose Kampuni for approvals and budgets per job.",
     goal: "Run jobs and projects",
-    useCases: ["job-costing", "sell-without-stock", "recurring-billing", "vat-and-kra", "control-spending"],
+    useCases: ["job-costing", "sell-without-stock", "pay-casual-workers", "recurring-billing", "vat-and-kra", "control-spending"],
     guides: ["projects", "quotations", "service-orders", "recurring-invoices", "supplier-payments"],
     faqs: [
       { q: "Can I bill a client in stages?", a: "Yes. Raise an invoice for each stage against the same project; the project report adds them up." },
@@ -234,7 +234,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Invoicing and CRM for firms that sell their time",
     intro: "Win work with the CRM, send quotations and invoices with payment links, and bill retainers every month. Track time-based work as projects and see what each client is worth.",
     who: ["Accountants and auditors", "Law firms", "Consultants", "Architects and engineers", "Marketing and creative agencies", "IT and software firms"],
-    uses: ["Quotations, invoices and payment links", "Recurring retainers", "CRM: leads, deals and follow-ups", "Withholding tax on supplier payments", "Projects for client work", "Work reports from staff"],
+    uses: ["Quotations, invoices and payment links", "Recurring retainers", "CRM: leads, deals and follow-ups", "Withholding tax on supplier payments", "Projects for client work", "Work reports from staff", "Catalogues of your services"],
     problems: [
       { title: "Leads that go cold", text: "Track leads and deals on a pipeline, with follow-up tasks so nothing is forgotten." },
       { title: "Clients who pay late", text: "Every invoice has a private link to view and pay by M-Pesa. Statements and reminders go to anyone overdue." },
@@ -259,7 +259,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "biashara", planNote: "Sales, CRM, projects and payroll are in Biashara.",
     goal: "Send invoices and get paid",
-    useCases: ["win-more-deals", "sell-without-stock", "recurring-billing", "job-costing", "get-paid-by-mpesa", "vat-and-kra"],
+    useCases: ["win-more-deals", "sell-without-stock", "recurring-billing", "job-costing", "get-paid-by-mpesa", "vat-and-kra", "run-departments"],
     guides: ["crm", "quotations", "invoices", "recurring-invoices", "customer-portal", "work-reports"],
     faqs: [
       { q: "Can my accountant work in my books?", a: "Yes. Invite them with the Accountant role. Accountants don't count towards your plan's team size." },
@@ -298,7 +298,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Duka has the counter, stock and buying. Choose Kampuni for several branches with approvals.",
     goal: "Run a shop with a till",
-    useCases: ["sell-at-the-till", "track-stock", "run-payroll", "control-spending"],
+    useCases: ["sell-at-the-till", "track-stock", "run-payroll", "control-spending", "run-departments"],
     guides: ["cash-sales", "invoices", "inventory", "branches", "payroll"],
     faqs: [
       { q: "Is MannaBooks a patient records system?", a: "No. MannaBooks handles the money, stock and staff. Keep clinical records in your medical system." },
@@ -310,7 +310,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Fees and accounting for schools and colleges",
     intro: "Invoice fees every term, let parents pay by paybill, and send statements that show exactly what is owed. Payroll for teaching and support staff is in the same books.",
     who: ["Private schools", "Colleges and training institutes", "Driving schools", "Daycare and kindergartens", "Tuition centres"],
-    uses: ["Recurring invoices for fees", "M-Pesa payments matched to students' invoices", "Customer statements for parents", "Payroll for teaching and support staff", "Budgets per term or year"],
+    uses: ["Recurring invoices for fees", "M-Pesa payments matched to students' invoices", "Customer statements for parents", "Payroll for teaching and support staff", "Department budgets drafted by heads"],
     problems: [
       { title: "Fees paid with no reference", text: "Parents pay your paybill with the invoice number as the account, so each payment finds its student." },
       { title: "Statements by hand", text: "Each family's statement is ready at any time: invoices, payments and the balance." },
@@ -336,7 +336,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "biashara", planNote: "Invoicing, M-Pesa and payroll are in Biashara. Choose Kampuni for budgets and approvals.",
     goal: "Send invoices and get paid",
-    useCases: ["recurring-billing", "get-paid-by-mpesa", "run-payroll", "control-spending"],
+    useCases: ["recurring-billing", "get-paid-by-mpesa", "run-payroll", "control-spending", "run-departments"],
     guides: ["recurring-invoices", "mpesa", "reminders", "customers", "payroll"],
     faqs: [
       { q: "Can I import all the families at once?", a: "Yes. Import customers from a CSV file in Import and export; MannaBooks checks every row before anything is added." },
@@ -348,7 +348,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Farm accounting for Kenyan agribusiness",
     intro: "Run each farm, crop or herd as a cost centre, keep inputs in stock, pay permanent and casual staff, and keep a register of tractors, pumps and greenhouses.",
     who: ["Farms and greenhouses", "Dairy farms", "Poultry and pig farms", "Agro-processors", "Produce aggregators and exporters"],
-    uses: ["Cost centres per farm, crop or herd", "Inputs in stock, used and costed", "Casual and permanent staff payroll", "Fixed assets: tractors, pumps, greenhouses", "Sales to buyers on invoice"],
+    uses: ["Cost centres per farm, crop or herd", "Inputs in stock, used and costed", "Casual pay runs by the day, and permanent staff payroll", "Fixed assets: tractors, pumps, greenhouses", "Sales to buyers on invoice"],
     problems: [
       { title: "Not knowing which enterprise pays", text: "Tag income and costs to a cost centre and compare dairy, avocados and poultry side by side." },
       { title: "Inputs bought in bulk", text: "Feed, seed and fertiliser go into stock and are costed as they are used." },
@@ -373,7 +373,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "kampuni", planNote: "Cost centres, budgets and fixed assets are in Kampuni.",
     goal: "Everything",
-    useCases: ["track-stock", "run-payroll", "control-spending", "vat-and-kra"],
+    useCases: ["track-stock", "pay-casual-workers", "run-payroll", "control-spending", "vat-and-kra"],
     guides: ["cost-centres", "fixed-assets", "inventory", "payroll", "budgets"],
     faqs: [
       { q: "Can I run two farms as separate businesses?", a: "Yes. Create a business for each and put them in a company group to see them together." },
@@ -409,7 +409,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "kampuni", planNote: "Cost centres and fixed assets are in Kampuni.",
     goal: "Everything",
-    useCases: ["recurring-billing", "sell-without-stock", "control-spending", "run-payroll", "vat-and-kra"],
+    useCases: ["recurring-billing", "sell-without-stock", "control-spending", "run-payroll", "pay-casual-workers", "vat-and-kra"],
     guides: ["cost-centres", "fixed-assets", "expenses", "recurring-invoices", "payroll"],
     faqs: [
       { q: "Can I bill a customer in dollars?", a: "Yes. Switch on the currencies you trade in and record their rates; documents are converted for your books at the rate on their date." },
@@ -421,7 +421,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Simple books for salons, garages and service shops",
     intro: "Ring up services and products at the till, take M-Pesa, and see a simple profit report. Products and parts are kept in stock, and staff payroll is done for you.",
     who: ["Salons, barbers and spas", "Gyms", "Garages and mechanics", "Laundry and dry cleaners", "Photographers and event planners"],
-    uses: ["Till or invoices for services", "Products and parts in stock", "M-Pesa till payments", "Commission and staff payroll", "Simple profit reports"],
+    uses: ["Till or invoices for services", "Products and parts in stock", "M-Pesa till payments", "Commission and staff payroll", "Gift vouchers and loyalty", "Simple profit reports"],
     problems: [
       { title: "Cash and M-Pesa mixed up", text: "Each sale records how it was paid, and the shift count shows both." },
       { title: "Products used but never sold", text: "Products and parts are kept in stock; stock takes show what was used." },
@@ -445,7 +445,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "The till and stock are in Duka. A service business without a till can start on Biashara.",
     goal: "Run a shop with a till",
-    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "run-payroll"],
+    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "reward-customers", "run-payroll"],
     guides: ["pos", "mpesa", "products", "payroll"],
     faqs: [
       { q: "Can I start free?", a: "Yes. The Free plan covers invoices, cash sales and M-Pesa for one person, up to 30 documents a month." },
@@ -457,7 +457,7 @@ export const INDUSTRIES: Industry[] = [
     headline: "Fund accounting for NGOs, churches and associations",
     intro: "Track each programme or donor as a cost centre, set budgets and compare them with what was spent, and require approval before money leaves. Payroll and the asset register are in the same books.",
     who: ["NGOs and foundations", "Churches and ministries", "Community and welfare groups", "Professional associations"],
-    uses: ["Cost centres per programme or donor", "Budgets and budget against actual", "Approval chains for spending", "Payroll and leave", "Fixed assets register"],
+    uses: ["Cost centres per programme or donor", "Budgets and budget against actual, drafted by department heads", "Approval chains for spending", "Payroll and leave", "Fixed assets register"],
     problems: [
       { title: "Donor reports by spreadsheet", text: "Tag every expense to its programme and print budget against actual at any time." },
       { title: "Spending without sign-off", text: "Orders and vouchers go up the approval chain before they count." },
@@ -483,7 +483,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "kampuni", planNote: "Budgets, approvals, cost centres and fixed assets are in Kampuni, with 25% off for registered NGOs and churches.",
     goal: "Everything",
-    useCases: ["control-spending", "run-payroll", "vat-and-kra"],
+    useCases: ["control-spending", "run-departments", "run-payroll", "vat-and-kra"],
     guides: ["budgets", "approvals", "cost-centres", "fixed-assets", "payment-vouchers"],
     faqs: [
       { q: "How do I get the NGO discount?", a: "Tell us through the contact page or Help and feedback, with your registration details, and we'll apply it to your business." },
@@ -519,7 +519,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "kampuni", planNote: "Company groups and consolidation are in Kampuni.",
     goal: "Everything",
-    useCases: ["consolidate-a-group", "control-spending", "vat-and-kra"],
+    useCases: ["consolidate-a-group", "control-spending", "run-departments", "vat-and-kra"],
     guides: ["company-groups", "business-inbox", "financial-reports"],
     faqs: [
       { q: "Does each company need its own plan?", a: "Yes, each business has its own subscription, and companies in a group report together." },

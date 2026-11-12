@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     page("", 1),
     page("/pricing", 0.9),
+    page("/features", 0.9),
     page("/industries", 0.9),
     page("/use-cases", 0.9),
     ...INDUSTRIES.map((i) => page(`/industries/${i.slug}`, 0.8)),

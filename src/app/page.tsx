@@ -1,6 +1,4 @@
-import {
-  ArrowRight, BarChart3, Boxes, Building2, CheckCheck, Landmark, ReceiptText, ShieldCheck, Smartphone, Users, Wallet,
-} from "lucide-react";
+import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
@@ -9,6 +7,7 @@ import { redirect } from "next/navigation";
 import { JsonLd } from "@/components/marketing";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { FEATURE_GROUPS, FEATURE_HIGHLIGHTS } from "@/content/features";
 import { INDUSTRIES } from "@/content/industries";
 import { authOptions } from "@/lib/auth/options";
 import { SITE_URL } from "@/lib/site";
@@ -18,16 +17,17 @@ export const metadata: Metadata = {
   description: "Invoices, M-Pesa, stock, payroll with PAYE, SHIF, NSSF and Housing Levy, approvals and financial reports in one place, built for Kenyan businesses.",
 };
 
-const FEATURES = [
-  { icon: ReceiptText, title: "Sell and get paid", text: "Quotations, invoices, cash sales and a till with shifts. Customers get a private link to see and pay their invoices." },
-  { icon: Smartphone, title: "M-Pesa built in", text: "Connect your own paybill or till. Send payment prompts and let payments match themselves to invoices." },
-  { icon: Boxes, title: "Buy and keep stock", text: "LPOs, goods received, supplier bills and payment vouchers. Stock in every warehouse at average cost, with stock takes." },
-  { icon: Landmark, title: "Cash and banking", text: "Bank, M-Pesa and cash accounts. Import statements, match them and reconcile month by month." },
-  { icon: Wallet, title: "Kenyan payroll", text: "PAYE, SHIF, NSSF and the Housing Levy worked out for you. Payslips staff open on their phones, and leave with balances." },
-  { icon: CheckCheck, title: "Approvals and budgets", text: "Orders, vouchers and payroll go up the chain before they count. Budgets, cost centres and project costing keep spending in check." },
-  { icon: BarChart3, title: "Reports that add up", text: "Profit and loss, balance sheet, who owes you, what you owe, and the VAT summary for your return. Print or export to Excel." },
-  { icon: Building2, title: "Fixed assets", text: "A register of vehicles, computers and equipment, with monthly depreciation and the gain or loss when you sell." },
-];
+const OVERVIEW: Record<string, string> = {
+  sell: "Quotations customers accept online, shareable catalogues, invoices with payment links, discounts and recurring billing.",
+  mpesa: "Your own paybill or till. Payment prompts to phones, and paybill payments that match themselves to invoices.",
+  till: "A till with shifts and cash counts, gift vouchers, loyalty points and an online shop on the same stock.",
+  stock: "LPOs, goods received, supplier bills and payment vouchers. Stock in every warehouse at average cost.",
+  money: "Bank, M-Pesa and cash accounts. Import statements, match them and reconcile month by month.",
+  people: "PAYE, SHIF, NSSF and Housing Levy for permanent staff and casuals, leave, and payslips on phones.",
+  control: "Approval chains, budgets month by month, department heads who draft their own, and fixed assets.",
+  reports: "Today's analytics, profit and loss, balance sheet, who owes you and the VAT summary for your return.",
+};
+const FEATURES = FEATURE_HIGHLIGHTS.map((id) => FEATURE_GROUPS.find((g) => g.id === id)!).map((g) => ({ ...g, text: OVERVIEW[g.id] }));
 
 const STRUCTURED_DATA = {
   "@context": "https://schema.org",
@@ -103,14 +103,18 @@ export default async function Home() {
 
         <section id="features" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16">
           <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">Everything a growing business runs on</h2>
-          <p className="mt-2 max-w-2xl text-stone-600">Start with invoicing and add stock, payroll or approvals when you need them. It is all one system, so nothing is typed twice.</p>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <p className="mt-2 max-w-2xl text-stone-600">Start with invoicing and add stock, payroll or approvals when you need them. It is all one system, so nothing is typed twice.</p>
+            <Link href="/features" className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">See every feature <ArrowRight className="h-4 w-4" aria-hidden /></Link>
+          </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-lg border border-stone-200 p-5">
+            {FEATURES.map(({ id, icon: Icon, title, text }) => (
+              <Link key={id} href={`/features#${id}`} className="group rounded-lg border border-stone-200 p-5 transition hover:border-brand-300 hover:shadow-sm">
                 <Icon className="h-6 w-6 text-brand-700" aria-hidden />
                 <h3 className="mt-3 font-semibold text-stone-900">{title}</h3>
                 <p className="mt-1.5 text-sm text-stone-600">{text}</p>
-              </div>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-700">More <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden /></span>
+              </Link>
             ))}
           </div>
         </section>
@@ -149,7 +153,8 @@ export default async function Home() {
               <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">Your team, your businesses</h2>
               <p className="mt-2 text-stone-600">Give each person the access their job needs, and run more than one business from one login.</p>
               <ul className="mt-6 space-y-3">
-                {["Roles for owners, accountants, sales, cashiers, store managers and HR", "Staff see their own payslips and ask for leave on their phones",
+                {["Roles for owners, accountants, sales, cashiers, store managers and HR", "Staff see their own payslips, ask for leave and update their details on their phones",
+                  "Department heads see their department's people, money and budget on one page",
                   "Every change is recorded in an audit log", "Accountants switch between their clients' businesses in one click"].map((item) => (
                   <li key={item} className="flex gap-3 text-sm text-stone-700"><Users className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden />{item}</li>
                 ))}
