@@ -132,7 +132,8 @@ function PortalInvoiceCard({ token, invoice, mpesa, card, email: knownEmail }: {
           <p className="font-medium">{invoice.kind === "debit_note" ? "Debit note" : "Invoice"} {invoice.number}</p>
           <p className="text-xs text-stone-500">Dated {fmtDate(invoice.issue_date)} · due {fmtDate(invoice.due_date)}</p>
         </div>
-        {open ? <Badge tone="amber">{fmt(invoice.balance_due)} to pay</Badge> : <Badge tone="green">Paid</Badge>}
+        {open ? <Badge tone="amber">{fmt(invoice.balance_due)} to pay</Badge>
+          : invoice.status === "void" ? <Badge>No longer payable</Badge> : <Badge tone="green">Paid. Thank you</Badge>}
       </div>
       <table className="w-full text-sm">
         <tbody className="divide-y divide-stone-100">

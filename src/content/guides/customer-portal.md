@@ -14,3 +14,5 @@ Choose how long the link works (7, 30 or 90 days), then **Copy link**, or send i
 Your business name and contacts, the invoice lines and totals, the KRA eTIMS number when signed, and what is left to pay. If M-Pesa is connected they can tap **Pay with M-Pesa**, enter their number and approve the prompt; the payment is recorded against the invoice.
 
 Anyone with the link can see it until it expires.
+
+An invoice's PDF and its email carry the same link, so the customer can pay from either. That link works while the invoice is unpaid, however late, and stops a year after the due date.
