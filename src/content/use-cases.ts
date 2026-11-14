@@ -3,7 +3,7 @@
  * INDUSTRIES[].useCases, so the two lists can't drift apart.
  */
 import {
-  BadgePercent, Boxes, Building2, ChefHat, Gift, Globe, HandCoins, Handshake, Link2, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet,
+  BadgePercent, Boxes, Building2, ChefHat, Gift, Globe, HandCoins, Handshake, Link2, Network, PackageOpen, Receipt, Repeat, Ruler, ShieldCheck, Smartphone, Store, Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +58,19 @@ export const USE_CASES: UseCase[] = [
       { title: "Count it", text: "Stock takes compare the shelf with the books and post the difference." },
     ],
     outcomes: ["Stock value on the balance sheet that is right", "Cost of sales from real costs", "Know what to reorder before you run out"],
+  },
+  {
+    slug: "buy-bulk-sell-small", icon: Ruler, title: "Buy in bulk, sell in small quantities", module: "inventory", guide: "products",
+    summary: "Buy timber by the piece and sell it by the foot, or cement by the bag and sell it by the kg, with stock and margins right in both.",
+    problem: "You buy a 14 ft length and sell 3 ft here and 5 ft there, so stock in the books never matches the yard, nobody knows the real margin per foot, and offcuts quietly eat the profit.",
+    steps: [
+      { title: "Set the unit you sell in", text: "Add each size once (2x2, 3x2, 4x2) in the unit you sell it in, such as the foot or the metre. Quantities can have decimals, so 2.5 ft is fine." },
+      { title: "Add the units you buy in", text: "Under Other units: a piece (1 piece = 14 ft) or a bundle, each with its own price if you sell whole pieces cheaper per foot." },
+      { title: "Order and receive in pieces", text: "LPOs, deliveries and the supplier's bill in pieces or bundles. Stock goes up in feet, at the average cost per foot, as prices change." },
+      { title: "Sell by the foot", text: "At the till or on an invoice, choose the unit and the quantity. Stock comes out in feet and each sale shows its cost and margin." },
+      { title: "Account for offcuts", text: "Record offcuts, splits and warped timber as stock adjustments, and count the yard with a stock take to see what cutting really costs." },
+    ],
+    outcomes: ["Stock right in feet and in pieces", "Margin per foot on every sale, not just at month end", "Offcuts and waste in shillings", "Cutting or delivery charged as its own line"],
   },
   {
     slug: "cost-recipes", icon: ChefHat, title: "Cost recipes and production", module: "manufacturing", guide: "manufacturing",
