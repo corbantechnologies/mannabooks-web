@@ -85,7 +85,7 @@ export default function SettingsPage() {
 
       <WorkingWeekCard />
 
-      <StoreSettings />
+      <div id="shop" className="scroll-mt-20"><StoreSettings /></div>
 
       {can("sequences.view") && (
         <Card>
