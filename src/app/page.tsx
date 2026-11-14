@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 const OVERVIEW: Record<string, string> = {
   sell: "Quotations customers accept online, shareable catalogues, invoices with payment links, discounts and recurring billing.",
-  mpesa: "Your own paybill or till. Payment prompts to phones, and paybill payments that match themselves to invoices.",
+  mpesa: "Your own paybill or till, and card payments through your own Paystack account. Payments match themselves to invoices.",
   till: "A till with shifts and cash counts, gift vouchers, loyalty points and an online shop on the same stock.",
   stock: "LPOs, goods received, supplier bills and payment vouchers. Stock in every warehouse at average cost.",
   money: "Bank, M-Pesa and cash accounts. Import statements, match them and reconcile month by month.",

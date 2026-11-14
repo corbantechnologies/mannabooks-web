@@ -663,6 +663,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/portal/{token}/card/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Start a card payment for one of the link's invoices: returns Paystack's page to send the customer to. */
+        post: operations["portal_card_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/{token}/card/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description After Paystack sends the customer back: did it go through? Checks with Paystack if the webhook hasn't arrived. */
+        get: operations["portal_card_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/portal/{token}/pay/": {
         parameters: {
             query?: never;
@@ -1626,6 +1660,58 @@ export interface paths {
         };
         /** @description What's left in the approved budget for an expense account (shown while entering a purchase). */
         get: operations["w_budgets_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/connection/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The workspace's card gateway (one per workspace). PUT creates or replaces it. */
+        get: operations["w_cards_connection_retrieve"];
+        /** @description The workspace's card gateway (one per workspace). PUT creates or replaces it. */
+        put: operations["w_cards_connection_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/connection/test/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Check the secret key with Paystack. */
+        post: operations["w_cards_connection_test_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/transactions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Card checkouts started on customers' links, and how each went. */
+        get: operations["w_cards_transactions_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8090,6 +8176,67 @@ export interface components {
             money_out: string;
             cleared: boolean;
         };
+        CardConnection: {
+            /** Format: uuid */
+            readonly id: string;
+            provider?: components["schemas"]["ProviderEnum"];
+            public_key?: string;
+            readonly has_secret_key: boolean;
+            readonly is_test: boolean;
+            readonly webhook_url: string | null;
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly verified_at: string | null;
+            readonly last_error: string;
+        };
+        CardConnectionRequest: {
+            provider?: components["schemas"]["ProviderEnum"];
+            public_key?: string;
+            /** @description Paystack secret key (sk_test_... or sk_live_...) */
+            secret_key?: string;
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            is_active?: boolean;
+        };
+        CardTransaction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly reference: string;
+            /** Format: uuid */
+            readonly invoice: string | null;
+            readonly invoice_number: string;
+            readonly customer_name: string;
+            /** Format: email */
+            readonly email: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly currency: string;
+            readonly status: components["schemas"]["CardTransactionStatusEnum"];
+            /** @description card, mobile_money, bank... */
+            readonly channel: string;
+            /** @description e.g. Visa ending 4081 */
+            readonly card_summary: string;
+            /** Format: decimal */
+            readonly fees: string;
+            /** Format: date-time */
+            readonly paid_at: string | null;
+            /** Format: uuid */
+            readonly payment: string | null;
+            readonly payment_number: string;
+            readonly result_description: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `pending` - Waiting for the customer
+         *     * `success` - Paid
+         *     * `failed` - Failed
+         *     * `abandoned` - Not completed
+         * @enum {string}
+         */
+        CardTransactionStatusEnum: "pending" | "success" | "failed" | "abandoned";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -11269,6 +11416,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Business"][];
         };
+        PaginatedCardTransactionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CardTransaction"][];
+        };
         PaginatedCatalogueList: {
             /** @example 123 */
             count: number;
@@ -13951,6 +14113,24 @@ export interface components {
             /** Format: date-time */
             last_login: string | null;
         };
+        PortalCardCheckout: {
+            reference: string;
+            /** Format: uri */
+            authorization_url: string;
+        };
+        PortalCardPayRequest: {
+            /** Format: uuid */
+            invoice_id: string;
+            /** Format: decimal */
+            amount: string;
+            email?: string;
+        };
+        PortalCardStatus: {
+            status: string;
+            amount: string;
+            invoice_number: string;
+            message: string;
+        };
         PortalData: {
             business: {
                 [key: string]: unknown;
@@ -13964,6 +14144,8 @@ export interface components {
                 [key: string]: unknown;
             }[];
             mpesa_available: boolean;
+            card_available: boolean;
+            customer_email: string;
         };
         PortalLink: {
             /** Format: uuid */
@@ -14526,6 +14708,11 @@ export interface components {
             by_account: components["schemas"]["ProjectLine"][];
             recent: components["schemas"]["ProjectRecent"][];
         };
+        /**
+         * @description * `paystack` - Paystack
+         * @enum {string}
+         */
+        ProviderEnum: "paystack";
         PublicCatalogue: {
             name: string;
             intro: string;
@@ -18084,6 +18271,55 @@ export interface operations {
             };
         };
     };
+    portal_card_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PortalCardPayRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortalCardPayRequest"];
+                "multipart/form-data": components["schemas"]["PortalCardPayRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortalCardCheckout"];
+                };
+            };
+        };
+    };
+    portal_card_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortalCardStatus"];
+                };
+            };
+        };
+    };
     portal_pay_create: {
         parameters: {
             query?: never;
@@ -19926,6 +20162,114 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BudgetCheck"];
+                };
+            };
+        };
+    };
+    w_cards_connection_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_connection_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CardConnectionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CardConnectionRequest"];
+                "multipart/form-data": components["schemas"]["CardConnectionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_connection_test_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_transactions_list: {
+        parameters: {
+            query?: {
+                customer?: string;
+                invoice?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - Waiting for the customer
+                 *     * `success` - Paid
+                 *     * `failed` - Failed
+                 *     * `abandoned` - Not completed
+                 */
+                status?: "abandoned" | "failed" | "pending" | "success";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCardTransactionList"];
                 };
             };
         };

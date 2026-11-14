@@ -52,6 +52,7 @@ export const GUIDES: Guide[] = [
   { slug: "gift-vouchers", title: "Gift vouchers", summary: "Sell or give vouchers, spend them at the till or on invoices, and what happens when they expire.", section: "Sales", app: "/sales/gift-vouchers" },
   { slug: "loyalty", title: "Loyalty", summary: "Points, tiers and rewards for returning customers.", section: "Point of sale", app: "/sales/loyalty" },
   { slug: "mpesa", title: "M-Pesa (Daraja)", summary: "Connect your paybill or till for prompts and automatic matching.", section: "Point of sale", app: "/mpesa" },
+  { slug: "card-payments", title: "Card payments (Paystack)", summary: "Let customers pay invoices by card from their link, recorded by themselves.", section: "Sales", app: "/card-payments" },
   { slug: "etims", title: "KRA eTIMS", summary: "How documents get signed by KRA, and setting up your device.", section: "Sales", app: "/etims" },
   { slug: "suppliers", title: "Suppliers", summary: "Who you buy from, what you owe and withholding tax.", section: "Purchasing", app: "/purchasing/suppliers" },
   { slug: "purchase-orders", title: "Purchase orders (LPOs)", summary: "Order goods, get them approved and print the LPO.", section: "Purchasing", app: "/purchasing/orders" },

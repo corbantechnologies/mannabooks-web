@@ -215,6 +215,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/approvals/rules", label: "Approval rules", icon: ListChecks, perm: ["approvals.view"] },
       { href: "/etims", label: "KRA eTIMS", icon: BadgeCheck, perm: ["etims.view"] },
       { href: "/mpesa", label: "M-Pesa (Daraja)", icon: Smartphone, perm: ["mpesa.view"] },
+      { href: "/card-payments", label: "Card payments", icon: CreditCard, perm: ["cardpayments.view"] },
       { href: "/audit-log", label: "Audit log", icon: History, perm: ["auditlogs.view"] },
       { href: "/settings", label: "Settings", icon: Settings, perm: ["workspace.manage"] },
       { href: "/billing", label: "Plan and billing", icon: CreditCard, perm: ["workspace.manage"] },
