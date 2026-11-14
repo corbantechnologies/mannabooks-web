@@ -36,11 +36,13 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     ],
   },
   {
-    id: "mpesa", icon: Smartphone, title: "M-Pesa built in", module: "sales",
-    summary: "Your own paybill or till, connected through your own Daraja account, so the money goes straight to you.",
+    id: "mpesa", icon: Smartphone, title: "M-Pesa and cards", module: "sales",
+    summary: "Your own paybill, till and Paystack account, so the money goes straight to you, from invoices or payment links.",
     items: [
       { name: "Payment prompts", text: "Send a prompt to the customer's phone from an invoice or the till. They enter their PIN and it is marked paid.", guide: "mpesa" },
       { name: "Paybill payments that find their invoice", text: "Customers pay with the invoice number as the account number, and the payment matches itself.", guide: "mpesa" },
+      { name: "Payment links", text: "A link or QR code that takes one payment by M-Pesa or card, with no invoice: a sale, a deposit, a donation or a gift voucher. Recorded as the right thing in the books.", guide: "payment-links", isNew: true },
+      { name: "Card payments", text: "Customers pay invoices by card from their link, through your own Paystack account. Recorded against the invoice, with the fee booked.", guide: "card-payments", isNew: true },
       { name: "No reading SMS", text: "Payments come in from Safaricom, not from screenshots, so nobody has to check messages by hand.", guide: "payments" },
     ],
   },

@@ -1,9 +1,9 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Smartphone } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, CreditCard, Loader2, Smartphone, XCircle } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -18,6 +18,8 @@ interface PortalInvoice {
 /** What a customer sees from a shared link: no sign-in. */
 export default function PortalPage() {
   const { token } = useParams<{ token: string }>();
+  // Paystack sends the customer back here with ?reference=...
+  const [cardRef] = useState(() => (typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("reference")));
   const portal = useQuery({
     queryKey: ["portal", token],
     queryFn: async () => unwrap(await api.GET("/api/v1/portal/{token}/", { params: { path: { token } } })),
@@ -57,15 +59,57 @@ export default function PortalPage() {
           <p className="text-2xl font-semibold">{fmt(p.balance)}</p>
         </Card>
       )}
+      {cardRef && <CardReturn token={token} reference={cardRef} />}
       {invoices.length === 0 && <Card className="p-6 text-center text-sm text-stone-600">Nothing to pay. Thank you!</Card>}
-      {invoices.map((inv) => <PortalInvoiceCard key={inv.id} token={token} invoice={inv} mpesa={p.mpesa_available} />)}
+      {invoices.map((inv) => <PortalInvoiceCard key={inv.id} token={token} invoice={inv} mpesa={p.mpesa_available} card={p.card_available} email={p.customer_email} />)}
       <p className="pt-4 text-center text-xs text-stone-400">Sent with MannaBooks</p>
     </main>
   );
 }
 
-function PortalInvoiceCard({ token, invoice, mpesa }: { token: string; invoice: PortalInvoice; mpesa: boolean }) {
+/** Back from Paystack: wait for the payment to be confirmed, then show the invoices as they now stand. */
+function CardReturn({ token, reference }: { token: string; reference: string }) {
+  const qc = useQueryClient();
+  const [tries, setTries] = useState(0);
+  const status = useQuery({
+    queryKey: ["portal-card", token, reference],
+    queryFn: async () => { setTries((n) => n + 1); return unwrap(await api.GET("/api/v1/portal/{token}/card/{reference}/", { params: { path: { token, reference } } })); },
+    refetchInterval: (q) => (q.state.data?.status === "pending" && tries < 20 ? 3000 : false),
+    retry: false,
+  });
+  const state = status.data?.status;
+  useEffect(() => {
+    if (state && state !== "pending") {
+      window.history.replaceState(null, "", window.location.pathname);  // a refresh shouldn't check again
+      if (state === "success") void qc.invalidateQueries({ queryKey: ["portal", token] });
+    }
+  }, [state, qc, token]);
+  if (status.error) return <Card className="p-4"><FormError error={status.error} /></Card>;
+  return (
+    <Card className="p-4 text-sm">
+      {state === "success" ? (
+        <p className="flex items-center gap-2 text-green-700"><CheckCircle2 className="h-5 w-5" /> Paid {fmt(status.data!.amount)} by card for {status.data!.invoice_number}. Thank you! Your bank or card statement shows Paystack.</p>
+      ) : state === "failed" || state === "abandoned" ? (
+        <p className="flex items-center gap-2 text-red-600"><XCircle className="h-5 w-5" /> The card payment didn&apos;t go through{status.data!.message ? ` (${status.data!.message})` : ""}. Nothing was taken. Try again below.</p>
+      ) : state === "pending" && tries >= 20 ? (
+        <p className="text-stone-600">We haven&apos;t heard from the card company yet. If money was taken, the payment will show here within a few minutes. Refresh this page later.</p>
+      ) : (
+        <p className="flex items-center gap-2 text-stone-700"><Loader2 className="h-5 w-5 animate-spin text-brand-700" /> Confirming your card payment...</p>
+      )}
+    </Card>
+  );
+}
+
+function PortalInvoiceCard({ token, invoice, mpesa, card, email: knownEmail }: { token: string; invoice: PortalInvoice; mpesa: boolean; card: boolean; email: string }) {
   const [paying, setPaying] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
+  const [email, setEmail] = useState(knownEmail);
+  const cardPay = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/portal/{token}/card/", {
+      params: { path: { token } }, body: { invoice_id: invoice.id, amount: invoice.balance_due, email },
+    })),
+    onSuccess: (r) => { window.location.href = r.authorization_url; },  // Paystack's own page takes the card details
+  });
   const [phone, setPhone] = useState("");
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const open = invoice.status === "issued" || invoice.status === "partially_paid";
@@ -100,6 +144,22 @@ function PortalInvoiceCard({ token, invoice, mpesa }: { token: string; invoice: 
         </tbody>
       </table>
       {invoice.etims_cu_invoice_number && <p className="px-4 pb-2 text-xs text-stone-500">KRA eTIMS: {invoice.etims_cu_invoice_number}</p>}
+      {open && card && (
+        <div className="border-t border-stone-200 p-4">
+          {!cardOpen ? (
+            <Button variant={mpesa ? "secondary" : "primary"} onClick={() => (knownEmail ? cardPay.mutate() : setCardOpen(true))} loading={cardPay.isPending}>
+              <CreditCard className="h-4 w-4" /> Pay {fmt(invoice.balance_due)} by card
+            </Button>
+          ) : (
+            <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); cardPay.mutate(); }}>
+              <div className="w-64"><Field label="Your email, for the receipt"><Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field></div>
+              <Button type="submit" loading={cardPay.isPending}>Continue to card payment</Button>
+            </form>
+          )}
+          <p className="mt-2 text-xs text-stone-500">You enter your card on Paystack&apos;s secure page; this business never sees your card number.</p>
+          <FormError error={cardPay.error} />
+        </div>
+      )}
       {open && mpesa && (
         <div className="border-t border-stone-200 p-4">
           {status.data?.status === "completed" ? (

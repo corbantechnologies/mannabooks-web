@@ -353,6 +353,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/paylinks/{token}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["paylinks_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paylinks/{token}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Start paying: an M-Pesa prompt, or the card page to send the payer to. */
+        post: operations["paylinks_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paylinks/{token}/pay/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["paylinks_pay_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plans/": {
         parameters: {
             query?: never;
@@ -655,6 +704,40 @@ export interface paths {
         };
         /** @description What a customer sees at their link (no sign-in). */
         get: operations["portal_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/{token}/card/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Start a card payment for one of the link's invoices: returns Paystack's page to send the customer to. */
+        post: operations["portal_card_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portal/{token}/card/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description After Paystack sends the customer back: did it go through? Checks with Paystack if the webhook hasn't arrived. */
+        get: operations["portal_card_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1626,6 +1709,58 @@ export interface paths {
         };
         /** @description What's left in the approved budget for an expense account (shown while entering a purchase). */
         get: operations["w_budgets_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/connection/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The workspace's card gateway (one per workspace). PUT creates or replaces it. */
+        get: operations["w_cards_connection_retrieve"];
+        /** @description The workspace's card gateway (one per workspace). PUT creates or replaces it. */
+        put: operations["w_cards_connection_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/connection/test/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Check the secret key with Paystack. */
+        post: operations["w_cards_connection_test_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/transactions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Card checkouts started on customers' links, and how each went. */
+        get: operations["w_cards_transactions_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4303,6 +4438,70 @@ export interface paths {
         put?: never;
         /** @description approve (payroll.approve), reopen, pay (net pay), remit (a statutory deduction), or add_employee to a draft. */
         post: operations["w_pay_runs_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/payment-links/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_payment_links_list"];
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_payment_links_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/payment-links/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A link and its QR code. Links with payments can't be deleted: close them (is_active false) instead. */
+        get: operations["w_payment_links_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description A link and its QR code. Links with payments can't be deleted: close them (is_active false) instead. */
+        delete: operations["w_payment_links_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A link and its QR code. Links with payments can't be deleted: close them (is_active false) instead. */
+        patch: operations["w_payment_links_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/payment-links/{id}/payments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Payments made through a link. */
+        get: operations["w_payment_links_payments_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -8090,6 +8289,67 @@ export interface components {
             money_out: string;
             cleared: boolean;
         };
+        CardConnection: {
+            /** Format: uuid */
+            readonly id: string;
+            provider?: components["schemas"]["ProviderEnum"];
+            public_key?: string;
+            readonly has_secret_key: boolean;
+            readonly is_test: boolean;
+            readonly webhook_url: string | null;
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly verified_at: string | null;
+            readonly last_error: string;
+        };
+        CardConnectionRequest: {
+            provider?: components["schemas"]["ProviderEnum"];
+            public_key?: string;
+            /** @description Paystack secret key (sk_test_... or sk_live_...) */
+            secret_key?: string;
+            /** Format: uuid */
+            deposit_account_id?: string | null;
+            is_active?: boolean;
+        };
+        CardTransaction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly reference: string;
+            /** Format: uuid */
+            readonly invoice: string | null;
+            readonly invoice_number: string;
+            readonly customer_name: string;
+            /** Format: email */
+            readonly email: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly currency: string;
+            readonly status: components["schemas"]["CardTransactionStatusEnum"];
+            /** @description card, mobile_money, bank... */
+            readonly channel: string;
+            /** @description e.g. Visa ending 4081 */
+            readonly card_summary: string;
+            /** Format: decimal */
+            readonly fees: string;
+            /** Format: date-time */
+            readonly paid_at: string | null;
+            /** Format: uuid */
+            readonly payment: string | null;
+            readonly payment_number: string;
+            readonly result_description: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `pending` - Waiting for the customer
+         *     * `success` - Paid
+         *     * `failed` - Failed
+         *     * `abandoned` - Not completed
+         * @enum {string}
+         */
+        CardTransactionStatusEnum: "pending" | "success" | "failed" | "abandoned";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -10509,6 +10769,56 @@ export interface components {
             tax_rate_id?: string | null;
             description?: string;
         };
+        LinkPayment: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly status: components["schemas"]["LinkPaymentStatusEnum"];
+            readonly method: components["schemas"]["LinkPaymentMethodEnum"];
+            readonly payer_name: string;
+            readonly phone: string;
+            /** Format: email */
+            readonly email: string;
+            readonly quantity: number;
+            /** Format: decimal */
+            readonly amount: string;
+            /** @description What the payer wrote, e.g. who a voucher is for */
+            readonly note: string;
+            /** Format: uuid */
+            readonly customer: string | null;
+            readonly customer_name: string;
+            /** Format: uuid */
+            readonly receipt: string | null;
+            readonly receipt_number: string;
+            /** Format: uuid */
+            readonly payment: string | null;
+            readonly payment_number: string;
+            /** Format: uuid */
+            readonly voucher: string | null;
+            readonly voucher_code: string;
+            /** Format: date-time */
+            readonly paid_at: string | null;
+            readonly result_description: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `mpesa` - M-Pesa
+         *     * `card` - Card
+         * @enum {string}
+         */
+        LinkPaymentMethodEnum: "mpesa" | "card";
+        /**
+         * @description * `pending` - Waiting for payment
+         *     * `paid` - Paid
+         *     * `failed` - Not paid
+         * @enum {string}
+         */
+        LinkPaymentStatusEnum: "pending" | "paid" | "failed";
+        LinkStats: {
+            paid_count: number;
+            paid_total: string;
+            view_count: number;
+        };
         LoginRequest: {
             /** Format: email */
             email: string;
@@ -11269,6 +11579,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Business"][];
         };
+        PaginatedCardTransactionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CardTransaction"][];
+        };
         PaginatedCatalogueList: {
             /** @example 123 */
             count: number;
@@ -11629,6 +11954,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["LeaveRequest"][];
         };
+        PaginatedLinkPaymentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["LinkPayment"][];
+        };
         PaginatedLoyaltyMemberList: {
             /** @example 123 */
             count: number;
@@ -11763,6 +12103,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["PayRun"][];
+        };
+        PaginatedPaymentLinkList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PaymentLink"][];
         };
         PaginatedPaymentList: {
             /** @example 123 */
@@ -12861,6 +13216,34 @@ export interface components {
             bank_account_number?: string;
             mpesa_phone?: string;
         };
+        PatchedPaymentLinkRequest: {
+            title?: string;
+            description?: string;
+            purpose?: components["schemas"]["PurposeEnum"];
+            /** Format: uuid */
+            product_id?: string | null;
+            /** @description Let the payer choose how many */
+            allow_quantity?: boolean;
+            max_quantity?: number;
+            /**
+             * Format: decimal
+             * @description The price, VAT included. Blank: the payer enters the amount
+             */
+            amount?: string | null;
+            /** Format: decimal */
+            min_amount?: string | null;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: uuid */
+            account_id?: string | null;
+            /** @description Vouchers: how long one is valid. Blank: no expiry */
+            voucher_valid_days?: number | null;
+            /** Format: date */
+            expires_on?: string | null;
+            /** @description Close the link after this many payments */
+            max_payments?: number | null;
+            is_active?: boolean;
+        };
         PatchedPaymentOptionRequest: {
             kind?: components["schemas"]["PaymentOptionKindEnum"];
             bank_name?: string;
@@ -13498,6 +13881,73 @@ export interface components {
             reference?: string;
             note?: string;
         };
+        PaymentLink: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly token: string;
+            readonly url: string;
+            title: string;
+            description?: string;
+            purpose?: components["schemas"]["PurposeEnum"];
+            /** Format: uuid */
+            product_id?: string | null;
+            readonly product_name: string;
+            /** @description Let the payer choose how many */
+            allow_quantity?: boolean;
+            max_quantity?: number;
+            /**
+             * Format: decimal
+             * @description The price, VAT included. Blank: the payer enters the amount
+             */
+            amount?: string | null;
+            /** Format: decimal */
+            min_amount?: string | null;
+            readonly unit_price: string | null;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: uuid */
+            account_id?: string | null;
+            /** @description Vouchers: how long one is valid. Blank: no expiry */
+            voucher_valid_days?: number | null;
+            /** Format: date */
+            expires_on?: string | null;
+            /** @description Close the link after this many payments */
+            max_payments?: number | null;
+            is_active?: boolean;
+            readonly stats: components["schemas"]["LinkStats"];
+            /** @description The link as a QR code (an SVG data URI) to print or download. */
+            readonly qr: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        PaymentLinkRequest: {
+            title: string;
+            description?: string;
+            purpose?: components["schemas"]["PurposeEnum"];
+            /** Format: uuid */
+            product_id?: string | null;
+            /** @description Let the payer choose how many */
+            allow_quantity?: boolean;
+            max_quantity?: number;
+            /**
+             * Format: decimal
+             * @description The price, VAT included. Blank: the payer enters the amount
+             */
+            amount?: string | null;
+            /** Format: decimal */
+            min_amount?: string | null;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: uuid */
+            account_id?: string | null;
+            /** @description Vouchers: how long one is valid. Blank: no expiry */
+            voucher_valid_days?: number | null;
+            /** Format: date */
+            expires_on?: string | null;
+            /** @description Close the link after this many payments */
+            max_payments?: number | null;
+            is_active?: boolean;
+        };
         /**
          * @description * `cash` - Cash
          *     * `mpesa` - M-Pesa
@@ -13951,6 +14401,24 @@ export interface components {
             /** Format: date-time */
             last_login: string | null;
         };
+        PortalCardCheckout: {
+            reference: string;
+            /** Format: uri */
+            authorization_url: string;
+        };
+        PortalCardPayRequest: {
+            /** Format: uuid */
+            invoice_id: string;
+            /** Format: decimal */
+            amount: string;
+            email?: string;
+        };
+        PortalCardStatus: {
+            status: string;
+            amount: string;
+            invoice_number: string;
+            message: string;
+        };
         PortalData: {
             business: {
                 [key: string]: unknown;
@@ -13964,6 +14432,8 @@ export interface components {
                 [key: string]: unknown;
             }[];
             mpesa_available: boolean;
+            card_available: boolean;
+            customer_email: string;
         };
         PortalLink: {
             /** Format: uuid */
@@ -14526,6 +14996,11 @@ export interface components {
             by_account: components["schemas"]["ProjectLine"][];
             recent: components["schemas"]["ProjectRecent"][];
         };
+        /**
+         * @description * `paystack` - Paystack
+         * @enum {string}
+         */
+        ProviderEnum: "paystack";
         PublicCatalogue: {
             name: string;
             intro: string;
@@ -14538,6 +15013,17 @@ export interface components {
             expires_on: string | null;
             pdf_available: boolean;
             items: components["schemas"]["CatalogueItem"][];
+        };
+        PublicLinkPayment: {
+            /** Format: uuid */
+            id: string;
+            status: string;
+            method: string;
+            amount: string;
+            authorization_url: string;
+            receipt_number: string;
+            voucher_code: string;
+            message: string;
         };
         /** @description What the customer sees on their order page (no internal details). */
         PublicOrder: {
@@ -14564,6 +15050,41 @@ export interface components {
             readonly cancel_reason: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        /**
+         * @description * `mpesa` - mpesa
+         *     * `card` - card
+         * @enum {string}
+         */
+        PublicPayMethodEnum: "mpesa" | "card";
+        PublicPayRequest: {
+            method: components["schemas"]["PublicPayMethodEnum"];
+            payer_name: string;
+            phone?: string;
+            email?: string;
+            /** @default 1 */
+            quantity: number;
+            /** Format: decimal */
+            amount?: string | null;
+            note?: string;
+        };
+        PublicPaymentLink: {
+            business: {
+                [key: string]: unknown;
+            };
+            title: string;
+            description: string;
+            purpose: string;
+            product: {
+                [key: string]: unknown;
+            } | null;
+            unit_price: string | null;
+            min_amount: string | null;
+            allow_quantity: boolean;
+            max_quantity: number;
+            currency: string;
+            methods: string[];
+            closed: string;
         };
         /** @description One purchase line. Leave out the cost, VAT or account to use the product's. */
         PurchaseLine: {
@@ -14676,6 +15197,14 @@ export interface components {
          * @enum {string}
          */
         PurchaseOrderStatusEnum: "draft" | "approved" | "partially_received" | "received" | "closed" | "cancelled";
+        /**
+         * @description * `sale` - A sale
+         *     * `deposit` - A deposit or advance payment
+         *     * `donation` - A donation or contribution
+         *     * `voucher` - A gift voucher
+         * @enum {string}
+         */
+        PurposeEnum: "sale" | "deposit" | "donation" | "voucher";
         /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         Quotation: {
             /** Format: uuid */
@@ -17443,6 +17972,76 @@ export interface operations {
             };
         };
     };
+    paylinks_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPaymentLink"];
+                };
+            };
+        };
+    };
+    paylinks_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicPayRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PublicPayRequest"];
+                "multipart/form-data": components["schemas"]["PublicPayRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicLinkPayment"];
+                };
+            };
+        };
+    };
+    paylinks_pay_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicLinkPayment"];
+                };
+            };
+        };
+    };
     plans_list: {
         parameters: {
             query?: {
@@ -18080,6 +18679,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortalData"];
+                };
+            };
+        };
+    };
+    portal_card_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PortalCardPayRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortalCardPayRequest"];
+                "multipart/form-data": components["schemas"]["PortalCardPayRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortalCardCheckout"];
+                };
+            };
+        };
+    };
+    portal_card_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortalCardStatus"];
                 };
             };
         };
@@ -19926,6 +20574,114 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BudgetCheck"];
+                };
+            };
+        };
+    };
+    w_cards_connection_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_connection_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CardConnectionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CardConnectionRequest"];
+                "multipart/form-data": components["schemas"]["CardConnectionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_connection_test_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardConnection"];
+                };
+            };
+        };
+    };
+    w_cards_transactions_list: {
+        parameters: {
+            query?: {
+                customer?: string;
+                invoice?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - Waiting for the customer
+                 *     * `success` - Paid
+                 *     * `failed` - Failed
+                 *     * `abandoned` - Not completed
+                 */
+                status?: "abandoned" | "failed" | "pending" | "success";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCardTransactionList"];
                 };
             };
         };
@@ -25052,6 +25808,185 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PayRun"];
+                };
+            };
+        };
+    };
+    w_payment_links_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                product?: string;
+                /**
+                 * @description * `sale` - A sale
+                 *     * `deposit` - A deposit or advance payment
+                 *     * `donation` - A donation or contribution
+                 *     * `voucher` - A gift voucher
+                 */
+                purpose?: "deposit" | "donation" | "sale" | "voucher";
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPaymentLinkList"];
+                };
+            };
+        };
+    };
+    w_payment_links_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentLinkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentLinkRequest"];
+                "multipart/form-data": components["schemas"]["PaymentLinkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentLink"];
+                };
+            };
+        };
+    };
+    w_payment_links_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentLink"];
+                };
+            };
+        };
+    };
+    w_payment_links_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_payment_links_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPaymentLinkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPaymentLinkRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPaymentLinkRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentLink"];
+                };
+            };
+        };
+    };
+    w_payment_links_payments_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `mpesa` - M-Pesa
+                 *     * `card` - Card
+                 */
+                method?: "card" | "mpesa";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - Waiting for payment
+                 *     * `paid` - Paid
+                 *     * `failed` - Not paid
+                 */
+                status?: "failed" | "paid" | "pending";
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedLinkPaymentList"];
                 };
             };
         };

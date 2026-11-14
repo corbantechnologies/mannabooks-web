@@ -3,7 +3,7 @@
  * INDUSTRIES[].useCases, so the two lists can't drift apart.
  */
 import {
-  BadgePercent, Boxes, Building2, ChefHat, Gift, Globe, HandCoins, Handshake, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet,
+  BadgePercent, Boxes, Building2, ChefHat, Gift, Globe, HandCoins, Handshake, Link2, Network, PackageOpen, Receipt, Repeat, ShieldCheck, Smartphone, Store, Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -81,6 +81,18 @@ export const USE_CASES: UseCase[] = [
       { title: "Share payslips", text: "Staff open their payslips and ask for leave on their phones." },
     ],
     outcomes: ["Deductions at the current rates", "Remittance schedules ready for each authority", "Leave balances kept for you"],
+  },
+  {
+    slug: "collect-payments", icon: Link2, title: "Take payments with a link", module: "sales", guide: "payment-links",
+    summary: "One link or QR code for a deposit, a fee, tickets or donations, paid by M-Pesa or card and recorded as the right thing.",
+    problem: "You send your paybill number, then spend the evening matching M-Pesa messages to people, and deposits, offerings and ticket money never reach the books properly.",
+    steps: [
+      { title: "Make a link", text: "Say what the money is for: a sale, a deposit, a donation or a gift voucher. Set a fixed price, a product, or let the payer choose the amount." },
+      { title: "Share it", text: "Copy it to WhatsApp, email it, or print the QR code on a poster, a counter card or a notice board." },
+      { title: "They pay", text: "By M-Pesa prompt or by card, on a simple page with your logo. They get a receipt; you get an email." },
+      { title: "It is recorded for you", text: "A sale becomes a cash sale with VAT, a deposit waits for the customer's invoice, a donation goes to income, and a voucher is emailed." },
+    ],
+    outcomes: ["No matching M-Pesa messages by hand", "Deposits kept under the right customer", "Views, payments and money collected per link", "Close it on a date or after a number of payments"],
   },
   {
     slug: "reward-customers", icon: Gift, title: "Reward and bring back customers", module: "pos", guide: "gift-vouchers",
