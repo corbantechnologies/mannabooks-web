@@ -30,3 +30,5 @@ Choose **Record payment** on the invoice. The status moves from **Issued** to **
 - **More > Share link with customer**, **Email a payment reminder**, **Delivery note** and **Debit note**.
 - **More > Send by email**: the customer gets the lines, the total, how to pay, a link to pay online and, where PDFs are set up, the invoice as a **PDF**.
 - **More > Download PDF** or **Print or save as PDF**: an A4 copy with your logo, KRA PIN and the eTIMS details once signed.
+
+**Pay online from the PDF.** When M-Pesa or card payments are switched on, an unpaid invoice's PDF shows **Pay online** under *How to pay*: a link and a QR code. Whoever has the PDF, even printed, can scan it and pay by M-Pesa or card, and the payment is recorded against the invoice. The link keeps working while the invoice is unpaid, however late. Once it is paid it shows *Paid. Thank you*, and a voided invoice shows *No longer payable*. It stops working a year after the due date. Paid invoices and drafts don't show it.

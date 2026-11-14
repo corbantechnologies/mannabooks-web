@@ -66,7 +66,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "The till, stock, buying and the online shop are all in Duka.",
     goal: "Run a shop with a till",
-    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "track-stock", "reward-customers", "sell-online", "vat-and-kra"],
+    useCases: ["sell-at-the-till", "get-paid-by-mpesa", "track-stock", "buy-bulk-sell-small", "reward-customers", "sell-online", "vat-and-kra"],
     guides: ["pos", "mpesa", "inventory", "goods-received", "stock-takes", "loyalty"],
     faqs: [
       { q: "Can I sell in cartons and in pieces?", a: "Yes. Give a product extra units, such as a carton of 12, each with its own price. Stock is kept in the base unit, so selling a carton takes out 12 pieces." },
@@ -105,7 +105,7 @@ export const INDUSTRIES: Industry[] = [
     },
     plan: "duka", planNote: "Duka has buying, stock and warehouses. Choose Kampuni for approvals on LPOs and branch budgets.",
     goal: "Manage stock and warehouses",
-    useCases: ["track-stock", "sell-without-stock", "get-paid-by-mpesa", "recurring-billing", "vat-and-kra", "control-spending"],
+    useCases: ["track-stock", "buy-bulk-sell-small", "sell-without-stock", "get-paid-by-mpesa", "recurring-billing", "vat-and-kra", "control-spending"],
     guides: ["price-lists", "inventory", "delivery-notes", "purchase-orders", "reminders", "business-inbox"],
     faqs: [
       { q: "Can customers on MannaBooks receive my invoices directly?", a: "Yes. Send an invoice to their Business inbox and they can accept it as a supplier bill in their own books, with no retyping." },
