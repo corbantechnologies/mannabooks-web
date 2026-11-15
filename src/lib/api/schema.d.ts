@@ -6155,6 +6155,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/report-submissions/record/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Each person's on-time record: reports handed in on time, late, or never, out of those due. Only over the reports
+         *     you can see (yours, your requests', or everyone's with work reports access). Filter by `employee`, `request`,
+         *     and due dates `since` / `until`. Lowest on-time share first.
+         */
+        get: operations["w_report_submissions_record_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/aged/{kind}/": {
         parameters: {
             query?: never;
@@ -15938,6 +15959,24 @@ export interface components {
          * @enum {string}
          */
         ReportFrequencyEnum: "once" | "daily" | "weekly" | "monthly";
+        ReportRecord: {
+            /** Format: uuid */
+            employee_id: string;
+            employee_name: string;
+            department: string | null;
+            on_time: number;
+            /** @description Handed in after the due date */
+            late: number;
+            /** @description Overdue, never handed in */
+            missed: number;
+            /** @description Not due yet, or being written */
+            waiting: number;
+            /** @description Due so far: on time + late + missed */
+            counted: number;
+            on_time_percent: number | null;
+            /** Format: date */
+            last_due: string | null;
+        };
         ReportRequest: {
             /** Format: uuid */
             readonly id: string;
@@ -29579,6 +29618,36 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReportSubmission"];
+                };
+            };
+        };
+    };
+    w_report_submissions_record_list: {
+        parameters: {
+            query?: {
+                employee?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                request?: string;
+                /** @description A search term. */
+                search?: string;
+                since?: string;
+                until?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportRecord"][];
                 };
             };
         };
