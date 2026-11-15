@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import {
+  HandCoins,
   Building2,
   Globe,
   LifeBuoy,
@@ -23,6 +24,7 @@ import {
   CalendarDays,
   Wallet as WalletIcon,
   UserRound,
+  UsersRound,
   Landmark,
   ArrowDownToLine,
   ArrowUpFromLine,
@@ -101,6 +103,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     { href: "", label: "Overview", icon: LayoutDashboard, perm: null },
     { href: "/analytics", label: "Analytics", icon: ChartNoAxesCombined, perm: null },
     { href: "/my-department", label: "My department", icon: Network, perm: null },
+    { href: "/my-team", label: "My team", icon: UsersRound, perm: null },
     { href: "/approvals", label: "Approvals", icon: CheckCheck, perm: null },
     { href: "/inbox", label: "Business inbox", icon: Inbox, perm: ["inbox.view", "inbox.send"] },
   ] },
@@ -202,6 +205,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [
       { href: "/me", label: "My leave and pay", icon: UserRound, perm: ["leave.request"] },
       { href: "/leave", label: "Leave", icon: CalendarDays, perm: ["leave.view", "leave.approve"] },
+      { href: "/advances", label: "Salary advances", icon: HandCoins, perm: ["advances.request"] },
       { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
       { href: "/payroll", label: "Payroll", icon: WalletIcon, perm: ["payroll.view"] },
     ],
@@ -247,7 +251,7 @@ function moduleOf(href: string): string | null {
   if (href.startsWith("/projects")) return "projects";
   if (href.startsWith("/crm")) return "crm";
   if (["/accounting/budgets", "/accounting/cost-centres", "/accounting/fixed-assets", "/approvals"].some((p) => href.startsWith(p))) return "control";
-  if (["/me", "/leave", "/payroll", "/work-reports"].some((p) => href === p || href.startsWith(`${p}/`))) return "people";
+  if (["/me", "/leave", "/advances", "/payroll", "/work-reports"].some((p) => href === p || href.startsWith(`${p}/`))) return "people";
   return null;
 }
 
@@ -309,6 +313,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const allowed = (item: NavItem) =>
     (item.href !== "/etims" || context.etims_enabled) &&
     (item.href !== "/my-department" || (context.headed_departments ?? []).length > 0) && // only for department heads
+    (item.href !== "/my-team" || (context.team_size ?? 0) > 0) && // only for people others report to
     !(context.limited_department && WHOLE_BUSINESS.includes(item.href)) && // hidden until KRA approves MannaBooks and signing is switched on
     (!switchedOn.length || !moduleOf(item.href) || switchedOn.includes(moduleOf(item.href)!)) &&
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)) ||

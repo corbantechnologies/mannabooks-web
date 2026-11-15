@@ -14,19 +14,24 @@ import { useWorkspace } from "@/lib/workspace";
 
 export default function WorkReportsPage() {
   const { slug, can } = useWorkspace();
-  const [tab, setTab] = useState<"todo" | "review" | "requests">("todo");
+  const [tab, setTab] = useState<"todo" | "review" | "requests" | "record">("todo");
   const subs = useQuery({
     queryKey: ["report-submissions", slug, tab],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-submissions/", { params: { path: { workspace: slug }, query: { box: tab === "review" ? "review" : "todo", page_size: 100 } } })),
-    enabled: tab !== "requests",
+    enabled: tab === "todo" || tab === "review",
   });
   const reqs = useQuery({
     queryKey: ["report-requests", slug],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/", { params: { path: { workspace: slug }, query: { page_size: 100 } } })),
     enabled: tab === "requests",
   });
+  const record = useQuery({
+    queryKey: ["report-record", slug],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-submissions/record/", { params: { path: { workspace: slug } } })),
+    enabled: tab === "record",
+  });
   const rows = subs.data?.results ?? [];
-  const tabs = [{ key: "todo", label: "My reports" }, { key: "review", label: "To review" }, { key: "requests", label: "My requests" }] as const;
+  const tabs = [{ key: "todo", label: "My reports" }, { key: "review", label: "To review" }, { key: "requests", label: "My requests" }, { key: "record", label: "On time" }] as const;
   return (
     <div className="w-full">
       <PageHeader title="Work reports" guide="work-reports"
@@ -37,7 +42,28 @@ export default function WorkReportsPage() {
           <button key={t.key} onClick={() => setTab(t.key)} className={clsx("-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
         ))}
       </div>
-      {tab === "requests" ? (
+      {tab === "record" ? (
+        <div className="space-y-2">
+          <p className="text-sm text-stone-600">Reports handed in by the due date, late, or never, out of all those due so far. A report sent back and handed in again keeps the mark of when it first came in. Lowest first.</p>
+          <Card>
+            {record.isLoading ? <div className="px-4"><Spinner /></div> : record.error ? <div className="p-4"><ErrorState error={record.error} /></div> : !(record.data ?? []).length ? (
+              <EmptyState title="No reports due yet" />
+            ) : (
+              <Table head={["Person", "Department", "On time", "Late", "Never came in", "Due so far", "On-time record"]}>
+                {record.data!.map((r) => (
+                  <tr key={r.employee_id}>
+                    <Td className="font-medium">{r.employee_name}</Td><Td className="text-stone-600">{r.department ?? ""}</Td>
+                    <Td className="text-right">{r.on_time}</Td><Td className="text-right">{r.late}</Td><Td className="text-right">{r.missed}</Td><Td className="text-right">{r.counted}</Td>
+                    <Td>{r.on_time_percent == null ? <span className="text-stone-400">Nothing due yet</span> : (
+                      <Badge tone={r.on_time_percent >= 90 ? "green" : r.on_time_percent >= 70 ? "amber" : "red"}>{r.on_time_percent}% on time</Badge>
+                    )}</Td>
+                  </tr>
+                ))}
+              </Table>
+            )}
+          </Card>
+        </div>
+      ) : tab === "requests" ? (
         <Card>
           {reqs.isLoading ? <div className="px-4"><Spinner /></div> : reqs.error ? <div className="p-4"><ErrorState error={reqs.error} /></div> : !(reqs.data?.results ?? []).length ? (
             <EmptyState title="You haven't asked for any reports" />

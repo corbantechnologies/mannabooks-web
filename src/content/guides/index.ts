@@ -28,6 +28,7 @@ export const GUIDES: Guide[] = [
   { slug: "departments", title: "Departments and in-charges", summary: "Group staff, and decide who is in charge of each module.", section: "Organisation", app: "/departments" },
   { slug: "self-service", title: "My leave and pay", summary: "Your leave days, leave requests and payslips.", section: "People", app: "/me" },
   { slug: "leave", title: "Leave", summary: "Asking for, approving and tracking leave.", section: "People", app: "/leave" },
+  { slug: "salary-advances", title: "Salary advances", summary: "Pay staff have earned, paid early and taken back on their next payslips.", section: "People", app: "/advances" },
   { slug: "work-reports", title: "Work reports", summary: "Ask your team for regular reports, and submit your own.", section: "People", app: "/work-reports" },
   { slug: "payroll", title: "Payroll", summary: "PAYE, SHIF, NSSF and Housing Levy, payslips and paying staff.", section: "People", app: "/payroll" },
   { slug: "employees", title: "Employees and self-service", summary: "Staff records, reporting lines and giving staff a login.", section: "People", app: "/employees" },

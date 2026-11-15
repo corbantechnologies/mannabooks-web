@@ -16,7 +16,7 @@ MannaBooks works out Kenyan payroll each month: **PAYE**, **SHIF**, **NSSF** and
 ## Each month
 
 1. **Pay staff > Monthly payroll** for the month: a payslip is made for everyone on the monthly payroll. Approved unpaid leave reduces basic pay. There is one monthly payroll a month.
-2. **Edit** a payslip for this month's extras (overtime, bonus, an advance), the days or hours of a waged worker, or which deductions apply this month. **Add someone** or **Remove** a person while it's a draft.
+2. **Edit** a payslip for this month's extras (overtime, bonus), the days or hours of a waged worker, or which deductions apply this month. **Add someone** or **Remove** a person while it's a draft. Paid **salary advances** are taken back by themselves as a *Salary advance* line (see the Salary advances guide).
 3. **Approve**. The payroll is posted to the books: salaries and the employer's NSSF and Housing Levy as costs; PAYE, SHIF, NSSF, Housing Levy, other deductions and net pay as amounts owed. Staff can now see their payslips.
 4. Download the **Bank / M-Pesa list** to pay salaries, then **Record salaries paid**.
 5. Use the **Statutory schedule** to file returns, and **Record paid** for each one when you pay KRA, SHA and NSSF (by the 9th of the next month).

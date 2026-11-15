@@ -28,6 +28,14 @@ This lets an admin set up the reporting for managers who don't use the system mu
 
 **Close** a request to stop further rounds.
 
+## The on-time record
+
+**Work reports > On time** shows each person's record over every report due so far: how many came in **on time**, how many came in **late**, how many **never came in**, and the share on time. The lowest are at the top, so the people to follow up are easy to spot. It's useful at appraisal time.
+
+- Only reports already due count. One still being written, before its due date, doesn't count yet.
+- A report you **send back** keeps the mark of when it first came in: if it was on time, fixing it after the due date doesn't make it late.
+- You see the record for the reports you asked for, or that were set up for you. Staff see their own. Anyone with full work reports access sees everyone's.
+
 ## Submitting your report
 
 Open **Work reports > My reports**, choose the report, and write it, attach a file (PDF, Word, Excel, PowerPoint or a photo, up to 10 MB), or both. Then **Submit report**. It works on a phone too. If it is sent back, the reason is shown at the top; change it and submit again.

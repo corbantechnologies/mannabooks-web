@@ -10,6 +10,31 @@ Choose **New employee**. Their **staff number** is given automatically (EMP-0001
 - **Reports to**: their supervisor. Approvals and work reports follow this reporting line, so set it for everyone. MannaBooks stops you making a loop (A reports to B who reports to A).
 - **Status**: Active, On leave or Exited.
 
+## The employee profile
+
+Click a name in **Employees**, **My department** or **My team** to open their profile: everything about them on one page.
+
+- **Who they are:** job, department, branch, supervisor, when they joined and how long they've been here, and who reports to them.
+- **Work reports:** their on-time record and their latest reports.
+- **Leave:** days left this year, what they've taken by type, and their recent requests.
+- **Payslips** and their pay rate.
+- **Salary advances**, and what's still owed.
+- **In MannaBooks:** for staff with a login, what they've done in the last 90 days, such as sales, invoices and approvals.
+
+It's a good starting point for a one-to-one or an appraisal.
+
+Who sees it: HR sees everyone's. Supervisors see everyone in their reporting line (the people who report to them, and the people who report to those), and department heads see their department. Everyone sees their own. **Pay and payslips** are shown only to payroll staff and the person themselves. A supervisor without payroll access doesn't see them.
+
+## My team
+
+Anyone with people reporting to them gets **My team** in the menu. It lists everyone in their reporting line: their own people first, then the people who report to them (shown as *through* their supervisor). For each person it shows:
+
+- whether they're in or on leave today;
+- their work reports on-time record over the last year, and any reports overdue;
+- leave and salary advances waiting for you to decide (for your own people and your department; the others' supervisors decide theirs).
+
+At the top are totals for leave waiting, advances to recommend and overdue reports, each linking to where you deal with them. Click a name to open their profile.
+
 ## Employee self-service
 
 Staff can sign in to see their own record, their payslips and their leave. There are three ways to give someone a login, and each links it to their staff record:
