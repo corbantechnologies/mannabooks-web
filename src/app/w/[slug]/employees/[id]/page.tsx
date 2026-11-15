@@ -1,11 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
-import { Badge, Card, ErrorState, Spinner, Table, Td } from "@/components/ui";
+import { EmployeeEditor } from "@/components/employee-editor";
+import { Badge, Button, Card, ErrorState, Spinner, Table, Td } from "@/components/ui";
 import { REPORT_STATUS } from "@/lib/api/assets";
 import { api, unwrap } from "@/lib/api/client";
 import { ADVANCE_STATUS, LEAVE_STATUS } from "@/lib/api/people";
@@ -14,8 +16,13 @@ import { useWorkspace } from "@/lib/workspace";
 
 /** Everything about one person: details, pay, leave, salary advances, work reports and what they did lately. */
 export default function EmployeeProfilePage() {
-  const { slug } = useWorkspace();
+  const { slug, can } = useWorkspace();
   const { id } = useParams<{ id: string }>();
+  const [editing, setEditing] = useState(false);
+  const record = useQuery({  // the full record, for editing
+    queryKey: ["employee", slug, id], enabled: can("employees.manage"),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/{id}/", { params: { path: { workspace: slug, id } } })),
+  });
   const q = useQuery({
     queryKey: ["employee-profile", slug, id],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/{id}/profile/", { params: { path: { workspace: slug, id } } })),
@@ -36,7 +43,10 @@ export default function EmployeeProfilePage() {
             {p.exit_date ? ` · left ${fmtDate(p.exit_date)}` : ""}
           </p>
         </div>
-        <div className="flex gap-2"><Badge tone={p.status === "active" ? "green" : p.status === "on_leave" ? "amber" : "stone"}>{p.status_label}</Badge>{!p.has_login && <Badge>No login</Badge>}</div>
+        <div className="flex items-center gap-2">
+          <Badge tone={p.status === "active" ? "green" : p.status === "on_leave" ? "amber" : "stone"}>{p.status_label}</Badge>{!p.has_login && <Badge>No login</Badge>}
+          {record.data && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Edit{record.data.pending_changes ? " (changes to check)" : ""}</Button>}
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -106,6 +116,7 @@ export default function EmployeeProfilePage() {
           </Section>
         )}
       </div>
+      {editing && record.data && <EmployeeEditor employee={record.data} onClose={() => { setEditing(false); void q.refetch(); void record.refetch(); }} />}
     </div>
   );
 }
