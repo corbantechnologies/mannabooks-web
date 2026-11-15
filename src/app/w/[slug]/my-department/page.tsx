@@ -43,7 +43,7 @@ export default function MyDepartmentPage() {
                   <ul className="divide-y divide-stone-100">
                     {d.members.map((m) => (
                       <li key={m.id} className="flex items-center justify-between gap-3 px-4 py-2 text-sm">
-                        <span className="min-w-0"><span className="block truncate">{m.name}</span><span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span>
+                        <span className="min-w-0"><Link href={`/w/${slug}/employees/${m.id}`} className="block truncate hover:underline">{m.name}</Link><span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span>
                         {m.away_until ? <Badge tone="amber">On leave until {fmtDate(m.away_until)}</Badge> : !m.has_login ? <span className="text-xs text-stone-400">No sign-in</span> : null}
                       </li>
                     ))}

@@ -2707,6 +2707,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/employees/{id}/profile/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Everything about one person: details, pay and payslips, leave, salary advances, work reports and their on-time
+         *     record, and what they did in MannaBooks lately. For HR, their supervisor, their department head and themselves;
+         *     pay only for payroll staff and the person.
+         */
+        get: operations["w_employees_profile_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/me/": {
         parameters: {
             query?: never;
@@ -2729,6 +2750,26 @@ export interface paths {
          *     are sent to HR, and the employee is emailed about any pay change.
          */
         patch: operations["w_employees_me_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/employees/team/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Everyone in your reporting line (people who report to you, and the people who report to them), with leave and
+         *     advances waiting for you, overdue work reports and each person's on-time record. Empty if nobody reports to you.
+         */
+        get: operations["w_employees_team_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/etims/device/": {
@@ -9501,6 +9542,38 @@ export interface components {
         EmployeeInviteRequest: {
             /** Format: uuid */
             role_id?: string | null;
+        };
+        EmployeeProfile: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            staff_number: string;
+            job_title: string;
+            status: string;
+            status_label: string;
+            department: string | null;
+            branch: string | null;
+            reports_to: string | null;
+            /** Format: date */
+            hire_date: string | null;
+            /** Format: date */
+            exit_date: string | null;
+            /** Format: double */
+            years_of_service: number | null;
+            email: string;
+            phone: string;
+            has_login: boolean;
+            is_me: boolean;
+            direct_reports: string[];
+            can_see_pay: boolean;
+            can_see_advances: boolean;
+            /** @description Only for payroll staff and the person */
+            pay: components["schemas"]["_ProfilePay"] | null;
+            advances: components["schemas"]["_ProfileAdvance"][] | null;
+            leave: components["schemas"]["_ProfileLeave"];
+            work_reports: components["schemas"]["_ProfileReports"];
+            /** @description The last 90 days in MannaBooks, for staff with a login */
+            activity: components["schemas"]["_ProfileActivity"] | null;
         };
         EmployeeRequest: {
             first_name: string;
@@ -17234,6 +17307,30 @@ export interface components {
             is_default?: boolean;
             is_active?: boolean;
         };
+        TeamMember: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            job_title: string;
+            department: string | null;
+            /** @description Their supervisor, when it isn't you */
+            reports_to: string | null;
+            /** @description Reports to you directly */
+            direct: boolean;
+            status: string;
+            has_login: boolean;
+            /**
+             * Format: date
+             * @description On approved leave today, until this day
+             */
+            away_until: string | null;
+            leave_waiting: number;
+            /** @description Salary advances waiting for a recommendation */
+            advances_waiting: number;
+            reports_overdue: number;
+            /** @description Work reports on time over the last year */
+            on_time_percent: number | null;
+        };
         TickRequest: {
             journal_line_ids: string[];
             cleared: boolean;
@@ -17548,6 +17645,8 @@ export interface components {
             headed_departments: {
                 [key: string]: string;
             }[];
+            /** @description People who report to this person directly (shows My team) */
+            team_size: number;
             /** @description KRA eTIMS signing is switched on for the platform */
             etims_enabled: boolean;
             /** @description Every financial year, latest first: id, name, start_date, end_date, status */
@@ -17657,6 +17756,102 @@ export interface components {
             costs: string;
             /** Format: decimal */
             net: string;
+        };
+        _ProfileActivity: {
+            /** Format: date */
+            since: string;
+            total: number;
+            by_kind: components["schemas"]["_ProfileActivityKind"][];
+            recent: components["schemas"]["_ProfileActivityItem"][];
+        };
+        _ProfileActivityItem: {
+            /** Format: date-time */
+            when: string;
+            action: string;
+            kind: string;
+            what: string;
+        };
+        _ProfileActivityKind: {
+            kind: string;
+            created: number;
+            total: number;
+        };
+        _ProfileAdvance: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: decimal */
+            amount: string;
+            status: string;
+            status_label: string;
+            /** Format: decimal */
+            outstanding: string;
+        };
+        _ProfileLeave: {
+            year: number;
+            /** Format: decimal */
+            entitlement: string;
+            /** Format: decimal */
+            taken: string;
+            /** Format: decimal */
+            pending: string;
+            /** Format: decimal */
+            remaining: string;
+            requests: components["schemas"]["_ProfileLeaveRequest"][];
+            days_by_type: components["schemas"]["_ProfileLeaveDays"][];
+        };
+        _ProfileLeaveDays: {
+            leave_type_label: string;
+            /** Format: decimal */
+            days: string;
+        };
+        _ProfileLeaveRequest: {
+            /** Format: uuid */
+            id: string;
+            leave_type_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** Format: decimal */
+            days: string;
+            status: string;
+        };
+        _ProfilePay: {
+            pay_type: string;
+            pay_type_label: string;
+            /** Format: decimal */
+            basic_salary: string;
+            /** Format: decimal */
+            pay_rate: string;
+            on_payroll: boolean;
+            payslips: components["schemas"]["_ProfilePayslip"][];
+        };
+        _ProfilePayslip: {
+            /** Format: uuid */
+            id: string;
+            period: string;
+            /** Format: date */
+            pay_date: string;
+            /** Format: decimal */
+            gross_pay: string;
+            /** Format: decimal */
+            net_pay: string;
+        };
+        _ProfileReport: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            period_label: string;
+            /** Format: date */
+            due_date: string;
+            status: string;
+            submitted_late: boolean;
+        };
+        _ProfileReports: {
+            record: components["schemas"]["ReportRecord"] | null;
+            recent: components["schemas"]["_ProfileReport"][];
         };
     };
     responses: never;
@@ -22883,6 +23078,28 @@ export interface operations {
             };
         };
     };
+    w_employees_profile_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeProfile"];
+                };
+            };
+        };
+    };
     w_employees_me_retrieve: {
         parameters: {
             query?: never;
@@ -22927,6 +23144,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Employee"];
+                };
+            };
+        };
+    };
+    w_employees_team_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamMember"][];
                 };
             };
         };

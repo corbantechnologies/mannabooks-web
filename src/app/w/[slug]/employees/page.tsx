@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -171,7 +172,7 @@ export default function EmployeesPage() {
             {rows.map((e) => (
               <tr key={e.id} className={manage ? "cursor-pointer hover:bg-stone-50" : ""} onClick={() => manage && open(e)}>
                 <Td className="font-mono text-xs">{e.staff_number}</Td>
-                <Td className="font-medium">{e.full_name}{Boolean(e.pending_changes) && manage ? <span className="ml-2"><Badge tone="amber">Changes to check</Badge></span> : null}</Td>
+                <Td className="font-medium"><Link href={`/w/${slug}/employees/${e.id}`} className="hover:underline" onClick={(ev) => ev.stopPropagation()}>{e.full_name}</Link>{Boolean(e.pending_changes) && manage ? <span className="ml-2"><Badge tone="amber">Changes to check</Badge></span> : null}</Td>
                 <Td>{e.job_title || "-"}</Td>
                 <Td>{e.department_name || "-"}</Td>
                 <Td>{e.reports_to_name || "-"}</Td>
