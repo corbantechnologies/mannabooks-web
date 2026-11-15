@@ -86,6 +86,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "PAYE, SHIF, NSSF and Housing Levy", text: "Worked out for you, with the remittance schedules and payslips staff open on their phones.", guide: "payroll" },
       { name: "Casual and waged workers", text: "Pay by the month, the day or the hour, in casual pay runs whenever you need one. Monthly casuals too.", guide: "payroll", isNew: true },
       { name: "Statutory deductions per person", text: "Choose for each person which of PAYE, NSSF, SHIF and the Housing Levy apply.", guide: "payroll", isNew: true },
+      { name: "Salary advances", text: "Staff ask from their phone, supervisors recommend, finance approves and pays, and it comes off the next payslips by itself. Casuals draw only pay already earned.", guide: "salary-advances", isNew: true },
       { name: "Leave, working week and holidays", text: "Leave balances that count only working days, using your working week and Kenya's public holidays.", guide: "leave", isNew: true },
       { name: "Staff self-service", text: "Staff update their own contact details; changes to bank or M-Pesa details wait for HR to approve.", guide: "self-service", isNew: true },
       { name: "Work reports", text: "Ask for weekly or monthly reports, with reminders, review and an overdue list. Admins can set them up for someone else.", guide: "work-reports" },

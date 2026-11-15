@@ -1022,6 +1022,98 @@ export interface paths {
         patch: operations["w_activities_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/advances/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Salary advances. `?mine=true` for your own. POST asks for one (for yourself, or for anyone if you approve advances). */
+        get: operations["w_advances_list"];
+        put?: never;
+        /** @description Salary advances. `?mine=true` for your own. POST asks for one (for yourself, or for anyone if you approve advances). */
+        post: operations["w_advances_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/advances/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_advances_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/advances/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description recommend (their supervisor or department head), approve or decline (finance), cancel (the employee or finance), pay (finance). */
+        post: operations["w_advances_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/advances/limit/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description How much someone can have now: yourself, or `?employee=` (finance, or their supervisor). Waged: pass `?days=` worked since last paid. */
+        get: operations["w_advances_limit_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/advances/policy/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business's advance rules. Anyone can read them; finance changes them. */
+        get: operations["w_advances_policy_retrieve"];
+        /** @description The business's advance rules. Anyone can read them; finance changes them. */
+        put: operations["w_advances_policy_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/approval-rules/": {
         parameters: {
             query?: never;
@@ -7429,6 +7521,85 @@ export interface components {
              */
             unit_cost?: string | null;
         };
+        /**
+         * @description * `recommend` - recommend
+         *     * `approve` - approve
+         *     * `decline` - decline
+         *     * `cancel` - cancel
+         *     * `pay` - pay
+         * @enum {string}
+         */
+        AdvanceActionActionEnum: "recommend" | "approve" | "decline" | "cancel" | "pay";
+        AdvanceActionRequest: {
+            action: components["schemas"]["AdvanceActionActionEnum"];
+            note?: string;
+            /**
+             * Format: decimal
+             * @description Approve: less than asked for, if need be
+             */
+            amount?: string;
+            /** @description Approve (salaried): payslips to take it back over */
+            months?: number;
+            /**
+             * Format: decimal
+             * @description Approve (waged): days or hours worked since they were last paid
+             */
+            days_worked?: string;
+            /** Format: uuid */
+            bank_account_id?: string;
+            /** Format: date */
+            date?: string;
+            reference?: string;
+        };
+        AdvanceLimit: {
+            basis: components["schemas"]["BasisEnum"];
+            pay_type: string;
+            /** Format: decimal */
+            rate: string | null;
+            /** Format: decimal */
+            units: string | null;
+            /** Format: decimal */
+            earned: string | null;
+            /** Format: decimal */
+            net_pay: string | null;
+            percent: number;
+            /** Format: decimal */
+            owed: string;
+            /** Format: date */
+            last_paid_on: string | null;
+            max_months: number;
+            /** Format: decimal */
+            limit: string | null;
+            enabled: boolean;
+        };
+        AdvancePolicy: {
+            /** @description Staff can ask for a salary advance */
+            enabled?: boolean;
+            /** @description Salaried: of the month's net pay. Waged: of the pay earned since they were last paid */
+            limit_percent?: number;
+            /** @description The longest a salaried person can take to pay it back (waged: from their next pay) */
+            max_months?: number;
+        };
+        AdvancePolicyRequest: {
+            /** @description Staff can ask for a salary advance */
+            enabled?: boolean;
+            /** @description Salaried: of the month's net pay. Waged: of the pay earned since they were last paid */
+            limit_percent?: number;
+            /** @description The longest a salaried person can take to pay it back (waged: from their next pay) */
+            max_months?: number;
+        };
+        AdvanceRecovery: {
+            readonly id: number;
+            /** Format: decimal */
+            amount: string;
+            readonly period: string;
+            /** Format: date */
+            readonly pay_date: string;
+        };
+        AdvanceRecoveryRequest: {
+            /** Format: decimal */
+            amount: string;
+        };
         AgedBuckets: {
             /** Format: decimal */
             current: string;
@@ -7816,6 +7987,12 @@ export interface components {
             reference?: string;
             notes?: string;
         };
+        /**
+         * @description * `salary` - salary
+         *     * `earned` - earned
+         * @enum {string}
+         */
+        BasisEnum: "salary" | "earned";
         Bill: {
             /** Format: uuid */
             readonly id: string;
@@ -12464,6 +12641,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Role"][];
         };
+        PaginatedSalaryAdvanceList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["SalaryAdvance"][];
+        };
         PaginatedSequenceList: {
             /** @example 123 */
             count: number;
@@ -13685,6 +13877,11 @@ export interface components {
             amount: string;
             /** @default true */
             taxable: boolean;
+            /**
+             * Format: uuid
+             * @description A salary advance this line takes back (set by MannaBooks)
+             */
+            advance?: string | null;
         };
         /**
          * @description * `earning` - earning
@@ -13699,6 +13896,11 @@ export interface components {
             amount: string;
             /** @default true */
             taxable: boolean;
+            /**
+             * Format: uuid
+             * @description A salary advance this line takes back (set by MannaBooks)
+             */
+            advance?: string | null;
         };
         /**
          * @description * `bank` - Bank transfer
@@ -15908,6 +16110,90 @@ export interface components {
             /** Format: decimal */
             total: string;
         };
+        SalaryAdvance: {
+            /** Format: uuid */
+            readonly id: string;
+            /**
+             * Format: uuid
+             * @description Blank: yourself
+             */
+            employee_id?: string;
+            readonly employee_name: string;
+            readonly department: string;
+            readonly pay_type: string;
+            /** Format: decimal */
+            readonly pay_rate: string;
+            /** Format: decimal */
+            requested_amount: string;
+            /**
+             * Format: decimal
+             * @description What was approved (at most what was asked for)
+             */
+            readonly amount: string;
+            /** @description Payslips it is taken back over */
+            months?: number;
+            reason?: string;
+            readonly status: components["schemas"]["SalaryAdvanceStatusEnum"];
+            readonly status_label: string;
+            /**
+             * Format: decimal
+             * @description Waged staff: days or hours worked since they were last paid, confirmed by the approver
+             */
+            readonly days_worked: string | null;
+            /**
+             * Format: decimal
+             * @description The most they could have had when it was approved
+             */
+            readonly limit: string | null;
+            readonly recommended_by_name: string;
+            /** Format: date-time */
+            readonly recommended_at: string | null;
+            readonly approved_by_name: string;
+            /** Format: date-time */
+            readonly approved_at: string | null;
+            readonly decision_note: string;
+            readonly paid_from_name: string;
+            /** Format: date */
+            readonly paid_on: string | null;
+            readonly payment_reference: string;
+            /**
+             * Format: decimal
+             * @description Taken back so far, from approved payslips
+             */
+            readonly recovered: string;
+            /** Format: decimal */
+            readonly outstanding: string;
+            readonly recoveries: components["schemas"]["AdvanceRecovery"][];
+            readonly can_recommend: boolean;
+            readonly can_approve: boolean;
+            readonly can_pay: boolean;
+            readonly can_cancel: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        SalaryAdvanceRequest: {
+            /**
+             * Format: uuid
+             * @description Blank: yourself
+             */
+            employee_id?: string;
+            /** Format: decimal */
+            requested_amount: string;
+            /** @description Payslips it is taken back over */
+            months?: number;
+            reason?: string;
+        };
+        /**
+         * @description * `pending` - Waiting for their supervisor
+         *     * `recommended` - Waiting for finance
+         *     * `approved` - Approved, not paid yet
+         *     * `paid` - Paid, being taken back
+         *     * `recovered` - Paid back
+         *     * `declined` - Declined
+         *     * `cancelled` - Cancelled
+         * @enum {string}
+         */
+        SalaryAdvanceStatusEnum: "pending" | "recommended" | "approved" | "paid" | "recovered" | "declined" | "cancelled";
         /** @description One line of a sales document. Leave out price, VAT or account to use the product's defaults. */
         SalesLine: {
             /** Format: uuid */
@@ -19227,6 +19513,199 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Activity"];
+                };
+            };
+        };
+    };
+    w_advances_list: {
+        parameters: {
+            query?: {
+                employee?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - Waiting for their supervisor
+                 *     * `recommended` - Waiting for finance
+                 *     * `approved` - Approved, not paid yet
+                 *     * `paid` - Paid, being taken back
+                 *     * `recovered` - Paid back
+                 *     * `declined` - Declined
+                 *     * `cancelled` - Cancelled
+                 */
+                status?: "approved" | "cancelled" | "declined" | "paid" | "pending" | "recommended" | "recovered";
+                /** @description Multiple values may be separated by commas. */
+                status__in?: string[];
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSalaryAdvanceList"];
+                };
+            };
+        };
+    };
+    w_advances_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SalaryAdvanceRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SalaryAdvanceRequest"];
+                "multipart/form-data": components["schemas"]["SalaryAdvanceRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SalaryAdvance"];
+                };
+            };
+        };
+    };
+    w_advances_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SalaryAdvance"];
+                };
+            };
+        };
+    };
+    w_advances_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdvanceActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AdvanceActionRequest"];
+                "multipart/form-data": components["schemas"]["AdvanceActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SalaryAdvance"];
+                };
+            };
+        };
+    };
+    w_advances_limit_retrieve: {
+        parameters: {
+            query?: {
+                days?: number;
+                employee?: string;
+                months?: number;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdvanceLimit"];
+                };
+            };
+        };
+    };
+    w_advances_policy_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdvancePolicy"];
+                };
+            };
+        };
+    };
+    w_advances_policy_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AdvancePolicyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AdvancePolicyRequest"];
+                "multipart/form-data": components["schemas"]["AdvancePolicyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdvancePolicy"];
                 };
             };
         };

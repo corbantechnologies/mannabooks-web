@@ -13,14 +13,18 @@ import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { MyDetails } from "@/components/my-details";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { AskAdvance } from "@/components/ask-advance";
+import { ADVANCE_STATUS } from "@/lib/api/people";
 
 /** Employee self-service: my leave and my payslips. Built for phones first. */
 export default function MePage() {
   const { slug } = useWorkspace();
   const [asking, setAsking] = useState(false);
+  const [advancing, setAdvancing] = useState(false);
   const balance = useQuery({ queryKey: ["leave-balances", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/balances/", wsPath(slug))), retry: false });
   const requests = useQuery({ queryKey: ["leave-requests", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/", { params: { path: { workspace: slug }, query: { mine: "true", page_size: 20 } as never } })) });
   const slips = useQuery({ queryKey: ["payslips", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/payslips/", { params: { path: { workspace: slug }, query: { mine: "true", page_size: 24 } as never } })) });
+  const advances = useQuery({ queryKey: ["advances", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/advances/", { params: { path: { workspace: slug }, query: { mine: "true", page_size: 5 } as never } })) });
   const cancel = useMutation({
     mutationFn: async (id: string) => unwrap(await api.POST("/api/v1/w/{workspace}/leave-requests/{id}/action/", { params: { path: { workspace: slug, id } }, body: { action: "cancel" } })),
     onSuccess: () => toast.success("Request cancelled"), onError: (e) => toast.error(e.message),
@@ -60,6 +64,24 @@ export default function MePage() {
         </div>
       </section>
       <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Salary advances</h2>
+          <button className="text-sm text-brand-700 underline" onClick={() => setAdvancing(true)}>Ask for an advance</button>
+        </div>
+        <div className="space-y-2">
+          {(advances.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">Need some of your pay early? Ask for an advance. It comes off your next payslip.</p>}
+          {(advances.data?.results ?? []).map((a) => (
+            <Link key={a.id} href={`/w/${slug}/advances`}>
+              <Card className="mb-2 flex items-center justify-between gap-3 p-3 hover:border-brand-600">
+                <div className="min-w-0"><p className="font-medium">{fmt(a.status === "pending" || a.status === "recommended" || a.status === "declined" ? a.requested_amount : a.amount)}</p>
+                  <p className="text-xs text-stone-500">{fmtDate(a.created_at)}{a.status === "paid" ? ` · ${fmt(a.outstanding)} left to take back` : ""}</p></div>
+                <Badge tone={ADVANCE_STATUS[a.status ?? "pending"].tone}>{ADVANCE_STATUS[a.status ?? "pending"].label}</Badge>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+      <section>
         <h2 className="mb-2 text-sm font-semibold">My payslips</h2>
         <div className="space-y-2">
           {(slips.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">No payslips yet.</p>}
@@ -74,6 +96,7 @@ export default function MePage() {
         </div>
       </section>
       {asking && <AskLeave onClose={() => setAsking(false)} />}
+      {advancing && <AskAdvance onClose={() => setAdvancing(false)} />}
       <MyDetails />
     </div>
   );

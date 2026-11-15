@@ -4,7 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 
 import { api, unwrap } from "./client";
 
-export interface PayItem { name: string; kind: "earning" | "deduction"; amount: string | number; taxable?: boolean }
+export interface PayItem { name: string; kind: "earning" | "deduction"; amount: string | number; taxable?: boolean; advance?: string | null }
+export const ADVANCE_STATUS: Record<string, { label: string; tone: Tone }> = {
+  pending: { label: "Waiting for their supervisor", tone: "amber" }, recommended: { label: "Waiting for finance", tone: "amber" },
+  approved: { label: "Approved, not paid yet", tone: "blue" }, paid: { label: "Paid, being taken back", tone: "blue" },
+  recovered: { label: "Paid back", tone: "green" }, declined: { label: "Declined", tone: "red" }, cancelled: { label: "Cancelled", tone: "stone" },
+};
 
 export const LEAVE_TYPES = [
   { value: "annual", label: "Annual leave" }, { value: "sick", label: "Sick leave" }, { value: "maternity", label: "Maternity leave" },

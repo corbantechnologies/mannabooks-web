@@ -14,8 +14,8 @@ export function PayItemsEditor({ items, onChange, hint }: { items: PayItem[]; on
       <p className="text-sm font-medium">Allowances and deductions {hint && <span className="font-normal text-stone-500">{hint}</span>}</p>
       {items.map((item, i) => (
         <div key={i} className="grid grid-cols-[1fr_8rem_7rem_auto_auto] items-center gap-2">
-          <Input placeholder="Name" value={item.name} onChange={(e) => update(i, { name: e.target.value })} />
-          <Select value={item.kind} onChange={(e) => update(i, { kind: e.target.value as PayItem["kind"] })}><option value="earning">Allowance</option><option value="deduction">Deduction</option></Select>
+          <Input placeholder="Name" value={item.name} readOnly={!!item.advance} title={item.advance ? "Takes back a salary advance. Change the amount, or remove it to take it back next time." : undefined} onChange={(e) => update(i, { name: e.target.value })} />
+          <Select value={item.kind} disabled={!!item.advance} onChange={(e) => update(i, { kind: e.target.value as PayItem["kind"] })}><option value="earning">Allowance</option><option value="deduction">Deduction</option></Select>
           <Input inputMode="decimal" className="text-right" placeholder="Amount" value={String(item.amount)} onChange={(e) => update(i, { amount: e.target.value })} />
           {item.kind === "earning" ? (
             <label className="flex items-center gap-1 text-xs text-stone-600"><input type="checkbox" checked={item.taxable ?? true} onChange={(e) => update(i, { taxable: e.target.checked })} /> Taxed</label>
