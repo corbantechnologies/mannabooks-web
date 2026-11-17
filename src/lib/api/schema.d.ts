@@ -1844,6 +1844,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/cards/payouts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Paystack's payouts to the business's bank, and whether each is recorded. */
+        get: operations["w_cards_payouts_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/payouts/{id}/record/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Finance records a payout after checking it: a Bank transfer to the payout bank. */
+        post: operations["w_cards_payouts_record_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/cards/payouts/sync/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Ask Paystack for its payouts now (it also happens every morning), and record the ones paid out. */
+        post: operations["w_cards_payouts_sync_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/cards/transactions/": {
         parameters: {
             query?: never;
@@ -4514,6 +4565,115 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/owners/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Owners, partners, directors and shareholders, each with their balances. */
+        get: operations["w_owners_list"];
+        put?: never;
+        /** @description Owners, partners, directors and shareholders, each with their balances. */
+        post: operations["w_owners_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_owners_retrieve"];
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        put: operations["w_owners_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_owners_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/{id}/statement/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One person's account: every transaction, oldest first, with their balances after each. */
+        get: operations["w_owners_statement_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/transactions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Capital, shares, loans each way and drawings. Recording one posts its entry. */
+        get: operations["w_owners_transactions_list"];
+        put?: never;
+        /** @description Capital, shares, loans each way and drawings. Recording one posts its entry. */
+        post: operations["w_owners_transactions_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/transactions/{id}/void/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_owners_transactions_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/pay-runs/": {
         parameters: {
             query?: never;
@@ -6168,6 +6328,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_report_submissions_review_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/report-submissions/{id}/start/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A task: say you've started on it. */
+        post: operations["w_report_submissions_start_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8538,6 +8715,15 @@ export interface components {
             readonly webhook_url: string | null;
             /** Format: uuid */
             deposit_account_id?: string | null;
+            /**
+             * Format: uuid
+             * @description The bank Paystack pays out to; payouts are recorded there by themselves
+             */
+            payout_account_id?: string | null;
+            /** @description Record a payout in the bank by itself when it matches its card payments exactly. Off: finance records each one after checking it */
+            auto_record_payouts?: boolean;
+            /** @description The bank account record of where card money waits (not one to choose as the payout bank). */
+            readonly transit_bank_account_id: string | null;
             is_active?: boolean;
             /** Format: date-time */
             readonly verified_at: string | null;
@@ -8550,8 +8736,90 @@ export interface components {
             secret_key?: string;
             /** Format: uuid */
             deposit_account_id?: string | null;
+            /**
+             * Format: uuid
+             * @description The bank Paystack pays out to; payouts are recorded there by themselves
+             */
+            payout_account_id?: string | null;
+            /** @description Record a payout in the bank by itself when it matches its card payments exactly. Off: finance records each one after checking it */
+            auto_record_payouts?: boolean;
             is_active?: boolean;
         };
+        CardPayout: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly settlement_id: string;
+            readonly status: components["schemas"]["CardPayoutStatusEnum"];
+            readonly status_label: string;
+            readonly currency: string;
+            /**
+             * Format: decimal
+             * @description The card payments in it, before fees
+             */
+            readonly total_amount: string;
+            /** Format: decimal */
+            readonly fees: string;
+            /**
+             * Format: decimal
+             * @description Refunds or chargebacks Paystack kept back
+             */
+            readonly deductions: string;
+            /**
+             * Format: decimal
+             * @description What reaches the bank
+             */
+            readonly amount: string;
+            /** Format: date */
+            readonly settlement_date: string | null;
+            /** @description Card payments in the payout */
+            readonly payments: number;
+            /** @description Of those, taken through MannaBooks */
+            readonly ours: number;
+            /**
+             * Format: decimal
+             * @description MannaBooks' card payments in it, less the fees booked with them
+             */
+            readonly our_net: string;
+            /**
+             * Format: decimal
+             * @description Payments in it not taken through MannaBooks, less their fees
+             */
+            readonly outside_net: string;
+            /** Format: decimal */
+            readonly difference: string;
+            readonly matches: boolean;
+            readonly is_recorded: boolean;
+            /** Format: uuid */
+            readonly transfer: string | null;
+            readonly transfer_number: string;
+            /** Format: uuid */
+            readonly bank_account: string | null;
+            readonly bank_account_name: string;
+            /**
+             * Format: uuid
+             * @description Where the payments taken outside MannaBooks were credited
+             */
+            readonly other_account: string | null;
+            /** Format: date-time */
+            readonly recorded_at: string | null;
+            /** @description Why it wasn't recorded by itself, or what is left to do */
+            readonly note: string;
+        };
+        CardPayoutRecordRequest: {
+            /**
+             * Format: uuid
+             * @description Where payments taken outside MannaBooks belong (e.g. a sales account)
+             */
+            other_account_id?: string | null;
+        };
+        /**
+         * @description * `pending` - On its way
+         *     * `processing` - On its way
+         *     * `success` - Paid out
+         *     * `failed` - Failed
+         * @enum {string}
+         */
+        CardPayoutStatusEnum: "pending" | "processing" | "success" | "failed";
         CardTransaction: {
             /** Format: uuid */
             readonly id: string;
@@ -10791,6 +11059,12 @@ export interface components {
          * @enum {string}
          */
         Kind3e9Enum: "customers" | "suppliers" | "products" | "opening_balances" | "employees" | "leads" | "accounts" | "fixed_assets" | "product_prices" | "product_units" | "recipes" | "stock_counts" | "open_invoices" | "open_bills";
+        /**
+         * @description * `report` - Report
+         *     * `task` - Task
+         * @enum {string}
+         */
+        Kind6b8Enum: "report" | "task";
         Lead: {
             /** Format: uuid */
             readonly id: string;
@@ -11027,9 +11301,10 @@ export interface components {
          *     * `exclude` - exclude
          *     * `include` - include
          *     * `record` - record
+         *     * `owner` - owner
          * @enum {string}
          */
-        LineActionActionEnum: "match" | "unmatch" | "exclude" | "include" | "record";
+        LineActionActionEnum: "match" | "unmatch" | "exclude" | "include" | "record" | "owner";
         LineActionRequest: {
             action: components["schemas"]["LineActionActionEnum"];
             /** Format: uuid */
@@ -11039,6 +11314,20 @@ export interface components {
             /** Format: uuid */
             tax_rate_id?: string | null;
             description?: string;
+            /**
+             * Format: uuid
+             * @description action owner: the owner or director the money is from or to
+             */
+            owner_id?: string;
+            /** @description action owner: capital, shares, loan_in, loan_in_repaid, loan_out, loan_out_repaid, drawings */
+            owner_kind?: string;
+            /**
+             * Format: decimal
+             * @default 0.00
+             */
+            share_premium: string;
+            /** @default false */
+            allow_over: boolean;
         };
         LinkPayment: {
             /** Format: uuid */
@@ -11549,6 +11838,14 @@ export interface components {
             readonly total_credit: string;
             readonly journal_number: string;
         };
+        /**
+         * @description * `capital` - Capital and shares
+         *     * `owed_to` - Owed to them
+         *     * `owed_by` - Owed by them
+         *     * `drawings` - Drawings
+         * @enum {string}
+         */
+        OpeningBalanceEnum: "capital" | "owed_to" | "owed_by" | "drawings";
         OpeningBalanceLine: {
             /** Format: uuid */
             account_id: string;
@@ -11684,6 +11981,190 @@ export interface components {
             cost_center_id?: string | null;
             /** Format: uuid */
             project_id?: string | null;
+        };
+        Owner: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            role?: components["schemas"]["RoleEnum"];
+            readonly role_label: string;
+            phone?: string;
+            email?: string;
+            /** @description National ID or passport */
+            id_number?: string;
+            kra_pin?: string;
+            notes?: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        OwnerBalances: {
+            /**
+             * Format: decimal
+             * @description Capital and shares put in
+             */
+            capital: string;
+            /**
+             * Format: decimal
+             * @description What the business owes them (their loans to it)
+             */
+            owed_to: string;
+            /**
+             * Format: decimal
+             * @description What they owe the business (its loans to them)
+             */
+            owed_by: string;
+            /**
+             * Format: decimal
+             * @description Drawings, all time
+             */
+            drawings: string;
+        };
+        OwnerRequest: {
+            name: string;
+            role?: components["schemas"]["RoleEnum"];
+            phone?: string;
+            email?: string;
+            /** @description National ID or passport */
+            id_number?: string;
+            kra_pin?: string;
+            notes?: string;
+            is_active?: boolean;
+        };
+        OwnerStatement: {
+            owner: components["schemas"]["Owner"];
+            balances: components["schemas"]["OwnerBalances"];
+            rows: components["schemas"]["OwnerStatementRow"][];
+        };
+        OwnerStatementRow: {
+            transaction: components["schemas"]["OwnerTransaction"];
+            /** Format: decimal */
+            money_in: string | null;
+            /** Format: decimal */
+            money_out: string | null;
+            /** Format: decimal */
+            capital: string;
+            /** Format: decimal */
+            owed_to: string;
+            /** Format: decimal */
+            owed_by: string;
+            /** Format: decimal */
+            drawings: string;
+        };
+        OwnerSummary: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            role?: components["schemas"]["RoleEnum"];
+            readonly role_label: string;
+            phone?: string;
+            email?: string;
+            /** @description National ID or passport */
+            id_number?: string;
+            kra_pin?: string;
+            notes?: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly balances: components["schemas"]["OwnerBalances"];
+            readonly drawings_this_year: string;
+            readonly last_date: string | null;
+        };
+        OwnerTransaction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** Format: uuid */
+            owner_id: string;
+            readonly owner_name: string;
+            kind: components["schemas"]["OwnerTransactionKindEnum"];
+            readonly kind_label: string;
+            /**
+             * @description For a balance brought forward: which of their balances it is
+             *
+             *     * `capital` - Capital and shares
+             *     * `owed_to` - Owed to them
+             *     * `owed_by` - Owed by them
+             *     * `drawings` - Drawings
+             */
+            opening_balance?: components["schemas"]["OpeningBalanceEnum"] | components["schemas"]["BlankEnum"];
+            readonly opening_balance_label: string;
+            /** Format: date */
+            transaction_date?: string;
+            /** Format: uuid */
+            bank_account_id?: string | null;
+            readonly bank_account_name: string;
+            /** Format: decimal */
+            amount: string;
+            /** @description Shares issued: how many */
+            share_count?: number | null;
+            /**
+             * Format: decimal
+             * @description Shares issued: the part paid above the shares' face value
+             */
+            share_premium?: string;
+            /**
+             * Format: date
+             * @description A loan: when it is to be repaid, if agreed
+             */
+            repay_by?: string | null;
+            reference?: string;
+            notes?: string;
+            readonly money_in: boolean;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `capital` - Capital put in
+         *     * `shares` - Shares issued
+         *     * `loan_in` - Lent to the business
+         *     * `loan_in_repaid` - Loan repaid to them
+         *     * `loan_out` - Lent to them by the business
+         *     * `loan_out_repaid` - Loan repaid by them
+         *     * `drawings` - Drawings
+         *     * `opening` - Balance brought forward
+         * @enum {string}
+         */
+        OwnerTransactionKindEnum: "capital" | "shares" | "loan_in" | "loan_in_repaid" | "loan_out" | "loan_out_repaid" | "drawings" | "opening";
+        OwnerTransactionRequest: {
+            /** Format: uuid */
+            owner_id: string;
+            kind: components["schemas"]["OwnerTransactionKindEnum"];
+            /**
+             * @description For a balance brought forward: which of their balances it is
+             *
+             *     * `capital` - Capital and shares
+             *     * `owed_to` - Owed to them
+             *     * `owed_by` - Owed by them
+             *     * `drawings` - Drawings
+             */
+            opening_balance?: components["schemas"]["OpeningBalanceEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: date */
+            transaction_date?: string;
+            /** Format: uuid */
+            bank_account_id?: string | null;
+            /** Format: decimal */
+            amount: string;
+            /** @description Shares issued: how many */
+            share_count?: number | null;
+            /**
+             * Format: decimal
+             * @description Shares issued: the part paid above the shares' face value
+             */
+            share_premium?: string;
+            /**
+             * Format: date
+             * @description A loan: when it is to be repaid, if agreed
+             */
+            repay_by?: string | null;
+            reference?: string;
+            notes?: string;
+            /**
+             * @description Record a repayment even though it is more than the balance
+             * @default false
+             */
+            allow_over: boolean;
         };
         PaginatedActivityList: {
             /** @example 123 */
@@ -11849,6 +12330,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Business"][];
+        };
+        PaginatedCardPayoutList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CardPayout"][];
         };
         PaginatedCardTransactionList: {
             /** @example 123 */
@@ -12359,6 +12855,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["OtherIncome"][];
+        };
+        PaginatedOwnerSummaryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["OwnerSummary"][];
+        };
+        PaginatedOwnerTransactionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["OwnerTransaction"][];
         };
         PaginatedPayRunList: {
             /** @example 123 */
@@ -13502,6 +14028,17 @@ export interface components {
             bank_account_number?: string;
             mpesa_phone?: string;
         };
+        PatchedOwnerRequest: {
+            name?: string;
+            role?: components["schemas"]["RoleEnum"];
+            phone?: string;
+            email?: string;
+            /** @description National ID or passport */
+            id_number?: string;
+            kra_pin?: string;
+            notes?: string;
+            is_active?: boolean;
+        };
         PatchedPaymentLinkRequest: {
             title?: string;
             description?: string;
@@ -13807,6 +14344,12 @@ export interface components {
             instructions?: string;
             remind_days_before?: number;
             status?: components["schemas"]["ReportRequestStatusEnum"];
+            priority?: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            due_time?: string | null;
         };
         PatchedRoleRequest: {
             name?: string;
@@ -14906,6 +15449,13 @@ export interface components {
             is_active?: boolean;
             items?: components["schemas"]["PriceListItemRequest"][];
         };
+        /**
+         * @description * `low` - Low
+         *     * `normal` - Normal
+         *     * `high` - High
+         * @enum {string}
+         */
+        PriorityA08Enum: "low" | "normal" | "high";
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Product: {
             /** Format: uuid */
@@ -16053,6 +16603,19 @@ export interface components {
         ReportRequest: {
             /** Format: uuid */
             readonly id: string;
+            /**
+             * @description A report to write, or a task to do (marked done, with a note or file if needed)
+             *
+             *     * `report` - Report
+             *     * `task` - Task
+             */
+            kind?: components["schemas"]["Kind6b8Enum"];
+            priority?: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            due_time?: string | null;
             title: string;
             instructions?: string;
             audience?: components["schemas"]["AudienceEnum"];
@@ -16077,6 +16640,19 @@ export interface components {
             readonly created_at: string;
         };
         ReportRequestRequest: {
+            /**
+             * @description A report to write, or a task to do (marked done, with a note or file if needed)
+             *
+             *     * `report` - Report
+             *     * `task` - Task
+             */
+            kind?: components["schemas"]["Kind6b8Enum"];
+            priority?: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            due_time?: string | null;
             title: string;
             instructions?: string;
             audience?: components["schemas"]["AudienceEnum"];
@@ -16126,6 +16702,16 @@ export interface components {
             readonly id: string;
             /** Format: uuid */
             readonly request_id: string;
+            readonly kind: string;
+            readonly priority: string;
+            /** Format: time */
+            readonly due_time: string | null;
+            /**
+             * Format: date-time
+             * @description A task: when they said they started it
+             */
+            readonly started_at: string | null;
+            readonly can_start: boolean;
             readonly title: string;
             readonly instructions: string;
             readonly has_template: boolean;
@@ -16154,13 +16740,14 @@ export interface components {
         };
         /**
          * @description * `pending` - Waiting
+         *     * `in_progress` - In progress
          *     * `submitted` - Submitted
          *     * `late` - Overdue
          *     * `accepted` - Accepted
          *     * `returned` - Sent back
          * @enum {string}
          */
-        ReportSubmissionStatusEnum: "pending" | "submitted" | "late" | "accepted" | "returned";
+        ReportSubmissionStatusEnum: "pending" | "in_progress" | "submitted" | "late" | "accepted" | "returned";
         ReportSubmitRequest: {
             /** @default  */
             body: string;
@@ -16172,6 +16759,12 @@ export interface components {
             instructions?: string;
             remind_days_before?: number;
             status?: components["schemas"]["ReportRequestStatusEnum"];
+            priority?: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            due_time?: string | null;
         };
         ReverseRequest: {
             /** Format: date */
@@ -16203,6 +16796,14 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /**
+         * @description * `owner` - Owner
+         *     * `partner` - Partner
+         *     * `director` - Director
+         *     * `shareholder` - Shareholder
+         * @enum {string}
+         */
+        RoleEnum: "owner" | "partner" | "director" | "shareholder";
         RoleRequest: {
             name: string;
             description?: string;
@@ -21360,6 +21961,97 @@ export interface operations {
             };
         };
     };
+    w_cards_payouts_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `pending` - On its way
+                 *     * `processing` - On its way
+                 *     * `success` - Paid out
+                 *     * `failed` - Failed
+                 */
+                status?: "failed" | "pending" | "processing" | "success";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCardPayoutList"];
+                };
+            };
+        };
+    };
+    w_cards_payouts_record_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CardPayoutRecordRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CardPayoutRecordRequest"];
+                "multipart/form-data": components["schemas"]["CardPayoutRecordRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardPayout"];
+                };
+            };
+        };
+    };
+    w_cards_payouts_sync_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardPayout"][];
+                };
+            };
+        };
+    };
     w_cards_transactions_list: {
         parameters: {
             query?: {
@@ -26445,6 +27137,268 @@ export interface operations {
             };
         };
     };
+    w_owners_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `owner` - Owner
+                 *     * `partner` - Partner
+                 *     * `director` - Director
+                 *     * `shareholder` - Shareholder
+                 */
+                role?: "director" | "owner" | "partner" | "shareholder";
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOwnerSummaryList"];
+                };
+            };
+        };
+    };
+    w_owners_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OwnerRequest"];
+                "multipart/form-data": components["schemas"]["OwnerRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Owner"];
+                };
+            };
+        };
+    };
+    w_owners_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Owner"];
+                };
+            };
+        };
+    };
+    w_owners_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OwnerRequest"];
+                "multipart/form-data": components["schemas"]["OwnerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Owner"];
+                };
+            };
+        };
+    };
+    w_owners_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedOwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedOwnerRequest"];
+                "multipart/form-data": components["schemas"]["PatchedOwnerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Owner"];
+                };
+            };
+        };
+    };
+    w_owners_statement_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerStatement"];
+                };
+            };
+        };
+    };
+    w_owners_transactions_list: {
+        parameters: {
+            query?: {
+                bank_account?: string;
+                /**
+                 * @description * `capital` - Capital put in
+                 *     * `shares` - Shares issued
+                 *     * `loan_in` - Lent to the business
+                 *     * `loan_in_repaid` - Loan repaid to them
+                 *     * `loan_out` - Lent to them by the business
+                 *     * `loan_out_repaid` - Loan repaid by them
+                 *     * `drawings` - Drawings
+                 *     * `opening` - Balance brought forward
+                 */
+                kind?: "capital" | "drawings" | "loan_in" | "loan_in_repaid" | "loan_out" | "loan_out_repaid" | "opening" | "shares";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                owner?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `posted` - Posted
+                 *     * `void` - Void
+                 */
+                status?: "posted" | "void";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOwnerTransactionList"];
+                };
+            };
+        };
+    };
+    w_owners_transactions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerTransactionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OwnerTransactionRequest"];
+                "multipart/form-data": components["schemas"]["OwnerTransactionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerTransaction"];
+                };
+            };
+        };
+    };
+    w_owners_transactions_void_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerTransaction"];
+                };
+            };
+        };
+    };
     w_pay_runs_list: {
         parameters: {
             query?: {
@@ -29733,12 +30687,13 @@ export interface operations {
                 search?: string;
                 /**
                  * @description * `pending` - Waiting
+                 *     * `in_progress` - In progress
                  *     * `submitted` - Submitted
                  *     * `late` - Overdue
                  *     * `accepted` - Accepted
                  *     * `returned` - Sent back
                  */
-                status?: "accepted" | "late" | "pending" | "returned" | "submitted";
+                status?: "accepted" | "in_progress" | "late" | "pending" | "returned" | "submitted";
             };
             header?: never;
             path: {
@@ -29826,6 +30781,28 @@ export interface operations {
                 "multipart/form-data": components["schemas"]["ReviewRequest"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportSubmission"];
+                };
+            };
+        };
+    };
+    w_report_submissions_start_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {

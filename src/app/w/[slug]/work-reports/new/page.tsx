@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -14,6 +14,7 @@ import { useWorkspace } from "@/lib/workspace";
 export default function NewWorkReportPage() {
   const { slug, can, context } = useWorkspace();
   const router = useRouter();
+  const task = useSearchParams().get("kind") === "task";
   const manage = can("workreports.manage");
   // admins can set a request up for someone else (the CEO, a manager): it is then theirs
   const members = useQuery({
@@ -25,7 +26,9 @@ export default function NewWorkReportPage() {
   const forName = (members.data?.results ?? []).find((m) => m.id === forId)?.user.full_name ?? "them";
   const people = useQuery({ queryKey: ["report-people", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/people/", { params: { path: { workspace: slug } } })) });
   const departments = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })) });
-  const [f, setF] = useState({ title: "", instructions: "", audience: "team", department_id: "", frequency: "weekly", first_due_date: "", remind_days_before: "1" });
+  const [f, setF] = useState({ kind: task ? "task" : "report", priority: "normal", due_time: "", title: "", instructions: "", audience: "team", department_id: "",
+    frequency: task ? "once" : "weekly", first_due_date: "", remind_days_before: "1" });
+  const isTask = f.kind === "task";
   const [chosen, setChosen] = useState<string[]>([]);
   const [template, setTemplate] = useState<File | null>(null);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF((p) => ({ ...p, [k]: e.target.value }));
@@ -44,14 +47,22 @@ export default function NewWorkReportPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
-      <PageHeader title="Ask for a report" guide="work-reports" description="People get an email, a reminder before it is due, and you are told when it comes in or is late." />
+      <PageHeader title={isTask ? "Give a task" : "Ask for a report"} guide="work-reports"
+        description={isTask ? "People get an email and a reminder, can mark it in progress, then done. You are told when it is done or late." : "People get an email, a reminder before it is due, and you are told when it comes in or is late."} />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <Card className="space-y-3 p-4">
-          <Field label="Report" error={fieldError(save.error, "title")}><Input required value={f.title} onChange={set("title")} placeholder="Weekly sales and visits" /></Field>
-          <Field label="What to include"><Textarea rows={4} value={f.instructions} onChange={set("instructions")} placeholder="Sales by customer, shops visited, orders expected next week, problems." /></Field>
-          <Field label="Template (optional)" hint="A form people download, fill and upload back. PDF, Word, Excel up to 10 MB.">
+          <div className="flex gap-1 rounded-md bg-stone-100 p-1 text-sm">
+            {[{ v: "report", l: "A report to write" }, { v: "task", l: "A task to do" }].map((o) => (
+              <button key={o.v} type="button" onClick={() => setF((p) => ({ ...p, kind: o.v, frequency: o.v === "task" && p.frequency === "weekly" && !p.title ? "once" : p.frequency }))}
+                className={`flex-1 rounded px-3 py-1.5 ${f.kind === o.v ? "bg-white font-medium shadow-sm" : "text-stone-600"}`}>{o.l}</button>
+            ))}
+          </div>
+          <Field label={isTask ? "Task" : "Report"} error={fieldError(save.error, "title")}><Input required value={f.title} onChange={set("title")} placeholder={isTask ? "Collect the signed lease from the landlord" : "Weekly sales and visits"} /></Field>
+          <Field label={isTask ? "Details" : "What to include"}><Textarea rows={4} value={f.instructions} onChange={set("instructions")} placeholder={isTask ? "Where, who to see, what done looks like." : "Sales by customer, shops visited, orders expected next week, problems."} /></Field>
+          {isTask && <Field label="Priority"><Select value={f.priority} onChange={set("priority")}><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></Select></Field>}
+          {!isTask && <Field label="Template (optional)" hint="A form people download, fill and upload back. PDF, Word, Excel up to 10 MB.">
             <input type="file" onChange={(e) => setTemplate(e.target.files?.[0] ?? null)} className="block w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-2 file:text-sm" />
-          </Field>
+          </Field>}
         </Card>
         <Card className="space-y-3 p-4">
           {manage && (members.data?.results ?? []).length > 1 && (
@@ -76,14 +87,15 @@ export default function NewWorkReportPage() {
             </div>
           )}
           {f.audience === "team" && <p className="text-xs text-stone-500">{forOther ? `Everyone in ${forName}'s reporting line, from "Reports to" on employee records.` : list.length ? `${list.length} people can be asked.` : "Nobody reports to you yet."}</p>}
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-4">
             <Field label="How often"><Select value={f.frequency} onChange={set("frequency")}>{REPORT_FREQUENCIES.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}</Select></Field>
             <Field label={f.frequency === "once" ? "Due on" : "First due on"} error={fieldError(save.error, "first_due_date")}><Input type="date" required value={f.first_due_date} onChange={set("first_due_date")} /></Field>
+            <Field label="By (time)" hint="Blank: by the end of the day." error={fieldError(save.error, "due_time")}><Input type="time" value={f.due_time} onChange={set("due_time")} /></Field>
             <Field label="Remind (days before)"><Input type="number" min="0" max="14" value={f.remind_days_before} onChange={set("remind_days_before")} /></Field>
           </div>
         </Card>
         <FormError error={save.error} />
-        <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button><Button type="submit" loading={save.isPending}>Send the request</Button></div>
+        <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button><Button type="submit" loading={save.isPending}>{isTask ? "Give the task" : "Send the request"}</Button></div>
       </form>
     </div>
   );

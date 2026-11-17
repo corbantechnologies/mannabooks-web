@@ -50,14 +50,14 @@ export default function EmployeeProfilePage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Tile label="Reports on time" value={rec?.on_time_percent == null ? "-" : `${rec.on_time_percent}%`} note={rec ? `${rec.on_time} of ${rec.counted} due${rec.missed ? `, ${rec.missed} never came in` : ""}` : "None due yet"} />
+        <Tile label="Reports and tasks on time" value={rec?.on_time_percent == null ? "-" : `${rec.on_time_percent}%`} note={rec ? `${rec.on_time} of ${rec.counted} due${rec.missed ? `, ${rec.missed} never came in` : ""}` : "None due yet"} />
         <Tile label={`Annual leave left in ${p.leave.year}`} value={`${Number(p.leave.remaining)} days`} note={`${Number(p.leave.taken)} taken · ${Number(p.leave.pending)} waiting`} />
         {p.pay && <Tile label={p.pay.pay_type === "salary" ? "Basic salary" : p.pay.pay_type_label} value={fmt(p.pay.pay_type === "salary" ? p.pay.basic_salary : p.pay.pay_rate)} note={p.pay.pay_type === "salary" ? "a month" : p.pay.pay_type === "daily" ? "a day" : "an hour"} />}
         {p.advances && <Tile label="Advance still owed" value={fmt(p.advances.reduce((s, a) => s + Number(a.outstanding), 0))} note={`${p.advances.length} advance${p.advances.length === 1 ? "" : "s"}`} />}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Section title="Work reports" empty={!p.work_reports.recent.length && "No reports asked of them yet"}>
+        <Section title="Reports and tasks" empty={!p.work_reports.recent.length && "No reports or tasks asked of them yet"}>
           <Table head={["Report", "Due", "Status"]}>
             {p.work_reports.recent.map((r) => (
               <tr key={r.id}><Td>{r.title}{r.period_label ? <span className="text-stone-500">, {r.period_label}</span> : null}</Td><Td>{fmtDate(r.due_date)}</Td>
