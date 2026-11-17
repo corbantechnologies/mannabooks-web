@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -101,17 +101,33 @@ export function OwnerEditor({ owner, onClose }: { owner: Owner | "new"; onClose:
   const qc = useQueryClient();
   const o = owner === "new" ? null : owner;
   const [form, setForm] = useState({ name: o?.name ?? "", role: o?.role ?? "director", phone: o?.phone ?? "", email: o?.email ?? "", id_number: o?.id_number ?? "",
-    kra_pin: o?.kra_pin ?? "", notes: o?.notes ?? "", is_active: o?.is_active ?? true });
+    kra_pin: o?.kra_pin ?? "", notes: o?.notes ?? "", is_active: o?.is_active ?? true, membership_id: o?.membership_id ?? "" });
+  const logins = useQuery({ queryKey: ["owner-logins", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/owners/logins/", wsPath(slug))) });
+  const link = (id: string) => {
+    const m = (logins.data ?? []).find((x) => x.id === id);
+    setForm((p) => ({ ...p, membership_id: id, name: p.name || m?.full_name || "", email: p.email || m?.email || "", phone: p.phone || m?.phone || "" }));
+  };
   const save = useMutation({
     mutationFn: async () => o
-      ? unwrap(await api.PATCH("/api/v1/w/{workspace}/owners/{id}/", { params: { path: { workspace: slug, id: o.id } }, body: form as never }))
-      : unwrap(await api.POST("/api/v1/w/{workspace}/owners/", { ...wsPath(slug), body: form as never })),
+      ? unwrap(await api.PATCH("/api/v1/w/{workspace}/owners/{id}/", { params: { path: { workspace: slug, id: o.id } }, body: { ...form, membership_id: form.membership_id || null } as never }))
+      : unwrap(await api.POST("/api/v1/w/{workspace}/owners/", { ...wsPath(slug), body: { ...form, membership_id: form.membership_id || null } as never })),
     onSuccess: () => { toast.success("Saved"); void qc.invalidateQueries({ queryKey: ["owners", slug] }); void qc.invalidateQueries({ queryKey: ["owner-statement", slug] }); onClose(); },
   });
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((p) => ({ ...p, [key]: e.target.value }));
   return (
     <Modal open title={o ? `Edit ${o.name}` : "Add an owner or director"} onClose={onClose}>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+        <Field label="Their MannaBooks login (optional)" error={fieldError(save.error, "membership_id")}
+          hint="If they use MannaBooks: their name and contacts fill in, they see their own account on their Me page, and they can't record their own money. The account stays here even if the login is removed.">
+          <Select value={form.membership_id} onChange={(e) => link(e.target.value)}>
+            <option value="">No login</option>
+            {(logins.data ?? []).map((m) => (
+              <option key={m.id} value={m.id} disabled={Boolean(m.linked_to) && m.id !== o?.membership_id}>
+                {m.full_name} ({m.email}){m.linked_to && m.id !== o?.membership_id ? `: linked to ${m.linked_to}` : ""}
+              </option>
+            ))}
+          </Select>
+        </Field>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} /></Field>
           <Field label="Role"><Select value={form.role} onChange={set("role")}>{OWNER_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</Select></Field>

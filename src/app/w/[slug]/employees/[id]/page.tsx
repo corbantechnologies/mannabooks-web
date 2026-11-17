@@ -49,8 +49,10 @@ export default function EmployeeProfilePage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Tile label="Reports on time" value={rec?.on_time_percent == null ? "-" : `${rec.on_time_percent}%`} note={rec ? `${rec.on_time} of ${rec.counted} due${rec.missed ? `, ${rec.missed} never came in` : ""}` : "None due yet"} />
+        {p.tasks && <Tile label="Tasks done on time" value={p.tasks.on_time_percent == null ? "-" : `${p.tasks.on_time_percent}%`}
+          note={`${p.tasks.done_on_time + p.tasks.done_late} done${p.tasks.done_late ? `, ${p.tasks.done_late} late` : ""} · ${p.tasks.open} open${p.tasks.overdue ? ` (${p.tasks.overdue} overdue)` : ""}${p.tasks.taken_from_department ? ` · took ${p.tasks.taken_from_department} from the department` : ""}${p.tasks.handed_back ? `, handed back ${p.tasks.handed_back}` : ""}`} />}
         <Tile label={`Annual leave left in ${p.leave.year}`} value={`${Number(p.leave.remaining)} days`} note={`${Number(p.leave.taken)} taken · ${Number(p.leave.pending)} waiting`} />
         {p.pay && <Tile label={p.pay.pay_type === "salary" ? "Basic salary" : p.pay.pay_type_label} value={fmt(p.pay.pay_type === "salary" ? p.pay.basic_salary : p.pay.pay_rate)} note={p.pay.pay_type === "salary" ? "a month" : p.pay.pay_type === "daily" ? "a day" : "an hour"} />}
         {p.advances && <Tile label="Advance still owed" value={fmt(p.advances.reduce((s, a) => s + Number(a.outstanding), 0))} note={`${p.advances.length} advance${p.advances.length === 1 ? "" : "s"}`} />}

@@ -4634,6 +4634,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/owners/logins/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business's active logins, to link an owner or director to theirs (with the owner record each is linked to). */
+        get: operations["w_owners_logins_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/mine/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own owner or director account, if your login is linked to one: read-only, no permission needed. 404: none. */
+        get: operations["w_owners_mine_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/owners/transactions/": {
         parameters: {
             query?: never;
@@ -7424,10 +7458,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description `?box=mine` (given to me, the default), `given` (I gave to others), or `all` (tasks.view). */
+        /**
+         * @description `?box=mine` (mine, and untaken tasks of my departments: the default), `given` (I gave to others),
+         *     `department` (every task of the departments I head), or `all` (everything I may see).
+         */
         get: operations["w_tasks_list"];
         put?: never;
-        /** @description `?box=mine` (given to me, the default), `given` (I gave to others), or `all` (tasks.view). */
+        /**
+         * @description `?box=mine` (mine, and untaken tasks of my departments: the default), `given` (I gave to others),
+         *     `department` (every task of the departments I head), or `all` (everything I may see).
+         */
         post: operations["w_tasks_create"];
         delete?: never;
         options?: never;
@@ -7470,6 +7510,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/departments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description How each department handles its tasks: how long they wait to be taken, and how they end. Heads see their own. */
+        get: operations["w_tasks_departments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tasks/people/": {
         parameters: {
             query?: never;
@@ -7477,8 +7534,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description The colleagues you may give tasks to: yourself, your reporting line (and department), or anyone with tasks.assign. */
-        get: operations["w_tasks_people_list"];
+        /**
+         * @description Who you may give tasks to: yourself, your reporting line (and the department you head), or anyone and any department
+         *     with tasks.assign.
+         */
+        get: operations["w_tasks_people_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8135,6 +8195,12 @@ export interface components {
             readonly full_name: string;
             readonly job_title: string;
             readonly is_me: boolean;
+        };
+        AssignableDepartment: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            readonly people: number;
         };
         /**
          * @description * `team` - Everyone who reports to me
@@ -9748,6 +9814,20 @@ export interface components {
             modules?: unknown;
             is_active?: boolean;
         };
+        DepartmentTaskRecord: {
+            /** Format: uuid */
+            department_id: string;
+            department: string;
+            given: number;
+            /** @description Not taken by anyone yet */
+            waiting: number;
+            taken: number;
+            /** Format: double */
+            median_hours_to_take: number | null;
+            done_on_time: number;
+            done_late: number;
+            handed_back: number;
+        };
         DepreciationHistory: {
             /** Format: date */
             month_end: string;
@@ -9917,6 +9997,8 @@ export interface components {
             advances: components["schemas"]["_ProfileAdvance"][] | null;
             leave: components["schemas"]["_ProfileLeave"];
             work_reports: components["schemas"]["_ProfileReports"];
+            /** @description Their tasks, for staff with a login */
+            tasks: components["schemas"]["PersonTaskRecord"] | null;
             /** @description The last 90 days in MannaBooks, for staff with a login */
             activity: components["schemas"]["_ProfileActivity"] | null;
         };
@@ -12072,6 +12154,12 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
+            readonly membership_name: string;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -12097,6 +12185,16 @@ export interface components {
              */
             drawings: string;
         };
+        OwnerLogin: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            /** Format: email */
+            email: string;
+            phone: string;
+            /** @description The owner record this login is already linked to */
+            linked_to: string | null;
+        };
         OwnerRequest: {
             name: string;
             role?: components["schemas"]["RoleEnum"];
@@ -12107,6 +12205,11 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
         };
         OwnerStatement: {
             owner: components["schemas"]["Owner"];
@@ -12141,6 +12244,12 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
+            readonly membership_name: string;
             /** Format: date-time */
             readonly created_at: string;
             readonly balances: components["schemas"]["OwnerBalances"];
@@ -14130,6 +14239,11 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
         };
         PatchedPaymentLinkRequest: {
             title?: string;
@@ -15197,6 +15311,15 @@ export interface components {
             readonly full_name: string;
             job_title?: string;
             readonly department_name: string;
+        };
+        PersonTaskRecord: {
+            done_on_time: number;
+            done_late: number;
+            open: number;
+            overdue: number;
+            taken_from_department: number;
+            handed_back: number;
+            on_time_percent: number | null;
         };
         Pipeline: {
             stages: components["schemas"]["Stage"][];
@@ -17974,8 +18097,20 @@ export interface components {
             readonly title: string;
             readonly details: string;
             /** Format: uuid */
-            readonly assigned_to_id: string;
-            readonly assigned_to_name: string;
+            readonly assigned_to_id: string | null;
+            readonly assigned_to_name: string | null;
+            /** Format: uuid */
+            readonly department_id: string | null;
+            readonly department_name: string | null;
+            readonly in_pool: boolean;
+            /**
+             * Format: date-time
+             * @description A department task: when someone (last) took it
+             */
+            readonly taken_at: string | null;
+            readonly can_take: boolean;
+            readonly can_hand_out: boolean;
+            readonly events: components["schemas"]["TaskEvent"][];
             readonly given_by_name: string;
             readonly priority: components["schemas"]["PriorityA08Enum"];
             /**
@@ -18012,7 +18147,10 @@ export interface components {
             readonly created_at: string;
         };
         /**
-         * @description * `start` - start
+         * @description * `take` - take
+         *     * `hand_back` - hand_back
+         *     * `assign` - assign
+         *     * `start` - start
          *     * `done` - done
          *     * `accept` - accept
          *     * `return` - return
@@ -18020,18 +18158,25 @@ export interface components {
          *     * `reopen` - reopen
          * @enum {string}
          */
-        TaskActionActionEnum: "start" | "done" | "accept" | "return" | "cancel" | "reopen";
+        TaskActionActionEnum: "take" | "hand_back" | "assign" | "start" | "done" | "accept" | "return" | "cancel" | "reopen";
         TaskActionRequest: {
             action: components["schemas"]["TaskActionActionEnum"];
             /** @default  */
             note: string;
+            /**
+             * Format: uuid
+             * @description assign: the person in the department to give it to
+             */
+            to_id?: string;
         };
         TaskCreateRequest: {
             title: string;
             /** @default  */
             details: string;
-            /** @description Memberships who do it, one task each. Blank: yourself */
+            /** @description Memberships who do it, one task each. Blank (and no department): yourself */
             assignee_ids?: string[];
+            /** @description Departments: one task each, for anyone in it to take */
+            department_ids?: string[];
             /** Format: date */
             due_date?: string | null;
             /** Format: time */
@@ -18043,6 +18188,25 @@ export interface components {
              * @default true
              */
             needs_check: boolean;
+        };
+        TaskEvent: {
+            kind: components["schemas"]["TaskEventKindEnum"];
+            readonly kind_label: string;
+            readonly person: string;
+            readonly by_name: string;
+            /** Format: date-time */
+            readonly at: string;
+        };
+        /**
+         * @description * `taken` - Took it
+         *     * `handed_back` - Handed it back
+         *     * `assigned` - Given it by the head
+         * @enum {string}
+         */
+        TaskEventKindEnum: "taken" | "handed_back" | "assigned";
+        TaskPeople: {
+            people: components["schemas"]["Assignable"][];
+            departments: components["schemas"]["AssignableDepartment"][];
         };
         /**
          * @description * `todo` - To do
@@ -27496,6 +27660,53 @@ export interface operations {
             };
         };
     };
+    w_owners_logins_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerLogin"][];
+                };
+            };
+        };
+    };
+    w_owners_mine_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerStatement"];
+                };
+            };
+        };
+    };
     w_owners_transactions_list: {
         parameters: {
             query?: {
@@ -32874,7 +33085,7 @@ export interface operations {
         parameters: {
             query?: {
                 assigned_to?: string;
-                box?: "all" | "given" | "mine";
+                box?: "all" | "department" | "given" | "mine";
                 /** @description Only tasks still to do or in progress */
                 open?: boolean;
                 /** @description Which field to use when ordering the results. */
@@ -33047,7 +33258,7 @@ export interface operations {
             };
         };
     };
-    w_tasks_people_list: {
+    w_tasks_departments_list: {
         parameters: {
             query?: {
                 /** @description Which field to use when ordering the results. */
@@ -33068,7 +33279,28 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Assignable"][];
+                    "application/json": components["schemas"]["DepartmentTaskRecord"][];
+                };
+            };
+        };
+    };
+    w_tasks_people_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskPeople"];
                 };
             };
         };

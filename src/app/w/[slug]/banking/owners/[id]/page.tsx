@@ -40,6 +40,7 @@ export default function OwnerStatementPage() {
         <div>
           <h1 className="text-xl font-semibold">{owner.name}</h1>
           <p className="text-sm text-stone-600">{[owner.role_label, owner.phone, owner.email, owner.kra_pin && `KRA PIN ${owner.kra_pin}`].filter(Boolean).join(" · ")}</p>
+          {owner.membership_name && <p className="text-xs text-stone-500">Uses MannaBooks as {owner.membership_name}: sees this account on their Me page.</p>}
           {!owner.is_active && <Badge>No longer involved</Badge>}
         </div>
         <div className="flex flex-wrap gap-2 print:hidden">
