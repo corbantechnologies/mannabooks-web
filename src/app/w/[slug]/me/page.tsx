@@ -14,6 +14,7 @@ import { MyDetails } from "@/components/my-details";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 import { AskAdvance } from "@/components/ask-advance";
+import { MyOwnerAccount } from "@/components/my-owner-account";
 import { ADVANCE_STATUS } from "@/lib/api/people";
 
 /** Employee self-service: my leave and my payslips. Built for phones first. */
@@ -30,7 +31,12 @@ export default function MePage() {
     onSuccess: () => toast.success("Request cancelled"), onError: (e) => toast.error(e.message),
   });
   if (balance.error) {
-    return <Card className="mx-auto max-w-md p-6 text-center text-sm text-stone-600">Your sign-in isn&apos;t linked to an employee record yet. Ask HR to link it, then your leave and payslips appear here.</Card>;
+    return (
+      <div className="mx-auto max-w-md space-y-5">
+        <MyOwnerAccount />
+        <Card className="p-6 text-center text-sm text-stone-600">Your sign-in isn&apos;t linked to an employee record yet. Ask HR to link it, then your leave and payslips appear here.</Card>
+      </div>
+    );
   }
   const b = balance.data?.[0];
   return (
@@ -95,6 +101,7 @@ export default function MePage() {
           ))}
         </div>
       </section>
+      <MyOwnerAccount />
       {asking && <AskLeave onClose={() => setAsking(false)} />}
       {advancing && <AskAdvance onClose={() => setAdvancing(false)} />}
       <MyDetails />

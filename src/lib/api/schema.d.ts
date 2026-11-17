@@ -4634,6 +4634,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/owners/logins/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business's active logins, to link an owner or director to theirs (with the owner record each is linked to). */
+        get: operations["w_owners_logins_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/mine/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own owner or director account, if your login is linked to one: read-only, no permission needed. 404: none. */
+        get: operations["w_owners_mine_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/owners/transactions/": {
         parameters: {
             query?: never;
@@ -12072,6 +12106,12 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
+            readonly membership_name: string;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -12097,6 +12137,16 @@ export interface components {
              */
             drawings: string;
         };
+        OwnerLogin: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            /** Format: email */
+            email: string;
+            phone: string;
+            /** @description The owner record this login is already linked to */
+            linked_to: string | null;
+        };
         OwnerRequest: {
             name: string;
             role?: components["schemas"]["RoleEnum"];
@@ -12107,6 +12157,11 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
         };
         OwnerStatement: {
             owner: components["schemas"]["Owner"];
@@ -12141,6 +12196,12 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
+            readonly membership_name: string;
             /** Format: date-time */
             readonly created_at: string;
             readonly balances: components["schemas"]["OwnerBalances"];
@@ -14130,6 +14191,11 @@ export interface components {
             kra_pin?: string;
             notes?: string;
             is_active?: boolean;
+            /**
+             * Format: uuid
+             * @description Their MannaBooks login, if any
+             */
+            membership_id?: string | null;
         };
         PatchedPaymentLinkRequest: {
             title?: string;
@@ -27480,6 +27546,53 @@ export interface operations {
             header?: never;
             path: {
                 id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerStatement"];
+                };
+            };
+        };
+    };
+    w_owners_logins_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerLogin"][];
+                };
+            };
+        };
+    };
+    w_owners_mine_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
                 workspace: string;
             };
             cookie?: never;

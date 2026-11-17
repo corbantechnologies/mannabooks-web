@@ -13,6 +13,13 @@ Each person has their own account, like a customer statement. It shows four bala
 
 Choose **Add a person**, then enter their name and whether they are a director, shareholder, owner or partner. The phone, email, ID number and KRA PIN are optional, but auditors and KRA often ask for them on director loans. Someone who leaves can be marked as no longer involved; their history stays.
 
+**If they use MannaBooks**, choose their login under **Their MannaBooks login**. Their name and contacts fill in, and:
+
+- they see their own balances and recent entries on their **Me** page, read-only;
+- they can't record or void money on their own account, so finance does it. This keeps anyone from recording their own loan or repayment. The business owner is the exception.
+
+The owner record is kept separate from the login on purpose. A director's loan is still owed if their login is removed, and a director who is also on the payroll keeps their salary and their loans apart. Each login can be linked to one owner record.
+
 ## Recording money
 
 Choose **Record money**, then choose the person and what happened:
