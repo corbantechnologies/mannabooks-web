@@ -25,6 +25,10 @@ Your tasks are under **My tasks**, with what's due first. Open one, then:
 - **I've started**: the person who gave it sees **In progress**.
 - **Mark done**, with a note if it helps (what was done, where it is). If they asked to check it, it shows as **Done, to check** until they do.
 
+## Changing the status from the list
+
+Each task in the list has its status as a small dropdown, so you don't have to open it. The person doing it can move it to **In progress** or **Done**; the person who gave it can **Accept** it, **Cancel** it or **Reopen** it. **Send back** opens the task, because it needs a reason.
+
 ## Checking a task
 
 Tasks you gave are under **I gave**. When one is marked done, you get an email. Open it, then **Accept** it, or **Send back** with what is still needed. A sent-back task returns to the person as **In progress**.

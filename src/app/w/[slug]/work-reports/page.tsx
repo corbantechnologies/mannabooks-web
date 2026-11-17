@@ -42,7 +42,7 @@ export default function WorkReportsPage() {
         </div>} />
       <div className="mb-4 flex gap-1 overflow-x-auto border-b border-stone-200">
         {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={clsx("-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
+          <button key={t.key} onClick={() => setTab(t.key)} className={clsx("shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
         ))}
       </div>
       {tab === "record" ? (
