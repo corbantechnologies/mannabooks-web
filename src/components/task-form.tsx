@@ -17,6 +17,12 @@ export const TASK_STATUS: Record<string, { label: string; tone: "stone" | "blue"
 };
 
 /** "Due Fri 14 Nov by 15:00", "No deadline". */
+/** Who has it: a person, or "Sales department, nobody yet". */
+export function holder(t: Pick<Task, "assigned_to_name" | "department_name">) {
+  if (t.assigned_to_name) return t.department_name ? `${t.assigned_to_name} (${t.department_name})` : t.assigned_to_name;
+  return `${t.department_name} department, nobody has taken it yet`;
+}
+
 export function dueLabel(t: Pick<Task, "due_date" | "due_time">, fmtDate: (d: string) => string) {
   if (!t.due_date) return "No deadline";
   return `Due ${fmtDate(t.due_date)}${t.due_time ? ` by ${t.due_time.slice(0, 5)}` : ""}`;
@@ -30,20 +36,22 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
     queryKey: ["task-people", slug], enabled: !task,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/people/", wsPath(slug))),
   });
-  const list = people.data ?? [];
+  const list = people.data?.people ?? [];
+  const deps = people.data?.departments ?? [];
   const me = list.find((p) => p.is_me);
   const [chosen, setChosen] = useState<string[]>([]);
+  const [chosenDeps, setChosenDeps] = useState<string[]>([]);
   const [f, setF] = useState({
     title: task?.title ?? "", details: task?.details ?? "", due_date: task?.due_date ?? "", due_time: task?.due_time?.slice(0, 5) ?? "",
     priority: task?.priority ?? "normal", needs_check: task?.needs_check ?? true,
   });
-  const who = chosen.length ? chosen : me ? [me.id] : [];
+  const who = chosen.length || chosenDeps.length ? chosen : me ? [me.id] : [];
   const onlyMe = who.length === 1 && who[0] === me?.id;
   const save = useMutation({
     mutationFn: async () => {
       const body = { ...f, due_date: f.due_date || null, due_time: f.due_time || null };
       if (task) return [unwrap(await api.PATCH("/api/v1/w/{workspace}/tasks/{id}/", { params: { path: { workspace: slug, id: task.id } }, body: body as never }))];
-      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: who } as never })) as unknown as Task[];
+      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: who, department_ids: chosenDeps } as never })) as unknown as Task[];
     },
     onSuccess: (made) => {
       toast.success(task ? "Task changed" : made.length > 1 ? `${made.length} tasks given` : onlyMe ? "Added to your tasks" : "Task given");
@@ -59,12 +67,21 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
         <Field label="Task" error={fieldError(save.error, "title")}><Input required autoFocus value={f.title} onChange={set("title")} placeholder="Collect the signed lease from the landlord" /></Field>
         <Field label="Details"><Textarea rows={3} value={f.details} onChange={set("details")} placeholder="Where, who to see, what done looks like." /></Field>
         {!task && (
-          <Field label="Who does it" hint={list.length <= 1 ? "You can give tasks to yourself and to the people below you in the reporting line." : "Choose one or more: each gets their own task. None chosen: it's yours."}>
-            <div className="max-h-48 space-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
+          <Field label="Who does it" hint={list.length <= 1 && !deps.length ? "You can give tasks to yourself and to the people below you in the reporting line."
+            : "Choose people (each gets their own task) or a department (anyone in it takes it). None chosen: it's yours."}>
+            <div className="max-h-56 space-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
+              {deps.length > 0 && <p className="px-2 pt-1 text-xs font-semibold uppercase text-stone-500">A department</p>}
+              {deps.map((d) => (
+                <label key={d.id} className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-stone-50">
+                  <input type="checkbox" checked={chosenDeps.includes(d.id)} onChange={(e) => setChosenDeps((c) => (e.target.checked ? [...c, d.id] : c.filter((x) => x !== d.id)))} />
+                  {d.name} department<span className="text-xs text-stone-500">{d.people} {d.people === 1 ? "person" : "people"}, anyone can take it</span>
+                </label>
+              ))}
+              {deps.length > 0 && <p className="px-2 pt-2 text-xs font-semibold uppercase text-stone-500">People</p>}
               {list.map((p) => (
                 <label key={p.id} className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-stone-50">
                   <input type="checkbox" checked={who.includes(p.id)} onChange={(e) => setChosen((c) => {
-                    const base = c.length ? c : me ? [me.id] : [];
+                    const base = c.length || chosenDeps.length ? c : me ? [me.id] : [];
                     return e.target.checked ? [...base, p.id] : base.filter((x) => x !== p.id);
                   })} />
                   {p.is_me ? `Me (${p.full_name})` : p.full_name}{p.job_title && <span className="text-xs text-stone-500">{p.job_title}</span>}

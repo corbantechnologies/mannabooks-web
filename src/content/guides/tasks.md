@@ -1,6 +1,6 @@
 # Tasks
 
-A task is something to do by a date, and a time if it matters: collect the signed lease, fix the gate, bank the takings by 3pm, renew the business permit. Give one to yourself, to the people below you, or to any colleague if your role allows it. Tasks aren't tied to work reports or to employee records: anyone with a login can be given one.
+A task is something to do by a date, and a time if it matters: collect the signed lease, fix the gate, bank the takings by 3pm, renew the business permit. Give one to yourself, to the people below you, to any colleague if your role allows it, or to a whole department for anyone in it to take. Tasks aren't tied to work reports or to employee records: anyone with a login can be given one.
 
 ## Giving a task
 
@@ -17,6 +17,26 @@ Who you can give tasks to:
 - yourself;
 - the people below you in the reporting line (from **Reports to** on employee records), and your department if you head it;
 - **any colleague**, if your role has the **Tasks: assign** permission. Admins, accountants, HR, sales and store managers have it; you can change this under roles.
+
+## Department tasks
+
+When you don't mind who does it, give the task to a department: under **Who does it**, tick the department (for example **Sales department**) instead of a person.
+
+- **Who can:** anyone with **Tasks: assign** can give a task to any department; a department head can give one to their own department.
+- **Who hears about it:** for a **high-priority** task, everyone in the department gets an email. Otherwise only the head does, so people aren't flooded. Everyone in the department sees it either way, under **My tasks > For your department, not taken yet**.
+- **Taking it:** anyone in the department chooses **I'll take it**. It becomes theirs and leaves the others' lists.
+- **Handing it out:** the head can give it to a named person instead, from the task page, or move it from one person to another.
+- **Handing it back:** if the person can't finish it, **Hand back to the department** returns it for someone else to take. The head is told.
+- **Who held it:** the task page lists everyone who took it, handed it back or was given it, with the times.
+
+You see it under **I gave** as *Sales department, nobody has taken it yet*, then with the person's name once someone has it.
+
+If nobody takes it, the head gets the due-day reminder. If it passes its due time untaken, you and the head are told it's overdue and nobody has it.
+
+### Performance
+
+- **Each person:** whoever marks it done gets the credit, on time or late. Their profile shows a **Tasks done on time** figure, with how many they took from their department and how many they handed back.
+- **Each department:** the **Departments** tab (for heads, and for roles with **Tasks: view**) shows, per department, how many tasks it was given, how many are waiting, how long they usually wait before someone takes them, how many were done on time or late, and how many were handed back.
 
 ## Doing a task
 
