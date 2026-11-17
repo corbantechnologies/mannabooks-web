@@ -90,7 +90,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Salary advances", text: "Staff ask from their phone, supervisors recommend, finance approves and pays, and it comes off the next payslips by itself. Casuals draw only pay already earned.", guide: "salary-advances", isNew: true },
       { name: "Leave, working week and holidays", text: "Leave balances that count only working days, using your working week and Kenya's public holidays.", guide: "leave", isNew: true },
       { name: "Staff self-service", text: "Staff update their own contact details; changes to bank or M-Pesa details wait for HR to approve.", guide: "self-service", isNew: true },
-      { name: "Work reports and tasks", text: "Ask for weekly or monthly reports, or give tasks due by a time, with reminders, in progress, review and an overdue list. Admins can set them up for someone else.", guide: "work-reports", isNew: true },
+      { name: "Tasks", text: "Give a task to yourself, your team or any colleague, due by a date and time, with a priority, in progress, done and your check. Overdue tasks are flagged within the hour.", guide: "tasks", isNew: true },
+      { name: "Work reports", text: "Ask for weekly or monthly reports, and set repeating tasks, with reminders, review and an overdue list. Admins can set them up for someone else.", guide: "work-reports" },
     ],
   },
   {

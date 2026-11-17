@@ -7417,6 +7417,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description `?box=mine` (given to me, the default), `given` (I gave to others), or `all` (tasks.view). */
+        get: operations["w_tasks_list"];
+        put?: never;
+        /** @description `?box=mine` (given to me, the default), `given` (I gave to others), or `all` (tasks.view). */
+        post: operations["w_tasks_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone has tasks: no permission to see your own. tasks.view sees everyone's. */
+        get: operations["w_tasks_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Everyone has tasks: no permission to see your own. tasks.view sees everyone's. */
+        patch: operations["w_tasks_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/action/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Everyone has tasks: no permission to see your own. tasks.view sees everyone's. */
+        post: operations["w_tasks_action_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/people/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The colleagues you may give tasks to: yourself, your reporting line (and department), or anyone with tasks.assign. */
+        get: operations["w_tasks_people_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tax-rates/": {
         parameters: {
             query?: never;
@@ -8058,6 +8128,13 @@ export interface components {
         AssetSchedule: {
             history: components["schemas"]["DepreciationHistory"][];
             projection: components["schemas"]["ScheduleRow"][];
+        };
+        Assignable: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly full_name: string;
+            readonly job_title: string;
+            readonly is_me: boolean;
         };
         /**
          * @description * `team` - Everyone who reports to me
@@ -13471,6 +13548,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["SupportTicket"][];
         };
+        PaginatedTaskList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Task"][];
+        };
         PaginatedTaxRateList: {
             /** @example 123 */
             count: number;
@@ -14425,6 +14517,23 @@ export interface components {
             bank_details?: string;
             notes?: string;
             is_active?: boolean;
+        };
+        PatchedTaskUpdateRequest: {
+            title?: string;
+            details?: string;
+            priority?: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: date
+             * @description Blank: no deadline
+             */
+            due_date?: string | null;
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            due_time?: string | null;
+            /** @description The person who gave it accepts it before it counts as done */
+            needs_check?: boolean;
         };
         PatchedTaxRateRequest: {
             code?: string;
@@ -17859,6 +17968,91 @@ export interface components {
          * @enum {string}
          */
         SupportTicketStatusEnum: "open" | "waiting" | "resolved" | "closed";
+        Task: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            readonly details: string;
+            /** Format: uuid */
+            readonly assigned_to_id: string;
+            readonly assigned_to_name: string;
+            readonly given_by_name: string;
+            readonly priority: components["schemas"]["PriorityA08Enum"];
+            /**
+             * Format: date
+             * @description Blank: no deadline
+             */
+            readonly due_date: string | null;
+            /**
+             * Format: time
+             * @description Due by this time on the due date. Blank: by the end of the day
+             */
+            readonly due_time: string | null;
+            /** @description The person who gave it accepts it before it counts as done */
+            readonly needs_check: boolean;
+            readonly status: components["schemas"]["TaskStatusEnum"];
+            readonly status_label: string;
+            readonly is_overdue: boolean;
+            readonly for_self: boolean;
+            /** Format: date-time */
+            readonly started_at: string | null;
+            /** Format: date-time */
+            readonly done_at: string | null;
+            readonly done_note: string;
+            /** @description Marked done after its due time (kept if it is sent back and done again) */
+            readonly done_late: boolean;
+            readonly checked_by_name: string;
+            /** Format: date-time */
+            readonly checked_at: string | null;
+            /** @description Why it was sent back, or a word on acceptance */
+            readonly check_comment: string;
+            readonly can_do: boolean;
+            readonly can_manage: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `start` - start
+         *     * `done` - done
+         *     * `accept` - accept
+         *     * `return` - return
+         *     * `cancel` - cancel
+         *     * `reopen` - reopen
+         * @enum {string}
+         */
+        TaskActionActionEnum: "start" | "done" | "accept" | "return" | "cancel" | "reopen";
+        TaskActionRequest: {
+            action: components["schemas"]["TaskActionActionEnum"];
+            /** @default  */
+            note: string;
+        };
+        TaskCreateRequest: {
+            title: string;
+            /** @default  */
+            details: string;
+            /** @description Memberships who do it, one task each. Blank: yourself */
+            assignee_ids?: string[];
+            /** Format: date */
+            due_date?: string | null;
+            /** Format: time */
+            due_time?: string | null;
+            /** @default normal */
+            priority: components["schemas"]["PriorityA08Enum"];
+            /**
+             * @description You accept it before it counts as done (never for your own tasks)
+             * @default true
+             */
+            needs_check: boolean;
+        };
+        /**
+         * @description * `todo` - To do
+         *     * `in_progress` - In progress
+         *     * `to_check` - Done, to check
+         *     * `done` - Done
+         *     * `cancelled` - Cancelled
+         * @enum {string}
+         */
+        TaskStatusEnum: "todo" | "in_progress" | "to_check" | "done" | "cancelled";
         TaxRate: {
             /** Format: uuid */
             readonly id: string;
@@ -32672,6 +32866,209 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SupportTicket"];
+                };
+            };
+        };
+    };
+    w_tasks_list: {
+        parameters: {
+            query?: {
+                assigned_to?: string;
+                box?: "all" | "given" | "mine";
+                /** @description Only tasks still to do or in progress */
+                open?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `low` - Low
+                 *     * `normal` - Normal
+                 *     * `high` - High
+                 */
+                priority?: "high" | "low" | "normal";
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `todo` - To do
+                 *     * `in_progress` - In progress
+                 *     * `to_check` - Done, to check
+                 *     * `done` - Done
+                 *     * `cancelled` - Cancelled
+                 */
+                status?: "cancelled" | "done" | "in_progress" | "to_check" | "todo";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTaskList"];
+                };
+            };
+        };
+    };
+    w_tasks_create: {
+        parameters: {
+            query?: {
+                assigned_to?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `low` - Low
+                 *     * `normal` - Normal
+                 *     * `high` - High
+                 */
+                priority?: "high" | "low" | "normal";
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `todo` - To do
+                 *     * `in_progress` - In progress
+                 *     * `to_check` - Done, to check
+                 *     * `done` - Done
+                 *     * `cancelled` - Cancelled
+                 */
+                status?: "cancelled" | "done" | "in_progress" | "to_check" | "todo";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskCreateRequest"];
+                "multipart/form-data": components["schemas"]["TaskCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTaskList"];
+                };
+            };
+        };
+    };
+    w_tasks_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Task"];
+                };
+            };
+        };
+    };
+    w_tasks_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTaskUpdateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTaskUpdateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTaskUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Task"];
+                };
+            };
+        };
+    };
+    w_tasks_action_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskActionRequest"];
+                "multipart/form-data": components["schemas"]["TaskActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Task"];
+                };
+            };
+        };
+    };
+    w_tasks_people_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assignable"][];
                 };
             };
         };

@@ -27,7 +27,7 @@ export default function NewWorkReportPage() {
   const people = useQuery({ queryKey: ["report-people", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/people/", { params: { path: { workspace: slug } } })) });
   const departments = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", { params: { path: { workspace: slug } } })) });
   const [f, setF] = useState({ kind: task ? "task" : "report", priority: "normal", due_time: "", title: "", instructions: "", audience: "team", department_id: "",
-    frequency: task ? "once" : "weekly", first_due_date: "", remind_days_before: "1" });
+    frequency: "weekly", first_due_date: "", remind_days_before: "1" });
   const isTask = f.kind === "task";
   const [chosen, setChosen] = useState<string[]>([]);
   const [template, setTemplate] = useState<File | null>(null);
@@ -47,16 +47,17 @@ export default function NewWorkReportPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
-      <PageHeader title={isTask ? "Give a task" : "Ask for a report"} guide="work-reports"
+      <PageHeader title={isTask ? "A repeating task" : "Ask for a report"} guide="work-reports"
         description={isTask ? "People get an email and a reminder, can mark it in progress, then done. You are told when it is done or late." : "People get an email, a reminder before it is due, and you are told when it comes in or is late."} />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <Card className="space-y-3 p-4">
           <div className="flex gap-1 rounded-md bg-stone-100 p-1 text-sm">
-            {[{ v: "report", l: "A report to write" }, { v: "task", l: "A task to do" }].map((o) => (
-              <button key={o.v} type="button" onClick={() => setF((p) => ({ ...p, kind: o.v, frequency: o.v === "task" && p.frequency === "weekly" && !p.title ? "once" : p.frequency }))}
+            {[{ v: "report", l: "A report to write" }, { v: "task", l: "A repeating task" }].map((o) => (
+              <button key={o.v} type="button" onClick={() => setF((p) => ({ ...p, kind: o.v }))}
                 className={`flex-1 rounded px-3 py-1.5 ${f.kind === o.v ? "bg-white font-medium shadow-sm" : "text-stone-600"}`}>{o.l}</button>
             ))}
           </div>
+          {isTask && <p className="text-xs text-stone-500">For a task that repeats (every day, week or month) or goes to a whole team. For a one-off task, use <Link className="underline" href={`/w/${slug}/tasks`}>Tasks</Link>.</p>}
           <Field label={isTask ? "Task" : "Report"} error={fieldError(save.error, "title")}><Input required value={f.title} onChange={set("title")} placeholder={isTask ? "Collect the signed lease from the landlord" : "Weekly sales and visits"} /></Field>
           <Field label={isTask ? "Details" : "What to include"}><Textarea rows={4} value={f.instructions} onChange={set("instructions")} placeholder={isTask ? "Where, who to see, what done looks like." : "Sales by customer, shops visited, orders expected next week, problems."} /></Field>
           {isTask && <Field label="Priority"><Select value={f.priority} onChange={set("priority")}><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></Select></Field>}

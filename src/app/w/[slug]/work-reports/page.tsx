@@ -34,10 +34,10 @@ export default function WorkReportsPage() {
   const tabs = [{ key: "todo", label: "Asked of me" }, { key: "review", label: "To review" }, { key: "requests", label: "My requests" }, { key: "record", label: "On time" }] as const;
   return (
     <div className="w-full">
-      <PageHeader title="Work reports and tasks" guide="work-reports"
-        description="Reports and tasks your manager asks of you, and the ones you ask of your team: weekly sales, site visits, a job to finish by a time."
+      <PageHeader title="Work reports" guide="work-reports"
+        description="Reports your manager asks you for, and the ones you ask your team for: weekly sales, site visits, monthly summaries. Also tasks that repeat. One-off tasks are under Tasks."
         actions={can("workreports.request") && <div className="flex gap-2">
-          <Link href={`/w/${slug}/work-reports/new?kind=task`}><Button variant="secondary"><Plus className="h-4 w-4" /> Give a task</Button></Link>
+          <Link href={`/w/${slug}/work-reports/new?kind=task`}><Button variant="secondary"><Plus className="h-4 w-4" /> Repeating task</Button></Link>
           <Link href={`/w/${slug}/work-reports/new`}><Button><Plus className="h-4 w-4" /> Ask for a report</Button></Link>
         </div>} />
       <div className="mb-4 flex gap-1 overflow-x-auto border-b border-stone-200">

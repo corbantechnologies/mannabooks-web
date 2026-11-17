@@ -1,6 +1,6 @@
-# Work reports and tasks
+# Work reports
 
-Managers and supervisors can ask the people below them for a report (weekly sales and visits, a monthly site report, a daily cash summary), or give them a task to do (collect a document, fix the gate, bank the cash by 3pm), once or on a schedule. These are work reports, separate from the financial reports.
+Managers and supervisors can ask the people below them for a report (weekly sales and visits, a monthly site report, a daily cash summary), once or on a schedule, or set them a task that repeats. These are work reports, separate from the financial reports.
 
 ## Asking for a report
 
@@ -28,17 +28,15 @@ This lets an admin set up the reporting for managers who don't use the system mu
 
 **Close** a request to stop further rounds.
 
-## Giving a task
+## Repeating tasks
 
-Choose **Give a task** (or **A task to do** on the request form). It works like a report request, with three differences:
+For a one-off task, use **Tasks** instead (see [Tasks](tasks)). Use a work report for a task that repeats or goes to a whole team, for example **Bank the till cash** every Friday. Choose **Repeating task** (or **A repeating task** on the request form). It works like a report request, with three differences:
 
 - **A due time.** Set **By (time)** for something due by, say, 15:00. MannaBooks checks every hour, so it is marked **Overdue** within the hour after that time. Leave it blank for the end of the day.
 - **A priority.** High-priority tasks are flagged in the list and in the email.
-- **Doing it.** The person can choose **I've started**, which shows **In progress** to you, then **Mark done**, with a note or a file if they want. No write-up is needed. You then **Accept** it (it shows as **Done**) or **Send back** with what is still needed.
+- **Doing it.** The person can choose **I've started**, which shows **In progress**, then **Mark done**, with a note or a file if they want. No write-up is needed. You then **Accept** it (it shows as **Done**) or **Send back** with what is still needed.
 
-Tasks count in the same on-time record as reports, and show on each person's profile. A task that was started but not done by its time still counts as late.
-
-Tasks can repeat too, for example **Bank the till cash** every week.
+Repeating tasks count in the same on-time record as reports. A task that was started but not done by its time still counts as late.
 
 ## The on-time record
 
