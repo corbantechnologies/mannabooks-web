@@ -8,6 +8,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { StatementImport } from "@/components/statement-import";
+import { OWNER_KINDS, useOwners } from "@/lib/api/owners";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { AccountOptions, useAccounts } from "@/lib/api/accounting";
 import { LINE_STATUS } from "@/lib/api/banking";
@@ -128,7 +129,7 @@ export default function BankAccountPage() {
 }
 
 function MatchModal({ line, onClose }: { line: BankStatementLine; onClose: () => void }) {
-  const { slug } = useWorkspace();
+  const { slug, can } = useWorkspace();
   const accounts = useAccounts(slug);
   const rates = useVatRates(slug);
   const out = Number(line.amount) < 0;
@@ -179,10 +180,39 @@ function MatchModal({ line, onClose }: { line: BankStatementLine; onClose: () =>
                 <Button type="submit" loading={act.isPending}>Record and match</Button>
               </div>
             </form>
+            {can("owners.record") && <OwnerMoney out={out} onRecord={(body) => act.mutate({ action: "owner", description: record.description, ...body })} saving={act.isPending} />}
           </>
         )}
         <FormError error={act.error} />
       </div>
     </Modal>
+  );
+}
+
+/** A deposit from a director, a loan repaid to one, drawings...: owners' money, not income or an expense. */
+function OwnerMoney({ out, saving, onRecord }: { out: boolean; saving: boolean; onRecord: (body: Record<string, unknown>) => void }) {
+  const { slug } = useWorkspace();
+  const owners = useOwners(slug);
+  const kinds = OWNER_KINDS.filter((k) => k.in === !out);
+  const [form, setForm] = useState({ owner_id: "", owner_kind: kinds[0].value as string, share_premium: "" });
+  const kind = kinds.find((k) => k.value === form.owner_kind);
+  return (
+    <form className="space-y-3 border-t border-stone-200 pt-4" onSubmit={(e) => { e.preventDefault(); onRecord({ ...form, share_premium: form.share_premium || 0 }); }}>
+      <h3 className="text-sm font-semibold">Or: money {out ? "to" : "from"} an owner or director</h3>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label="Who">
+          <Select required value={form.owner_id} onChange={(e) => setForm((p) => ({ ...p, owner_id: e.target.value }))}>
+            <option value="">Choose</option>
+            {(owners.data?.results ?? []).filter((o) => o.is_active).map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+          </Select>
+        </Field>
+        <Field label="What it was" hint={kind?.hint}>
+          <Select value={form.owner_kind} onChange={(e) => setForm((p) => ({ ...p, owner_kind: e.target.value }))}>{kinds.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}</Select>
+        </Field>
+        {form.owner_kind === "shares" && <Field label="Share premium" hint="The part paid above the shares' face value, if any."><Input inputMode="decimal" value={form.share_premium} onChange={(e) => setForm((p) => ({ ...p, share_premium: e.target.value }))} /></Field>}
+      </div>
+      {(owners.data?.results ?? []).length === 0 && <p className="text-xs text-stone-500">Add your owners and directors under Cash and banking &gt; Owners and directors first.</p>}
+      <div className="flex justify-end"><Button type="submit" variant="secondary" loading={saving}>Record and match</Button></div>
+    </form>
   );
 }

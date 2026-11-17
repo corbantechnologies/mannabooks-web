@@ -1,0 +1,99 @@
+"use client";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
+
+import { TASK_STATUS, TaskForm, dueLabel } from "@/components/task-form";
+import { Badge, Button, Card, ErrorState, Field, FormError, Spinner, Textarea } from "@/components/ui";
+import { api, unwrap } from "@/lib/api/client";
+import { fmtDate } from "@/lib/format";
+import { useWorkspace } from "@/lib/workspace";
+
+const DONE_MESSAGE: Record<string, string> = {
+  start: "Marked in progress", done: "Marked done", accept: "Accepted", return: "Sent back", cancel: "Cancelled", reopen: "Reopened",
+};
+
+export default function TaskPage() {
+  const { slug } = useWorkspace();
+  const { id } = useParams<{ id: string }>();
+  const path = { params: { path: { workspace: slug, id } } };
+  const q = useQuery({ queryKey: ["task", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/{id}/", path)) });
+  const [note, setNote] = useState("");
+  const [editing, setEditing] = useState(false);
+  const act = useMutation({
+    mutationFn: async (action: "start" | "done" | "accept" | "return" | "cancel" | "reopen") =>
+      unwrap(await api.POST("/api/v1/w/{workspace}/tasks/{id}/action/", { ...path, body: { action, note } })),
+    onSuccess: (_t, action) => { toast.success(DONE_MESSAGE[action]); setNote(""); void q.refetch(); },
+  });
+  if (q.isLoading) return <Spinner />;
+  if (q.error) return <ErrorState error={q.error} />;
+  const t = q.data!;
+  const st = TASK_STATUS[t.status ?? "todo"];
+  return (
+    <div className="w-full max-w-3xl space-y-4">
+      <Link href={`/w/${slug}/tasks`} className="text-sm text-stone-500 hover:underline">&larr; Tasks</Link>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">{t.title}</h1>
+          <p className="text-sm text-stone-600">
+            {t.for_self ? `${t.assigned_to_name}'s own task` : `${t.given_by_name} gave it to ${t.assigned_to_name}`} · <span className={t.is_overdue ? "font-medium text-red-700" : ""}>{dueLabel(t, fmtDate)}{t.is_overdue ? ", overdue" : ""}</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {t.priority !== "normal" && <Badge tone={t.priority === "high" ? "red" : "stone"}>{t.priority === "high" ? "High priority" : "Low priority"}</Badge>}
+          <Badge tone={st.tone}>{st.label}</Badge>
+          {t.can_manage && (t.status === "todo" || t.status === "in_progress") && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Change</Button>}
+        </div>
+      </div>
+
+      {t.details && <Card className="p-4"><p className="whitespace-pre-line text-sm text-stone-700">{t.details}</p></Card>}
+      {t.status === "in_progress" && t.check_comment && t.checked_by_name && (
+        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800"><span className="font-medium">{t.checked_by_name} sent it back:</span> {t.check_comment}</p>
+      )}
+      {t.done_at && (
+        <Card className="space-y-1 p-4 text-sm">
+          <p className="text-stone-500">Marked done {fmtDate(t.done_at)}{t.done_late ? " (after its due time)" : ""}{t.started_at ? `, started ${fmtDate(t.started_at)}` : ""}</p>
+          {t.done_note && <p className="whitespace-pre-line text-stone-800">{t.done_note}</p>}
+          {t.status === "done" && t.checked_by_name && <p className="text-emerald-700">Accepted by {t.checked_by_name}{t.check_comment ? `: ${t.check_comment}` : ""}</p>}
+        </Card>
+      )}
+
+      {t.can_do && (
+        <Card className="space-y-3 p-4">
+          <Field label="Note (optional)" hint={t.needs_check ? `${t.given_by_name} checks it after you mark it done.` : undefined}>
+            <Textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="What was done, where it is, what's left." />
+          </Field>
+          <div className="flex flex-wrap justify-end gap-2">
+            {t.status === "todo" && <Button variant="secondary" loading={act.isPending && act.variables === "start"} onClick={() => act.mutate("start")}>I&apos;ve started</Button>}
+            <Button loading={act.isPending && act.variables === "done"} onClick={() => act.mutate("done")}>Mark done</Button>
+          </div>
+        </Card>
+      )}
+
+      {t.can_manage && t.status === "to_check" && (
+        <Card className="space-y-3 p-4">
+          <h2 className="text-sm font-semibold">Check it</h2>
+          <Field label="Comment" hint="Needed if you send it back."><Textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} /></Field>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" loading={act.isPending && act.variables === "return"} onClick={() => act.mutate("return")}>Send back</Button>
+            <Button loading={act.isPending && act.variables === "accept"} onClick={() => act.mutate("accept")}>Accept</Button>
+          </div>
+        </Card>
+      )}
+
+      {t.can_manage && !t.for_self && (
+        <div className="flex justify-end gap-2">
+          {(t.status === "todo" || t.status === "in_progress" || t.status === "to_check") && <Button variant="ghost" className="text-red-600" onClick={() => act.mutate("cancel")}>Cancel the task</Button>}
+          {(t.status === "done" || t.status === "cancelled") && <Button variant="ghost" onClick={() => act.mutate("reopen")}>Reopen</Button>}
+        </div>
+      )}
+      {t.for_self && t.status === "done" && <div className="flex justify-end"><Button variant="ghost" onClick={() => act.mutate("reopen")}>Reopen</Button></div>}
+      <FormError error={act.error} />
+      {editing && <TaskForm task={t} onClose={() => { setEditing(false); void q.refetch(); }} />}
+    </div>
+  );
+}

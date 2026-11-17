@@ -8,7 +8,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { Badge, Button, Card, ErrorState, Field, FormError, PageHeader, Spinner, Textarea } from "@/components/ui";
-import { REPORT_STATUS, type ReportSubmission, downloadFile, sendForm } from "@/lib/api/assets";
+import { PRIORITY, REPORT_STATUS, type ReportSubmission, downloadFile, dueText, sendForm } from "@/lib/api/assets";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -28,7 +28,12 @@ export default function SubmissionPage() {
       if (file) form.append("file", file);
       return sendForm<ReportSubmission>(`/api/v1/w/${slug}/report-submissions/${id}/submit/`, form);
     },
-    onSuccess: () => { toast.success("Report submitted"); setFile(null); },
+    onSuccess: () => { toast.success(sub.data?.kind === "task" ? "Marked done" : "Report submitted"); setFile(null); void sub.refetch(); },
+  });
+  const start = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/report-submissions/{id}/start/", path)),
+    onSuccess: () => { toast.success("Marked in progress"); void sub.refetch(); },
+    onError: (e) => toast.error(e.message),
   });
   const review = useMutation({
     mutationFn: async (decision: "accepted" | "returned") => unwrap(await api.POST("/api/v1/w/{workspace}/report-submissions/{id}/review/", { ...path, body: { decision, comment } })),
@@ -38,29 +43,34 @@ export default function SubmissionPage() {
   if (sub.error) return <ErrorState error={sub.error} />;
   const s = sub.data!;
   const get = (p: string, name: string) => downloadFile(p, name).catch((e) => toast.error(e.message));
+  const isTask = s.kind === "task";
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/work-reports`} className="text-sm text-stone-500 hover:underline">&larr; Work reports</Link>
-      <PageHeader title={s.title} description={`${s.employee_name}${s.period_label ? `, ${s.period_label}` : ""}, due ${fmtDate(s.due_date)}. Asked by ${s.requested_by_name}.`} guide="work-reports" />
+      <PageHeader title={s.title} description={`${isTask ? "Task for " : ""}${s.employee_name}${s.period_label ? `, ${s.period_label}` : ""}, ${dueText(s.due_date, s.due_time, fmtDate)}. Asked by ${s.requested_by_name}.`} guide="work-reports" />
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Badge tone={REPORT_STATUS[s.status ?? "pending"].tone}>{REPORT_STATUS[s.status ?? "pending"].label}</Badge>
+        <Badge tone={REPORT_STATUS[s.status ?? "pending"].tone}>{isTask && s.status === "accepted" ? "Done" : REPORT_STATUS[s.status ?? "pending"].label}</Badge>
+        {isTask && s.priority !== "normal" && <Badge tone={PRIORITY[s.priority ?? "normal"].tone}>{PRIORITY[s.priority ?? "normal"].label}</Badge>}
+        {s.started_at && <span className="text-sm text-stone-500">Started {fmtDate(s.started_at)}</span>}
+        {s.can_start && <Button variant="secondary" loading={start.isPending} onClick={() => start.mutate()}>I&apos;ve started</Button>}
         {s.submitted_at && <span className="text-sm text-stone-500">Submitted {fmtDate(s.submitted_at)}{s.submitted_late ? " (late)" : ""}</span>}
         {s.has_template && <Button variant="ghost" onClick={() => get(`/api/v1/w/${slug}/report-requests/${s.request_id}/template/`, "template")}><Download className="h-4 w-4" /> Template</Button>}
       </div>
-      {s.instructions && <Card className="mb-4 p-4"><p className="text-xs font-semibold uppercase text-stone-500">What to include</p><p className="mt-1 whitespace-pre-line text-sm text-stone-700">{s.instructions}</p></Card>}
+      {s.instructions && <Card className="mb-4 p-4"><p className="text-xs font-semibold uppercase text-stone-500">{isTask ? "Details" : "What to include"}</p><p className="mt-1 whitespace-pre-line text-sm text-stone-700">{s.instructions}</p></Card>}
       {s.status === "returned" && s.review_comment && <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800"><span className="font-medium">{s.reviewed_by_name} sent it back:</span> {s.review_comment}</p>}
       {s.can_submit ? (
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); submit.mutate(); }}>
-          <Field label="Your report"><Textarea rows={10} value={body ?? s.body ?? ""} onChange={(e) => setBody(e.target.value)} placeholder="Write it here, attach a file, or both." /></Field>
+          <Field label={isTask ? "Note (optional)" : "Your report"}><Textarea rows={isTask ? 3 : 10} value={body ?? s.body ?? ""} onChange={(e) => setBody(e.target.value)}
+            placeholder={isTask ? "Anything to say about it: what was done, where it is, what's left." : "Write it here, attach a file, or both."} /></Field>
           <Field label="Attach a file (optional)" hint={s.has_file ? `Already attached: ${s.file_name}. Choose another to replace it.` : "PDF, Word, Excel, PowerPoint or a photo, up to 10 MB."}>
             <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="block w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-2 file:text-sm" />
           </Field>
           <FormError error={submit.error} />
-          <div className="flex justify-end"><Button type="submit" loading={submit.isPending}>Submit report</Button></div>
+          <div className="flex justify-end"><Button type="submit" loading={submit.isPending}>{isTask ? "Mark done" : "Submit report"}</Button></div>
         </form>
       ) : (
         <Card className="space-y-3 p-4">
-          {s.body ? <p className="whitespace-pre-line text-sm text-stone-800">{s.body}</p> : <p className="text-sm text-stone-500">{s.status === "pending" || s.status === "late" ? "Not submitted yet." : "No written report."}</p>}
+          {s.body ? <p className="whitespace-pre-line text-sm text-stone-800">{s.body}</p> : <p className="text-sm text-stone-500">{s.status === "pending" || s.status === "in_progress" || s.status === "late" ? (isTask ? "Not done yet." : "Not submitted yet.") : "No written report."}</p>}
           {s.has_file && <Button variant="secondary" onClick={() => get(`/api/v1/w/${slug}/report-submissions/${id}/file/`, s.file_name ?? "report")}><Paperclip className="h-4 w-4" /> {s.file_name}</Button>}
           {s.status === "accepted" && <p className="text-sm text-emerald-700">Accepted by {s.reviewed_by_name}{s.review_comment ? `: ${s.review_comment}` : ""}</p>}
         </Card>

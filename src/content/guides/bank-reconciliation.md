@@ -12,6 +12,7 @@ For each line **To match**, choose **Match**:
 
 - MannaBooks shows transactions in the books with the same amount within 10 days. Pick the right one.
 - If it isn't in the books (bank charges, interest, a standing order), choose the account and **Record and match**. It is entered as an expense or other income.
+- If it is money from or to an owner or director (a director's deposit, a loan repaid to them, drawings), use **Or: money from an owner or director** instead. See [Owners and directors](owners).
 - Lines that don't belong (for example a reversal pair) can be **ignored**.
 
 ## 3. Reconcile

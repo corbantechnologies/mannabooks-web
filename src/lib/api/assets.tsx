@@ -20,9 +20,14 @@ export const METHODS = [
   { value: "none", label: "Not depreciated", hint: "For land." },
 ] as const;
 export const REPORT_STATUS: Record<string, { label: string; tone: Tone }> = {
-  pending: { label: "Waiting", tone: "amber" }, submitted: { label: "Submitted", tone: "blue" }, late: { label: "Overdue", tone: "red" },
+  pending: { label: "Waiting", tone: "amber" }, in_progress: { label: "In progress", tone: "blue" }, submitted: { label: "Submitted", tone: "blue" }, late: { label: "Overdue", tone: "red" },
   accepted: { label: "Accepted", tone: "green" }, returned: { label: "Sent back", tone: "red" },
 };
+export const PRIORITY: Record<string, { label: string; tone: Tone }> = {
+  high: { label: "High priority", tone: "red" }, normal: { label: "Normal", tone: "stone" }, low: { label: "Low priority", tone: "stone" },
+};
+/** "Due 14 Nov", or "Due 14 Nov by 15:00" for a task due by a time. */
+export const dueText = (date: string, time?: string | null, fmt: (d: string) => string = (d) => d) => `due ${fmt(date)}${time ? ` by ${time.slice(0, 5)}` : ""}`;
 export const REPORT_FREQUENCIES = [
   { value: "once", label: "Once" }, { value: "daily", label: "Every working day" }, { value: "weekly", label: "Every week" }, { value: "monthly", label: "Every month" },
 ] as const;
