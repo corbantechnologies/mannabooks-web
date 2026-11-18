@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { PeriodDashboard } from "@/components/period-dashboard";
 import { SetupGuide } from "@/components/setup-guide";
+import { TaskInsights } from "@/components/task-insights";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { useWorkspace } from "@/lib/workspace";
 
@@ -32,6 +33,8 @@ export default function OverviewPage() {
           <span className="mt-1 block text-stone-600">You see {context.limited_department.name}&apos;s documents and reports. Open its profit and loss &rarr;</span>
         </Link>
       )}
+
+      <div className="mb-8"><TaskInsights compact /></div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="p-5">

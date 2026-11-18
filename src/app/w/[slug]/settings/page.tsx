@@ -25,12 +25,14 @@ export default function SettingsPage() {
   const [form, setForm] = useState({
     name: ws.name, legal_name: ws.legal_name ?? "", kra_pin: ws.kra_pin ?? "", vat_registered: !!ws.vat_registered,
     vat_number: ws.vat_number ?? "", currency: ws.currency ?? "KES", phone: ws.phone ?? "", email: ws.email ?? "",
-    address: ws.address ?? "", fiscal_year_start_month: ws.fiscal_year_start_month ?? 1,
+    address: ws.address ?? "", fiscal_year_start_month: ws.fiscal_year_start_month ?? 1, timezone: ws.timezone ?? "Africa/Nairobi",
+    setup_hidden: Boolean(ws.setup_hidden),
   });
+  const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["Africa/Nairobi"];
 
   const save = useMutation({
     mutationFn: async () => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { ...p, body: form })),
-    onSuccess: () => toast.success("Settings saved"),
+    onSuccess: () => { toast.success("Settings saved"); if (form.setup_hidden !== Boolean(ws.setup_hidden) || form.timezone !== ws.timezone) window.location.reload(); },
   });
   const sequences = useQuery({ queryKey: ["sequences", slug], enabled: can("sequences.view"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/sequences/", p)) });
   const updateSeq = useMutation({
@@ -66,12 +68,18 @@ export default function SettingsPage() {
                 {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
               </Select>
             </Field>
+            <Field label="Time zone" hint="Task and report deadlines, and reminders, follow this clock." error={fieldError(save.error, "timezone")}>
+              <Select value={form.timezone} onChange={set("timezone")}>
+                {(zones.includes(form.timezone) ? zones : [form.timezone, ...zones]).map((z) => <option key={z} value={z}>{z.replace(/_/g, " ")}</option>)}
+              </Select>
+            </Field>
           </div>
           <Field label="Address" error={fieldError(save.error, "address")}><Textarea value={form.address} onChange={set("address")} /></Field>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.vat_registered} onChange={(e) => setForm((prev) => ({ ...prev, vat_registered: e.target.checked }))} /> Registered for VAT</label>
           {form.vat_registered && (
             <Field label="VAT number" error={fieldError(save.error, "vat_number")}><Input value={form.vat_number} onChange={set("vat_number")} /></Field>
           )}
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!form.setup_hidden} onChange={(e) => setForm((prev) => ({ ...prev, setup_hidden: !e.target.checked }))} /> Show the setup checklist on the overview until it&apos;s done</label>
           <FormError error={save.error} />
           <Button type="submit" loading={save.isPending}>Save settings</Button>
         </form>

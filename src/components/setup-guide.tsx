@@ -43,6 +43,10 @@ export function SetupGuide() {
     mutationFn: async (key: string) => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { business_goal: key } as never })),
     onSuccess: (_, key) => toast.success(`Set up for: ${goals.find((g) => g.key === key)?.label}. Change it any time in Settings.`),
   });
+  const hide = useMutation({
+    mutationFn: async () => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { setup_hidden: true } as never })),
+    onSuccess: () => { toast.success("Hidden. Bring it back any time in Settings."); window.location.reload(); },
+  });
   const setYear = useMutation({
     // sending the month (even the same one) also marks it checked
     mutationFn: async (month: number) => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { params: { path: { workspace: slug } }, body: { fiscal_year_start_month: month } as never })),
@@ -111,6 +115,7 @@ export function SetupGuide() {
       { key: "team", label: "Invite your team", href: "/team", done: (n.members.data ?? 0) > 1 }],
   };
 
+  if (ws.setup_hidden) return null;
   if (!goal) {
     if (!manage) return null;
     return (
@@ -137,9 +142,12 @@ export function SetupGuide() {
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="font-semibold text-stone-900">Set up {ws.name}: {goals.find((g) => g.key === goal)?.label.toLowerCase()}</h2>
-          <p className="mt-1 text-sm text-stone-600">{steps.length - left.length} of {steps.length} done. This list disappears once everything is set up.</p>
+          <p className="mt-1 text-sm text-stone-600">{steps.length - left.length} of {steps.length} done. This list disappears once everything is set up, or hide it now.</p>
         </div>
-        <Link href={`/w/${slug}/settings`}><Button variant="ghost">Change goal or modules</Button></Link>
+        <div className="flex flex-wrap gap-1">
+          <Link href={`/w/${slug}/settings`}><Button variant="ghost">Change goal or modules</Button></Link>
+          <Button variant="ghost" loading={hide.isPending} onClick={() => hide.mutate()}>Hide this list</Button>
+        </div>
       </div>
       <ul className="mt-4 space-y-2">
         {steps.map((step) => (

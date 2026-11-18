@@ -6,8 +6,8 @@ A task is something to do by a date, and a time if it matters: collect the signe
 
 Open **Tasks** and choose **New task**:
 
-1. Say what the task is, with any details: where, who to see, what done looks like.
-2. **Who does it.** Leave it on yourself for your own to-do, or tick one or more people. Each person gets their own task, so you can see who has done theirs.
+1. Say what the task is, with any details: where, who to see, what done looks like. Add a **checklist** (one step per line) if it has several steps, and link it to a **project** or **customer** if it belongs to one.
+2. **Who does it.** Leave it on yourself for your own to-do, or tick one or more people, or a department. Each person (and each department) gets their own task, so you can see who has done theirs. If you tick someone who is also in a department you ticked, MannaBooks asks whether you mean the department, the person, or both, so the same job isn't given twice by mistake.
 3. **Due on** and **By (time)**. Leave the time blank for the end of the day, or leave both blank for no deadline.
 4. **Priority.** High-priority tasks are flagged in the list and in the email.
 5. **I'll check it when it's done.** On: when they mark it done, it waits for you to accept it. Off: done is done. Your own tasks never wait for a check.
@@ -24,7 +24,7 @@ When you don't mind who does it, give the task to a department: under **Who does
 
 - **Who can:** anyone with **Tasks: assign** can give a task to any department; a department head can give one to their own department.
 - **Who hears about it:** for a **high-priority** task, everyone in the department gets an email. Otherwise only the head does, so people aren't flooded. Everyone in the department sees it either way, under **My tasks > For your department, not taken yet**.
-- **Taking it:** anyone in the department chooses **I'll take it**. It becomes theirs and leaves the others' lists.
+- **Taking it:** anyone in the department chooses **I'll take it**. It becomes theirs and leaves the others' lists. If you take a department task you gave yourself, it doesn't wait for anyone to check it.
 - **Handing it out:** the head can give it to a named person instead, from the task page, or move it from one person to another.
 - **Handing it back:** if the person can't finish it, **Hand back to the department** returns it for someone else to take. The head is told.
 - **Who held it:** the task page lists everyone who took it, handed it back or was given it, with the times.
@@ -45,6 +45,36 @@ Your tasks are under **My tasks**, with what's due first. Open one, then:
 - **I've started**: the person who gave it sees **In progress**.
 - **Mark done**, with a note if it helps (what was done, where it is). If they asked to check it, it shows as **Done, to check** until they do.
 
+## Working on a task
+
+Open a task to see everything about it:
+
+- **Checklist:** the steps. Whoever does the task (or gave it) ticks them off; the bar shows how far along it is.
+- **Files:** the brief, drafts, the finished document. PDF, Word, Excel, PowerPoint or photos, up to 10 MB each.
+- **Comments:** questions and updates. Whoever gave the task and whoever does it are emailed about each new comment or file.
+- **Project and customer**, if it's linked to one.
+
+## List or board
+
+Choose **List** or **Board** above the tasks. The board shows the same tasks in columns: **To do**, **In progress**, **Done, to check** and **Done**. Drag a card to another column to move it, where you're allowed to (start it, mark it done, accept it). Each card shows its due date, priority, checklist progress, comments and files. MannaBooks remembers your choice.
+
+In the list, open tasks come first, overdue and soonest due at the top, then higher priority. Tick **Show done and cancelled** to see finished ones in a **Finished** section underneath, latest first.
+
+## Insights
+
+The **Insights** tab, and a **Tasks** section on the **Overview**, show the numbers:
+
+- how many tasks there are, and what share are **done**, **in progress**, **not started** and **late** (done after their time, or still open past it);
+- a bar for each person showing how much they carry, done, in progress and not started, so you can see who is overloaded and who has room;
+- tables by department and by person, with how many are done on time.
+
+Choose whose numbers to see, and the period (last 30 or 90 days, last year, or all time):
+
+- **Whole company** and **By department**: owners, admins and HR (roles with **Tasks: view**);
+- **My departments**: department heads, for their departments and their people;
+- **My team**: anyone people report to, for everyone below them;
+- **Just me**: everyone, for their own tasks.
+
 ## Changing the status from the list
 
 Each task in the list has its status as a small dropdown, so you don't have to open it. The person doing it can move it to **In progress** or **Done**; the person who gave it can **Accept** it, **Cancel** it or **Reopen** it. **Send back** opens the task, because it needs a reason.
@@ -59,6 +89,7 @@ You can also **Change** a task's details or deadline while it is open, **Cancel*
 
 - On the morning of the due day, the person gets a reminder.
 - MannaBooks checks every hour. Once a task passes its due time, it shows as **overdue** in red, and the person who gave it gets one email.
+- Times follow the business's **time zone** in **Settings** (Nairobi unless changed).
 - A task marked done after its time is marked **done late**, even if it is later sent back and done again.
 
 ## Seeing everyone's tasks

@@ -8,6 +8,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { TASK_STATUS, TaskForm, dueLabel } from "@/components/task-form";
+import { TaskChecklist, TaskComments, TaskFiles } from "@/components/task-work";
 import { Badge, Button, Card, ErrorState, Field, FormError, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
@@ -57,7 +58,14 @@ export default function TaskPage() {
         </div>
       </div>
 
+      {(t.project_name || t.customer_name) && (
+        <p className="flex flex-wrap gap-3 text-sm text-stone-600">
+          {t.project_name && <Link className="hover:underline" href={`/w/${slug}/projects/${t.project_id}`}>Project: {t.project_name}</Link>}
+          {t.customer_name && <Link className="hover:underline" href={`/w/${slug}/sales/customers/${t.customer_id}`}>Customer: {t.customer_name}</Link>}
+        </p>
+      )}
       {t.details && <Card className="p-4"><p className="whitespace-pre-line text-sm text-stone-700">{t.details}</p></Card>}
+      <TaskChecklist task={t} onChange={() => void q.refetch()} />
       {t.status === "in_progress" && t.check_comment && t.checked_by_name && (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800"><span className="font-medium">{t.checked_by_name} sent it back:</span> {t.check_comment}</p>
       )}
@@ -132,6 +140,8 @@ export default function TaskPage() {
         </Card>
       )}
       <FormError error={act.error} />
+      <TaskFiles task={t} />
+      <TaskComments task={t} />
       {editing && <TaskForm task={t} onClose={() => { setEditing(false); void q.refetch(); }} />}
     </div>
   );

@@ -32,11 +32,14 @@ The menu then shows only those modules, so it stays short. Accounting, reports, 
 
 ## 3. Follow the checklist
 
-The **Overview** then shows a short checklist for your goal, for example *Add your KRA PIN*, *Add your products with the stock you have* and *Open a till shift and make a sale*. Each step ticks itself off when it is done, and the list disappears once everything is set up.
+The **Overview** then shows a short checklist for your goal, for example *Add your KRA PIN*, *Add your products with the stock you have* and *Open a till shift and make a sale*. Each step ticks itself off when it is done, and the list disappears once everything is set up. You can also **Hide this list** sooner; bring it back in **Settings**.
 
 ## Getting around
 
 - The left menu shows only the pages your role allows.
+- **Find a page quickly:** press **Ctrl+K** (**Cmd+K** on a Mac), or tap the search button at the top. Type part of a page's name, such as *tasks* or *invoices*, then press **Enter**.
+- **Fold the menu:** tap a section heading (Sales, People...) to fold or unfold it. The section you're in always stays open. MannaBooks remembers this in your browser.
+- **Pin pages you use most:** hover over a menu item (on a phone, tap the star beside it) and choose the star. Pinned pages appear at the top of the menu, and first in the quick search.
 - The **Guide** button on each page opens the guide for that page.
 - **Switch workspace** at the top takes you back to your list of businesses.
 - Under your name (top right): **My account** to change your password, and **Sign out**.
