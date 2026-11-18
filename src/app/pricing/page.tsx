@@ -22,6 +22,9 @@ export default function PricingPage() {
       <main className="mx-auto max-w-6xl px-4 py-14">
         <h1 className="text-center text-4xl font-bold tracking-tight text-stone-900">Simple prices in shillings</h1>
         <p className="mx-auto mt-3 max-w-2xl text-center text-stone-600">Start free. Every new business gets 30 days of every feature, then chooses a plan or stays on Free. Pay monthly or yearly by M-Pesa. Prices include VAT.</p>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-sm">
+          <Link href="/founding" className="rounded-full bg-brand-50 px-3 py-1 font-medium text-brand-800 hover:bg-brand-100">Founding customers: limited places at a founding price. Apply &rarr;</Link>
+        </p>
         <div className="mt-6 flex justify-center">
           <div className="inline-flex rounded-md border border-stone-200 p-0.5 text-sm">
             <button type="button" onClick={() => setYearly(false)} className={`rounded px-4 py-1.5 ${!yearly ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600"}`}>Monthly</button>
