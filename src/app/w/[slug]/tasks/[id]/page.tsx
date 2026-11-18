@@ -121,13 +121,12 @@ export default function TaskPage() {
         </Card>
       )}
 
-      {t.can_manage && !t.for_self && (
+      {t.can_manage && (
         <div className="flex justify-end gap-2">
           {(t.status === "todo" || t.status === "in_progress" || t.status === "to_check") && <Button variant="ghost" className="text-red-600" onClick={() => act.mutate("cancel")}>Cancel the task</Button>}
           {(t.status === "done" || t.status === "cancelled") && <Button variant="ghost" onClick={() => act.mutate("reopen")}>Reopen</Button>}
         </div>
       )}
-      {t.for_self && t.status === "done" && <div className="flex justify-end"><Button variant="ghost" onClick={() => act.mutate("reopen")}>Reopen</Button></div>}
       {t.events.length > 0 && (
         <Card className="p-4">
           <h2 className="mb-2 text-sm font-semibold">Who has held it</h2>

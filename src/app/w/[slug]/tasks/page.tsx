@@ -129,7 +129,7 @@ function choices(t: Task): { value: Action | "open"; label: string }[] {
   if (t.can_hand_out && !t.can_do) out.push({ value: "open", label: t.assigned_to_id ? "Give it to someone else..." : "Give it to someone..." });
   if (t.can_manage) {
     if (t.status === "to_check") out.push({ value: "accept", label: "Accept: done" }, { value: "open", label: "Send back..." });
-    if (!t.for_self && (t.status === "todo" || t.status === "in_progress" || t.status === "to_check")) out.push({ value: "cancel", label: "Cancel the task" });
+    if (t.status === "todo" || t.status === "in_progress" || t.status === "to_check") out.push({ value: "cancel", label: "Cancel the task" });
     if (t.status === "done" || t.status === "cancelled") out.push({ value: "reopen", label: "Reopen" });
   } else if (t.for_self && t.status === "done") out.push({ value: "reopen", label: "Reopen" });
   return out;

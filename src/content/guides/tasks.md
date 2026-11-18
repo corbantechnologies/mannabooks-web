@@ -77,7 +77,7 @@ Choose whose numbers to see, and the period (last 30 or 90 days, last year, or a
 
 ## Changing the status from the list
 
-Each task in the list has its status as a small dropdown, so you don't have to open it. The person doing it can move it to **In progress** or **Done**; the person who gave it can **Accept** it, **Cancel** it or **Reopen** it. **Send back** opens the task, because it needs a reason.
+Each task in the list has its status as a small dropdown, so you don't have to open it. The person doing it can move it to **In progress** or **Done**; the person who gave it can **Accept** it, **Cancel** it or **Reopen** it (for your own tasks, that's you: cancel a duplicate or something no longer needed, without counting it as done). **Send back** opens the task, because it needs a reason.
 
 ## Checking a task
 
