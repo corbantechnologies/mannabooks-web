@@ -46,6 +46,9 @@ export default function BillingPage() {
           <p className="text-xs uppercase text-stone-500">{sub.complimentary ? "Billing" : sub.status === "trialing" ? "Trial ends" : "Paid up to"}</p>
           <p className="mt-1 font-medium">{sub.complimentary ? "Free for founding businesses" : sub.status === "trialing" ? fmtDate(sub.trial_ends_on) : sub.paid_until ? fmtDate(sub.paid_until) : sub.plan.is_free ? "Nothing to pay" : "Not paid yet"}</p>
           {Number(sub.discount_percent) > 0 && <p className="text-xs text-brand-700">{Number(sub.discount_percent)}% discount</p>}
+          {sub.locked_price_monthly != null && (!sub.locked_until || sub.locked_until >= new Date().toISOString().slice(0, 10)) && (
+            <p className="text-xs text-brand-700">Your price is kept at KES {Number(sub.locked_price_monthly).toLocaleString()} a month (KES {Number(sub.locked_price_yearly ?? 0).toLocaleString()} a year){sub.locked_until ? ` until ${fmtDate(sub.locked_until)}` : ""}</p>
+          )}
         </div>
         <div>
           <p className="text-xs uppercase text-stone-500">This month</p>
@@ -144,7 +147,7 @@ function PayDialog({ plan, onClose }: { plan: Plan; onClose: () => void }) {
       ) : (
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); pay.mutate(); }}>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Pay"><Select value={form.cycle} onChange={(e) => setForm((f) => ({ ...f, cycle: e.target.value, periods: 1 }))}><option value="monthly">Monthly</option><option value="yearly">Yearly (2 months free)</option></Select></Field>
+            <Field label="Pay"><Select value={form.cycle} onChange={(e) => setForm((f) => ({ ...f, cycle: e.target.value, periods: 1 }))}><option value="monthly">Monthly</option><option value="yearly">Yearly</option></Select></Field>
             <Field label={form.cycle === "yearly" ? "Years" : "Months"}><Input type="number" min={1} max={form.cycle === "yearly" ? 3 : 24} value={form.periods} onChange={(e) => setForm((f) => ({ ...f, periods: Math.max(1, Number(e.target.value) || 1) }))} /></Field>
           </div>
           <Field label="Discount code (optional)"><Input value={form.coupon} onChange={(e) => setForm((f) => ({ ...f, coupon: e.target.value.toUpperCase() }))} /></Field>

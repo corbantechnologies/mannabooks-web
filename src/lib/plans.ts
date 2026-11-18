@@ -5,7 +5,18 @@
 export type PublicPlan = {
   key: string; name: string; description: string; price_monthly: string; price_yearly: string; modules: unknown; features: unknown;
   max_users: number | null; max_documents_month: number | null; payroll_per_employee: string; payroll_minimum: string; is_free: boolean;
+  highlights?: unknown;
 };
+
+const COMMON = ["Tasks for people and departments, with insights", "Salary advances and staff self-service", "Owners and directors: capital, loans and drawings",
+  "Card payments (Paystack) and payment links", "Work reports"];
+
+/** "Yearly (1 month free)": worked out from the paid plans' prices, so it follows whatever the admin sets. */
+export function yearlyLabel(plans: PublicPlan[]): string {
+  const paid = plans.filter((p) => !p.is_free && Number(p.price_monthly) > 0);
+  const free = paid.length ? Math.round(Math.min(...paid.map((p) => (12 * Number(p.price_monthly) - Number(p.price_yearly)) / Number(p.price_monthly)))) : 0;
+  return free > 0 ? `Yearly (${free} month${free === 1 ? "" : "s"} free)` : "Yearly";
+}
 
 export const MODULE_LABEL: Record<string, string> = {
   sales: "Quotations, invoices, cash sales, M-Pesa", pos: "Till with shifts and loyalty", store: "Online shop", purchasing: "LPOs, bills and suppliers",
@@ -18,15 +29,17 @@ const ALL = ["sales", "pos", "store", "purchasing", "inventory", "manufacturing"
 export const FALLBACK_PLANS: PublicPlan[] = [
   { key: "free", name: "Free", description: "Invoices, cash sales and M-Pesa for one person starting out.", price_monthly: "0.00", price_yearly: "0.00",
     modules: ["sales", "banking"], features: [], max_users: 1, max_documents_month: 30, payroll_per_employee: "0", payroll_minimum: "0", is_free: true },
-  { key: "biashara", name: "Biashara", description: "Service businesses: sales, banking, VAT, CRM and payroll.", price_monthly: "1500.00", price_yearly: "15000.00",
-    modules: ["sales", "banking", "crm", "people", "projects"], features: ["business_inbox"], max_users: 3, max_documents_month: null,
-    payroll_per_employee: "100", payroll_minimum: "500", is_free: false },
-  { key: "duka", name: "Duka", description: "Shops, restaurants and stores: the till, stock, buying, recipes and an online shop.", price_monthly: "3500.00",
-    price_yearly: "35000.00", modules: ["sales", "pos", "store", "purchasing", "inventory", "manufacturing", "banking", "crm", "people", "projects"],
-    features: ["business_inbox"], max_users: 5, max_documents_month: null, payroll_per_employee: "100", payroll_minimum: "500", is_free: false },
+  { key: "biashara", name: "Biashara", description: "Service businesses: sales, banking, VAT, CRM and payroll.", price_monthly: "2500.00", price_yearly: "27500.00",
+    modules: ["sales", "banking", "crm", "people", "projects"], features: ["business_inbox"], max_users: 5, max_documents_month: null,
+    payroll_per_employee: "100", payroll_minimum: "500", is_free: false, highlights: COMMON },
+  { key: "duka", name: "Duka", description: "Shops, restaurants and stores: the till, stock, buying, recipes and an online shop.", price_monthly: "5000.00",
+    price_yearly: "55000.00", modules: ["sales", "pos", "store", "purchasing", "inventory", "manufacturing", "banking", "crm", "people", "projects"],
+    features: ["business_inbox"], max_users: 8, max_documents_month: null, payroll_per_employee: "100", payroll_minimum: "500", is_free: false,
+    highlights: [...COMMON, "Gift vouchers"] },
   { key: "kampuni", name: "Kampuni", description: "Growing and multi-branch firms: everything, with budgets, approvals, assets and company groups.",
-    price_monthly: "8000.00", price_yearly: "80000.00", modules: ALL, features: ["business_inbox", "company_groups"], max_users: 15,
-    max_documents_month: null, payroll_per_employee: "100", payroll_minimum: "500", is_free: false },
+    price_monthly: "10000.00", price_yearly: "110000.00", modules: ALL, features: ["business_inbox", "company_groups"], max_users: 15,
+    max_documents_month: null, payroll_per_employee: "100", payroll_minimum: "500", is_free: false,
+    highlights: [...COMMON, "Gift vouchers", "Department budgets and My department"] },
 ];
 
 export function planOf(key: string): PublicPlan {

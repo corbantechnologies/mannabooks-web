@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
-import { FALLBACK_PLANS, MODULE_LABEL, type PublicPlan } from "@/lib/plans";
+import { FALLBACK_PLANS, MODULE_LABEL, type PublicPlan, yearlyLabel } from "@/lib/plans";
 
 /** The public pricing page: plans come from the API, so prices set in the MannaBooks admin show here; until it answers, the seeded plans show. */
 export default function PricingPage() {
@@ -25,7 +25,7 @@ export default function PricingPage() {
         <div className="mt-6 flex justify-center">
           <div className="inline-flex rounded-md border border-stone-200 p-0.5 text-sm">
             <button type="button" onClick={() => setYearly(false)} className={`rounded px-4 py-1.5 ${!yearly ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600"}`}>Monthly</button>
-            <button type="button" onClick={() => setYearly(true)} className={`rounded px-4 py-1.5 ${yearly ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600"}`}>Yearly (2 months free)</button>
+            <button type="button" onClick={() => setYearly(true)} className={`rounded px-4 py-1.5 ${yearly ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600"}`}>{yearlyLabel(list)}</button>
           </div>
         </div>
         {(
@@ -47,6 +47,7 @@ export default function PricingPage() {
                     <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />{p.max_documents_month ? `${p.max_documents_month} documents a month` : "Unlimited documents"}</li>
                     {modules.map((m) => <li key={m} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />{MODULE_LABEL[m] ?? m}</li>)}
                     {((p.features as string[]) ?? []).includes("company_groups") && <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />Company groups and consolidation</li>}
+                    {((p.highlights as string[]) ?? []).map((h) => <li key={h} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />{h}</li>)}
                     {modules.includes("people") && Number(p.payroll_per_employee) > 0 && <li className="text-xs text-stone-500">Payroll: KES {Number(p.payroll_per_employee)} per employee a month (from KES {Number(p.payroll_minimum)})</li>}
                   </ul>
                   <Link href="/signup" className={`mt-6 inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium ${popular ? "bg-brand-700 text-white hover:bg-brand-600" : "border border-stone-300 text-stone-800 hover:bg-stone-50"}`}>

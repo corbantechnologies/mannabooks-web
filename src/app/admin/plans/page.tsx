@@ -4,12 +4,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
 
 const MODULES = ["sales", "pos", "store", "purchasing", "inventory", "manufacturing", "banking", "people", "projects", "crm", "control"];
-type Plan = { id: string; key: string; name: string; description?: string; price_monthly?: string; price_yearly?: string; modules?: unknown; features?: unknown; max_users?: number | null; max_documents_month?: number | null; payroll_per_employee?: string; payroll_minimum?: string; is_free?: boolean; is_public?: boolean; is_active?: boolean };
+type Plan = { id: string; key: string; name: string; description?: string; price_monthly?: string; price_yearly?: string; modules?: unknown; features?: unknown; highlights?: unknown; max_users?: number | null; max_documents_month?: number | null; payroll_per_employee?: string; payroll_minimum?: string; is_free?: boolean; is_public?: boolean; is_active?: boolean };
 
 export default function PlansPage() {
   const plans = useQuery({ queryKey: ["platform-plans"], queryFn: async () => unwrap(await api.GET("/api/v1/platform/plans/")) });
@@ -46,14 +46,18 @@ function EditPlan({ plan, onClose }: { plan: Plan; onClose: () => void }) {
     max_users: plan.max_users != null ? String(plan.max_users) : "", max_documents_month: plan.max_documents_month != null ? String(plan.max_documents_month) : "",
     payroll_per_employee: String(Number(plan.payroll_per_employee ?? 0)), payroll_minimum: String(Number(plan.payroll_minimum ?? 0)),
     modules: (plan.modules as string[]) ?? [], is_public: plan.is_public ?? true, is_active: plan.is_active ?? true,
+    highlights: ((plan.highlights as string[]) ?? []).join(String.fromCharCode(10)),
   });
+  const monthly = Number(f.price_monthly) || 0;
+  const freeMonths = monthly ? Math.round((12 * monthly - (Number(f.price_yearly) || 0)) / monthly) : 0;
   const save = useMutation({
     mutationFn: async () => unwrap(await api.PATCH("/api/v1/platform/plans/{id}/", { params: { path: { id: plan.id } }, body: {
       ...f, max_users: f.max_users ? Number(f.max_users) : null, max_documents_month: f.max_documents_month ? Number(f.max_documents_month) : null,
+      highlights: f.highlights.split(String.fromCharCode(10)).map((x) => x.trim()).filter(Boolean),
     } as never })),
     onSuccess: () => { toast.success("Plan saved"); onClose(); },
   });
-  const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((p) => ({ ...p, [k]: e.target.value }));
+  const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF((p) => ({ ...p, [k]: e.target.value }));
   return (
     <Modal size="lg" open title={`Edit ${plan.name}`} onClose={onClose}>
       <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
@@ -61,7 +65,9 @@ function EditPlan({ plan, onClose }: { plan: Plan; onClose: () => void }) {
           <Field label="Name"><Input required value={f.name} onChange={set("name")} /></Field>
           <Field label="Description"><Input value={f.description} onChange={set("description")} /></Field>
           <Field label="Monthly (KES, VAT included)"><Input inputMode="decimal" value={f.price_monthly} onChange={set("price_monthly")} /></Field>
-          <Field label="Yearly (KES)"><Input inputMode="decimal" value={f.price_yearly} onChange={set("price_yearly")} /></Field>
+          <Field label="Yearly (KES)" hint={monthly ? (freeMonths > 0 ? `${freeMonths} month${freeMonths === 1 ? "" : "s"} free against paying monthly` : "No saving against paying monthly") : undefined}>
+            <Input inputMode="decimal" value={f.price_yearly} onChange={set("price_yearly")} />
+          </Field>
           <Field label="Team members" hint="Blank: any. Accountants and self-service staff are free."><Input inputMode="numeric" value={f.max_users} onChange={set("max_users")} /></Field>
           <Field label="Documents a month" hint="Blank: any"><Input inputMode="numeric" value={f.max_documents_month} onChange={set("max_documents_month")} /></Field>
           <Field label="Payroll per employee (KES)"><Input inputMode="decimal" value={f.payroll_per_employee} onChange={set("payroll_per_employee")} /></Field>
@@ -73,6 +79,9 @@ function EditPlan({ plan, onClose }: { plan: Plan; onClose: () => void }) {
             {MODULES.map((m) => <label key={m} className="flex items-center gap-1.5"><input type="checkbox" checked={f.modules.includes(m)} onChange={(e) => setF((p) => ({ ...p, modules: e.target.checked ? [...p.modules, m] : p.modules.filter((x) => x !== m) }))} /> {m}</label>)}
           </div>
         </div>
+        <Field label="Extra lines on the pricing page" hint="One per line, shown under the modules, e.g. Tasks with insights. Changes show on the pricing page straight away.">
+          <Textarea rows={5} value={f.highlights} onChange={set("highlights")} />
+        </Field>
         <div className="flex gap-4 text-sm">
           <label className="flex items-center gap-2"><input type="checkbox" checked={f.is_public} onChange={(e) => setF((p) => ({ ...p, is_public: e.target.checked }))} /> Shown on the pricing page</label>
           <label className="flex items-center gap-2"><input type="checkbox" checked={f.is_active} onChange={(e) => setF((p) => ({ ...p, is_active: e.target.checked }))} /> Available</label>

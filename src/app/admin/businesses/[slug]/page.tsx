@@ -12,7 +12,7 @@ import { PAYMENT_STATUS, SUB_STATUS, TICKET_STATUS } from "@/lib/api/platform";
 import { fmt, fmtDate } from "@/lib/format";
 import { ask } from "@/components/confirm";
 
-type Action = "block" | "change_plan" | "extend_trial" | "set_discount" | "record_payment" | "note" | "set_complimentary";
+type Action = "block" | "change_plan" | "extend_trial" | "set_discount" | "record_payment" | "note" | "set_complimentary" | "lock_price";
 type Payment = { id: string; paid_at: string | null; created_at: string; plan_name: string; cycle: string; amount: string; method: string; reference: string; status: string; recorded_by_name: string | null; note: string };
 type TicketRow = { id: string; number: string; subject: string; status: string; updated_at: string };
 
@@ -54,6 +54,9 @@ export default function AdminBusinessPage() {
           <p className="text-xs uppercase text-stone-500">{b.status === "trialing" ? "Trial ends" : "Paid up to"}</p>
           <p className="mt-1 font-semibold">{b.status === "trialing" ? fmtDate(b.trial_ends_on) : b.paid_until ? fmtDate(b.paid_until) : "-"}</p>
           <p className="text-xs text-stone-500">{b.complimentary ? `Free${b.complimentary_until ? ` until ${fmtDate(b.complimentary_until)}` : ""}${b.owner_full_access ? " (owner has full access)" : ""}` : ""}{Number(b.discount_percent) ? ` ${Number(b.discount_percent)}% off` : ""}</p>
+          {b.locked_price_monthly != null && (
+            <p className="text-xs text-stone-500">Price kept at KES {Number(b.locked_price_monthly).toLocaleString()} a month / {Number(b.locked_price_yearly ?? 0).toLocaleString()} a year{b.locked_until ? ` until ${fmtDate(b.locked_until)}` : " for good"}</p>
+          )}
         </Card>
         <Card className="p-4"><p className="text-xs uppercase text-stone-500">This month</p><p className="mt-1 text-sm">{d.usage.documents_this_month} documents · {d.usage.users} seats used</p></Card>
         <Card className="p-4"><p className="text-xs uppercase text-stone-500">Last active</p><p className="mt-1 text-sm">{d.usage.last_active ? fmtDate(d.usage.last_active) : "Never"}</p></Card>
@@ -61,6 +64,9 @@ export default function AdminBusinessPage() {
       <div className="mb-4 flex flex-wrap gap-2 text-sm">
         <Button variant="ghost" onClick={() => setDialog("extend_trial")}>Extend trial</Button>
         <Button variant="ghost" onClick={() => setDialog("set_discount")}>Set discount</Button>
+        {b.locked_price_monthly != null
+          ? <Button variant="ghost" onClick={() => void ask("Stop keeping this business on its old price? Its next payment is at the plan's current price.", { confirmLabel: "Stop" }).then((ok) => ok && act.mutate({ action: "unlock_price" }))}>Remove price lock</Button>
+          : <Button variant="ghost" onClick={() => setDialog("lock_price")}>Keep current price</Button>}
         {b.complimentary
           ? <Button variant="ghost" onClick={() => void ask("End the free access? The business gets a short trial, then normal billing.").then((ok) => ok && act.mutate({ action: "set_complimentary", complimentary: false }))}>End free access</Button>
           : <Button variant="ghost" onClick={() => setDialog("set_complimentary")}>Give full access (free)</Button>}
@@ -125,6 +131,7 @@ export default function AdminBusinessPage() {
 
 const TITLES: Record<Action, string> = {
   block: "Block this business", set_complimentary: "Give this business full access, free", change_plan: "Change plan", extend_trial: "Extend the trial", set_discount: "Standing discount", record_payment: "Record a payment", note: "Staff notes",
+  lock_price: "Keep this business on its current price",
 };
 
 function ActionDialog({ action, plan, notes, pending, error, onClose, onSubmit }: {
@@ -138,6 +145,7 @@ function ActionDialog({ action, plan, notes, pending, error, onClose, onSubmit }
     record_payment: { plan: f.plan, cycle: f.cycle, periods: Number(f.periods), amount: f.amount || "0", method: f.method, reference: f.reference, note: f.note },
     note: { notes: f.notes },
     set_complimentary: { complimentary: true, plan: f.plan, until: f.until || null, note: f.note },
+    lock_price: { until: f.until || null },
   })[action];
   return (
     <Modal open title={TITLES[action]} onClose={onClose}>
@@ -169,6 +177,12 @@ function ActionDialog({ action, plan, notes, pending, error, onClose, onSubmit }
               <Field label="Free until (optional)" hint="Blank: until you end it. After this day, normal billing starts with a short trial."><Input type="date" value={f.until} onChange={set("until")} /></Field>
             </div>
             <Field label="Why?" hint="Kept in the staff notes."><Input required value={f.note} onChange={set("note")} placeholder="Church partner, pilot extension, competition prize" /></Field>
+          </>
+        )}
+        {action === "lock_price" && (
+          <>
+            <p className="text-sm text-stone-600">Its plan&apos;s prices today, monthly and yearly, stay this business&apos;s price when you raise the plan&apos;s price. Changing it to another plan ends the lock.</p>
+            <Field label="Keep it until (optional)" hint="Payments made up to this day use the kept price. Blank: for good."><Input type="date" value={f.until} onChange={set("until")} /></Field>
           </>
         )}
         {action === "note" && <Field label="Notes (staff only)"><Textarea rows={5} value={f.notes} onChange={set("notes")} /></Field>}

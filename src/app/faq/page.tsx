@@ -25,7 +25,7 @@ const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
     items: [
       { q: "Is there a free plan?", a: "Yes. The Free plan covers invoices, cash sales and M-Pesa for one person, up to 30 documents a month, for as long as you like." },
       { q: "How does the free trial work?", a: "Every new business gets 30 days of every feature. When it ends the business moves to the Free plan unless you choose a paid plan. Nothing you entered is lost." },
-      { q: "How do I pay?", a: "By M-Pesa, from Plan and billing in MannaBooks, monthly or yearly. Yearly plans cost the same as 10 months." },
+      { q: "How do I pay?", a: "By M-Pesa, from Plan and billing in MannaBooks, monthly or yearly. Paying yearly costs less than twelve monthly payments; the pricing page shows the saving." },
       { q: "What happens if I miss a payment?", a: "You get reminders and a grace period. After that the business becomes read-only: you can still see and export everything, and it works again as soon as it is paid." },
       { q: "Do you offer discounts?", a: "Registered NGOs and churches get 25% off. Accountants get free seats in their clients' businesses." },
     ],
