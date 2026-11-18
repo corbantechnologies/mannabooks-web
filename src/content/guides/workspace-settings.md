@@ -12,6 +12,9 @@
 | Registered for VAT | Tick if you charge VAT. You must enter your KRA PIN first |
 | Currency | The currency your books are kept in, usually KES |
 | Financial year starts in | The first month of your financial year, used by reports and year-end |
+| Time zone | The business's clock. A task or report due "by 15:00" is due at 15:00 here, and reminders go out on this clock. Nairobi unless you change it |
+
+Under the details, **Show the setup checklist on the overview until it's done** brings back the setup list if someone hid it.
 
 ## Logo
 

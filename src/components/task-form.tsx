@@ -36,6 +36,10 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
     queryKey: ["task-people", slug], enabled: !task,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/people/", wsPath(slug))),
   });
+  const projects = useQuery({ queryKey: ["projects", slug, "pick"], retry: false,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/projects/", { params: { path: { workspace: slug }, query: { page_size: 200 } as never } })) });
+  const customers = useQuery({ queryKey: ["customers", slug, "pick"], retry: false,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/customers/", { params: { path: { workspace: slug }, query: { page_size: 300 } as never } })) });
   const list = people.data?.people ?? [];
   const deps = people.data?.departments ?? [];
   const me = list.find((p) => p.is_me);
@@ -44,14 +48,38 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
   const [f, setF] = useState({
     title: task?.title ?? "", details: task?.details ?? "", due_date: task?.due_date ?? "", due_time: task?.due_time?.slice(0, 5) ?? "",
     priority: task?.priority ?? "normal", needs_check: task?.needs_check ?? true,
+    project_id: task?.project_id ?? "", customer_id: task?.customer_id ?? "", steps: "",
   });
   const who = chosen.length || chosenDeps.length ? chosen : me ? [me.id] : [];
   const onlyMe = who.length === 1 && who[0] === me?.id;
+  // someone ticked who is also in a ticked department would get the task twice: ask which
+  const [clash, setClash] = useState<{ people: string[]; deps: string[] } | null>(null);
+  const findClash = () => {
+    const people = list.filter((p) => who.includes(p.id) && p.department_ids.some((d) => chosenDeps.includes(d)));
+    if (!people.length) return null;
+    return { people: people.map((p) => p.id), deps: [...new Set(people.flatMap((p) => p.department_ids.filter((d) => chosenDeps.includes(d))))] };
+  };
+  const submit = () => {
+    const c = task ? null : findClash();
+    if (c) setClash(c);
+    else save.mutate(undefined);
+  };
+  const resolve = (keep: "departments" | "people" | "both") => {
+    if (!clash) return;
+    const people = keep === "departments" ? who.filter((id) => !clash.people.includes(id)) : who;
+    const departments = keep === "people" ? chosenDeps.filter((d) => !clash.deps.includes(d)) : chosenDeps;
+    setChosen(people);
+    setChosenDeps(departments);
+    setClash(null);
+    save.mutate({ people, departments });
+  };
   const save = useMutation({
-    mutationFn: async () => {
-      const body = { ...f, due_date: f.due_date || null, due_time: f.due_time || null };
+    mutationFn: async (picked?: { people: string[]; departments: string[] }) => {
+      const { steps, ...rest } = f;
+      const body = { ...rest, due_date: f.due_date || null, due_time: f.due_time || null, project_id: f.project_id || null, customer_id: f.customer_id || null,
+        ...(task ? {} : { checklist: steps.split(/\r?\n/).map((x) => x.trim()).filter(Boolean) }) };
       if (task) return [unwrap(await api.PATCH("/api/v1/w/{workspace}/tasks/{id}/", { params: { path: { workspace: slug, id: task.id } }, body: body as never }))];
-      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: who, department_ids: chosenDeps } as never })) as unknown as Task[];
+      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: picked?.people ?? who, department_ids: picked?.departments ?? chosenDeps } as never })) as unknown as Task[];
     },
     onSuccess: (made) => {
       toast.success(task ? "Task changed" : made.length > 1 ? `${made.length} tasks given` : onlyMe ? "Added to your tasks" : "Task given");
@@ -63,9 +91,14 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF((p) => ({ ...p, [k]: e.target.value }));
   return (
     <Modal open title={task ? "Change the task" : "New task"} onClose={onClose}>
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submit(); }}>
         <Field label="Task" error={fieldError(save.error, "title")}><Input required autoFocus value={f.title} onChange={set("title")} placeholder="Collect the signed lease from the landlord" /></Field>
         <Field label="Details"><Textarea rows={3} value={f.details} onChange={set("details")} placeholder="Where, who to see, what done looks like." /></Field>
+        {!task && <Field label="Checklist (optional)" hint="One step per line. They tick each off as they go."><Textarea rows={2} value={f.steps} onChange={set("steps")} placeholder={["Draft", "Review with the client", "Send the final PDF"].join("\n")} /></Field>}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field label="Project (optional)"><Select value={f.project_id} onChange={set("project_id")}><option value="">None</option>{(projects.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>
+          <Field label="Customer (optional)"><Select value={f.customer_id} onChange={set("customer_id")}><option value="">None</option>{(customers.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>
+        </div>
         {!task && (
           <Field label="Who does it" hint={list.length <= 1 && !deps.length ? "You can give tasks to yourself and to the people below you in the reporting line."
             : "Choose people (each gets their own task) or a department (anyone in it takes it). None chosen: it's yours."}>
@@ -101,6 +134,21 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
             <span>I&apos;ll check it when it&apos;s done<span className="block text-xs text-stone-500">Off: when they mark it done, it is done.</span></span>
           </label>
         )}
+        {clash && (() => {
+          const names = list.filter((p) => clash.people.includes(p.id)).map((p) => (p.is_me ? "You" : p.full_name));
+          const depNames = deps.filter((d) => clash.deps.includes(d.id)).map((d) => d.name);
+          const isAre = names.length === 1 && names[0] !== "You" ? "is" : "are";
+          return (
+            <div className="space-y-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+              <p>{names.join(", ")} {isAre} in {depNames.join(", ")}. Giving it to both makes two tasks for the same job. Give it to:</p>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" onClick={() => resolve("departments")}>{depNames.join(", ")} only</Button>
+                <Button type="button" variant="secondary" onClick={() => resolve("people")}>{names.join(", ")} only</Button>
+                <Button type="button" variant="ghost" onClick={() => resolve("both")}>Both, on purpose</Button>
+              </div>
+            </div>
+          );
+        })()}
         <FormError error={save.error} />
         <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>{task ? "Save" : "Give the task"}</Button></div>
       </form>

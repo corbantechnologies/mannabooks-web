@@ -68,6 +68,8 @@ import {
   Building,
   CalendarRange,
   ChevronsUpDown,
+  Star,
+  ChevronDown,
   Coins,
   History,
   LayoutDashboard,
@@ -91,9 +93,11 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { PeriodFixDialog } from "@/components/period-fix-dialog";
 import { PeriodSwitcher } from "@/components/period-switcher";
+import { type JumpItem, QuickJump } from "@/components/quick-jump";
 import { SubscriptionBanner } from "@/components/subscription-banner";
 import { TopBar } from "@/components/top-bar";
 import { ErrorState, Spinner } from "@/components/ui";
+import { SERVER_PREFS, readNavPrefs, subscribeNavPrefs, toggleSection, togglePin } from "@/lib/nav-prefs";
 import { PeriodProvider } from "@/lib/period";
 import { WorkspaceProvider, grants, useWorkspaceContextQuery, useWorkspaceSlug } from "@/lib/workspace";
 
@@ -278,6 +282,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const sidebarHidden = useSyncExternalStore(subscribeSidebar, readSidebarHidden, () => false);
+  const prefs = useSyncExternalStore(subscribeNavPrefs, () => readNavPrefs(slug), () => SERVER_PREFS);
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
@@ -322,37 +327,68 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)) ||
       (item.href === "/accounting/budgets" && (context.headed_departments ?? []).length > 0)); // heads draft their department's budget
   const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0);
+  const isActive = (href: string) => {
+    const target = base + href;
+    return href === "" || href === "/pos" || href === "/inventory" || href === "/banking" || href === "/crm" ? pathname === target || (href === "/inventory" && pathname.startsWith(`${target}/products`)) || (href === "/banking" && /^\/w\/[^/]+\/banking\/(accounts|reconciliations)/.test(pathname)) : pathname.startsWith(target);
+  };
+  const everyItem = sections.flatMap((sec) => sec.items.map((item) => ({ ...item, section: sec.section })));
+  const pinned = prefs.pinned.map((h) => everyItem.find((i) => i.href === h)).filter((i): i is (typeof everyItem)[number] => Boolean(i));
+  const jumpItems: JumpItem[] = everyItem.map((i) => ({ href: base + i.href, label: i.label, section: i.section ?? undefined, icon: i.icon, pinned: prefs.pinned.includes(i.href) }));
+
+  const navLink = ({ href, label, icon: Icon }: NavItem, key: string) => {
+    const active = isActive(href);
+    const isPinned = prefs.pinned.includes(href);
+    return (
+      <div key={key} className="group relative">
+        <Link
+          href={base + href}
+          onClick={() => setMenuOpen(false)}
+          className={clsx(
+            "flex items-center gap-2.5 rounded-md py-2 pl-3 pr-8 text-sm",
+            active ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
+          )}
+        >
+          <Icon className="h-4 w-4 shrink-0" aria-hidden /> <span className="min-w-0 flex-1">{label}</span>
+          {href === "/sales/online-orders" && context.online_orders_new > 0 && (
+            <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.online_orders_new}</span>
+          )}
+          {href === "/inbox" && context.inbox_new > 0 && (
+            <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.inbox_new}</span>
+          )}
+        </Link>
+        <button type="button" onClick={() => togglePin(slug, href)} aria-label={isPinned ? `Unpin ${label}` : `Pin ${label}`} title={isPinned ? "Unpin" : "Pin to the top"}
+          className={clsx("absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-stone-200",
+            isPinned ? "text-amber-500" : "text-stone-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100")}>
+          <Star className="h-3.5 w-3.5" fill={isPinned ? "currentColor" : "none"} />
+        </button>
+      </div>
+    );
+  };
 
   const nav = (
-    <nav className="space-y-4 overflow-y-auto p-3">
-      {sections.map((section) => (
-        <div key={section.section ?? "main"} className="space-y-0.5">
-          {section.section && <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400">{section.section}</p>}
-          {section.items.map(({ href, label, icon: Icon }) => {
-            const target = base + href;
-            const active = href === "" || href === "/pos" || href === "/inventory" || href === "/banking" || href === "/crm" ? pathname === target || (href === "/inventory" && pathname.startsWith(`${target}/products`)) || (href === "/banking" && /^\/w\/[^/]+\/banking\/(accounts|reconciliations)/.test(pathname)) : pathname.startsWith(target);
-            return (
-              <Link
-                key={href}
-                href={target}
-                onClick={() => setMenuOpen(false)}
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm",
-                  active ? "bg-brand-50 font-medium text-brand-700" : "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
-                )}
-              >
-                <Icon className="h-4 w-4" aria-hidden /> {label}
-                {href === "/sales/online-orders" && context.online_orders_new > 0 && (
-                  <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.online_orders_new}</span>
-                )}
-                {href === "/inbox" && context.inbox_new > 0 && (
-                  <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.inbox_new}</span>
-                )}
-              </Link>
-            );
-          })}
+    <nav className="space-y-3 overflow-y-auto p-3">
+      {pinned.length > 0 && (
+        <div className="space-y-0.5">
+          <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-amber-600">Pinned</p>
+          {pinned.map((item) => navLink(item, `pin-${item.href}`))}
         </div>
-      ))}
+      )}
+      {sections.map((section) => {
+        const name = section.section;
+        const hasActive = section.items.some((i) => isActive(i.href));
+        const folded = Boolean(name) && prefs.collapsed.includes(name!) && !hasActive;  // the section you're in stays open
+        return (
+          <div key={name ?? "main"} className="space-y-0.5">
+            {name && (
+              <button type="button" onClick={() => toggleSection(slug, name)} aria-expanded={!folded}
+                className="flex w-full items-center justify-between rounded px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400 hover:text-stone-600">
+                {name}<ChevronDown className={clsx("h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
+              </button>
+            )}
+            {!folded && section.items.map((item) => navLink(item, item.href))}
+          </div>
+        );
+      })}
       {context.workspace.group_id && grants(context.permissions, "reports.view") && (
         <Link href={`/groups/${context.workspace.group_id}`} className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900">
           <Network className="h-4 w-4" aria-hidden /> Group: {context.workspace.group_name}
@@ -381,6 +417,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </Link>
         <PeriodSwitcher />
+        <QuickJump items={jumpItems} />
       </TopBar>
       <div className="flex">
         {!sidebarHidden && <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>}

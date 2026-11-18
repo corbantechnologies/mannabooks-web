@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { BookOpen, Eye, EyeOff, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -207,25 +207,42 @@ export function Modal({
   /** md for short forms; lg for long forms (two or three columns); xl for wide tables. */
   size?: keyof typeof MODAL_WIDTH;
 }) {
+  // Something typed: closing by tapping outside, Escape or the X asks first, so a stray tap doesn't lose the work.
+  // A press that starts inside (selecting text, say) and ends outside never closes it.
+  const dirty = useRef(false);
+  const pressedOutside = useRef(false);
+  const closeRef = useRef(onClose);
+  useEffect(() => { closeRef.current = onClose; }, [onClose]);
+  const tryClose = useCallback(async () => {
+    if (dirty.current) {
+      const { ask } = await import("./confirm");
+      if (!(await ask("Discard what you typed?", { confirmLabel: "Discard", danger: true }))) return;
+    }
+    closeRef.current();
+  }, []);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    dirty.current = false;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") void tryClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, tryClose]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/40 p-2 pt-6 sm:p-10" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/40 p-2 pt-6 sm:p-10"
+      onMouseDown={(e) => { pressedOutside.current = e.target === e.currentTarget; }}
+      onClick={(e) => { if (e.target === e.currentTarget && pressedOutside.current) void tryClose(); }}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
         className={clsx("w-full rounded-lg bg-white shadow-xl", MODAL_WIDTH[size])}
-        onClick={(e) => e.stopPropagation()}
+        onInputCapture={() => { dirty.current = true; }}
+        onChangeCapture={() => { dirty.current = true; }}
       >
         <div className="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3.5 sm:px-5">
           <h2 className="text-base font-semibold text-stone-900">{title}</h2>
-          <button onClick={onClose} className="rounded p-1 text-stone-500 hover:bg-stone-100" aria-label="Close">
+          <button type="button" onClick={() => void tryClose()} className="rounded p-1 text-stone-500 hover:bg-stone-100" aria-label="Close">
             <X className="h-4 w-4" />
           </button>
         </div>

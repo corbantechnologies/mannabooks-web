@@ -7510,6 +7510,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/{id}/attachments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Files on a task. PDF, Word, Excel, PowerPoint, CSV, text or images up to 10 MB. */
+        get: operations["w_tasks_attachments_list"];
+        put?: never;
+        /** @description Files on a task. PDF, Word, Excel, PowerPoint, CSV, text or images up to 10 MB. */
+        post: operations["w_tasks_attachments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/attachments/{aid}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Download a file, or remove it (whoever added it, or whoever gave the task). */
+        get: operations["w_tasks_attachments_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Download a file, or remove it (whoever added it, or whoever gave the task). */
+        delete: operations["w_tasks_attachments_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/checklist/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Add a step to the task's checklist. */
+        post: operations["w_tasks_checklist_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/checklist/{cid}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Tick or rename a step (PATCH), or remove it (DELETE). */
+        delete: operations["w_tasks_checklist_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Tick or rename a step (PATCH), or remove it (DELETE). */
+        patch: operations["w_tasks_checklist_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/{id}/comments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Comments on a task, oldest first. Anyone who can see the task can comment. */
+        get: operations["w_tasks_comments_list"];
+        put?: never;
+        /** @description Comments on a task, oldest first. Anyone who can see the task can comment. */
+        post: operations["w_tasks_comments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tasks/departments/": {
         parameters: {
             query?: never;
@@ -7519,6 +7608,23 @@ export interface paths {
         };
         /** @description How each department handles its tasks: how long they wait to be taken, and how they end. Heads see their own. */
         get: operations["w_tasks_departments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/insights/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Task numbers: `?scope=company|department|team|me` (what you may see; default the widest), `?days=30|90|365` (blank: all). */
+        get: operations["w_tasks_insights_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8195,6 +8301,8 @@ export interface components {
             readonly full_name: string;
             readonly job_title: string;
             readonly is_me: boolean;
+            /** @description The departments whose tasks they can take (their own, and any they head) */
+            readonly department_ids: string[];
         };
         AssignableDepartment: {
             /** Format: uuid */
@@ -9797,6 +9905,20 @@ export interface components {
             readonly employee_count: number;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        DepartmentCounts: {
+            total: number;
+            /** @description Done, or done and waiting for a check */
+            done: number;
+            in_progress: number;
+            /** @description To do, including department tasks nobody has taken */
+            not_started: number;
+            /** @description Done after their time, or still open past it */
+            late: number;
+            overdue: number;
+            done_late: number;
+            on_time_percent: number | null;
+            name: string;
         };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         DepartmentRequest: {
@@ -11865,6 +11987,8 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description The setup checklist on the overview was dismissed */
+            setup_hidden?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -14632,6 +14756,10 @@ export interface components {
             notes?: string;
             is_active?: boolean;
         };
+        PatchedTaskChecklistItemRequest: {
+            text?: string;
+            done?: boolean;
+        };
         PatchedTaskUpdateRequest: {
             title?: string;
             details?: string;
@@ -14648,6 +14776,10 @@ export interface components {
             due_time?: string | null;
             /** @description The person who gave it accepts it before it counts as done */
             needs_check?: boolean;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
         };
         PatchedTaxRateRequest: {
             code?: string;
@@ -14719,6 +14851,8 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description The setup checklist on the overview was dismissed */
+            setup_hidden?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -15311,6 +15445,24 @@ export interface components {
             readonly full_name: string;
             job_title?: string;
             readonly department_name: string;
+        };
+        PersonCounts: {
+            total: number;
+            /** @description Done, or done and waiting for a check */
+            done: number;
+            in_progress: number;
+            /** @description To do, including department tasks nobody has taken */
+            not_started: number;
+            /** @description Done after their time, or still open past it */
+            late: number;
+            overdue: number;
+            done_late: number;
+            on_time_percent: number | null;
+            /** @description Their login, or pool for department tasks nobody has taken */
+            id: string;
+            name: string;
+            department: string | null;
+            open: number;
         };
         PersonTaskRecord: {
             done_on_time: number;
@@ -18111,6 +18263,16 @@ export interface components {
             readonly can_take: boolean;
             readonly can_hand_out: boolean;
             readonly events: components["schemas"]["TaskEvent"][];
+            /** Format: uuid */
+            readonly project_id: string | null;
+            readonly project_name: string | null;
+            /** Format: uuid */
+            readonly customer_id: string | null;
+            readonly customer_name: string | null;
+            readonly checklist: components["schemas"]["TaskChecklistItem"][];
+            readonly comment_count: number;
+            readonly attachment_count: number;
+            readonly can_edit_checklist: boolean;
             readonly given_by_name: string;
             readonly priority: components["schemas"]["PriorityA08Enum"];
             /**
@@ -18169,6 +18331,54 @@ export interface components {
              */
             to_id?: string;
         };
+        TaskAttachment: {
+            readonly id: number;
+            readonly name: string;
+            readonly size: number;
+            readonly added_by_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        TaskAttachmentUploadRequest: {
+            /** Format: binary */
+            file: string;
+        };
+        TaskChecklistItem: {
+            readonly id: number;
+            text: string;
+            done?: boolean;
+            readonly done_by_name: string;
+            /** Format: date-time */
+            readonly done_at: string | null;
+            readonly position: number;
+        };
+        TaskChecklistItemRequest: {
+            text: string;
+            done?: boolean;
+        };
+        TaskComment: {
+            readonly id: number;
+            readonly author_name: string;
+            body: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        TaskCommentRequest: {
+            body: string;
+        };
+        TaskCounts: {
+            total: number;
+            /** @description Done, or done and waiting for a check */
+            done: number;
+            in_progress: number;
+            /** @description To do, including department tasks nobody has taken */
+            not_started: number;
+            /** @description Done after their time, or still open past it */
+            late: number;
+            overdue: number;
+            done_late: number;
+            on_time_percent: number | null;
+        };
         TaskCreateRequest: {
             title: string;
             /** @default  */
@@ -18188,6 +18398,12 @@ export interface components {
              * @default true
              */
             needs_check: boolean;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** @description Steps to tick off */
+            checklist?: string[];
         };
         TaskEvent: {
             kind: components["schemas"]["TaskEventKindEnum"];
@@ -18204,6 +18420,13 @@ export interface components {
          * @enum {string}
          */
         TaskEventKindEnum: "taken" | "handed_back" | "assigned";
+        TaskInsights: {
+            scope: string;
+            scopes: string[];
+            summary: components["schemas"]["TaskCounts"];
+            departments: components["schemas"]["DepartmentCounts"][];
+            people: components["schemas"]["PersonCounts"][];
+        };
         TaskPeople: {
             people: components["schemas"]["Assignable"][];
             departments: components["schemas"]["AssignableDepartment"][];
@@ -18571,6 +18794,8 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description The setup checklist on the overview was dismissed */
+            setup_hidden?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -18659,6 +18884,8 @@ export interface components {
             modules?: unknown;
             /** @description What the business chose to do first */
             business_goal?: string;
+            /** @description The setup checklist on the overview was dismissed */
+            setup_hidden?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -33258,6 +33485,238 @@ export interface operations {
             };
         };
     };
+    w_tasks_attachments_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskAttachment"][];
+                };
+            };
+        };
+    };
+    w_tasks_attachments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["TaskAttachmentUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskAttachment"];
+                };
+            };
+        };
+    };
+    w_tasks_attachments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                aid: number;
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    w_tasks_attachments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                aid: number;
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_tasks_checklist_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskChecklistItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskChecklistItemRequest"];
+                "multipart/form-data": components["schemas"]["TaskChecklistItemRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskChecklistItem"];
+                };
+            };
+        };
+    };
+    w_tasks_checklist_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_tasks_checklist_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: number;
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTaskChecklistItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTaskChecklistItemRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTaskChecklistItemRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskChecklistItem"];
+                };
+            };
+        };
+    };
+    w_tasks_comments_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskComment"][];
+                };
+            };
+        };
+    };
+    w_tasks_comments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskCommentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskCommentRequest"];
+                "multipart/form-data": components["schemas"]["TaskCommentRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskComment"];
+                };
+            };
+        };
+    };
     w_tasks_departments_list: {
         parameters: {
             query?: {
@@ -33280,6 +33739,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DepartmentTaskRecord"][];
+                };
+            };
+        };
+    };
+    w_tasks_insights_retrieve: {
+        parameters: {
+            query?: {
+                days?: number;
+                scope?: "company" | "department" | "me" | "team";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskInsights"];
                 };
             };
         };

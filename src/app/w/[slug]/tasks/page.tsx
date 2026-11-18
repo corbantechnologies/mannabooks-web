@@ -10,23 +10,28 @@ import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { TASK_STATUS, type Task, TaskForm, dueLabel, holder } from "@/components/task-form";
+import { TaskInsights } from "@/components/task-insights";
 import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-type Box = "mine" | "given" | "department" | "all";
+type Box = "mine" | "given" | "department" | "all" | "insights";
 type Action = "take" | "hand_back" | "start" | "done" | "accept" | "return" | "cancel" | "reopen";
 
 /** Tasks: things to do by a date (and time), for yourself, your team, or any colleague. */
 export default function TasksPage() {
   const { slug, can, context } = useWorkspace();
   const heads = (context.headed_departments ?? []).length > 0;
-  const [box, setBox] = useState<Box>("mine");
+  const [box, setBox] = useState<Box>(() => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("view") === "insights" ? "insights" : "mine"));
   const [open, setOpen] = useState(true);
   const [adding, setAdding] = useState(false);
+  const [view, setView] = useState<"list" | "board">(() => {
+    try { return localStorage.getItem("mannabooks.tasks-view") === "board" ? "board" : "list"; } catch { return "list"; }
+  });
+  const chooseView = (v: "list" | "board") => { setView(v); try { localStorage.setItem("mannabooks.tasks-view", v); } catch { /* just for now */ } };
   const q = useQuery({
-    queryKey: ["tasks", slug, box, open],
+    queryKey: ["tasks", slug, box, open], enabled: box !== "insights",
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box, open, page_size: 200 } as never } })),
   });
   const rows = q.data?.results ?? [];
@@ -34,9 +39,14 @@ export default function TasksPage() {
     { key: "mine", label: "My tasks" }, { key: "given", label: "I gave" },
     ...(heads || can("tasks.view") ? [{ key: "department" as Box, label: "Departments" }] : []),
     ...(can("tasks.view") ? [{ key: "all" as Box, label: "Everyone's" }] : []),
+    { key: "insights", label: "Insights" },
   ];
-  const pool = box === "mine" ? rows.filter((t) => t.in_pool) : [];
-  const listed = box === "mine" ? rows.filter((t) => !t.in_pool) : rows;
+  const sorted = [...rows].sort(byUrgency);
+  const finished = sorted.filter((t) => t.status === "done" || t.status === "cancelled")
+    .sort((a, b) => (b.done_at ?? b.created_at ?? "").localeCompare(a.done_at ?? a.created_at ?? ""));  // latest finished first
+  const active = sorted.filter((t) => t.status !== "done" && t.status !== "cancelled");
+  const pool = box === "mine" ? active.filter((t) => t.in_pool) : [];
+  const listed = box === "mine" ? active.filter((t) => !t.in_pool) : active;
   return (
     <div className="w-full">
       <PageHeader title="Tasks" guide="tasks"
@@ -48,13 +58,28 @@ export default function TasksPage() {
             <button key={t.key} onClick={() => setBox(t.key)} className={clsx("shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", box === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
           ))}
         </div>
-        <label className="ml-auto flex items-center gap-2 pb-2 text-sm text-stone-600"><input type="checkbox" checked={!open} onChange={(e) => setOpen(!e.target.checked)} /> Show done and cancelled</label>
+        {box !== "insights" && (
+          <div className="ml-auto flex items-center gap-3 pb-2">
+            <div className="flex rounded-md border border-stone-200 p-0.5 text-xs" role="group" aria-label="Show as">
+              {(["list", "board"] as const).map((v) => (
+                <button key={v} type="button" onClick={() => chooseView(v)} aria-pressed={view === v}
+                  className={clsx("rounded px-2 py-1", view === v ? "bg-stone-800 text-white" : "text-stone-600 hover:bg-stone-100")}>{v === "list" ? "List" : "Board"}</button>
+              ))}
+            </div>
+            <label className="flex items-center gap-2 text-sm text-stone-600"><input type="checkbox" checked={!open} onChange={(e) => setOpen(!e.target.checked)} /> Show done and cancelled</label>
+          </div>
+        )}
       </div>
-      {q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
+      {box === "insights" ? <TaskInsights /> : q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
         <>
           {box === "department" && <DepartmentRecord />}
           <Card><EmptyState title={box === "mine" ? "Nothing to do" : box === "given" ? "You haven't given anyone a task" : "No tasks"}>{box === "mine" ? "Add a task for yourself with New task." : undefined}</EmptyState></Card>
         </>
+      ) : view === "board" ? (
+        <div className="space-y-5">
+          {box === "department" && <DepartmentRecord />}
+          <TaskBoard rows={sorted} box={box} showFinished={!open} />
+        </div>
       ) : (
         <div className="space-y-5">
           {box === "department" && <DepartmentRecord />}
@@ -70,11 +95,26 @@ export default function TasksPage() {
               <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
             </section>
           )}
+          {!open && active.length === 0 && <p className="text-sm text-stone-500">Nothing open.</p>}
+          {finished.length > 0 && (
+            <section>
+              <h2 className="mb-2 text-sm font-semibold text-stone-500">Finished</h2>
+              <div className="space-y-2 opacity-80">{finished.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
+            </section>
+          )}
         </div>
       )}
       {adding && <TaskForm onClose={() => setAdding(false)} />}
     </div>
   );
+}
+
+const PRIORITY_RANK: Record<string, number> = { high: 0, normal: 1, low: 2 };
+
+/** Overdue and soonest first (no deadline last), then higher priority, then newest. */
+function byUrgency(a: Task, b: Task) {
+  const due = (t: Task) => (t.due_date ? `${t.due_date}T${t.due_time ?? "23:59:59"}` : "9999");
+  return due(a).localeCompare(due(b)) || PRIORITY_RANK[a.priority ?? "normal"] - PRIORITY_RANK[b.priority ?? "normal"] || (b.created_at ?? "").localeCompare(a.created_at ?? "");
 }
 
 /** What this person may move the task to from the list. "Send back" needs a reason, so it opens the task. */
@@ -131,7 +171,7 @@ function TaskRow({ t, box }: { t: Task; box: Box }) {
             className={clsx("rounded-full border px-2.5 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-500",
               st.tone === "green" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : st.tone === "blue" ? "border-sky-200 bg-sky-50 text-sky-800"
                 : st.tone === "amber" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-stone-200 bg-stone-50 text-stone-700")}>
-            <option value="" disabled>{act.isPending ? "Saving..." : `${st.label} ▾`}</option>
+            <option value="" disabled>{act.isPending ? "Saving..." : st.label}</option>
             {options.map((o) => <option key={o.label} value={o.value}>{o.label}</option>)}
           </select>
         ) : <Badge tone={st.tone}>{st.label}</Badge>}
@@ -159,5 +199,87 @@ function DepartmentRecord() {
         ))}
       </Table>
     </Card>
+  );
+}
+
+/** What a drop on a board column means for this task, if anything this person may do. */
+function dropAction(t: Task, column: string): Action | null {
+  if (column === "in_progress" && t.can_take) return "take";
+  if (column === "in_progress" && t.can_do && t.status === "todo") return "start";
+  if ((column === "to_check" || column === "done") && t.can_do) return "done";
+  if (column === "done" && t.can_manage && t.status === "to_check") return "accept";
+  if (column === "todo" && t.can_manage && (t.status === "done" || t.status === "cancelled")) return "reopen";
+  return null;
+}
+
+const COLUMNS = [
+  { key: "todo", label: "To do", has: (t: Task) => t.status === "todo" },
+  { key: "in_progress", label: "In progress", has: (t: Task) => t.status === "in_progress" },
+  { key: "to_check", label: "Done, to check", has: (t: Task) => t.status === "to_check" },
+  { key: "done", label: "Done", has: (t: Task) => t.status === "done" },
+] as const;
+
+/** The same tasks as columns. Drag a card to move it, where you're allowed to; every card also keeps its status menu. */
+function TaskBoard({ rows, box, showFinished }: { rows: Task[]; box: Box; showFinished: boolean }) {
+  const { slug } = useWorkspace();
+  const qc = useQueryClient();
+  const [over, setOver] = useState<string | null>(null);
+  const act = useMutation({
+    mutationFn: async ({ id, action }: { id: string; action: Action }) =>
+      unwrap(await api.POST("/api/v1/w/{workspace}/tasks/{id}/action/", { params: { path: { workspace: slug, id } }, body: { action, note: "" } })),
+    onSuccess: (_r, v) => { toast.success(DONE[v.action]); void qc.invalidateQueries({ queryKey: ["tasks", slug] }); },
+    onError: (e) => toast.error(e.message),
+  });
+  const columns = COLUMNS.filter((c) => c.key !== "done" || showFinished || rows.some(c.has));
+  const drop = (column: string, id: string) => {
+    setOver(null);
+    const t = rows.find((r) => r.id === id);
+    if (!t || COLUMNS.find((c) => c.key === column)?.has(t)) return;
+    const action = dropAction(t, column);
+    if (!action) { toast.error("You can't move this task there. Open it to see what you can do."); return; }
+    act.mutate({ id, action });
+  };
+  return (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      {columns.map((c) => {
+        const cards = rows.filter(c.has);
+        return (
+          <section key={c.key} onDragOver={(e) => { e.preventDefault(); setOver(c.key); }} onDragLeave={() => setOver((o) => (o === c.key ? null : o))}
+            onDrop={(e) => { e.preventDefault(); drop(c.key, e.dataTransfer.getData("text/plain")); }}
+            className={clsx("min-h-40 rounded-lg border bg-stone-50 p-2 transition-colors", over === c.key ? "border-brand-400 bg-brand-50" : "border-stone-200")}>
+            <h2 className="flex items-center justify-between px-1 pb-2 text-sm font-semibold text-stone-700">{c.label}<span className="text-xs font-normal text-stone-500">{cards.length}</span></h2>
+            <div className="space-y-2">
+              {cards.map((t) => (
+                <div key={t.id} draggable onDragStart={(e) => { e.dataTransfer.setData("text/plain", t.id); e.dataTransfer.effectAllowed = "move"; }}
+                  className="cursor-grab active:cursor-grabbing">
+                  <BoardCard t={t} box={box} />
+                </div>
+              ))}
+              {cards.length === 0 && <p className="px-1 py-4 text-center text-xs text-stone-400">Nothing here</p>}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+function BoardCard({ t, box }: { t: Task; box: Box }) {
+  const { slug } = useWorkspace();
+  const steps = t.checklist.length;
+  const ticked = t.checklist.filter((i) => i.done).length;
+  return (
+    <Link href={`/w/${slug}/tasks/${t.id}`} className={clsx("block rounded-md border bg-white p-3 text-sm shadow-sm hover:border-brand-300", t.is_overdue ? "border-red-300" : "border-stone-200")}>
+      <p className="font-medium text-stone-900">{t.title}</p>
+      <p className="mt-0.5 text-xs text-stone-600">{box === "mine" ? (t.in_pool ? `${t.department_name}, not taken` : t.for_self ? "Your own" : `From ${t.given_by_name}`) : holder(t)}</p>
+      <p className={clsx("mt-0.5 text-xs", t.is_overdue ? "font-medium text-red-700" : "text-stone-500")}>{dueLabel(t, fmtDate)}{t.is_overdue ? ", overdue" : ""}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-stone-500">
+        {t.priority === "high" && <Badge tone="red">High</Badge>}
+        {steps > 0 && <span>{ticked}/{steps} steps</span>}
+        {t.comment_count > 0 && <span>{t.comment_count} comment{t.comment_count === 1 ? "" : "s"}</span>}
+        {t.attachment_count > 0 && <span>{t.attachment_count} file{t.attachment_count === 1 ? "" : "s"}</span>}
+        {t.project_name && <span className="truncate">· {t.project_name}</span>}
+      </div>
+    </Link>
   );
 }
