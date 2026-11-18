@@ -8866,6 +8866,12 @@ export interface components {
              * @default 0.00
              */
             discount_percent: string;
+            /** Format: decimal */
+            locked_price_monthly?: string | null;
+            /** Format: decimal */
+            locked_price_yearly?: string | null;
+            /** Format: date */
+            locked_until?: string | null;
             /** @default  */
             notes: string;
             /** Format: date-time */
@@ -8886,9 +8892,11 @@ export interface components {
          *     * `move_to_free` - move_to_free
          *     * `note` - note
          *     * `send_reminder` - send_reminder
+         *     * `lock_price` - lock_price
+         *     * `unlock_price` - unlock_price
          * @enum {string}
          */
-        BusinessActionActionEnum: "block" | "unblock" | "change_plan" | "extend_trial" | "set_discount" | "set_complimentary" | "record_payment" | "move_to_free" | "note" | "send_reminder";
+        BusinessActionActionEnum: "block" | "unblock" | "change_plan" | "extend_trial" | "set_discount" | "set_complimentary" | "record_payment" | "move_to_free" | "note" | "send_reminder" | "lock_price" | "unlock_price";
         /**
          * @description * `monthly` - monthly
          *     * `yearly` - yearly
@@ -8907,7 +8915,7 @@ export interface components {
             action: components["schemas"]["BusinessActionActionEnum"];
             /**
              * Format: date
-             * @description set_complimentary: the last free day; blank: until ended
+             * @description set_complimentary: the last free day; lock_price: the last day the price is kept; blank: until ended
              */
             until?: string | null;
             reason?: string;
@@ -14457,6 +14465,8 @@ export interface components {
             modules?: unknown;
             /** @description Extra features, e.g. company_groups */
             features?: unknown;
+            /** @description Extra lines for the pricing page, e.g. "Tasks with insights" */
+            highlights?: unknown;
             /** @description Team members, not counting accountants and self-service staff; blank: no limit */
             max_users?: number | null;
             /** @description Invoices, cash sales and quotations a month; blank: no limit */
@@ -15523,6 +15533,8 @@ export interface components {
             modules?: unknown;
             /** @description Extra features, e.g. company_groups */
             features?: unknown;
+            /** @description Extra lines for the pricing page, e.g. "Tasks with insights" */
+            highlights?: unknown;
             /** @description Team members, not counting accountants and self-service staff; blank: no limit */
             max_users?: number | null;
             /** @description Invoices, cash sales and quotations a month; blank: no limit */
@@ -15561,6 +15573,8 @@ export interface components {
             modules?: unknown;
             /** @description Extra features, e.g. company_groups */
             features?: unknown;
+            /** @description Extra lines for the pricing page, e.g. "Tasks with insights" */
+            highlights?: unknown;
             /** @description Team members, not counting accountants and self-service staff; blank: no limit */
             max_users?: number | null;
             /** @description Invoices, cash sales and quotations a month; blank: no limit */
@@ -17959,6 +17973,15 @@ export interface components {
             readonly coupon_code: string;
             /** @description Payments the coupon still applies to; blank: every payment */
             readonly coupon_payments_left: number | null;
+            /** Format: decimal */
+            readonly locked_price_monthly: string | null;
+            /** Format: decimal */
+            readonly locked_price_yearly: string | null;
+            /**
+             * Format: date
+             * @description The locked price applies to payments made up to this day; blank: for good
+             */
+            readonly locked_until: string | null;
             /** Format: date-time */
             readonly created_at: string;
         };
