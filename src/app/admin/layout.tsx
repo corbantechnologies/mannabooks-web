@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Building2, CreditCard, History, LayoutDashboard, LifeBuoy, Tag, Ticket, Users } from "lucide-react";
+import { Building2, CreditCard, History, LayoutDashboard, LifeBuoy, Tag, Sparkles, Ticket, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,6 +18,7 @@ const NAV = [
   { href: "/admin/tickets", label: "Support tickets", icon: LifeBuoy },
   { href: "/admin/plans", label: "Plans", icon: Tag },
   { href: "/admin/coupons", label: "Coupons", icon: Ticket },
+  { href: "/admin/founding", label: "Founding customers", icon: Sparkles },
   { href: "/admin/log", label: "Admin log", icon: History },
 ];
 

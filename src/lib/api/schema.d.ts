@@ -153,6 +153,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/founding/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The founding-customer offer: open or not, and the places left in each industry. */
+        get: operations["founding_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/founding/apply/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Apply to be a founding customer. Staff are emailed; the business gets a confirmation. */
+        post: operations["founding_apply_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/groups/": {
         parameters: {
             query?: never;
@@ -513,6 +547,74 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["platform_coupons_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/platform/founding/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Founding applications, newest first. `?status=` and `?industry=` filter. */
+        get: operations["platform_founding_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/founding/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Change an application's status (approving emails the code) or its notes. */
+        patch: operations["platform_founding_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/platform/founding/places/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_founding_places_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/platform/founding/settings/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The offer's settings: open or closed, places per industry, the coupon code and the offer's wording. */
+        get: operations["platform_founding_settings_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description The offer's settings: open or closed, places per industry, the coupon code and the offer's wording. */
+        patch: operations["platform_founding_settings_partial_update"];
         trace?: never;
     };
     "/api/v1/platform/payments/": {
@@ -8140,11 +8242,63 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        Application: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly business_name: string;
+            readonly contact_name: string;
+            readonly phone: string;
+            /** Format: email */
+            readonly email: string;
+            readonly industry: components["schemas"]["IndustryEnum"];
+            readonly industry_label: string;
+            readonly staff: components["schemas"]["StaffEnum"];
+            readonly staff_label: string;
+            /** @description What they keep their books in today */
+            readonly uses_now: string;
+            /** @description What they most want help with */
+            readonly wants: string;
+            /** @description Where they came from, e.g. a poster's ?from=westlands */
+            readonly source: string;
+            status?: components["schemas"]["ApplicationStatusEnum"];
+            /** @description For MannaBooks staff only */
+            notes?: string;
+            readonly decided_by_name: string;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `new` - New
+         *     * `contacted` - Contacted
+         *     * `approved` - Approved
+         *     * `declined` - Declined
+         * @enum {string}
+         */
+        ApplicationStatusEnum: "new" | "contacted" | "approved" | "declined";
         ApplyMpesaRequest: {
             /** Format: uuid */
             customer_id: string;
             /** Format: uuid */
             invoice_id?: string | null;
+        };
+        ApplyRequest: {
+            business_name: string;
+            contact_name: string;
+            phone: string;
+            /** Format: email */
+            email: string;
+            industry: components["schemas"]["IndustryEnum"];
+            staff?: components["schemas"]["StaffEnum"] | components["schemas"]["BlankEnum"];
+            /** @description What they keep their books in today */
+            uses_now?: string;
+            /** @description What they most want help with */
+            wants?: string;
+            /** @description Where they came from, e.g. a poster's ?from=westlands */
+            source?: string;
+            /** @description Leave empty (catches robots) */
+            website?: string;
         };
         /**
          * @description * `purchase_order` - Purchase orders
@@ -11009,6 +11163,17 @@ export interface components {
         IncomeVoidRequest: {
             reason: string;
         };
+        /**
+         * @description * `shop` - Shop or supermarket
+         *     * `restaurant` - Restaurant, café or hotel
+         *     * `wholesale` - Wholesale or distribution
+         *     * `services` - Services, agency or consultancy
+         *     * `manufacturing` - Manufacturing or production
+         *     * `ngo` - NGO, church or school
+         *     * `other` - Something else
+         * @enum {string}
+         */
+        IndustryEnum: "shop" | "restaurant" | "wholesale" | "services" | "manufacturing" | "ngo" | "other";
         Intercompany: {
             /** Format: uuid */
             readonly id: string;
@@ -12499,6 +12664,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Activity"][];
         };
+        PaginatedApplicationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Application"][];
+        };
         PaginatedApprovalRequestList: {
             /** @example 123 */
             count: number;
@@ -13884,6 +14064,11 @@ export interface components {
             /** Format: uuid */
             customer_id?: string | null;
         };
+        PatchedApplicationRequest: {
+            status?: components["schemas"]["ApplicationStatusEnum"];
+            /** @description For MannaBooks staff only */
+            notes?: string;
+        };
         PatchedApprovalRuleRequest: {
             name?: string;
             document_type?: components["schemas"]["ApprovalDocumentTypeEnum"];
@@ -14577,6 +14762,14 @@ export interface components {
              * @description Blank: the default warehouse
              */
             opening_warehouse_id?: string | null;
+        };
+        PatchedProgrammeRequest: {
+            is_open?: boolean;
+            places_per_industry?: number;
+            /** @description Sent to approved businesses; create it under Coupons */
+            coupon_code?: string;
+            /** @description Shown on the page and in the approval email */
+            offer?: string;
         };
         PatchedProjectRequest: {
             code?: string;
@@ -15513,6 +15706,12 @@ export interface components {
             payment_method: components["schemas"]["OnlinePaymentMethodEnum"];
             lines: components["schemas"]["PlaceLineRequest"][];
         };
+        Places: {
+            industry: string;
+            label: string;
+            total: number;
+            left: number;
+        };
         Plan: {
             /** Format: uuid */
             readonly id: string;
@@ -16135,6 +16334,14 @@ export interface components {
             operating_profit: string[];
             net_profit: string[];
         };
+        Programme: {
+            is_open?: boolean;
+            places_per_industry?: number;
+            /** @description Sent to approved businesses; create it under Coupons */
+            coupon_code?: string;
+            /** @description Shown on the page and in the approval email */
+            offer?: string;
+        };
         Project: {
             /** Format: uuid */
             readonly id: string;
@@ -16257,6 +16464,11 @@ export interface components {
             expires_on: string | null;
             pdf_available: boolean;
             items: components["schemas"]["CatalogueItem"][];
+        };
+        PublicFounding: {
+            is_open: boolean;
+            offer: string;
+            places: components["schemas"]["Places"][];
         };
         PublicLinkPayment: {
             /** Format: uuid */
@@ -17633,6 +17845,15 @@ export interface components {
             /** Format: decimal */
             total: string;
         };
+        /**
+         * @description * `1` - Just me
+         *     * `2-5` - 2 to 5
+         *     * `6-20` - 6 to 20
+         *     * `21-50` - 21 to 50
+         *     * `50+` - More than 50
+         * @enum {string}
+         */
+        StaffEnum: "1" | "2-5" | "6-20" | "21-50" | "50+";
         Stage: {
             stage: string;
             label: string;
@@ -19311,6 +19532,49 @@ export interface operations {
             };
         };
     };
+    founding_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicFounding"];
+                };
+            };
+        };
+    };
+    founding_apply_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ApplyRequest"];
+                "multipart/form-data": components["schemas"]["ApplyRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     groups_list: {
         parameters: {
             query?: {
@@ -19998,6 +20262,129 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Coupon"];
+                };
+            };
+        };
+    };
+    platform_founding_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedApplicationList"];
+                };
+            };
+        };
+    };
+    platform_founding_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedApplicationRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedApplicationRequest"];
+                "multipart/form-data": components["schemas"]["PatchedApplicationRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+        };
+    };
+    platform_founding_places_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Places"][];
+                };
+            };
+        };
+    };
+    platform_founding_settings_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Programme"];
+                };
+            };
+        };
+    };
+    platform_founding_settings_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProgrammeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProgrammeRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProgrammeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Programme"];
                 };
             };
         };
