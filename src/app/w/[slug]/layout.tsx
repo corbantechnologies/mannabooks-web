@@ -97,7 +97,7 @@ import { type JumpItem, QuickJump } from "@/components/quick-jump";
 import { SubscriptionBanner } from "@/components/subscription-banner";
 import { TopBar } from "@/components/top-bar";
 import { ErrorState, Spinner } from "@/components/ui";
-import { SERVER_PREFS, readNavPrefs, subscribeNavPrefs, toggleSection, togglePin } from "@/lib/nav-prefs";
+import { SERVER_PREFS, readNavPrefs, subscribeNavPrefs, togglePin } from "@/lib/nav-prefs";
 import { PeriodProvider } from "@/lib/period";
 import { WorkspaceProvider, grants, useWorkspaceContextQuery, useWorkspaceSlug } from "@/lib/workspace";
 
@@ -180,6 +180,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     section: "Cash and banking",
     items: [
       { href: "/banking", label: "Accounts", icon: Landmark, perm: ["banking.view"] },
+      { href: "/banking/money", label: "Money in and out", icon: ArrowLeftRight, perm: ["banking.view"] },
       { href: "/banking/expenses", label: "Expenses", icon: ArrowUpFromLine, perm: ["banking.view"] },
       { href: "/banking/income", label: "Other income", icon: ArrowDownToLine, perm: ["banking.view"] },
       { href: "/banking/transfers", label: "Transfers", icon: Repeat, perm: ["banking.view"] },
@@ -281,6 +282,10 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const slug = useWorkspaceSlug();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  // sections opened by hand, for this page only: moving to another page folds them again
+  const [peek, setPeek] = useState<{ path: string; names: string[] }>({ path: "", names: [] });
+  const peeked = peek.path === pathname ? peek.names : [];
+  const togglePeek = (name: string) => setPeek({ path: pathname, names: peeked.includes(name) ? peeked.filter((n) => n !== name) : [...peeked, name] });
   const sidebarHidden = useSyncExternalStore(subscribeSidebar, readSidebarHidden, () => false);
   const prefs = useSyncExternalStore(subscribeNavPrefs, () => readNavPrefs(slug), () => SERVER_PREFS);
   useEffect(() => {
@@ -376,11 +381,11 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
       {sections.map((section) => {
         const name = section.section;
         const hasActive = section.items.some((i) => isActive(i.href));
-        const folded = Boolean(name) && !prefs.opened.includes(name!) && !hasActive;  // folded until opened; the section you're in stays open
+        const folded = Boolean(name) && !peeked.includes(name!) && !hasActive;  // only the section you're in is open, plus any you open here
         return (
           <div key={name ?? "main"} className="space-y-0.5">
             {name && (
-              <button type="button" onClick={() => toggleSection(slug, name)} aria-expanded={!folded}
+              <button type="button" onClick={() => togglePeek(name)} aria-expanded={!folded}
                 className="flex w-full items-center justify-between rounded px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400 hover:text-stone-600">
                 {name}<ChevronDown className={clsx("h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
               </button>

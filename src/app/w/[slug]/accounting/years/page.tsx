@@ -1,12 +1,13 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Button, Card, ErrorState, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
-import { fmtDate } from "@/lib/format";
+import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
@@ -43,6 +44,7 @@ export default function FinancialYearsPage() {
     onSuccess: (pr) => toast.success(`${pr.name} is ${pr.status}`),
     onError: (e) => toast.error(e.message),
   });
+  const [closing, setClosing] = useState<string | null>(null);
   const manageYears = can("fiscalyears.manage");
   const managePeriods = can("periods.manage");
 
@@ -94,7 +96,7 @@ export default function FinancialYearsPage() {
                     <Td>{fmtDate(pr.end_date)}</Td>
                     <Td>{pr.status === "open" ? <Badge tone="green">Open</Badge> : <Badge>Closed{pr.closed_by_name ? ` by ${pr.closed_by_name}` : ""}</Badge>}</Td>
                     <Td className="text-right">
-                      {managePeriods && <Button variant="ghost" className="px-2 py-1" onClick={() => periodAction.mutate({ id: pr.id, action: pr.status === "open" ? "close" : "reopen" })}>{pr.status === "open" ? "Close" : "Reopen"}</Button>}
+                      {managePeriods && <Button variant="ghost" className="px-2 py-1" onClick={() => pr.status === "open" ? setClosing(pr.id) : void ask(`Reopen ${pr.name}? Entries can be added and changed in it again.`, { confirmLabel: "Reopen" }).then((ok) => ok && periodAction.mutate({ id: pr.id, action: "reopen" }))}>{pr.status === "open" ? "Close" : "Reopen"}</Button>}
                     </Td>
                   </tr>
                 ))}
@@ -103,6 +105,51 @@ export default function FinancialYearsPage() {
           </Card>
         </div>
       )}
+      {closing && <CloseMonth slug={slug} periodId={closing} busy={periodAction.isPending} onClose={() => setClosing(null)}
+        onConfirm={() => periodAction.mutate({ id: closing, action: "close" }, { onSuccess: () => setClosing(null) })} />}
     </div>
+  );
+}
+
+function CloseMonth({ slug, periodId, busy, onClose, onConfirm }: { slug: string; periodId: string; busy: boolean; onClose: () => void; onConfirm: () => void }) {
+  const s = useQuery({
+    queryKey: ["period-summary", slug, periodId],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/periods/{id}/summary/", { params: { path: { workspace: slug, id: periodId } } })),
+  });
+  const d = s.data;
+  const loose = d ? [
+    d.draft_invoices && { n: d.draft_invoices, text: "draft invoice", href: `/w/${slug}/sales/invoices?status=draft` },
+    d.draft_bills && { n: d.draft_bills, text: "draft bill", href: `/w/${slug}/purchasing/bills?status=draft` },
+    d.draft_journals && { n: d.draft_journals, text: "draft journal entry", plural: "draft journal entries", href: `/w/${slug}/accounting/journals` },
+    d.unmatched_lines && { n: d.unmatched_lines, text: "bank statement line not matched", plural: "bank statement lines not matched", href: `/w/${slug}/banking` },
+  ].filter(Boolean) as { n: number; text: string; plural?: string; href: string }[] : [];
+  return (
+    <Modal open title={d ? `Close ${d.name}?` : "Close this month?"} onClose={onClose}>
+      {s.isLoading ? <Spinner /> : s.error ? <ErrorState error={s.error} /> : d && (
+        <div className="space-y-4 text-sm">
+          <p className="text-stone-600">Once closed, nothing dated {fmtDate(d.start_date)} to {fmtDate(d.end_date)} can be added, changed or voided until someone reopens the month.</p>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-md bg-stone-50 p-3 sm:grid-cols-3">
+            {([["Income", d.income], ["Expenses", d.expenses], ["Profit", d.profit], ["Money in", d.money_in], ["Money out", d.money_out]] as const).map(([k, v]) => (
+              <div key={k}><dt className="text-xs text-stone-500">{k}</dt><dd className={`font-mono ${Number(v) < 0 ? "text-red-600" : "text-stone-900"}`}>{fmt(v)}</dd></div>
+            ))}
+            <div><dt className="text-xs text-stone-500">Entries</dt><dd className="font-mono text-stone-900">{d.entries}</dd></div>
+          </dl>
+          {loose.length > 0 ? (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <p className="font-medium text-amber-900">Still unfinished in {d.name}</p>
+              <ul className="mt-1 list-disc pl-5 text-amber-900">
+                {loose.map((l) => <li key={l.text}><Link className="underline" href={l.href}>{l.n} {l.n === 1 ? l.text : l.plural ?? `${l.text}s`}</Link></li>)}
+              </ul>
+              <p className="mt-1 text-xs text-amber-800">Drafts dated in a closed month can&apos;t be posted until it&apos;s reopened.</p>
+            </div>
+          ) : <p className="text-emerald-700">Nothing left unfinished in this month.</p>}
+          {d.earlier_open.length > 0 && <p className="text-xs text-stone-500">Earlier months still open: {d.earlier_open.join(", ")}. Closing in order is usual, but not required.</p>}
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button loading={busy} onClick={onConfirm}>Close {d.name}</Button>
+          </div>
+        </div>
+      )}
+    </Modal>
   );
 }
