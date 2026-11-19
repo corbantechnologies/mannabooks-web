@@ -7,6 +7,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { SendEmailButton } from "@/components/send-email";
+import { ApplyToBills } from "@/components/supplier-advance";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
@@ -35,6 +36,7 @@ export default function SupplierPaymentPage() {
       <PageHeader title={`Payment ${p.number}`} description={p.supplier_name} guide="supplier-payments"
         actions={p.status === "posted" && (
           <div className="flex flex-wrap gap-2">
+            {can("supplierpayments.create") && Number(p.unallocated_amount) > 0 && <ApplyToBills paymentId={p.id} supplierId={p.supplier_id} unapplied={p.unallocated_amount ?? "0"} />}
             {can("supplierpayments.create") && <SendEmailButton docType="supplier_payment" id={p.id} label="Email remittance" />}
             {can("supplierpayments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
           </div>
