@@ -38,7 +38,7 @@ The **Overview** then shows a short checklist for your goal, for example *Add yo
 
 - The left menu shows only the pages your role allows.
 - **Find a page quickly:** press **Ctrl+K** (**Cmd+K** on a Mac), or tap the search button at the top. Type part of a page's name, such as *tasks* or *invoices*, then press **Enter**.
-- **Fold the menu:** tap a section heading (Sales, People...) to fold or unfold it. The section you're in always stays open. MannaBooks remembers this in your browser.
+- **Menu sections:** they start folded. Tap a heading (Sales, People...) to open or fold it; the section you're in always stays open. MannaBooks remembers this in your browser.
 - **Pin pages you use most:** hover over a menu item (on a phone, tap the star beside it) and choose the star. Pinned pages appear at the top of the menu, and first in the quick search.
 - The **Guide** button on each page opens the guide for that page.
 - **Switch workspace** at the top takes you back to your list of businesses.

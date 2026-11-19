@@ -2,9 +2,10 @@
 
 Money that passes between the business and the people who own or run it isn't a sale, income or an expense. When a director deposits money to keep the business going, when the business pays them back, or when an owner takes money out, record it under **Cash and banking > Owners and directors**.
 
-Each person has their own account, like a customer statement. It shows four balances that are kept apart:
+Each person has their own account, like a customer statement. It shows five balances that are kept apart:
 
-- **Capital and shares put in**
+- **Capital put in**: money given to the business for good, without shares in return
+- **Paid for shares**: what they paid for shares, premium included
 - **Owed to them**: money they lent the business
 - **Owed by them**: money the business lent them
 - **Drawings**
@@ -46,7 +47,7 @@ In the bank reconciliation, open a statement line that isn't in the books yet. U
 
 ## Balances from before MannaBooks
 
-If a director had already lent the business money before you started, record a **Balance brought forward** for them, choosing which balance it is. It posts nothing. The total for everyone belongs in your **opening balances** (for example on Directors' loan accounts), and the brought-forward records split it by person.
+If a director had already lent the business money before you started, record a **Balance brought forward** for them, choosing which balance it is: capital, shares, owed to them, owed by them or drawings. It posts nothing. The total for everyone belongs in your **opening balances** (for example on Directors' loan accounts), and the brought-forward records split it by person.
 
 ## Mistakes
 

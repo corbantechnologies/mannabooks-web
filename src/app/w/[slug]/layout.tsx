@@ -376,7 +376,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
       {sections.map((section) => {
         const name = section.section;
         const hasActive = section.items.some((i) => isActive(i.href));
-        const folded = Boolean(name) && prefs.collapsed.includes(name!) && !hasActive;  // the section you're in stays open
+        const folded = Boolean(name) && !prefs.opened.includes(name!) && !hasActive;  // folded until opened; the section you're in stays open
         return (
           <div key={name ?? "main"} className="space-y-0.5">
             {name && (

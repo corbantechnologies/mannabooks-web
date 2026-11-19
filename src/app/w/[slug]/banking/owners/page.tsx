@@ -18,7 +18,7 @@ export default function OwnersPage() {
   const [adding, setAdding] = useState(false);
   const [recording, setRecording] = useState(false);
   const rows = owners.data?.results ?? [];
-  const total = (key: "capital" | "owed_to" | "owed_by") => rows.reduce((s, r) => s + Number(r.balances[key]), 0);
+  const total = (key: "capital" | "shares" | "owed_to" | "owed_by") => rows.reduce((s, r) => s + Number(r.balances[key]), 0);
   const money = (v: string | number) => (Number(v) ? fmt(v) : <span className="text-stone-400">-</span>);
   return (
     <div className="space-y-6">
@@ -32,17 +32,19 @@ export default function OwnersPage() {
         <Card><EmptyState title="No owners or directors yet">Add the people who own or run the business, then record what they put in, lend or take out.</EmptyState></Card>
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Card className="p-4"><p className="text-sm text-stone-500">Capital and shares put in</p><p className="text-2xl font-semibold">{fmt(total("capital"))}</p></Card>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="p-4"><p className="text-sm text-stone-500">Capital put in</p><p className="text-2xl font-semibold">{fmt(total("capital"))}</p></Card>
+            <Card className="p-4"><p className="text-sm text-stone-500">Paid for shares</p><p className="text-2xl font-semibold">{fmt(total("shares"))}</p></Card>
             <Card className="p-4"><p className="text-sm text-stone-500">The business owes them</p><p className="text-2xl font-semibold">{fmt(total("owed_to"))}</p></Card>
             <Card className="p-4"><p className="text-sm text-stone-500">They owe the business</p><p className="text-2xl font-semibold">{fmt(total("owed_by"))}</p></Card>
           </div>
           <Card>
-            <Table head={["Name", "Capital and shares", "Owed to them", "Owed by them", "Drawings this year", "Last money"]}>
+            <Table head={["Name", "Capital", "Shares", "Owed to them", "Owed by them", "Drawings this year", "Last money"]}>
               {rows.map((o) => (
                 <tr key={o.id} className="cursor-pointer hover:bg-stone-50" onClick={() => router.push(`/w/${slug}/banking/owners/${o.id}`)}>
                   <Td className="font-medium">{o.name}<span className="block text-xs font-normal text-stone-500">{o.role_label}{o.is_active ? "" : " · no longer involved"}</span></Td>
                   <Td className="text-right font-mono">{money(o.balances.capital)}</Td>
+                  <Td className="text-right font-mono">{money(o.balances.shares)}</Td>
                   <Td className="text-right font-mono">{money(o.balances.owed_to)}</Td>
                   <Td className="text-right font-mono">{money(o.balances.owed_by)}</Td>
                   <Td className="text-right font-mono">{money(o.drawings_this_year)}</Td>
