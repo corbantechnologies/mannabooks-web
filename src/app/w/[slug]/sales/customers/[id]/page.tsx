@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { CustomerForm } from "@/components/customer-form";
 import { ShareLinkModal } from "@/components/share-link";
 import { Meta } from "@/components/document-view";
+import { SendInvoicesToInbox } from "@/components/send-invoices-to-inbox";
 import { Button, Card, EmptyState, ErrorState, Field, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, fmtNonZero } from "@/lib/format";
@@ -47,6 +48,7 @@ export default function CustomerPage() {
           <div className="flex flex-wrap gap-2">
             {can("customers.manage") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
             {can("customers.manage") && <Button variant="secondary" onClick={() => setSharing(true)}>Share statement</Button>}
+            <SendInvoicesToInbox customerId={c.id} />
             {can("payments.create") && <Link href={`/w/${slug}/sales/payments/new?customer=${c.id}`}><Button variant="secondary">Record payment</Button></Link>}
             {can("invoices.create") && <Link href={`/w/${slug}/sales/invoices/new?customer=${c.id}`}><Button>New invoice</Button></Link>}
           </div>

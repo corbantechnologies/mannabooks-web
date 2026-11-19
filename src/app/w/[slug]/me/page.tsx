@@ -80,7 +80,7 @@ export default function MePage() {
             <Link key={a.id} href={`/w/${slug}/advances`}>
               <Card className="mb-2 flex items-center justify-between gap-3 p-3 hover:border-brand-600">
                 <div className="min-w-0"><p className="font-medium">{fmt(a.status === "pending" || a.status === "recommended" || a.status === "declined" ? a.requested_amount : a.amount)}</p>
-                  <p className="text-xs text-stone-500">{fmtDate(a.created_at)}{a.status === "paid" ? ` · ${fmt(a.outstanding)} left to take back` : ""}</p></div>
+                  <p className="text-xs text-stone-500">{fmtDate(a.created_at)}{a.status === "paid" ? ` · ${fmt(a.outstanding)} still to recover` : ""}</p></div>
                 <Badge tone={ADVANCE_STATUS[a.status ?? "pending"].tone}>{ADVANCE_STATUS[a.status ?? "pending"].label}</Badge>
               </Card>
             </Link>

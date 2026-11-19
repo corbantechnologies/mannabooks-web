@@ -17,7 +17,7 @@ import { useWorkspace, wsPath } from "@/lib/workspace";
 type Advance = components["schemas"]["SalaryAdvance"];
 const OPEN = "pending,recommended,approved,paid";
 
-/** Salary advances: ask for one, recommend (supervisor or department head), approve and pay (finance), and see what's left to take back. */
+/** Salary advances: ask for one, recommend (supervisor or department head), approve and pay (finance), and see what's still to recover. */
 export default function AdvancesPage() {
   const { slug, can } = useWorkspace();
   const finance = can("advances.approve");
@@ -56,7 +56,7 @@ export default function AdvancesPage() {
       </div>
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : rows.length === 0 ? <EmptyState title="No advances here" /> : (
-          <Table head={["Employee", "Asked", "Approved", "Over", "Left to take back", "Reason", "Status", ""]}>
+          <Table head={["Employee", "Asked", "Approved", "Over", "Still to recover", "Reason", "Status", ""]}>
             {rows.map((r) => (
               <tr key={r.id}>
                 <Td className="font-medium">{r.employee_name}<p className="text-xs font-normal text-stone-500">{fmtDate(r.created_at)}{r.department ? ` · ${r.department}` : ""}</p></Td>
