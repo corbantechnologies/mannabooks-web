@@ -42,4 +42,4 @@ The **Overview** then shows a short checklist for your goal, for example *Add yo
 - **Pin pages you use most:** hover over a menu item (on a phone, tap the star beside it) and choose the star. Pinned pages appear at the top of the menu, and first in the quick search.
 - The **Guide** button on each page opens the guide for that page.
 - **Switch workspace** at the top takes you back to your list of businesses.
-- Under your name (top right): **My account** to change your password, and **Sign out**.
+- Under your name (top right): **My account** to change your password or your sign-in email (a link goes to the new address, and the email changes only once you open it), and **Sign out**.

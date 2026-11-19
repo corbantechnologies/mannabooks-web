@@ -4,6 +4,39 @@
  */
 
 export interface paths {
+    "/api/v1/auth/email/change/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Ask to sign in with another email: a confirmation link goes to the new address; nothing changes until it's used. */
+        post: operations["auth_email_change_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/email/change/confirm/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_email_change_confirm_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/google/": {
         parameters: {
             query?: never;
@@ -10176,6 +10209,14 @@ export interface components {
             subject: string;
             message: string;
         };
+        EmailChangeConfirmRequest: {
+            token: string;
+        };
+        EmailChangeRequest: {
+            /** Format: email */
+            new_email: string;
+            password?: string;
+        };
         Employee: {
             /** Format: uuid */
             readonly id: string;
@@ -19292,6 +19333,55 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    auth_email_change_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailChangeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["EmailChangeRequest"];
+                "multipart/form-data": components["schemas"]["EmailChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    auth_email_change_confirm_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailChangeConfirmRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["EmailChangeConfirmRequest"];
+                "multipart/form-data": components["schemas"]["EmailChangeConfirmRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
     auth_google_create: {
         parameters: {
             query?: never;
