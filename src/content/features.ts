@@ -77,7 +77,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Bank, M-Pesa and cash accounts", text: "Balances that move with every sale, bill and payslip.", guide: "banking" },
       { name: "Statement import and reconciliation", text: "Bring in the bank or M-Pesa statement, match it to the books and close the month.", guide: "bank-reconciliation" },
       { name: "Expenses and other income", text: "Rent, fuel and small costs with their VAT, and income that isn't a sale.", guide: "expenses" },
-      { name: "Owners and directors", text: "Capital and shares put in, director loans either way, and drawings, with a running account for each person.", guide: "owners", isNew: true },
+      { name: "Owners and directors", text: "Capital and shares kept apart, director loans either way, and drawings, with a running account for each person.", guide: "owners", isNew: true },
     ],
   },
   {

@@ -12336,13 +12336,14 @@ export interface components {
             readonly journal_number: string;
         };
         /**
-         * @description * `capital` - Capital and shares
+         * @description * `capital` - Capital put in
+         *     * `shares` - Shares
          *     * `owed_to` - Owed to them
          *     * `owed_by` - Owed by them
          *     * `drawings` - Drawings
          * @enum {string}
          */
-        OpeningBalanceEnum: "capital" | "owed_to" | "owed_by" | "drawings";
+        OpeningBalanceEnum: "capital" | "shares" | "owed_to" | "owed_by" | "drawings";
         OpeningBalanceLine: {
             /** Format: uuid */
             account_id: string;
@@ -12504,9 +12505,14 @@ export interface components {
         OwnerBalances: {
             /**
              * Format: decimal
-             * @description Capital and shares put in
+             * @description Capital put in (not for shares)
              */
             capital: string;
+            /**
+             * Format: decimal
+             * @description Paid for shares, premium included
+             */
+            shares: string;
             /**
              * Format: decimal
              * @description What the business owes them (their loans to it)
@@ -12563,6 +12569,8 @@ export interface components {
             /** Format: decimal */
             capital: string;
             /** Format: decimal */
+            shares: string;
+            /** Format: decimal */
             owed_to: string;
             /** Format: decimal */
             owed_by: string;
@@ -12606,7 +12614,8 @@ export interface components {
             /**
              * @description For a balance brought forward: which of their balances it is
              *
-             *     * `capital` - Capital and shares
+             *     * `capital` - Capital put in
+             *     * `shares` - Shares
              *     * `owed_to` - Owed to them
              *     * `owed_by` - Owed by them
              *     * `drawings` - Drawings
@@ -12658,7 +12667,8 @@ export interface components {
             /**
              * @description For a balance brought forward: which of their balances it is
              *
-             *     * `capital` - Capital and shares
+             *     * `capital` - Capital put in
+             *     * `shares` - Shares
              *     * `owed_to` - Owed to them
              *     * `owed_by` - Owed by them
              *     * `drawings` - Drawings

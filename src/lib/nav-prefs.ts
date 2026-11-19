@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Each person's menu: which sections they folded and which pages they pinned, per workspace, kept in this browser.
+ * Each person's menu: which sections they opened (all start folded) and which pages they pinned, per workspace, kept in this browser.
  * A shared store so the sidebar and the quick search see the same pins.
  */
-type Prefs = { collapsed: string[]; pinned: string[] };
+type Prefs = { opened: string[]; pinned: string[] };
 
-const EMPTY: Prefs = { collapsed: [], pinned: [] };
+const EMPTY: Prefs = { opened: [], pinned: [] };
 const listeners = new Set<() => void>();
 const cache = new Map<string, Prefs>();
 const key = (slug: string) => `mannabooks.nav.${slug}`;
@@ -19,7 +19,7 @@ export function readNavPrefs(slug: string): Prefs {
     const raw = localStorage.getItem(key(slug));
     if (raw) {
       const p = JSON.parse(raw);
-      prefs = { collapsed: Array.isArray(p.collapsed) ? p.collapsed : [], pinned: Array.isArray(p.pinned) ? p.pinned : [] };
+      prefs = { opened: Array.isArray(p.opened) ? p.opened : [], pinned: Array.isArray(p.pinned) ? p.pinned : [] };
     }
   } catch { /* private window or bad data: start empty */ }
   cache.set(slug, prefs);
@@ -34,7 +34,7 @@ function write(slug: string, prefs: Prefs) {
 
 export function toggleSection(slug: string, section: string) {
   const p = readNavPrefs(slug);
-  write(slug, { ...p, collapsed: p.collapsed.includes(section) ? p.collapsed.filter((s) => s !== section) : [...p.collapsed, section] });
+  write(slug, { ...p, opened: p.opened.includes(section) ? p.opened.filter((s) => s !== section) : [...p.opened, section] });
 }
 
 export function togglePin(slug: string, href: string) {

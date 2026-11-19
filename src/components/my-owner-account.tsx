@@ -22,7 +22,8 @@ export function MyOwnerAccount() {
       <h2 className="mb-2 text-sm font-semibold">My account as {owner.role_label.toLowerCase()}</h2>
       <Card className="space-y-3 p-4">
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div><p className="text-stone-500">Capital and shares</p><p className="text-lg font-semibold">{fmt(balances.capital)}</p></div>
+          <div><p className="text-stone-500">Capital put in</p><p className="text-lg font-semibold">{fmt(balances.capital)}</p></div>
+          <div><p className="text-stone-500">Paid for shares</p><p className="text-lg font-semibold">{fmt(balances.shares)}</p></div>
           <div><p className="text-stone-500">The business owes you</p><p className="text-lg font-semibold">{fmt(balances.owed_to)}</p></div>
           <div><p className="text-stone-500">You owe the business</p><p className="text-lg font-semibold">{fmt(balances.owed_by)}</p></div>
           <div><p className="text-stone-500">Drawings</p><p className="text-lg font-semibold">{fmt(balances.drawings)}</p></div>

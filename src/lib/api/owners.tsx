@@ -18,7 +18,8 @@ export const OWNER_KINDS: { value: Exclude<OwnerKind, "opening">; label: string;
 ];
 
 export const OWNER_BALANCES = [
-  { value: "capital", label: "Capital and shares put in" },
+  { value: "capital", label: "Capital put in" },
+  { value: "shares", label: "Shares (paid for shares)" },
   { value: "owed_to", label: "Owed to them (they lent the business)" },
   { value: "owed_by", label: "Owed by them (the business lent them)" },
   { value: "drawings", label: "Drawings" },

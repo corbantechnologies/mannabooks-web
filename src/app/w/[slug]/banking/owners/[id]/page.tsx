@@ -50,8 +50,9 @@ export default function OwnerStatementPage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Tile label="Capital and shares put in" value={balances.capital} />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Tile label="Capital put in" value={balances.capital} />
+        <Tile label="Paid for shares" value={balances.shares} />
         <Tile label="The business owes them" value={balances.owed_to} warn={Number(balances.owed_to) < 0} />
         <Tile label="They owe the business" value={balances.owed_by} warn={Number(balances.owed_by) < 0} />
         <Tile label="Drawings, all time" value={balances.drawings} />
@@ -59,7 +60,7 @@ export default function OwnerStatementPage() {
 
       <Card>
         {rows.length === 0 ? <EmptyState title="Nothing recorded yet" /> : (
-          <Table head={["Date", "What", "In", "Out", "Capital", "Owed to them", "Owed by them", ""]}>
+          <Table head={["Date", "What", "In", "Out", "Capital", "Shares", "Owed to them", "Owed by them", ""]}>
             {rows.map(({ transaction: t, ...r }) => (
               <tr key={t.id}>
                 <Td className="whitespace-nowrap">{fmtDate(t.transaction_date)}</Td>
@@ -70,6 +71,7 @@ export default function OwnerStatementPage() {
                 <Td className="text-right font-mono">{t.kind === "opening" ? "" : money(r.money_in)}</Td>
                 <Td className="text-right font-mono">{t.kind === "opening" ? "" : money(r.money_out)}</Td>
                 <Td className="text-right font-mono">{fmt(r.capital)}</Td>
+                <Td className="text-right font-mono">{fmt(r.shares)}</Td>
                 <Td className="text-right font-mono">{fmt(r.owed_to)}</Td>
                 <Td className="text-right font-mono">{fmt(r.owed_by)}</Td>
                 <Td className="print:hidden">{can("owners.record") && <Button variant="ghost" className="px-2 py-1 text-red-600"
