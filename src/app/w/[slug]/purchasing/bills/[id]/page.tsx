@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { SupplierAdvances } from "@/components/supplier-advance";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
@@ -57,6 +58,7 @@ export default function BillPage() {
           </div>
         } />
       <RelatedDocuments kind="bill" id={id} />
+      {open && <SupplierAdvances billId={b.id} supplierId={b.supplier_id ?? ""} balance={b.balance_due ?? "0"} />}
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status"><Badge tone={BILL_STATUS[b.status ?? "draft"].tone}>{BILL_STATUS[b.status ?? "draft"].label}</Badge>{b.is_overdue && <span className="ml-1"><Badge tone="red">Overdue</Badge></span>}</Meta>
         <Meta label="Bill date">{fmtDate(b.bill_date)}</Meta>

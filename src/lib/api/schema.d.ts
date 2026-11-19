@@ -7479,6 +7479,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/supplier-payments/{id}/allocate/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Apply money paid in advance (a deposit) to the supplier's bills once they arrive. */
+        post: operations["w_supplier_payments_allocate_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/supplier-payments/{id}/void/": {
         parameters: {
             query?: never;
@@ -18582,6 +18599,9 @@ export interface components {
             readonly balance: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        SupplierAllocateRequest: {
+            allocations: components["schemas"]["SupplierAllocationRequest"][];
         };
         SupplierAllocation: {
             /** Format: uuid */
@@ -33743,6 +33763,7 @@ export interface operations {
                  */
                 status?: "posted" | "void";
                 supplier?: string;
+                unallocated_amount__gt?: number;
             };
             header?: never;
             path: {
@@ -33800,6 +33821,34 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierPayment"];
+                };
+            };
+        };
+    };
+    w_supplier_payments_allocate_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierAllocateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SupplierAllocateRequest"];
+                "multipart/form-data": components["schemas"]["SupplierAllocateRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
