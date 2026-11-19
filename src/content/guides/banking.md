@@ -13,6 +13,18 @@ Your starting accounts (Cash on hand, Petty cash, Bank account, M-Pesa) are ther
 - **Receive money** (Other income): interest, rent you receive, commission, refunds.
 - **Transfers**: money moved between your own accounts, such as banking the day's cash, sweeping M-Pesa to the bank or topping up petty cash. Enter any bank or M-Pesa charge and it goes to *Bank and M-Pesa charges*.
 
+## Money in and out
+
+**Cash and banking > Money in and out** shows the state of your money for the year or month chosen at the top:
+
+- what was in your accounts at the start and at the end, and what came in and went out;
+- each bank, M-Pesa and cash account with its own start, in, out and end;
+- **where it came from** and **where it went** (customers, sales, owners' loans, suppliers, salaries, expenses...), from the other side of each entry, so nothing is missed however it was recorded;
+- what customers still owe you and what you still owe suppliers at the end of the period;
+- every movement, which you can narrow to one account or to money in or out. Open one to see its entry.
+
+Transfers between your own accounts show on each account but are left out of the totals, since they don't change how much you have. The page needs the right to see banking, and it isn't available to someone whose access is limited to a department.
+
 ## Keeping the books right
 
 Once a month, **reconcile** each account against its statement (see *Bank reconciliation*).

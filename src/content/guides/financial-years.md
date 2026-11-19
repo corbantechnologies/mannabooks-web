@@ -6,6 +6,8 @@ Your books are divided into **financial years**, each with 12 monthly **periods*
 
 When a month's books are final (for example, after the VAT return is filed), **Close** it. Nothing can then be posted to, or removed from, that month, by anyone or by any module. If something must change, **Reopen** it; both actions are in the audit log.
 
+Before closing, MannaBooks shows the month's income, expenses, profit, money in and out, and anything still unfinished in it: draft invoices, bills and journal entries, and bank statement lines not yet matched. It also says if earlier months are still open. Finish those first, or close anyway.
+
 ## Closing a year
 
 **Close year** does the year-end for you:

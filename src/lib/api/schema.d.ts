@@ -1471,6 +1471,23 @@ export interface paths {
         patch: operations["w_bank_accounts_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/bank-accounts/movements/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Money in and out across every bank, M-Pesa and cash account, however it was recorded. */
+        get: operations["w_bank_accounts_movements_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/bank-transfers/": {
         parameters: {
             query?: never;
@@ -5258,6 +5275,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_periods_reopen_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/periods/{id}/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The month's figures and anything unfinished in it, shown before closing. */
+        get: operations["w_periods_summary_retrieve"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -12079,6 +12113,99 @@ export interface components {
          * @enum {string}
          */
         Method126Enum: "cash" | "mpesa" | "bank" | "card";
+        MonthSummary: {
+            /** Format: uuid */
+            period_id: string;
+            name: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** @description Posted journal entries dated in the month */
+            entries: number;
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            expenses: string;
+            /** Format: decimal */
+            profit: string;
+            /**
+             * Format: decimal
+             * @description Into bank, M-Pesa and cash, transfers between them left out
+             */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
+            draft_invoices: number;
+            draft_bills: number;
+            draft_journals: number;
+            /** @description Bank statement lines in the month not yet matched */
+            unmatched_lines: number;
+            /** @description Earlier months still open */
+            earlier_open: string[];
+        };
+        MovementAccount: {
+            /** Format: uuid */
+            bank_account_id: string;
+            name: string;
+            kind: string;
+            /** Format: decimal */
+            opening: string;
+            /** Format: decimal */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
+            /** Format: decimal */
+            closing: string;
+        };
+        MovementGroup: {
+            /** @description The account on the other side */
+            name: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        MovementRow: {
+            /** Format: uuid */
+            entry_id: string;
+            number: string;
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            bank_account_id: string;
+            bank_account_name: string;
+            description: string;
+            reference: string;
+            source: string;
+            source_model: string;
+            source_id: string;
+            /** @description The accounts the money came from or went to */
+            other_side: string;
+            /** Format: decimal */
+            money_in: string | null;
+            /** Format: decimal */
+            money_out: string | null;
+        };
+        Movements: {
+            /** Format: date */
+            from_date: string | null;
+            /** Format: date */
+            to_date: string | null;
+            accounts: components["schemas"]["MovementAccount"][];
+            rows: components["schemas"]["MovementRow"][];
+            /** @description More than 2,000 movements: narrow the dates */
+            truncated: boolean;
+            came_from: components["schemas"]["MovementGroup"][];
+            went_to: components["schemas"]["MovementGroup"][];
+            /**
+             * Format: decimal
+             * @description Moved between the money accounts
+             */
+            transfers: string;
+            /** Format: decimal */
+            customers_owe: string;
+            /** Format: decimal */
+            owed_to_suppliers: string;
+        };
         MpesaConnection: {
             /** Format: uuid */
             readonly id: string;
@@ -22089,6 +22216,32 @@ export interface operations {
             };
         };
     };
+    w_bank_accounts_movements_retrieve: {
+        parameters: {
+            query?: {
+                bank_account?: string;
+                direction?: "in" | "out";
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movements"];
+                };
+            };
+        };
+    };
     w_bank_transfers_list: {
         parameters: {
             query?: {
@@ -29414,6 +29567,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountingPeriod"];
+                };
+            };
+        };
+    };
+    w_periods_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MonthSummary"];
                 };
             };
         };

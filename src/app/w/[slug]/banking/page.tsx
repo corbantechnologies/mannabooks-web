@@ -28,6 +28,7 @@ export default function BankingPage() {
       <PageHeader title="Cash and banking" description={`Your bank, M-Pesa and cash accounts. Total ${context.workspace.currency} ${fmt(total)}.`} guide="banking"
         actions={
           <div className="flex flex-wrap gap-2">
+            <Link href={`/w/${slug}/banking/money`}><Button variant="secondary">Money in and out</Button></Link>
             {can("banking.spend") && <Link href={`/w/${slug}/banking/expenses/new`}><Button variant="secondary">Spend money</Button></Link>}
             {can("banking.receive") && <Link href={`/w/${slug}/banking/income/new`}><Button variant="secondary">Receive money</Button></Link>}
             {can("banking.transfer") && <Link href={`/w/${slug}/banking/transfers`}><Button variant="secondary">Transfer</Button></Link>}
