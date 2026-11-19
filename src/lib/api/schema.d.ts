@@ -3695,6 +3695,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/inbox/send-many/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Send several invoices to the customer's MannaBooks inbox at once. */
+        post: operations["w_inbox_send_many_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/inbox/sendable/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A customer's issued invoices, with whether each is already in their MannaBooks inbox. */
+        get: operations["w_inbox_sendable_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/inbox/sent/": {
         parameters: {
             query?: never;
@@ -8020,6 +8054,11 @@ export interface components {
              * @description For an invoice: the expense or asset account the bill is recorded in
              */
             account_id?: string | null;
+            /**
+             * Format: uuid
+             * @description For an invoice already paid: the cash, bank or M-Pesa account you paid from. The bill is posted and the sender's payments are recorded against it
+             */
+            paid_from_id?: string | null;
         };
         AcceptedInvitation: {
             workspace_slug: string;
@@ -11194,8 +11233,21 @@ export interface components {
              * @description The document in the sender's workspace
              */
             readonly source_id: string;
+            readonly payments: components["schemas"]["InboxPayment"][];
+            /** Format: decimal */
+            readonly paid_amount: string;
+            /** @description Supplier payments recorded when it was accepted */
+            readonly payment_ids: string[];
             /** Format: date-time */
             readonly created_at: string;
+        };
+        InboxPayment: {
+            /** Format: date */
+            date: string;
+            amount: string;
+            method: string;
+            reference: string;
+            number?: string;
         };
         InboxSendRequest: {
             kind: components["schemas"]["InboxKindEnum"];
@@ -17791,6 +17843,14 @@ export interface components {
          * @enum {string}
          */
         SendDocumentTypeEnum: "invoice" | "quotation" | "credit_note" | "cash_sale" | "payment" | "delivery_note" | "purchase_order" | "service_order" | "supplier_payment";
+        SendManyRequest: {
+            invoice_ids: string[];
+            message?: string;
+        };
+        SendManyResult: {
+            sent: string[];
+            skipped: components["schemas"]["Skipped"][];
+        };
         SendReminderRequest: {
             /** Format: uuid */
             invoice_id: string;
@@ -17805,6 +17865,26 @@ export interface components {
             subject: string;
             /** @default  */
             message: string;
+        };
+        Sendable: {
+            /** @description The customer's business is on MannaBooks */
+            available: boolean;
+            recipient_name: string;
+            invoices: components["schemas"]["SendableInvoice"][];
+        };
+        SendableInvoice: {
+            /** Format: uuid */
+            id: string;
+            number: string;
+            /** Format: date */
+            issue_date: string;
+            /** Format: decimal */
+            total: string;
+            /** Format: decimal */
+            balance_due: string;
+            status: string;
+            /** @description new, accepted or declined if sent already */
+            sent_status: string | null;
         };
         Sequence: {
             /** Format: uuid */
@@ -18022,6 +18102,10 @@ export interface components {
             totals: string[];
             /** Format: decimal */
             total: string;
+        };
+        Skipped: {
+            id: string;
+            reason: string;
         };
         /**
          * @description * `1` - Just me
@@ -26357,6 +26441,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InboxMessage"];
+                };
+            };
+        };
+    };
+    w_inbox_send_many_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendManyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SendManyRequest"];
+                "multipart/form-data": components["schemas"]["SendManyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SendManyResult"];
+                };
+            };
+        };
+    };
+    w_inbox_sendable_retrieve: {
+        parameters: {
+            query: {
+                customer: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Sendable"];
                 };
             };
         };

@@ -18,6 +18,14 @@ Check the KRA PIN on the customer or supplier if the button doesn't appear. If t
 2. Add a message if you like, and **Send**.
 3. **Business inbox > Sent** shows each document you sent and what they did with it: *New*, *Accepted*, or *Declined* with their reason. A declined document can be fixed and sent again.
 
+### Many invoices at once
+
+When a customer joins MannaBooks after you have already billed them, open the customer and choose **Send invoices to *their name***. Every issued invoice not yet in their inbox is ticked; untick any you don't want and **Send**. Invoices already waiting or accepted are left out, and any that can't go are listed with the reason.
+
+### Invoices already paid
+
+An invoice you have been paid for carries its payments with it: the date, amount, method and reference of each. The customer sees them and can record the bill and the payment in one step.
+
 ## Receiving
 
 Documents sent to you appear in **Business inbox**, with a count in the menu. Open one to see its lines and totals, then:
@@ -29,6 +37,8 @@ Documents sent to you appear in **Business inbox**, with a count in the menu. Op
 | A customer's purchase order (LPO) | A **draft invoice** to that customer, with the LPO number as the reference |
 
 Drafts are never posted for you: check them, then post the bill, approve the order or issue the invoice as usual.
+
+**A supplier's invoice you have already paid.** If the supplier recorded your payment, the invoice shows it. Tick **We paid this** and choose the account the money left (bank, M-Pesa or cash). Accepting then posts the bill and records each payment on its own date, with the supplier's reference, so the bill is paid and your bank shows the money going out. This needs the right to post bills and to record supplier payments; without them, accept it as a draft. If the dates fall in a closed month, reopen it first.
 
 If your business isn't registered for VAT, the VAT on a supplier's invoice becomes part of the cost on your bill.
 
