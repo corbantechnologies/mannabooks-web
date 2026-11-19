@@ -340,6 +340,9 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const pinned = prefs.pinned.map((h) => everyItem.find((i) => i.href === h)).filter((i): i is (typeof everyItem)[number] => Boolean(i));
   const jumpItems: JumpItem[] = everyItem.map((i) => ({ href: base + i.href, label: i.label, section: i.section ?? undefined, icon: i.icon, pinned: prefs.pinned.includes(i.href) }));
 
+  // counts shown beside a page, and on its section heading while the section is folded
+  const countOf = (href: string) => (href === "/sales/online-orders" ? context.online_orders_new : href === "/inbox" ? context.inbox_new : 0) || 0;
+
   const navLink = ({ href, label, icon: Icon }: NavItem, key: string) => {
     const active = isActive(href);
     const isPinned = prefs.pinned.includes(href);
@@ -354,12 +357,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           )}
         >
           <Icon className="h-4 w-4 shrink-0" aria-hidden /> <span className="min-w-0 flex-1">{label}</span>
-          {href === "/sales/online-orders" && context.online_orders_new > 0 && (
-            <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.online_orders_new}</span>
-          )}
-          {href === "/inbox" && context.inbox_new > 0 && (
-            <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{context.inbox_new}</span>
-          )}
+          {countOf(href) > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{countOf(href)}</span>}
         </Link>
         <button type="button" onClick={() => togglePin(slug, href)} aria-label={isPinned ? `Unpin ${label}` : `Pin ${label}`} title={isPinned ? "Unpin" : "Pin to the top"}
           className={clsx("absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-stone-200",
@@ -382,12 +380,14 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         const name = section.section;
         const hasActive = section.items.some((i) => isActive(i.href));
         const folded = Boolean(name) && !peeked.includes(name!) && !hasActive;  // only the section you're in is open, plus any you open here
+        const waiting = section.items.reduce((n, i) => n + countOf(i.href), 0);
         return (
           <div key={name ?? "main"} className="space-y-0.5">
             {name && (
               <button type="button" onClick={() => togglePeek(name)} aria-expanded={!folded}
                 className="flex w-full items-center justify-between rounded px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400 hover:text-stone-600">
-                {name}<ChevronDown className={clsx("h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
+                <span className="flex items-center gap-1.5">{name}{folded && waiting > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-[10px] font-medium normal-case tracking-normal text-white">{waiting}</span>}</span>
+                <ChevronDown className={clsx("h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
               </button>
             )}
             {!folded && section.items.map((item) => navLink(item, item.href))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -28,6 +28,8 @@ export default function InboxMessagePage() {
   const path = { params: { path: { workspace: slug, id } } };
   const msg = useQuery({ queryKey: ["inbox-message", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/inbox/{id}/", path)) });
   const accounts = usePurchaseAccounts(slug);
+  const qc = useQueryClient();
+  const recount = () => void qc.invalidateQueries({ queryKey: ["workspace-context", slug] });
   const [account, setAccount] = useState("");
   const banks = useBankAccounts(slug);
   const [paidToo, setPaidToo] = useState(true);
@@ -36,11 +38,11 @@ export default function InboxMessagePage() {
   const [reason, setReason] = useState("");
   const accept = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/{id}/accept/", { ...path, body: { account_id: account || null, paid_from_id: recordPaid ? paidFrom : null } })),
-    onSuccess: (m) => toast.success((m.payment_ids ?? []).length ? `Accepted: the bill is posted and ${(m.payment_ids ?? []).length === 1 ? "the payment is" : "the payments are"} recorded` : `Accepted: ${CREATES[m.kind][0]} is ready to check`),
+    onSuccess: (m) => { recount(); toast.success((m.payment_ids ?? []).length ? `Accepted: the bill is posted and ${(m.payment_ids ?? []).length === 1 ? "the payment is" : "the payments are"} recorded` : `Accepted: ${CREATES[m.kind][0]} is ready to check`); },
   });
   const decline = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/{id}/decline/", { ...path, body: { reason } })),
-    onSuccess: () => { toast.success("Declined. The sender sees your reason."); setDeclining(false); },
+    onSuccess: () => { recount(); toast.success("Declined. The sender sees your reason."); setDeclining(false); },
   });
   if (msg.isLoading) return <Spinner />;
   if (msg.error) return <ErrorState error={msg.error} />;

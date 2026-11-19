@@ -28,7 +28,7 @@ An invoice you have been paid for carries its payments with it: the date, amount
 
 ## Receiving
 
-Documents sent to you appear in **Business inbox**, with a count in the menu. Open one to see its lines and totals, then:
+Documents sent to you appear in **Business inbox**, with a count beside it in the menu (and on its section heading while the section is folded). Everyone whose role can accept documents is emailed when one arrives; invoices sent together arrive as one email. When you decline, the person who sent it is emailed your reason. Open one to see its lines and totals, then:
 
 | You receive | Accepting creates |
 | --- | --- |
