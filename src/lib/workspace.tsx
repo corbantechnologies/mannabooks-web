@@ -29,6 +29,8 @@ export function useWorkspaceContextQuery(slug: string) {
   return useQuery({
     queryKey: ["workspace-context", slug],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/context/", { params: { path: { workspace: slug } } })),
+    refetchInterval: 120_000,  // keeps the menu counts (inbox, online orders) current
+    refetchIntervalInBackground: false,
   });
 }
 
