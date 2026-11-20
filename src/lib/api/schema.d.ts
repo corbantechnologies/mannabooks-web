@@ -10368,7 +10368,31 @@ export interface components {
             spending: components["schemas"]["SpendingRow"][];
             people: components["schemas"]["PersonPay"][];
             wages_shown: boolean;
+            documents: components["schemas"]["DepartmentDocument"][];
+            documents_limit: number;
         };
+        DepartmentDocument: {
+            /** Format: uuid */
+            entry_id: string;
+            /** Format: date */
+            date: string;
+            number: string;
+            description: string;
+            reference: string;
+            /** @description invoice, bill, expense, payroll, manual... */
+            source: string;
+            source_model: string;
+            source_id: string;
+            kind: components["schemas"]["DepartmentDocumentKindEnum"];
+            /** Format: decimal */
+            amount: string;
+        };
+        /**
+         * @description * `spent` - spent
+         *     * `earned` - earned
+         * @enum {string}
+         */
+        DepartmentDocumentKindEnum: "spent" | "earned";
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         DepartmentRequest: {
             name: string;

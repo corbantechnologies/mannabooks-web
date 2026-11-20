@@ -48,4 +48,13 @@ The menu entry appears only for someone set as a department's head.
 - its approved **budget** for the same months, how much of it is **used**, and what's **left** (amber past 85%, red when over);
 - its **wages**: gross pay on approved payslips, by each person's department, and how many people were paid.
 
-Open a department to see **what the money went on**, account by account (transport, fuel, entertainment, rent…) against the budget, and **pay person by person**. Wages and pay show only to people whose role can see payroll. The page needs the right to see reports, and isn't shown to someone limited to one department.
+## A department's page
+
+Click a department, in **Organisation > Departments** or in **All departments**, to open its page. Both lists open the same page; **Edit** on it (or on the row) changes the name, head and modules.
+
+- **Head and people:** who heads it, what it runs, and everyone employed in it. A head employed in another department, such as a CEO who also leads a division, is listed as **Head** too.
+- **Documents:** every invoice, bill, expense, payroll and journal in the period with a line tagged to the department or one of its cost centres, with the part that belongs to it. Click one to open it.
+- **What it spent on:** account by account (transport, fuel, rent…) against the budget.
+- **Pay:** person by person.
+
+People see the head and people with the right to see departments. The money (documents, spending and budget) needs the right to see reports and isn't shown to someone limited to one department; pay needs the right to see payroll. Everything follows the year or month chosen at the top.

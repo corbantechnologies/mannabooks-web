@@ -2,7 +2,9 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
@@ -47,12 +49,25 @@ export default function DepartmentsPage() {
   const moduleLabels = (catalog.data?.department_modules ?? {}) as Record<string, string>;
   const manage = can("departments.manage");
   const rows = list.data?.results ?? [];
+  const router = useRouter();
+  // the department page's Edit button comes here with ?edit=<id>
+  useEffect(() => {
+    const want = new URLSearchParams(window.location.search).get("edit");
+    const d = want ? rows.find((r) => r.id === want) : undefined;
+    if (d && manage) {
+      // opening the form once, from the department page's Edit link
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      open(d);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list.data]);
 
   return (
     <div className="w-full">
       <PageHeader
         title="Departments"
-        description="Each department runs one or more modules. Its head is the in-charge of those modules and receives their approvals and alerts."
+        description="Each department runs one or more modules. Its head is the in-charge of those modules and receives their approvals and alerts. Open one to see its people, documents and spending."
         guide="departments"
         actions={manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New department</Button>}
       />
@@ -60,15 +75,16 @@ export default function DepartmentsPage() {
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No departments yet">For example: Sales, Stores, Finance, HR.</EmptyState>
         ) : (
-          <Table head={["Department", "Head (in-charge)", "Runs", "Employees"]}>
+          <Table head={["Department", "Head (in-charge)", "Runs", "Employees", ""]}>
             {rows.map((d) => (
-              <tr key={d.id} className={manage ? "cursor-pointer hover:bg-stone-50" : ""} onClick={() => manage && open(d)}>
-                <Td className="font-medium">{d.name} {!d.is_active && <Badge>Inactive</Badge>}</Td>
+              <tr key={d.id} className="cursor-pointer hover:bg-stone-50" onClick={() => router.push(`/w/${slug}/departments/${d.id}`)}>
+                <Td className="font-medium"><Link href={`/w/${slug}/departments/${d.id}`} className="hover:underline" onClick={(e) => e.stopPropagation()}>{d.name}</Link> {!d.is_active && <Badge>Inactive</Badge>}</Td>
                 <Td>{d.head_name || <span className="text-stone-400">No head</span>}</Td>
                 <Td>
                   <div className="flex flex-wrap gap-1">{((d.modules as string[]) ?? []).map((m) => <Badge key={m} tone="blue">{moduleLabels[m] ?? m}</Badge>)}</div>
                 </Td>
                 <Td>{d.employee_count}</Td>
+                <Td className="text-right">{manage && <Button variant="ghost" onClick={(e) => { e.stopPropagation(); open(d); }}>Edit</Button>}</Td>
               </tr>
             ))}
           </Table>
