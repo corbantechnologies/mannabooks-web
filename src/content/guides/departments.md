@@ -38,3 +38,14 @@ A department's head sees **My department** in the menu. It shows, for each depar
 - **Work reports:** reports from their people that are late, and how many fall due in the next week.
 
 The menu entry appears only for someone set as a department's head.
+
+
+## All departments (owners and finance)
+
+**All departments** shows every department side by side for the year or month chosen at the top:
+
+- what it **spent**, from the books: everything tagged with the department or one of its cost centres;
+- its approved **budget** for the same months, how much of it is **used**, and what's **left** (amber past 85%, red when over);
+- its **wages**: gross pay on approved payslips, by each person's department, and how many people were paid.
+
+Open a department to see **what the money went on**, account by account (transport, fuel, entertainment, rent…) against the budget, and **pay person by person**. Wages and pay show only to people whose role can see payroll. The page needs the right to see reports, and isn't shown to someone limited to one department.

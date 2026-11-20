@@ -34,6 +34,12 @@ The menu then shows only those modules, so it stays short. Accounting, reports, 
 
 The **Overview** then shows a short checklist for your goal, for example *Add your KRA PIN*, *Add your products with the stock you have* and *Open a till shift and make a sale*. Each step ticks itself off when it is done, and the list disappears once everything is set up. You can also **Hide this list** sooner; bring it back in **Settings**.
 
+## Your Overview
+
+The **Overview** is yours to arrange. Choose **Customise** to add, remove and reorder what you see: **Coming up**, this period's figures, **Cash and bank** (what's in each account), **Money in and out**, **Tasks**, the **Business inbox** and your role. It changes only your Overview, not anyone else's, and shows only what your role can see.
+
+**Coming up** (also in the menu) lists everything with a due date, soonest first: suppliers' bills, approved payment vouchers, salaries, PAYE, SHIF, NSSF and the Housing Levy (due by the 9th), VAT (by the 20th, if you're registered), and what customers owe you. It's grouped into overdue, the next 7 days and later, with totals to pay and to collect. Choose how far ahead to look, from 7 to 90 days, and open any line to pay or chase it.
+
 ## Getting around
 
 - The left menu shows only the pages your role allows.

@@ -2430,6 +2430,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/dashboard/coming-up/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description What's due to pay and to collect, soonest first, with what's overdue. Each item shows only if your role can see it. */
+        get: operations["w_dashboard_coming_up_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/departments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every department: spending against budget, and wages. For owners and finance (people who can see reports). */
+        get: operations["w_dashboard_departments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/departments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One department: what it spent on, account by account against its budget, and what each person in it was paid. */
+        get: operations["w_dashboard_departments_retrieve_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/layout/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own Overview: which cards, in which order. Everyone can change theirs; it doesn't change anyone else's. */
+        get: operations["w_dashboard_layout_retrieve"];
+        /** @description Your own Overview: which cards, in which order. Everyone can change theirs; it doesn't change anyone else's. */
+        put: operations["w_dashboard_layout_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/deals/": {
         parameters: {
             query?: never;
@@ -9241,6 +9310,10 @@ export interface components {
             money_out: string;
             cleared: boolean;
         };
+        Card: {
+            key: string;
+            label: string;
+        };
         CardConnection: {
             /** Format: uuid */
             readonly id: string;
@@ -9356,6 +9429,10 @@ export interface components {
          * @enum {string}
          */
         CardPayoutStatusEnum: "pending" | "processing" | "success" | "failed";
+        CardRequest: {
+            key: string;
+            label: string;
+        };
         CardTransaction: {
             /** Format: uuid */
             readonly id: string;
@@ -9393,6 +9470,17 @@ export interface components {
          * @enum {string}
          */
         CardTransactionStatusEnum: "pending" | "success" | "failed" | "abandoned";
+        /**
+         * @description * `coming_up` - coming_up
+         *     * `period` - period
+         *     * `accounts` - accounts
+         *     * `money` - money
+         *     * `tasks` - tasks
+         *     * `inbox` - inbox
+         *     * `role` - role
+         * @enum {string}
+         */
+        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -9594,6 +9682,51 @@ export interface components {
             counted_cash: string;
             notes?: string;
         };
+        ComingUp: {
+            /** Format: date */
+            today: string;
+            /** Format: date */
+            horizon: string;
+            items: components["schemas"]["ComingUpItem"][];
+            /** Format: decimal */
+            to_pay: string;
+            /** Format: decimal */
+            to_collect: string;
+            /** Format: decimal */
+            overdue_to_pay: string;
+            /** Format: decimal */
+            overdue_to_collect: string;
+        };
+        ComingUpItem: {
+            kind: components["schemas"]["ComingUpItemKindEnum"];
+            /**
+             * @description out: to pay; in: to collect
+             *
+             *     * `out` - out
+             *     * `in` - in
+             */
+            direction: components["schemas"]["DirectionEnum"];
+            title: string;
+            party: string;
+            /** Format: date */
+            due_date: string;
+            /** Format: decimal */
+            amount: string;
+            /** @description Where it is, under /w/<workspace>/ */
+            href: string;
+            overdue: boolean;
+            note: string;
+        };
+        /**
+         * @description * `bill` - bill
+         *     * `voucher` - voucher
+         *     * `salaries` - salaries
+         *     * `statutory` - statutory
+         *     * `vat` - vat
+         *     * `invoice` - invoice
+         * @enum {string}
+         */
+        ComingUpItemKindEnum: "bill" | "voucher" | "salaries" | "statutory" | "vat" | "invoice";
         CompanyGroup: {
             /** Format: uuid */
             readonly id: string;
@@ -10205,6 +10338,18 @@ export interface components {
             on_time_percent: number | null;
             name: string;
         };
+        DepartmentDetail: {
+            /** Format: uuid */
+            department_id: string;
+            name: string;
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            spending: components["schemas"]["SpendingRow"][];
+            people: components["schemas"]["PersonPay"][];
+            wages_shown: boolean;
+        };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         DepartmentRequest: {
             name: string;
@@ -10221,6 +10366,30 @@ export interface components {
             modules?: unknown;
             is_active?: boolean;
         };
+        DepartmentRow: {
+            /** Format: uuid */
+            department_id: string | null;
+            name: string;
+            head: string;
+            /**
+             * Format: decimal
+             * @description Approved budget for the costs in the range
+             */
+            budget: string;
+            /**
+             * Format: decimal
+             * @description Costs in the books tagged with the department or its cost centres
+             */
+            spent: string;
+            /** Format: decimal */
+            left: string | null;
+            /**
+             * Format: decimal
+             * @description Gross pay on approved payslips, by each person's department
+             */
+            wages: string;
+            people: number;
+        };
         DepartmentTaskRecord: {
             /** Format: uuid */
             department_id: string;
@@ -10234,6 +10403,21 @@ export interface components {
             done_on_time: number;
             done_late: number;
             handed_back: number;
+        };
+        DepartmentsOverview: {
+            /** Format: date */
+            from_date: string;
+            /** Format: date */
+            to_date: string;
+            rows: components["schemas"]["DepartmentRow"][];
+            /** Format: decimal */
+            total_spent: string;
+            /** Format: decimal */
+            total_budget: string;
+            /** Format: decimal */
+            total_wages: string;
+            /** @description False when your role can't see payroll */
+            wages_shown: boolean;
         };
         DepreciationHistory: {
             /** Format: date */
@@ -10260,6 +10444,12 @@ export interface components {
             entries: number;
             assets: number;
         };
+        /**
+         * @description * `out` - out
+         *     * `in` - in
+         * @enum {string}
+         */
+        DirectionEnum: "out" | "in";
         DocumentEmail: {
             /** Format: uuid */
             readonly id: string;
@@ -11663,6 +11853,13 @@ export interface components {
          * @enum {string}
          */
         Kind6b8Enum: "report" | "task";
+        Layout: {
+            cards: components["schemas"]["CardsEnum"][];
+            readonly available: components["schemas"]["Card"][];
+        };
+        LayoutRequest: {
+            cards: components["schemas"]["CardsEnum"][];
+        };
         Lead: {
             /** Format: uuid */
             readonly id: string;
@@ -15914,6 +16111,17 @@ export interface components {
             department: string | null;
             open: number;
         };
+        PersonPay: {
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            job_title: string;
+            payslips: number;
+            /** Format: decimal */
+            gross: string;
+            /** Format: decimal */
+            net: string;
+        };
         PersonTaskRecord: {
             done_on_time: number;
             done_late: number;
@@ -18123,6 +18331,15 @@ export interface components {
         Skipped: {
             id: string;
             reason: string;
+        };
+        SpendingRow: {
+            /** Format: uuid */
+            account_id: string;
+            account: string;
+            /** Format: decimal */
+            spent: string;
+            /** Format: decimal */
+            budget: string;
         };
         /**
          * @description * `1` - Just me
@@ -24200,6 +24417,131 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Statement"];
+                };
+            };
+        };
+    };
+    w_dashboard_coming_up_retrieve: {
+        parameters: {
+            query?: {
+                /** @description How far ahead, 7 to 90 days (default 30) */
+                days?: number;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComingUp"];
+                };
+            };
+        };
+    };
+    w_dashboard_departments_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Default: 1 January */
+                from?: string;
+                /** @description Default: today */
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartmentsOverview"];
+                };
+            };
+        };
+    };
+    w_dashboard_departments_retrieve_2: {
+        parameters: {
+            query?: {
+                /** @description Default: 1 January */
+                from?: string;
+                /** @description Default: today */
+                to?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartmentDetail"];
+                };
+            };
+        };
+    };
+    w_dashboard_layout_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Layout"];
+                };
+            };
+        };
+    };
+    w_dashboard_layout_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LayoutRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LayoutRequest"];
+                "multipart/form-data": components["schemas"]["LayoutRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Layout"];
                 };
             };
         };
