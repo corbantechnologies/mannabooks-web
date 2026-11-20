@@ -8546,6 +8546,8 @@ export interface components {
             readonly can_decide: boolean;
             readonly can_cancel: boolean;
             readonly requested_by_name: string;
+            /** @description What it is for, from the person who sent it, so approvers understand it */
+            note?: string;
             readonly steps: components["schemas"]["ApprovalStep"][];
             /** Format: date-time */
             readonly created_at: string;
@@ -9037,6 +9039,11 @@ export interface components {
             /** Format: uuid */
             fiscal_year_id: string;
             readonly fiscal_year_name: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             readonly cost_center_name: string;
@@ -9057,6 +9064,8 @@ export interface components {
              * @description When a head sent the draft for approval
              */
             readonly submitted_at: string | null;
+            /** @description What the sender wrote when sending it for approval */
+            readonly submitted_note: string;
             readonly total_income: string;
             readonly total_expense: string;
             readonly months: string[];
@@ -9087,6 +9096,11 @@ export interface components {
              * @default 0.00
              */
             uplift_percent: string;
+            /**
+             * @description submit: what it is for
+             * @default
+             */
+            note: string;
         };
         BudgetCheck: {
             budgeted: boolean;
@@ -9126,6 +9140,11 @@ export interface components {
             name: string;
             /** Format: uuid */
             fiscal_year_id: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             /** Format: uuid */
@@ -10349,7 +10368,31 @@ export interface components {
             spending: components["schemas"]["SpendingRow"][];
             people: components["schemas"]["PersonPay"][];
             wages_shown: boolean;
+            documents: components["schemas"]["DepartmentDocument"][];
+            documents_limit: number;
         };
+        DepartmentDocument: {
+            /** Format: uuid */
+            entry_id: string;
+            /** Format: date */
+            date: string;
+            number: string;
+            description: string;
+            reference: string;
+            /** @description invoice, bill, expense, payroll, manual... */
+            source: string;
+            source_model: string;
+            source_id: string;
+            kind: components["schemas"]["DepartmentDocumentKindEnum"];
+            /** Format: decimal */
+            amount: string;
+        };
+        /**
+         * @description * `spent` - spent
+         *     * `earned` - earned
+         * @enum {string}
+         */
+        DepartmentDocumentKindEnum: "spent" | "earned";
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         DepartmentRequest: {
             name: string;
@@ -11155,6 +11198,11 @@ export interface components {
         Glance: {
             /** Format: date */
             today: string;
+            /** Format: date */
+            start: string;
+            /** Format: date */
+            end: string;
+            label: string;
             sales: components["schemas"]["GlanceSales"] | null;
             quotes: components["schemas"]["GlanceQuotes"] | null;
             receivables: components["schemas"]["GlanceReceivables"] | null;
@@ -11162,6 +11210,11 @@ export interface components {
             cash: components["schemas"]["GlanceCash"] | null;
         };
         GlanceCash: {
+            /**
+             * Format: date
+             * @description Balances on this day: the end of the period, or today
+             */
+            on: string;
             /** Format: decimal */
             total: string;
             accounts: components["schemas"]["GlanceCashAccount"][];
@@ -11197,9 +11250,12 @@ export interface components {
             /** Format: decimal */
             overdue: string;
             overdue_count: number;
-            /** Format: decimal */
-            due_soon: string;
-            due_soon_count: number;
+            /**
+             * Format: decimal
+             * @description Due in what is left of the period; null once it has ended
+             */
+            due_soon: string | null;
+            due_soon_count: number | null;
             draft_count: number;
             list: components["schemas"]["GlanceDoc"][];
             vouchers_waiting: number | null;
@@ -11213,9 +11269,10 @@ export interface components {
             sent_count: number;
             draft_count: number;
             to_review_count: number;
-            expiring_count: number;
+            /** @description Expiring in what is left of the period; null once it has ended */
+            expiring_count: number | null;
             /** Format: decimal */
-            expiring_value: string;
+            expiring_value: string | null;
             accepted_count: number;
             /** Format: decimal */
             accepted_value: string;
@@ -11228,26 +11285,40 @@ export interface components {
             /** Format: decimal */
             overdue: string;
             overdue_count: number;
-            /** Format: decimal */
-            due_soon: string;
-            due_soon_count: number;
+            /**
+             * Format: decimal
+             * @description Due in what is left of the period; null once it has ended
+             */
+            due_soon: string | null;
+            due_soon_count: number | null;
             draft_count: number;
             list: components["schemas"]["GlanceDoc"][];
             top_overdue: components["schemas"]["GlanceDebtor"][];
         };
         GlanceSales: {
-            /** Format: decimal */
-            this_month: string;
-            /** Format: decimal */
-            last_month: string;
-            /** Format: decimal */
-            last_month_to_date: string;
+            /** @description False for a period still to come */
+            started: boolean;
+            finished: boolean;
+            /**
+             * Format: decimal
+             * @description Sold in the period up to today
+             */
+            in_period: string;
+            /**
+             * Format: decimal
+             * @description Sold in the whole period before
+             */
+            previous: string;
+            /**
+             * Format: decimal
+             * @description The same number of days of the period before
+             */
+            previous_to_date: string;
             /** Format: double */
             change_percent: number | null;
             /** Format: decimal */
             collected: string | null;
-            month_label: string;
-            last_month_label: string;
+            previous_label: string;
         };
         GoodsReceipt: {
             /** Format: uuid */
@@ -14590,6 +14661,11 @@ export interface components {
             name?: string;
             /** Format: uuid */
             fiscal_year_id?: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             /** Format: uuid */
@@ -18664,6 +18740,11 @@ export interface components {
             document_type: components["schemas"]["SubmitDocumentTypeEnum"];
             /** Format: uuid */
             object_id: string;
+            /**
+             * @description What it is for, shown to the approvers and in their email
+             * @default
+             */
+            note: string;
         };
         Subscription: {
             /** Format: uuid */
@@ -32761,7 +32842,12 @@ export interface operations {
     };
     w_reports_glance_retrieve: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Defaults to the start of this month */
+                from?: string;
+                /** @description Defaults to the end of the month of from */
+                to?: string;
+            };
             header?: never;
             path: {
                 workspace: string;

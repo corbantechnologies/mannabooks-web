@@ -38,7 +38,7 @@ export default function AllDepartmentsPage() {
                   const used = Number(r.budget) > 0 ? Math.round((Number(r.spent) / Number(r.budget)) * 100) : null;
                   return (
                     <tr key={r.department_id ?? "none"} className={r.department_id ? "cursor-pointer hover:bg-stone-50" : ""}
-                      onClick={() => r.department_id && router.push(`/w/${slug}/all-departments/${r.department_id}`)}>
+                      onClick={() => r.department_id && router.push(`/w/${slug}/departments/${r.department_id}`)}>
                       <Td className="font-medium">{r.name}{r.head && <span className="block text-xs font-normal text-stone-500">Head: {r.head}</span>}</Td>
                       <Td className="text-right font-mono">{Number(r.budget) ? fmt(r.budget) : "-"}</Td>
                       <Td className="text-right font-mono">{fmt(r.spent)}</Td>

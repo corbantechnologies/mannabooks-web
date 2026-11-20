@@ -9,7 +9,7 @@ import { useState } from "react";
 import { TagPickers, type Tags, tagsBody } from "@/components/tag-pickers";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
-import { BUDGET_STATUS } from "@/lib/api/control";
+import { BUDGET_STATUS, monthLabel } from "@/lib/api/control";
 import { fmt } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
@@ -26,7 +26,8 @@ export default function BudgetsPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/budgets/", { params: { path: { workspace: slug }, query: { page_size: 100 } } })),
   });
   const [creating, setCreating] = useState(false);
-  const [f, setF] = useState({ name: "Operating budget", fiscal_year_id: "" });
+  const [f, setF] = useState({ name: "Operating budget", fiscal_year_id: "", month: "" });
+  const [oneMonth, setOneMonth] = useState(false);
   const [tags, setTags] = useState<Tags>({ cost_center_id: "", project_id: "" });
   const [departmentId, setDepartmentId] = useState("");
   const departments = useQuery({
@@ -38,7 +39,7 @@ export default function BudgetsPage() {
   const yearId = f.fiscal_year_id || (years.data?.find((y) => y.status === "open")?.id ?? "");
   const create = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/budgets/", {
-      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, ...(deptId ? { department_id: deptId } : tagsBody(tags)), lines: [] } as never,
+      params: { path: { workspace: slug } }, body: { name: f.name, fiscal_year_id: yearId, month: oneMonth && f.month ? `${f.month}-01` : null, ...(deptId ? { department_id: deptId } : tagsBody(tags)), lines: [] } as never,
     })),
     onSuccess: (b) => router.push(`/w/${slug}/accounting/budgets/${b.id}`),
   });
@@ -56,7 +57,7 @@ export default function BudgetsPage() {
             {rows.map((b) => (
               <tr key={b.id} className="hover:bg-stone-50">
                 <Td><Link className="font-medium hover:underline" href={`/w/${slug}/accounting/budgets/${b.id}`}>{b.name}</Link></Td>
-                <Td>{b.fiscal_year_name}</Td>
+                <Td>{b.month ? `${monthLabel(b.month)} only` : b.fiscal_year_name}</Td>
                 <Td>{b.department_name ?? b.cost_center_name ?? b.project_name ?? "Whole business"}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_income)}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_expense)}</Td>
@@ -70,6 +71,17 @@ export default function BudgetsPage() {
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
           <Field label="Name"><Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} /></Field>
           <Field label="Financial year"><Select required value={yearId} onChange={(e) => setF((x) => ({ ...x, fiscal_year_id: e.target.value }))}>{(years.data ?? []).map((y) => <option key={y.id} value={y.id}>{y.name}</option>)}</Select></Field>
+          <Field label="Covers">
+            <Select value={oneMonth ? "month" : "year"} onChange={(e) => setOneMonth(e.target.value === "month")}>
+              <option value="year">The whole year, month by month</option>
+              <option value="month">One month, or a one-off (an outing, an event)</option>
+            </Select>
+          </Field>
+          {oneMonth && (
+            <Field label="Month" hint="It must fall in the financial year. Several one-month budgets can be approved, and they add to the year's plan.">
+              <Input type="month" required value={f.month} onChange={(e) => setF((x) => ({ ...x, month: e.target.value }))} />
+            </Field>
+          )}
           <Field label={own ? "Department" : "Department (optional)"}>
             <Select required={!!own} value={deptId} onChange={(e) => setDepartmentId(e.target.value)}>
               {!own && <option value="">None</option>}

@@ -51,6 +51,7 @@ export function DecideModal({ req, decision, onClose }: { req: ApprovalRequest |
     <Modal open={Boolean(req)} title={decision === "approved" ? `Approve ${req?.document_number}` : `Don't approve ${req?.document_number}`} onClose={onClose}>
       <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); decide.mutate(); }}>
         <p className="text-sm text-stone-600">{req?.document_label}: {req?.summary}</p>
+        {req?.note && <p className="whitespace-pre-line rounded-md bg-stone-50 px-3 py-2 text-sm text-stone-700"><span className="font-medium">{req.requested_by_name}:</span> {req.note}</p>}
         <Field label={decision === "approved" ? "Note (optional)" : "Why not? They'll see this"}>
           <Textarea rows={3} required={decision === "rejected"} value={comment} onChange={(e) => setComment(e.target.value)} />
         </Field>
@@ -69,10 +70,11 @@ export function ApprovalPanel({ docType, id }: { docType: DocType; id: string })
   const { slug } = useWorkspace();
   const status = useApprovalStatus(slug, docType, id);
   const [deciding, setDeciding] = useState<"approved" | "rejected" | null>(null);
+  const [sending, setSending] = useState(false);
+  const [note, setNote] = useState("");
   const submit = useMutation({
-    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/approvals/", { params: { path: { workspace: slug } }, body: { document_type: docType, object_id: id } })),
-    onSuccess: (r) => toast.success(`Sent to ${r.waiting_on.join(", ") || "the approvers"}`),
-    onError: (e) => toast.error(e.message),
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/approvals/", { params: { path: { workspace: slug } }, body: { document_type: docType, object_id: id, note } })),
+    onSuccess: (r) => { toast.success(`Sent to ${r.waiting_on.join(", ") || "the approvers"}`); setSending(false); setNote(""); },
   });
   const cancel = useMutation({
     mutationFn: async (rid: string) => unwrap(await api.POST("/api/v1/w/{workspace}/approvals/{id}/cancel/", { params: { path: { workspace: slug, id: rid } } })),
@@ -97,13 +99,29 @@ export function ApprovalPanel({ docType, id }: { docType: DocType; id: string })
             <Button onClick={() => setDeciding("approved")}>Approve</Button>
           </>}
           {pending && req!.can_cancel && <Button variant="ghost" loading={cancel.isPending} onClick={() => void ask("Withdraw this request?").then((ok) => ok && cancel.mutate(req!.id))}>Withdraw</Button>}
-          {s.can_submit && <Button loading={submit.isPending} onClick={() => submit.mutate()}>{req?.status === "rejected" ? "Send again" : "Send for approval"}</Button>}
+          {s.can_submit && <Button onClick={() => { submit.reset(); setSending(true); }}>{req?.status === "rejected" ? "Send again" : "Send for approval"}</Button>}
         </div>
       </div>
       {req && (req.status !== "cancelled" || !s.can_submit) ? <ApprovalChain req={req} /> : (
         <p className="text-sm text-stone-600">This needs approval by: {s.levels.join(" then ")}.</p>
       )}
       {pending && <p className="text-sm text-stone-600">Waiting for {req!.waiting_on.join(", ") || "the owner"}. Sent by {req!.requested_by_name} on {fmtDate(req!.created_at)}.</p>}
+      {req?.note && req.status !== "cancelled" && (
+        <p className="whitespace-pre-line rounded-md bg-stone-50 px-3 py-2 text-sm text-stone-700"><span className="font-medium">{req.requested_by_name}:</span> {req.note}</p>
+      )}
+      <Modal open={sending} title="Send for approval" onClose={() => setSending(false)}>
+        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); submit.mutate(); }}>
+          <p className="text-sm text-stone-600">It goes to: {s.levels.join(" then ") || "the approvers"}.</p>
+          <Field label="What is it for? (optional)" hint="The approvers see this and get it in their email. For example: payroll for all staff, sent in bulk.">
+            <Textarea rows={4} maxLength={2000} value={note} onChange={(e) => setNote(e.target.value)} />
+          </Field>
+          <FormError error={submit.error} />
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="secondary" onClick={() => setSending(false)}>Cancel</Button>
+            <Button type="submit" loading={submit.isPending}>Send</Button>
+          </div>
+        </form>
+      </Modal>
       {req?.steps.filter((st) => st.comment).map((st) => (
         <p key={st.id} className={clsx("rounded-md px-3 py-2 text-sm", st.decision === "rejected" ? "bg-red-50 text-red-800" : "bg-stone-50 text-stone-700")}>
           <span className="font-medium">{st.decided_by_name}:</span> {st.comment}

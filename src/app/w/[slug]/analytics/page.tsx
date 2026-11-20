@@ -4,8 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
-import { Badge, Card, ErrorState, PageHeader, Spinner } from "@/components/ui";
+import { Badge, Card, ErrorState, Input, PageHeader, Select, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { fmt, fmtDate } from "@/lib/format";
@@ -15,36 +16,85 @@ type Doc = components["schemas"]["GlanceDoc"];
 
 const PATH: Record<string, string> = { invoices: "sales/invoices", bills: "purchasing/bills", quotations: "sales/quotations" };
 
-/** The business at a glance: what needs attention today. Each part shows only to people allowed to see it. */
+type Preset = "this" | "next" | "last" | "range";
+
+const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const month = (shift: number) => {
+  const now = new Date();
+  return { from: iso(new Date(now.getFullYear(), now.getMonth() + shift, 1)), to: iso(new Date(now.getFullYear(), now.getMonth() + shift + 1, 0)) };
+};
+const PRESETS: Record<Exclude<Preset, "range">, () => { from: string; to: string }> = { this: () => month(0), next: () => month(1), last: () => month(-1) };
+
+/**
+ * The business at a glance for a chosen stretch of time: this month by default, next month, last month or any dates.
+ * Overdue is always as of today. Each part shows only to people allowed to see it.
+ */
 export default function AnalyticsPage() {
   const { slug, context } = useWorkspace();
   const cur = context.workspace.currency;
+  const [preset, setPreset] = useState<Preset>("this");
+  const [range, setRange] = useState(month(0));
+  const period = preset === "range" ? range : PRESETS[preset]();
+  const badRange = preset === "range" && (!range.from || !range.to || range.to < range.from);
   const glance = useQuery({
-    queryKey: ["glance", slug],
+    queryKey: ["glance", slug, period.from, period.to],
     refetchInterval: 5 * 60000,
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/glance/", { params: { path: { workspace: slug } } })),
+    enabled: !badRange,
+    placeholderData: (prev) => prev,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/glance/", { params: { path: { workspace: slug }, query: { from: period.from, to: period.to } } })),
   });
+
+  const picker = (
+    <div className="flex flex-wrap items-center gap-2">
+      <Select aria-label="Period" className="w-40" value={preset} onChange={(e) => {
+        const next = e.target.value as Preset;
+        if (next === "range") setRange(period);
+        setPreset(next);
+      }}>
+        <option value="this">This month</option>
+        <option value="next">Next month</option>
+        <option value="last">Last month</option>
+        <option value="range">Choose dates</option>
+      </Select>
+      {preset === "range" && (
+        <>
+          <Input type="date" aria-label="From" className="w-40" value={range.from} onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))} />
+          <span className="text-sm text-stone-500">to</span>
+          <Input type="date" aria-label="To" className="w-40" value={range.to} min={range.from} onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))} />
+        </>
+      )}
+    </div>
+  );
+
   if (glance.isLoading) return <Spinner label="Adding up the numbers" />;
-  if (glance.error) return <ErrorState error={glance.error} />;
-  const { sales, quotes, receivables: ar, payables: ap, cash } = glance.data!;
+  if (!glance.data) return glance.error ? <ErrorState error={glance.error} /> : <div className="w-full"><PageHeader title="Analytics" actions={picker} /><p className="text-sm text-red-700">Choose a start date and an end date on or after it.</p></div>;
+  const data = glance.data;
+  const { sales, quotes, receivables: ar, payables: ap, cash } = data;
   const nothing = !sales && !quotes && !ar && !ap && !cash;
   const link = (href: string) => `/w/${slug}/${href}`;
+  const p = data.label;
+  const running = data.start <= data.today && data.end >= data.today;
+  const ahead = running ? `Still due by ${fmtDate(data.end)}` : `Due in ${p}`;
 
   return (
     <div className="w-full">
-      <PageHeader title="Analytics" description={`What needs attention today, ${fmtDate(glance.data!.today)}. Amounts in ${cur}.${context.limited_department ? ` Limited to ${context.limited_department.name}.` : ""}`} />
+      <PageHeader title="Analytics" description={`${p}. Overdue is as of today, ${fmtDate(data.today)}. Amounts in ${cur}.${context.limited_department ? ` Limited to ${context.limited_department.name}.` : ""}`} actions={picker} />
+      {badRange && <p className="mb-3 text-sm text-red-700">Choose a start date and an end date on or after it.</p>}
+      {glance.error && <div className="mb-3"><ErrorState error={glance.error} /></div>}
       {nothing && <Card className="p-5 text-sm text-stone-600">There is nothing here for your role yet. Your Overview shows what you can work on.</Card>}
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {sales && (
-          <Tile label={`Sales in ${sales.month_label}`} value={fmt(sales.this_month)} href={link("sales/invoices")}
-            note={sales.change_percent === null ? `${sales.last_month_label}: ${fmt(sales.last_month)}` : undefined}
-            trend={sales.change_percent === null ? undefined : { pct: sales.change_percent, against: `${sales.last_month_label} by this day` }} />
-        )}
-        {sales?.collected != null && <Tile label="Money in this month" value={fmt(sales.collected)} note="Payments received and cash sales" href={link("sales/payments")} />}
+      <div className={clsx("mb-6 grid gap-3 transition-opacity sm:grid-cols-2 lg:grid-cols-5", glance.isFetching && "opacity-60")}>
+        {sales && (sales.started ? (
+          <Tile label={`Sales, ${p}`} value={fmt(sales.in_period)} href={link("sales/invoices")}
+            note={sales.change_percent === null ? `${sales.previous_label}: ${fmt(sales.previous)}` : undefined}
+            trend={sales.change_percent === null ? undefined : { pct: sales.change_percent, against: running ? `${sales.previous_label}, same days` : sales.previous_label }} />
+        ) : (
+          <Tile label={`Sales, ${p}`} value="Not started" note={`${sales.previous_label}: ${fmt(sales.previous)}`} href={link("sales/invoices")} />
+        ))}
+        {sales?.collected != null && sales.started && <Tile label="Money in" value={fmt(sales.collected)} note={`Payments and cash sales, ${p}`} href={link("sales/payments")} />}
         {ar && <Tile label="Customers owe you" value={fmt(ar.total)} note={Number(ar.overdue) ? `${fmt(ar.overdue)} overdue` : "Nothing overdue"} bad={Number(ar.overdue) > 0} href={link("accounting/reports/aged-receivables")} />}
         {ap && <Tile label="You owe suppliers" value={fmt(ap.total)} note={Number(ap.overdue) ? `${fmt(ap.overdue)} overdue` : "Nothing overdue"} bad={Number(ap.overdue) > 0} href={link("accounting/reports/aged-payables")} />}
-        {cash && <Tile label="Cash and bank" value={fmt(cash.total)} note={`${cash.accounts.length} account${cash.accounts.length === 1 ? "" : "s"}`} bad={Number(cash.total) < 0} href={link("banking")} />}
+        {cash && <Tile label="Cash and bank" value={fmt(cash.total)} note={`${cash.on === data.today ? "Today" : `On ${fmtDate(cash.on)}`}, ${cash.accounts.length} account${cash.accounts.length === 1 ? "" : "s"}`} bad={Number(cash.total) < 0} href={link("banking")} />}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -52,11 +102,11 @@ export default function AnalyticsPage() {
           <Section title="Money coming in" href={link("sales/invoices")}>
             <Facts items={[
               [`Overdue (${ar.overdue_count})`, fmt(ar.overdue), Number(ar.overdue) > 0],
-              [`Due in the next 7 days (${ar.due_soon_count})`, fmt(ar.due_soon)],
+              ...(ar.due_soon_count != null ? [[`${ahead} (${ar.due_soon_count})`, fmt(ar.due_soon ?? "0")] as Fact] : []),
               [`Unpaid invoices`, `${ar.count}`],
               [`Draft invoices not issued`, `${ar.draft_count}`, false, link("sales/invoices")],
             ]} />
-            <Docs docs={ar.list} slug={slug} empty="No invoices overdue or due this week." />
+            <Docs docs={ar.list} slug={slug} empty={`No invoices overdue or due by ${fmtDate(data.end)}.`} />
             {ar.top_overdue.length > 0 && (
               <div className="border-t border-stone-100 px-4 py-3">
                 <p className="mb-1 text-xs uppercase tracking-wide text-stone-500">Most overdue</p>
@@ -72,12 +122,12 @@ export default function AnalyticsPage() {
           <Section title="Money going out" href={link("purchasing/bills")}>
             <Facts items={[
               [`Overdue bills (${ap.overdue_count})`, fmt(ap.overdue), Number(ap.overdue) > 0],
-              [`Due in the next 7 days (${ap.due_soon_count})`, fmt(ap.due_soon)],
+              ...(ap.due_soon_count != null ? [[`${ahead} (${ap.due_soon_count})`, fmt(ap.due_soon ?? "0")] as Fact] : []),
               [`Unpaid bills`, `${ap.count}`],
               [`Draft bills not posted`, `${ap.draft_count}`, false, link("purchasing/bills")],
               ...(ap.vouchers_waiting != null ? [[`Payment vouchers awaiting approval (${ap.vouchers_waiting})`, fmt(ap.vouchers_waiting_value ?? "0"), false, link("purchasing/vouchers")] as Fact] : []),
             ]} />
-            <Docs docs={ap.list} slug={slug} empty="No bills overdue or due this week." />
+            <Docs docs={ap.list} slug={slug} empty={`No bills overdue or due by ${fmtDate(data.end)}.`} />
           </Section>
         )}
 
@@ -85,7 +135,7 @@ export default function AnalyticsPage() {
           <Section title="Quotations" href={link("sales/quotations")}>
             <Facts items={[
               [`Open (${quotes.open_count}: ${quotes.sent_count} sent, ${quotes.draft_count} draft)`, fmt(quotes.open_value)],
-              [`Expiring in the next 7 days (${quotes.expiring_count})`, fmt(quotes.expiring_value), quotes.expiring_count > 0],
+              ...(quotes.expiring_count != null ? [[`Expiring by ${fmtDate(data.end)} (${quotes.expiring_count})`, fmt(quotes.expiring_value ?? "0"), quotes.expiring_count > 0] as Fact] : []),
               [`Accepted, not yet invoiced (${quotes.accepted_count})`, fmt(quotes.accepted_value)],
               ...(quotes.to_review_count ? [[`From catalogues, waiting for your review`, `${quotes.to_review_count}`, true, link("sales/quotations")] as Fact] : []),
             ]} />
@@ -94,7 +144,7 @@ export default function AnalyticsPage() {
         )}
 
         {cash && (
-          <Section title="Cash and bank" href={link("banking")}>
+          <Section title={cash.on === data.today ? "Cash and bank" : `Cash and bank on ${fmtDate(cash.on)}`} href={link("banking")}>
             {cash.accounts.length === 0 ? <p className="px-4 py-6 text-sm text-stone-500">No cash or bank accounts used yet.</p> : (
               <ul className="divide-y divide-stone-100">
                 {cash.accounts.map((a) => (
@@ -105,7 +155,7 @@ export default function AnalyticsPage() {
           </Section>
         )}
       </div>
-      {sales && <p className="mt-4 text-xs text-stone-500">Sales are before VAT: invoices, debit notes and cash sales. The change compares {sales.month_label} so far with the same days of {sales.last_month_label}.</p>}
+      {sales && <p className="mt-4 text-xs text-stone-500">Sales are before VAT: invoices, debit notes and cash sales. {running ? `The change compares ${p} so far with the same number of days of ${sales.previous_label}.` : `The change compares ${p} with ${sales.previous_label}.`} Overdue and what is owed are always as of today.</p>}
     </div>
   );
 }
