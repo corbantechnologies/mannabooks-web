@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ApprovalPanel } from "@/components/approval-panel";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { BUDGET_STATUS, type Budget, monthLabel, useApprovalStatus } from "@/lib/api/control";
 import { downloadCsv, fmt, fmtDate, todayIso } from "@/lib/format";
@@ -35,11 +35,13 @@ export default function BudgetPage() {
   const approval = useApprovalStatus(slug, "budget", id);
   const [tab, setTab] = useState<"plan" | "actual">("plan");
   const act = useMutation({
-    mutationFn: async (body: { action: "approve" | "reopen" | "submit" | "fill_from_last_year"; uplift_percent?: string }) =>
+    mutationFn: async (body: { action: "approve" | "reopen" | "submit" | "fill_from_last_year"; uplift_percent?: string; note?: string }) =>
       unwrap(await api.POST("/api/v1/w/{workspace}/budgets/{id}/action/", { ...path, body: body as never })),
-    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : v.action === "submit" ? "Sent for approval" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); },
-    onError: (e) => { if (!filling) toast.error(e.message); },
+    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : v.action === "submit" ? "Sent for approval" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); setSending(false); setNote(""); },
+    onError: (e) => { if (!filling && !sending) toast.error(e.message); },
   });
+  const [sending, setSending] = useState(false);
+  const [note, setNote] = useState("");
   const remove = useMutation({
     mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/budgets/{id}/", path)),
     onSuccess: () => { toast.success("Budget deleted"); router.replace(`/w/${slug}/accounting/budgets`); },
@@ -57,12 +59,12 @@ export default function BudgetPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/accounting/budgets`} className="text-sm text-stone-500 hover:underline">&larr; Budgets</Link>
-      <PageHeader title={b.name} description={`${b.fiscal_year_name}, ${b.department_name ?? b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
+      <PageHeader title={b.name} description={`${b.month ? `${monthLabel(b.month)} only (${b.fiscal_year_name})` : b.fiscal_year_name}, ${b.department_name ?? b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
         actions={<div className="flex flex-wrap gap-2">
           {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this budget?").then((ok) => ok && remove.mutate())}>Delete</Button>}
           {editable && <Button variant="secondary" onClick={() => { act.reset(); setFilling(true); }}>Copy last year</Button>}
           {draft && editable && !can("budgets.approve") && (
-            <Button loading={act.isPending} disabled={!(b.lines ?? []).length} onClick={() => act.mutate({ action: "submit" })}>{b.submitted_at ? "Send again" : "Submit for approval"}</Button>
+            <Button disabled={!(b.lines ?? []).length} onClick={() => { act.reset(); setSending(true); }}>{b.submitted_at ? "Send again" : "Submit for approval"}</Button>
           )}
           {draft && can("budgets.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
           {!draft && can("budgets.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change the figures?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
@@ -71,7 +73,7 @@ export default function BudgetPage() {
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge>
         {b.approved_by_name && <span className="text-sm text-stone-500">by {b.approved_by_name}</span>}
-        {draft && b.submitted_at && <span className="text-sm text-stone-500">Sent for approval by {b.submitted_by_name ?? "someone"}, {fmtDate(b.submitted_at)}</span>}
+        {draft && b.submitted_at && <span className="text-sm text-stone-500">Sent for approval by {b.submitted_by_name ?? "someone"}, {fmtDate(b.submitted_at)}{b.submitted_note && !approval.data?.request ? `: "${b.submitted_note}"` : ""}</span>}
         <div className="ml-auto flex gap-1 rounded-md border border-stone-200 p-0.5">
           {(["plan", "actual"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)} className={clsx("rounded px-3 py-1.5 text-sm", tab === t ? "bg-brand-700 text-white" : "text-stone-600 hover:bg-stone-100")}>
@@ -80,7 +82,16 @@ export default function BudgetPage() {
           ))}
         </div>
       </div>
-      {tab === "plan" ? <PlanGrid key={b.id + (b.lines ?? []).length + b.status} budget={b} editable={editable} /> : <VersusActual id={id} months={b.months} />}
+      {tab === "plan" ? <PlanGrid key={b.id + (b.lines ?? []).length + b.status} budget={b} editable={editable} /> : <VersusActual id={id} months={b.months} month={b.month ?? null} />}
+      <Modal open={sending} title="Send for approval" onClose={() => setSending(false)}>
+        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); act.mutate({ action: "submit", note }); }}>
+          <Field label="What is it for? (optional)" hint="Whoever approves it sees this and gets it in their email.">
+            <Textarea rows={4} maxLength={2000} value={note} onChange={(e) => setNote(e.target.value)} />
+          </Field>
+          <FormError error={act.error} />
+          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setSending(false)}>Cancel</Button><Button type="submit" loading={act.isPending}>Send</Button></div>
+        </form>
+      </Modal>
       <Modal open={filling} title="Copy last year's figures" onClose={() => setFilling(false)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); act.mutate({ action: "fill_from_last_year", uplift_percent: uplift || "0" }); }}>
           <p className="text-sm text-stone-600">Each income and expense account gets what it actually came to in the same month last year, plus the percentage below. This replaces what is in the plan now.</p>
@@ -115,6 +126,10 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
     { kind: "income", label: "Income" },
     { kind: "expense", label: "Spending" },
   ];
+  // a one-month budget shows just its month; the server keeps every other month at zero
+  const only = budget.month ? budget.months.indexOf(budget.month) : -1;
+  const shown = (k: number) => only < 0 || k === only;
+  const yearCol = only < 0;
   const totalOf = (kind: string, m?: number) => rows.filter((r) => byId[r.account_id]?.account_type === kind).reduce((a, r) => a + (m === undefined ? sum(r.amounts) : Number(r.amounts[m]) || 0), 0);
   function exportCsv() {
     downloadCsv(`budget-${budget.name}.csv`, [["Code", "Account", ...budget.months.map(monthLabel), "Total"],
@@ -129,8 +144,8 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
             <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
               <tr>
                 <th className="sticky left-0 z-10 bg-stone-50 px-3 py-2 text-left font-medium">Account</th>
-                {budget.months.map((m) => <th key={m} className="px-1 py-2 text-right font-medium">{monthLabel(m)}</th>)}
-                <th className="px-3 py-2 text-right font-medium">Year</th>
+                {budget.months.map((m, k) => shown(k) && <th key={m} className="px-1 py-2 text-right font-medium">{monthLabel(m)}</th>)}
+                {yearCol && <th className="px-3 py-2 text-right font-medium">Year</th>}
                 {editable && <th />}
               </tr>
             </thead>
@@ -138,28 +153,28 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
               {groups.map((g) => {
                 const groupRows = rows.map((r, i) => ({ r, i })).filter(({ r }) => byId[r.account_id]?.account_type === g.kind);
                 return (
-                  <GroupRows key={g.kind} label={g.label} months={budget.months.length} editable={editable}>
+                  <GroupRows key={g.kind} label={g.label} months={only < 0 ? budget.months.length : 0} editable={editable}>
                     {groupRows.map(({ r, i }) => (
                       <tr key={r.account_id} className="border-t border-stone-100">
                         <td className="sticky left-0 z-10 bg-white px-3 py-1 whitespace-nowrap"><span className="mr-2 font-mono text-xs text-stone-400">{byId[r.account_id]?.code}</span>{byId[r.account_id]?.name}</td>
-                        {r.amounts.map((a, m) => (
+                        {r.amounts.map((a, m) => shown(m) && (
                           <td key={m} className="px-1 py-1">
                             {editable ? <input type="number" min="0" step="0.01" value={a} onChange={(e) => update(i, (x) => ({ ...x, amounts: x.amounts.map((v, k) => (k === m ? e.target.value : v)) }))}
                               className="w-24 rounded border border-stone-200 px-1.5 py-1 text-right font-mono text-xs focus:border-brand-600 focus:outline-none" /> : <span className="block text-right font-mono text-xs">{fmt(a)}</span>}
                           </td>
                         ))}
-                        <td className="px-3 py-1">
+                        {yearCol && <td className="px-3 py-1">
                           {editable ? <input key={sum(r.amounts).toFixed(2)} type="number" min="0" step="0.01" defaultValue={sum(r.amounts).toFixed(2)} title="Type a year total to spread it evenly over the months"
                             onBlur={(e) => { const v = Number(e.target.value); if (Number.isFinite(v) && Math.abs(v - sum(r.amounts)) > 0.005) update(i, (x) => ({ ...x, amounts: spread(v) })); }}
                             className="w-28 rounded border border-stone-300 bg-stone-50 px-1.5 py-1 text-right font-mono text-xs font-semibold focus:border-brand-600 focus:outline-none" /> : <span className="block text-right font-mono text-xs font-semibold">{fmt(sum(r.amounts))}</span>}
-                        </td>
+                        </td>}
                         {editable && <td className="px-1"><button onClick={() => { setRows((p) => p.filter((_, j) => j !== i)); setDirty(true); }} className="rounded p-1 text-stone-400 hover:bg-stone-100" aria-label="Remove"><X className="h-3.5 w-3.5" /></button></td>}
                       </tr>
                     ))}
                     <tr className="border-t border-stone-200 bg-stone-50 font-medium">
                       <td className="sticky left-0 z-10 bg-stone-50 px-3 py-1.5">Total {g.label.toLowerCase()}</td>
-                      {budget.months.map((m, k) => <td key={m} className="px-1 py-1.5 text-right font-mono text-xs">{fmt(totalOf(g.kind, k))}</td>)}
-                      <td className="px-3 py-1.5 text-right font-mono text-xs">{fmt(totalOf(g.kind))}</td>
+                      {budget.months.map((m, k) => shown(k) && <td key={m} className="px-1 py-1.5 text-right font-mono text-xs">{fmt(totalOf(g.kind, k))}</td>)}
+                      {yearCol && <td className="px-3 py-1.5 text-right font-mono text-xs">{fmt(totalOf(g.kind))}</td>}
                       {editable && <td />}
                     </tr>
                   </GroupRows>
@@ -167,8 +182,8 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
               })}
               <tr className="border-t-2 border-stone-300 bg-stone-100 font-semibold">
                 <td className="sticky left-0 z-10 bg-stone-100 px-3 py-2">Planned profit</td>
-                {budget.months.map((m, k) => <td key={m} className="px-1 py-2 text-right font-mono text-xs">{fmt(totalOf("income", k) - totalOf("expense", k))}</td>)}
-                <td className="px-3 py-2 text-right font-mono text-xs">{fmt(totalOf("income") - totalOf("expense"))}</td>
+                {budget.months.map((m, k) => shown(k) && <td key={m} className="px-1 py-2 text-right font-mono text-xs">{fmt(totalOf("income", k) - totalOf("expense", k))}</td>)}
+                {yearCol && <td className="px-3 py-2 text-right font-mono text-xs">{fmt(totalOf("income") - totalOf("expense"))}</td>}
                 {editable && <td />}
               </tr>
             </tbody>
@@ -196,7 +211,7 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
           {editable && <Button disabled={!dirty} loading={save.isPending} onClick={() => save.mutate()}>Save budget</Button>}
         </div>
       </div>
-      {editable && <p className="text-xs text-stone-500">Tip: type a figure in the Year column to spread it evenly across the months.</p>}
+      {editable && <p className="text-xs text-stone-500">{yearCol ? "Tip: type a figure in the Year column to spread it evenly across the months." : `This budget covers ${monthLabel(budget.month!)} only.`}</p>}
       <FormError error={save.error} />
     </div>
   );
@@ -205,13 +220,13 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
 function GroupRows({ label, months, editable, children }: { label: string; months: number; editable: boolean; children: React.ReactNode }) {
   return (
     <>
-      <tr><td colSpan={months + 2 + (editable ? 1 : 0)} className="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-stone-500">{label}</td></tr>
+      <tr><td colSpan={months ? months + 2 + (editable ? 1 : 0) : 2 + (editable ? 1 : 0)} className="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-stone-500">{label}</td></tr>
       {children}
     </>
   );
 }
 
-function VersusActual({ id, months }: { id: string; months: string[] }) {
+function VersusActual({ id, months, month }: { id: string; months: string[]; month: string | null }) {
   const { slug } = useWorkspace();
   const [through, setThrough] = useState(todayIso());
   const va = useQuery({
@@ -223,7 +238,8 @@ function VersusActual({ id, months }: { id: string; months: string[] }) {
     <div className="space-y-3">
       <div className="flex flex-wrap items-end gap-3">
         <Field label="Year to date up to"><Input type="date" value={through} onChange={(e) => setThrough(e.target.value)} /></Field>
-        {d && <p className="pb-2 text-sm text-stone-500">{d.ytd_months} of 12 months ({months.length ? `${monthLabel(months[0])} to ${monthLabel(months[Math.max(d.ytd_months - 1, 0)])}` : ""})</p>}
+        {d && month && <p className="pb-2 text-sm text-stone-500">Covers {monthLabel(month)} only: spending in that month against this budget.</p>}
+        {d && !month && <p className="pb-2 text-sm text-stone-500">{d.ytd_months} of 12 months ({months.length ? `${monthLabel(months[0])} to ${monthLabel(months[Math.max(d.ytd_months - 1, 0)])}` : ""})</p>}
       </div>
       <Card>
         {va.isLoading ? <div className="px-4"><Spinner /></div> : va.error ? <div className="p-4"><ErrorState error={va.error} /></div> : !d!.rows.length ? <EmptyState title="Nothing planned yet" /> : (

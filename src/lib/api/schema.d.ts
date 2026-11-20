@@ -8546,6 +8546,8 @@ export interface components {
             readonly can_decide: boolean;
             readonly can_cancel: boolean;
             readonly requested_by_name: string;
+            /** @description What it is for, from the person who sent it, so approvers understand it */
+            note?: string;
             readonly steps: components["schemas"]["ApprovalStep"][];
             /** Format: date-time */
             readonly created_at: string;
@@ -9037,6 +9039,11 @@ export interface components {
             /** Format: uuid */
             fiscal_year_id: string;
             readonly fiscal_year_name: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             readonly cost_center_name: string;
@@ -9057,6 +9064,8 @@ export interface components {
              * @description When a head sent the draft for approval
              */
             readonly submitted_at: string | null;
+            /** @description What the sender wrote when sending it for approval */
+            readonly submitted_note: string;
             readonly total_income: string;
             readonly total_expense: string;
             readonly months: string[];
@@ -9087,6 +9096,11 @@ export interface components {
              * @default 0.00
              */
             uplift_percent: string;
+            /**
+             * @description submit: what it is for
+             * @default
+             */
+            note: string;
         };
         BudgetCheck: {
             budgeted: boolean;
@@ -9126,6 +9140,11 @@ export interface components {
             name: string;
             /** Format: uuid */
             fiscal_year_id: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             /** Format: uuid */
@@ -14618,6 +14637,11 @@ export interface components {
             name?: string;
             /** Format: uuid */
             fiscal_year_id?: string;
+            /**
+             * Format: date
+             * @description The first day of the one month it covers. Blank: the whole year
+             */
+            month?: string | null;
             /** Format: uuid */
             cost_center_id?: string | null;
             /** Format: uuid */
@@ -18692,6 +18716,11 @@ export interface components {
             document_type: components["schemas"]["SubmitDocumentTypeEnum"];
             /** Format: uuid */
             object_id: string;
+            /**
+             * @description What it is for, shown to the approvers and in their email
+             * @default
+             */
+            note: string;
         };
         Subscription: {
             /** Format: uuid */

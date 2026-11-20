@@ -53,6 +53,7 @@ export default function ApprovalsPage() {
                     <Badge tone={APPROVAL_STATUS[r.status ?? "pending"].tone}>{APPROVAL_STATUS[r.status ?? "pending"].label}</Badge>
                   </div>
                   <p className="text-sm text-stone-600">{r.summary}</p>
+                  {r.note && <p className="mt-1 max-w-xl whitespace-pre-line rounded-md bg-stone-50 px-3 py-2 text-sm text-stone-700">{r.note}</p>}
                   <p className="text-xs text-stone-500">Asked by {r.requested_by_name} on {fmtDate(r.created_at)}</p>
                 </div>
                 <div className="text-right">

@@ -26,10 +26,10 @@ Nobody approves their own document. If a level finds nobody (for example the pre
 
 ## Sending and approving
 
-- On a document that a rule covers, the **Approval** box shows who must approve it. Choose **Send for approval**.
+- On a document that a rule covers, the **Approval** box shows who must approve it. Choose **Send for approval** and, if it helps, write **what it is for** (for example "payroll for all staff, sent in bulk" or "the end-of-year staff outing"). The approvers see your note on the document, under **Approvals > Waiting for me** and in their email.
 - Each approver gets an email and sees it under **Approvals > Waiting for me**. They can approve from there or from the document itself, on a phone too.
 - **Don't approve** needs a reason, which the person who sent it sees. They fix the document and **Send again**.
 - When the last level approves, the document is approved: an order can be received, a voucher paid, payroll posted, a budget used.
 - The person who sent it can **Withdraw** a request still waiting.
 
-If a document's amount goes up after it was approved, it has to go round again.
+If a document's amount goes up after it was approved, it has to go round again. So does a budget that is reopened after it was approved: the Approval box starts afresh, ready to **Send for approval** again.
