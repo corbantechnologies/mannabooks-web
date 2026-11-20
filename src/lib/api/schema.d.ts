@@ -11155,6 +11155,11 @@ export interface components {
         Glance: {
             /** Format: date */
             today: string;
+            /** Format: date */
+            start: string;
+            /** Format: date */
+            end: string;
+            label: string;
             sales: components["schemas"]["GlanceSales"] | null;
             quotes: components["schemas"]["GlanceQuotes"] | null;
             receivables: components["schemas"]["GlanceReceivables"] | null;
@@ -11162,6 +11167,11 @@ export interface components {
             cash: components["schemas"]["GlanceCash"] | null;
         };
         GlanceCash: {
+            /**
+             * Format: date
+             * @description Balances on this day: the end of the period, or today
+             */
+            on: string;
             /** Format: decimal */
             total: string;
             accounts: components["schemas"]["GlanceCashAccount"][];
@@ -11197,9 +11207,12 @@ export interface components {
             /** Format: decimal */
             overdue: string;
             overdue_count: number;
-            /** Format: decimal */
-            due_soon: string;
-            due_soon_count: number;
+            /**
+             * Format: decimal
+             * @description Due in what is left of the period; null once it has ended
+             */
+            due_soon: string | null;
+            due_soon_count: number | null;
             draft_count: number;
             list: components["schemas"]["GlanceDoc"][];
             vouchers_waiting: number | null;
@@ -11213,9 +11226,10 @@ export interface components {
             sent_count: number;
             draft_count: number;
             to_review_count: number;
-            expiring_count: number;
+            /** @description Expiring in what is left of the period; null once it has ended */
+            expiring_count: number | null;
             /** Format: decimal */
-            expiring_value: string;
+            expiring_value: string | null;
             accepted_count: number;
             /** Format: decimal */
             accepted_value: string;
@@ -11228,26 +11242,40 @@ export interface components {
             /** Format: decimal */
             overdue: string;
             overdue_count: number;
-            /** Format: decimal */
-            due_soon: string;
-            due_soon_count: number;
+            /**
+             * Format: decimal
+             * @description Due in what is left of the period; null once it has ended
+             */
+            due_soon: string | null;
+            due_soon_count: number | null;
             draft_count: number;
             list: components["schemas"]["GlanceDoc"][];
             top_overdue: components["schemas"]["GlanceDebtor"][];
         };
         GlanceSales: {
-            /** Format: decimal */
-            this_month: string;
-            /** Format: decimal */
-            last_month: string;
-            /** Format: decimal */
-            last_month_to_date: string;
+            /** @description False for a period still to come */
+            started: boolean;
+            finished: boolean;
+            /**
+             * Format: decimal
+             * @description Sold in the period up to today
+             */
+            in_period: string;
+            /**
+             * Format: decimal
+             * @description Sold in the whole period before
+             */
+            previous: string;
+            /**
+             * Format: decimal
+             * @description The same number of days of the period before
+             */
+            previous_to_date: string;
             /** Format: double */
             change_percent: number | null;
             /** Format: decimal */
             collected: string | null;
-            month_label: string;
-            last_month_label: string;
+            previous_label: string;
         };
         GoodsReceipt: {
             /** Format: uuid */
@@ -32761,7 +32789,12 @@ export interface operations {
     };
     w_reports_glance_retrieve: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Defaults to the start of this month */
+                from?: string;
+                /** @description Defaults to the end of the month of from */
+                to?: string;
+            };
             header?: never;
             path: {
                 workspace: string;
