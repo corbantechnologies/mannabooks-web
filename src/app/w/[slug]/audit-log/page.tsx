@@ -47,18 +47,34 @@ export default function AuditLogPage() {
                 <Td>{log.actor_name || "System"}</Td>
                 <Td><Badge tone={TONE[log.action]}>{log.action}</Badge></Td>
                 <Td><span className="text-stone-500">{log.model.split(".")[1]}</span> {log.object_repr}</Td>
-                <Td className="max-w-md text-xs text-stone-600">
-                  {log.action === "update"
-                    ? Object.entries(log.changes as Record<string, { from: unknown; to: unknown }>).map(([field, change]) => (
-                        <div key={field}><strong>{field}</strong>: {String(change.from ?? "-")} &rarr; {String(change.to ?? "-")}</div>
-                      ))
-                    : null}
-                </Td>
+                <Td className="max-w-md text-xs text-stone-600"><Details changes={log.changes} /></Td>
               </tr>
             ))}
           </Table>
         )}
       </Card>
     </div>
+  );
+}
+
+const show = (v: unknown): string => (v === null || v === undefined || v === "" ? "-" : typeof v === "object" ? JSON.stringify(v) : String(v));
+
+/**
+ * What changed. An edit records {field: {from, to}}; other entries record whatever explains them (a status, what was sent,
+ * a list of amounts), so anything that isn't a from/to pair is shown as it is, never assumed.
+ */
+function Details({ changes }: { changes: unknown }) {
+  if (!changes || typeof changes !== "object") return changes ? <span>{show(changes)}</span> : null;
+  return (
+    <>
+      {Object.entries(changes as Record<string, unknown>).map(([field, change]) => {
+        const pair = change && typeof change === "object" && !Array.isArray(change) && ("from" in change || "to" in change) ? (change as { from?: unknown; to?: unknown }) : null;
+        return (
+          <div key={field} className="break-words">
+            <strong>{field.replace(/_/g, " ")}</strong>: {pair ? <>{show(pair.from)} &rarr; {show(pair.to)}</> : Array.isArray(change) ? change.map(show).join(", ") : show(change)}
+          </div>
+        );
+      })}
+    </>
   );
 }
