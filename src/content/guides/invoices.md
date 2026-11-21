@@ -32,3 +32,14 @@ Choose **Record payment** on the invoice. The status moves from **Issued** to **
 - **More > Download PDF** or **Print or save as PDF**: an A4 copy with your logo, KRA PIN and the eTIMS details once signed.
 
 **Pay online from the PDF.** When M-Pesa or card payments are switched on, an unpaid invoice's PDF shows **Pay online** under *How to pay*: a link and a QR code. Whoever has the PDF, even printed, can scan it and pay by M-Pesa or card, and the payment is recorded against the invoice. The link keeps working while the invoice is unpaid, however late. Once it is paid it shows *Paid. Thank you*, and a voided invoice shows *No longer payable*. It stops working a year after the due date. Paid invoices and drafts don't show it.
+
+## eTIMS number and attachments
+
+Many customers won't pay until the eTIMS invoice comes with your invoice. While signing from MannaBooks is waiting for KRA's approval, raise the eTIMS invoice on KRA's portal or app, then on the issued invoice:
+
+- **eTIMS invoice no. > Add:** type its CU invoice number. It's searchable, and it's what KRA and the customer check. Once signing from MannaBooks is on, KRA's number fills in by itself.
+- **Attachments > Add a file:** upload the eTIMS invoice (choose **eTIMS invoice** first). Files you mark **Send with email** go with the invoice when you email it; an eTIMS invoice is marked for you.
+
+Other files you can keep on an invoice: the customer's **LPO**, a signed **proof of delivery**, the **contract**, and their **withholding certificate** (withholding VAT or income tax they deducted: keep it, it's what you offset with KRA). Attachments are always optional; files over 15 MB in total aren't added to an email.
+
+While a VAT-registered business's invoice has neither an eTIMS number nor an eTIMS file, it shows a reminder. It never stops you.

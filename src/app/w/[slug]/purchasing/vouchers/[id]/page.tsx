@@ -19,6 +19,7 @@ import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 import { PartyLink } from "@/components/party-link";
+import { Attachments } from "@/components/attachments";
 
 export default function VoucherPage() {
   const { slug, can } = useWorkspace();
@@ -53,6 +54,7 @@ export default function VoucherPage() {
         } />
       <RelatedDocuments kind="payment_voucher" id={id} />
       <ApprovalPanel docType="payment_voucher" id={id} />
+      <Attachments docType="payment_voucher" id={id} side="purchase" canAdd={can("paymentvouchers.create")} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={PV_STATUS[v.status ?? "draft"].tone}>{PV_STATUS[v.status ?? "draft"].label}</Badge></Meta>
         <Meta label="Bills">{fmt(v.total)}</Meta>

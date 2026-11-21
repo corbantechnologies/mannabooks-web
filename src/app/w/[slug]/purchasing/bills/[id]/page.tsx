@@ -19,6 +19,7 @@ import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 import { PartyLink } from "@/components/party-link";
+import { Attachments } from "@/components/attachments";
 
 export default function BillPage() {
   const { slug, can } = useWorkspace();
@@ -59,6 +60,7 @@ export default function BillPage() {
           </div>
         } />
       <RelatedDocuments kind="bill" id={id} />
+      <Attachments docType="bill" id={id} side="purchase" canAdd={can("bills.create")} missingEtims={b.status !== "draft" && !b.supplier_etims_number} />
       {open && <SupplierAdvances billId={b.id} supplierId={b.supplier_id ?? ""} balance={b.balance_due ?? "0"} />}
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status"><Badge tone={BILL_STATUS[b.status ?? "draft"].tone}>{BILL_STATUS[b.status ?? "draft"].label}</Badge>{b.is_overdue && <span className="ml-1"><Badge tone="red">Overdue</Badge></span>}</Meta>

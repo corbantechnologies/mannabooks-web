@@ -22,6 +22,8 @@ import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 import { PartyLink } from "@/components/party-link";
+import { Attachments } from "@/components/attachments";
+import { EtimsNumber } from "@/components/etims-number";
 
 interface AppliedRow { kind: string; id: string; number: string; date: string; amount: string }
 
@@ -127,6 +129,8 @@ export default function InvoicePage() {
         }
       />
       <RelatedDocuments kind="invoice" id={id} />
+      {inv.status !== "draft" && <Attachments docType="invoice" id={inv.id} side="sales" canAdd={can("invoices.create")}
+        missingEtims={!inv.etims_cu_invoice_number && (context.workspace.vat_registered ?? false)} />}
       <SendEmailDialog docType="invoice" id={inv.id} open={emailing} onClose={() => setEmailing(false)} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Status">
@@ -140,6 +144,7 @@ export default function InvoicePage() {
         {inv.reference && <Meta label="Customer's reference">{inv.reference}</Meta>}
         <TagsMeta doc={inv} />
         {inv.status !== "draft" && <EtimsMeta status={inv.etims_status} cu={inv.etims_cu_invoice_number} />}
+        {inv.status !== "draft" && inv.status !== "void" && <EtimsNumber id={inv.id} value={inv.etims_cu_invoice_number} signed={inv.etims_status === "signed"} canEdit={can("invoices.create")} />}
         {inv.void_reason && <Meta label="Void because">{inv.void_reason}</Meta>}
       </Card>
       <DocumentLines lines={inv.lines ?? []} subtotal={inv.subtotal} tax={inv.tax_total} total={inv.total} currency={inv.currency ?? ""} />

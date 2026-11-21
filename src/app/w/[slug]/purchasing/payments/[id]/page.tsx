@@ -12,6 +12,7 @@ import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PartyLink } from "@/components/party-link";
+import { Attachments } from "@/components/attachments";
 import { api, unwrap } from "@/lib/api/client";
 import { PAY_METHODS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
@@ -43,6 +44,7 @@ export default function SupplierPaymentPage() {
           </div>
         )} />
       <RelatedDocuments kind="supplier_payment" id={id} />
+      <Attachments docType="supplier_payment" id={id} side="purchase" canAdd={can("supplierpayments.create")} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Paid">{fmt(p.amount)}</Meta>
         <Meta label="Withholding tax">{fmt(p.withholding_amount)}</Meta>

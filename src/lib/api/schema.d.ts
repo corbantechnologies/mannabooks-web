@@ -1403,6 +1403,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attachments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Files on one document (GET with document_type and object_id), or add one (multipart POST). Seeing them needs the
+         *     right to see the document; adding needs the right to create that kind of document.
+         */
+        get: operations["w_attachments_list"];
+        put?: never;
+        /**
+         * @description Files on one document (GET with document_type and object_id), or add one (multipart POST). Seeing them needs the
+         *     right to see the document; adding needs the right to create that kind of document.
+         */
+        post: operations["w_attachments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attachments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Download a file (GET), change its type or whether the customer gets it (PATCH), or remove it (DELETE: whoever
+         *     added it, or the owner; recorded in the audit log).
+         */
+        get: operations["w_attachments_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Download a file (GET), change its type or whether the customer gets it (PATCH), or remove it (DELETE: whoever
+         *     added it, or the owner; recorded in the audit log).
+         */
+        delete: operations["w_attachments_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Download a file (GET), change its type or whether the customer gets it (PATCH), or remove it (DELETE: whoever
+         *     added it, or the owner; recorded in the audit log).
+         */
+        patch: operations["w_attachments_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/audit-logs/": {
         parameters: {
             query?: never;
@@ -3921,6 +3973,26 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_invoices_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/invoices/{id}/etims-number/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Record the CU invoice number of the eTIMS invoice raised for this invoice on KRA's own portal or app, while signing
+         *     from MannaBooks is switched off. Once KRA has signed it through MannaBooks, the number is KRA's and can't be changed.
+         */
+        post: operations["w_invoices_etims_number_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/invoices/{id}/issue/": {
@@ -8658,6 +8730,47 @@ export interface components {
             name: string;
             readonly people: number;
         };
+        Attachment: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly document_type: string;
+            /** Format: uuid */
+            readonly object_id: string;
+            kind?: components["schemas"]["KindA2fEnum"];
+            readonly kind_label: string;
+            readonly name: string;
+            readonly size: number;
+            /** @description Sent with the document when it is emailed to the customer */
+            for_customer?: boolean;
+            readonly added_by_name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `invoice` - invoice
+         *     * `payment` - payment
+         *     * `bill` - bill
+         *     * `payment_voucher` - payment_voucher
+         *     * `supplier_payment` - supplier_payment
+         *     * `expense` - expense
+         *     * `journal` - journal
+         * @enum {string}
+         */
+        AttachmentUploadDocumentTypeEnum: "invoice" | "payment" | "bill" | "payment_voucher" | "supplier_payment" | "expense" | "journal";
+        AttachmentUploadRequest: {
+            document_type: components["schemas"]["AttachmentUploadDocumentTypeEnum"];
+            /** Format: uuid */
+            object_id: string;
+            /** Format: binary */
+            file: string;
+            /** @default other */
+            kind: components["schemas"]["KindA2fEnum"];
+            /**
+             * @description Send it with the document when it is emailed to the customer
+             * @default false
+             */
+            for_customer: boolean;
+        };
         /**
          * @description * `team` - Everyone who reports to me
          *     * `department` - A department
@@ -10768,6 +10881,9 @@ export interface components {
             communication_key?: string;
             is_active?: boolean;
         };
+        EtimsNumberRequest: {
+            etims_cu_invoice_number: string;
+        };
         /**
          * @description * `` - Not sent
          *     * `disabled` - Signing switched off
@@ -11926,6 +12042,19 @@ export interface components {
          * @enum {string}
          */
         Kind6b8Enum: "report" | "task";
+        /**
+         * @description * `etims` - eTIMS invoice
+         *     * `supplier_invoice` - Supplier invoice
+         *     * `receipt` - Receipt
+         *     * `payment_proof` - Payment proof
+         *     * `lpo` - LPO / purchase order
+         *     * `delivery` - Proof of delivery
+         *     * `contract` - Contract
+         *     * `withholding` - Withholding certificate
+         *     * `other` - Other
+         * @enum {string}
+         */
+        KindA2fEnum: "etims" | "supplier_invoice" | "receipt" | "payment_proof" | "lpo" | "delivery" | "contract" | "withholding" | "other";
         Layout: {
             cards: components["schemas"]["CardsEnum"][];
             readonly available: components["schemas"]["Card"][];
@@ -14638,6 +14767,11 @@ export interface components {
             max_amount?: string | null;
             levels?: components["schemas"]["ApprovalLevelRequest"][];
             is_active?: boolean;
+        };
+        PatchedAttachmentRequest: {
+            kind?: components["schemas"]["KindA2fEnum"];
+            /** @description Sent with the document when it is emailed to the customer */
+            for_customer?: boolean;
         };
         PatchedBankAccountRequest: {
             name?: string;
@@ -22503,6 +22637,130 @@ export interface operations {
             };
         };
     };
+    w_attachments_list: {
+        parameters: {
+            query: {
+                document_type: "bill" | "expense" | "invoice" | "journal" | "payment" | "payment_voucher" | "supplier_payment";
+                object_id: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Attachment"][];
+                };
+            };
+        };
+    };
+    w_attachments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["AttachmentUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Attachment"];
+                };
+            };
+        };
+    };
+    w_attachments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    w_attachments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attachments_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAttachmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAttachmentRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAttachmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Attachment"];
+                };
+            };
+        };
+    };
     w_audit_logs_list: {
         parameters: {
             query?: {
@@ -27261,6 +27519,34 @@ export interface operations {
                 "application/json": components["schemas"]["PatchedInvoiceRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PatchedInvoiceRequest"];
                 "multipart/form-data": components["schemas"]["PatchedInvoiceRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Invoice"];
+                };
+            };
+        };
+    };
+    w_invoices_etims_number_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EtimsNumberRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["EtimsNumberRequest"];
+                "multipart/form-data": components["schemas"]["EtimsNumberRequest"];
             };
         };
         responses: {
