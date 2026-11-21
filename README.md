@@ -1,1 +1,1 @@
-# MannaBooks Web
+# MannaBooks Web Platform
