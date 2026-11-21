@@ -91,7 +91,8 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
         </Field>
         {kind === "bill" && <Field label="Supplier's invoice number" error={fieldError(save.error, "supplier_invoice_number")}><Input required value={head.supplier_invoice_number} onChange={set("supplier_invoice_number")} /></Field>}
         {kind === "bill" && <Field label="Their eTIMS CU invoice no." hint="Needed to claim the input VAT."><Input value={head.supplier_etims_number} onChange={set("supplier_etims_number")} /></Field>}
-        {kind !== "service" && (
+        {/* only stock has a warehouse: a bill for services (a subscription, a consultant) doesn't ask */}
+        {kind !== "service" && (kind === "order" || head.warehouse_id || lines.some((l) => l.product_id)) && (
           <Field label={kind === "order" ? "Deliver to" : "Stock goes to"}>
             <Select value={head.warehouse_id} onChange={set("warehouse_id")}>
               <option value="">Default warehouse</option>
