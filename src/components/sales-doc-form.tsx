@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useCustomers } from "@/lib/api/sales";
 import type { Invoice, Quotation } from "@/lib/api/types";
-import { todayIso } from "@/lib/format";
+import { startDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { EditLine, LinesEditor, WholeDiscount, blankLine, linesFromDocument, linesToRequest, noWholeDiscount, useDefaultVat, wholeDiscountBody } from "./lines-editor";
@@ -35,7 +35,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
   const quote = existing as Quotation | undefined;
   const [head, setHead] = useState({
     customer_id: existing?.customer_id ?? original?.customer_id ?? initialCustomer ?? "",
-    issue_date: existing?.issue_date ?? todayIso(),
+    issue_date: existing?.issue_date ?? startDate(),
     second_date: (billing ? inv?.due_date : quote?.valid_until) ?? "",
     reference: existing?.reference ?? "",
     notes: existing?.notes ?? "",

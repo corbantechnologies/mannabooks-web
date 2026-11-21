@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useSuppliers, useWarehouses } from "@/lib/api/purchasing";
 import type { Bill, PurchaseOrder, ServiceOrder } from "@/lib/api/types";
-import { todayIso } from "@/lib/format";
+import { startDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { useDefaultVat } from "./lines-editor";
@@ -31,7 +31,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
   const so = existing as ServiceOrder | undefined;
   const bill = existing as Bill | undefined;
   const [head, setHead] = useState({
-    supplier_id: existing?.supplier_id ?? supplierId ?? "", date: (kind === "bill" ? bill?.bill_date : kind === "service" ? so?.order_date : po?.order_date) ?? todayIso(),
+    supplier_id: existing?.supplier_id ?? supplierId ?? "", date: (kind === "bill" ? bill?.bill_date : kind === "service" ? so?.order_date : po?.order_date) ?? startDate(),
     second: (kind === "bill" ? bill?.due_date : kind === "service" ? so?.required_by : po?.expected_date) ?? "",
     warehouse_id: (kind === "order" ? po?.warehouse_id : bill?.warehouse_id) ?? "", reference: existing?.reference ?? "", notes: existing?.notes ?? "",
     scope: so?.scope ?? "", supplier_invoice_number: bill?.supplier_invoice_number ?? "", supplier_etims_number: bill?.supplier_etims_number ?? "",

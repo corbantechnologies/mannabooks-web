@@ -91,7 +91,7 @@ export default function FinancialYearsPage() {
               <Table head={["Month", "From", "To", "Status", ""]}>
                 {(periods.data ?? []).map((pr) => (
                   <tr key={pr.id}>
-                    <Td className="font-medium">{pr.name}</Td>
+                    <Td className="font-medium"><Link href={`/w/${slug}/accounting/months/${pr.id}`} className="text-brand-700 hover:underline">{pr.name}</Link></Td>
                     <Td>{fmtDate(pr.start_date)}</Td>
                     <Td>{fmtDate(pr.end_date)}</Td>
                     <Td>{pr.status === "open" ? <Badge tone="green">Open</Badge> : <Badge>Closed{pr.closed_by_name ? ` by ${pr.closed_by_name}` : ""}</Badge>}</Td>
