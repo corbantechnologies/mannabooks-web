@@ -28,7 +28,7 @@ export default function MpesaPaymentsPage() {
     <div className="w-full">
       <PageHeader
         title="M-Pesa payments"
-        description="Payments seen through your Daraja app. Those paid with an invoice number as the account are recorded automatically; apply the rest to a customer."
+        description="Payments seen through your Daraja app. Those paid with an invoice number as the account (INV-2026-0006, or just 20260006) are recorded automatically; apply the rest to a customer, or tie one you already recorded."
         guide="mpesa"
       />
       <div className="mb-4 flex flex-wrap gap-2">
@@ -70,7 +70,16 @@ function ApplyModal({ tx, onClose }: { tx: MpesaTransaction; onClose: () => void
   const customers = useCustomers(slug);
   const [customerId, setCustomerId] = useState("");
   const [invoiceId, setInvoiceId] = useState("");
+  const [already, setAlready] = useState(false);
+  const [paymentNumber, setPaymentNumber] = useState("");
   const invoices = useOpenInvoices(slug, customerId || "none");
+  // recorded by hand already (e.g. the customer typed only the invoice digits): tie it to that payment instead of recording it twice
+  const tie = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/mpesa/transactions/{id}/already-recorded/", {
+      params: { path: { workspace: slug, id: tx.id } }, body: { payment_number: paymentNumber },
+    })),
+    onSuccess: (t) => { toast.success(`Tied to ${t.payment_number}`); onClose(); },
+  });
   const apply = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/mpesa/transactions/{id}/apply/", {
       params: { path: { workspace: slug, id: tx.id } }, body: { customer_id: customerId, invoice_id: invoiceId || null },
@@ -79,8 +88,21 @@ function ApplyModal({ tx, onClose }: { tx: MpesaTransaction; onClose: () => void
   });
   return (
     <Modal open title={`Apply ${tx.mpesa_receipt} (${fmt(tx.amount)})`} onClose={onClose}>
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); apply.mutate(); }}>
+      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (already) tie.mutate(); else apply.mutate(); }}>
         <p className="text-sm text-stone-600">From {tx.payer_name || tx.phone}{tx.account_reference ? `, account "${tx.account_reference}"` : ""}.</p>
+        <div className="flex gap-1 rounded-md border border-stone-200 p-0.5 text-sm sm:w-fit">
+          <button type="button" onClick={() => setAlready(false)} className={`rounded px-3 py-1.5 ${!already ? "bg-brand-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>Record it now</button>
+          <button type="button" onClick={() => setAlready(true)} className={`rounded px-3 py-1.5 ${already ? "bg-brand-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>It&apos;s already recorded</button>
+        </div>
+        {already ? (
+          <>
+            <Field label="The payment it was recorded as" hint={`For example PAY-2026-0005. It must be for ${fmt(tx.amount)}. Nothing is recorded again.`}>
+              <Input required value={paymentNumber} onChange={(e) => setPaymentNumber(e.target.value)} placeholder="PAY-" />
+            </Field>
+            <FormError error={tie.error} />
+            <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={tie.isPending}>Tie them</Button></div>
+          </>
+        ) : <>
         <Field label="Customer">
           <Select required value={customerId} onChange={(e) => { setCustomerId(e.target.value); setInvoiceId(""); }}>
             <option value="">Choose a customer</option>
@@ -97,6 +119,7 @@ function ApplyModal({ tx, onClose }: { tx: MpesaTransaction; onClose: () => void
         )}
         <FormError error={apply.error} />
         <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={apply.isPending}>Record payment</Button></div>
+        </>}
       </form>
     </Modal>
   );
