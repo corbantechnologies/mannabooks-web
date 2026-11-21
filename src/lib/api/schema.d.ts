@@ -4653,6 +4653,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/mpesa/transactions/{id}/already-recorded/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description It was already recorded by hand: tie it to that payment instead of recording it again. */
+        post: operations["w_mpesa_transactions_already_recorded_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/mpesa/transactions/{id}/apply/": {
         parameters: {
             query?: never;
@@ -12325,6 +12342,10 @@ export interface components {
             share_premium: string;
             /** @default false */
             allow_over: boolean;
+        };
+        LinkMpesaRequest: {
+            /** @description The payment already recorded for it, e.g. PAY-2026-0005 */
+            payment_number: string;
         };
         LinkPayment: {
             /** Format: uuid */
@@ -28918,6 +28939,34 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MpesaTransaction"];
+                };
+            };
+        };
+    };
+    w_mpesa_transactions_already_recorded_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkMpesaRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LinkMpesaRequest"];
+                "multipart/form-data": components["schemas"]["LinkMpesaRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {

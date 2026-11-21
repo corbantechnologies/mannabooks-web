@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { ask } from "@/components/confirm";
 import { TASK_STATUS, type Task, TaskForm, dueLabel, holder } from "@/components/task-form";
 import { TaskInsights } from "@/components/task-insights";
-import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -26,6 +26,8 @@ export default function TasksPage() {
   const [box, setBox] = useState<Box>(() => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("view") === "insights" ? "insights" : "mine"));
   const [open, setOpen] = useState(true);
   const [adding, setAdding] = useState(false);
+  const [filters, setFilters] = useState<Filters>(readFilters);
+  const setFilter = (patch: Partial<Filters>) => setFilters((f) => { const next = { ...f, ...patch }; saveFilters(next); return next; });
   const [view, setView] = useState<"list" | "board">(() => {
     try { return localStorage.getItem("mannabooks.tasks-view") === "board" ? "board" : "list"; } catch { return "list"; }
   });
@@ -41,7 +43,8 @@ export default function TasksPage() {
     ...(can("tasks.view") ? [{ key: "all" as Box, label: "Everyone's" }] : []),
     { key: "insights", label: "Insights" },
   ];
-  const sorted = [...rows].sort(byUrgency);
+  const shown = rows.filter((t) => matches(t, filters));
+  const sorted = [...shown].sort(byUrgency);
   const finished = sorted.filter((t) => t.status === "done" || t.status === "cancelled")
     .sort((a, b) => (b.done_at ?? b.created_at ?? "").localeCompare(a.done_at ?? a.created_at ?? ""));  // latest finished first
   const active = sorted.filter((t) => t.status !== "done" && t.status !== "cancelled");
@@ -70,11 +73,36 @@ export default function TasksPage() {
           </div>
         )}
       </div>
+      {box !== "insights" && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Input className="max-w-xs" placeholder="Search tasks, people, departments" value={filters.q} onChange={(e) => setFilter({ q: e.target.value })} />
+          <Select aria-label="Priority" className="w-36" value={filters.priority} onChange={(e) => setFilter({ priority: e.target.value })}>
+            <option value="">Any priority</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option>
+          </Select>
+          <Select aria-label="When due" className="w-40" value={filters.due} onChange={(e) => setFilter({ due: e.target.value as Filters["due"] })}>
+            <option value="">Due any time</option><option value="overdue">Overdue</option><option value="today">Due today</option>
+            <option value="week">Due this week</option><option value="next">Due next week</option><option value="none">No deadline</option>
+          </Select>
+          {view === "list" && (
+            <Select aria-label="Group by" className="w-44" value={filters.group} onChange={(e) => setFilter({ group: e.target.value as Filters["group"] })}>
+              <option value="">No grouping</option><option value="priority">Group by priority</option><option value="date">Group by due date</option>
+              <option value="week">Group by week</option><option value="department">Group by department</option>
+            </Select>
+          )}
+          {(filters.q || filters.priority || filters.due) && (
+            <button type="button" className="text-sm text-brand-700 hover:underline" onClick={() => setFilter({ q: "", priority: "", due: "" })}>
+              Clear ({shown.length} of {rows.length})
+            </button>
+          )}
+        </div>
+      )}
       {box === "insights" ? <TaskInsights /> : q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
         <>
           {box === "department" && <DepartmentRecord />}
           <Card><EmptyState title={box === "mine" ? "Nothing to do" : box === "given" ? "You haven't given anyone a task" : "No tasks"}>{box === "mine" ? "Add a task for yourself with New task." : undefined}</EmptyState></Card>
         </>
+      ) : shown.length === 0 ? (
+        <Card><EmptyState title="No tasks match">Change the search or filters above.</EmptyState></Card>
       ) : view === "board" ? (
         <div className="space-y-5">
           {box === "department" && <DepartmentRecord />}
@@ -92,7 +120,7 @@ export default function TasksPage() {
           {listed.length > 0 && (
             <section>
               {pool.length > 0 && <h2 className="mb-2 text-sm font-semibold">Mine</h2>}
-              <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
+              {filters.group ? <Grouped rows={listed} group={filters.group} box={box} /> : <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>}
             </section>
           )}
           {!open && active.length === 0 && <p className="text-sm text-stone-500">Nothing open.</p>}
@@ -110,6 +138,87 @@ export default function TasksPage() {
 }
 
 const PRIORITY_RANK: Record<string, number> = { high: 0, normal: 1, low: 2 };
+
+type Filters = { q: string; priority: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" };
+const NO_FILTERS: Filters = { q: "", priority: "", due: "", group: "" };
+const FILTERS_KEY = "mb.tasks.filters";
+
+/** Remembered per person in this browser: the grouping and filters they last used. */
+function readFilters(): Filters {
+  try {
+    return { ...NO_FILTERS, ...JSON.parse(localStorage.getItem(FILTERS_KEY) ?? "{}") };
+  } catch {
+    return NO_FILTERS;
+  }
+}
+function saveFilters(f: Filters) {
+  try { localStorage.setItem(FILTERS_KEY, JSON.stringify(f)); } catch { /* private window: not remembered */ }
+}
+
+const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+/** Monday of the week a date falls in. */
+function weekStart(day: string): string {
+  const d = new Date(`${day}T12:00:00`);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return iso(d);
+}
+
+function matches(t: Task, f: Filters): boolean {
+  const needle = f.q.trim().toLowerCase();
+  if (needle && ![t.title, t.details, t.assigned_to_name, t.given_by_name, t.department_name, t.project_name, t.customer_name]
+    .some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
+  if (f.priority && (t.priority ?? "normal") !== f.priority) return false;
+  if (f.due) {
+    const today = iso(new Date());
+    const thisWeek = weekStart(today);
+    const nextWeek = (() => { const d = new Date(`${thisWeek}T12:00:00`); d.setDate(d.getDate() + 7); return iso(d); })();
+    if (f.due === "none") return !t.due_date;
+    if (!t.due_date) return false;
+    if (f.due === "overdue") return !!t.is_overdue;
+    if (f.due === "today") return t.due_date === today;
+    if (f.due === "week") return weekStart(t.due_date) === thisWeek;
+    if (f.due === "next") return weekStart(t.due_date) === nextWeek;
+  }
+  return true;
+}
+
+/** The list in sections: by priority, by due date, by week, or by department. */
+function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["group"], "">; box: Box }) {
+  const today = iso(new Date());
+  const thisWeek = weekStart(today);
+  const key = (t: Task): [string, string] => {  // [sort key, heading]
+    if (group === "priority") {
+      const p = t.priority ?? "normal";
+      return [String(PRIORITY_RANK[p]), `${p[0].toUpperCase()}${p.slice(1)} priority`];
+    }
+    if (group === "department") return [t.department_name ?? "~", t.department_name ?? "No department"];
+    if (!t.due_date) return ["9999", "No deadline"];
+    if (group === "date") {
+      if (t.is_overdue) return ["0000", "Overdue"];
+      return [t.due_date, t.due_date === today ? "Today" : new Date(`${t.due_date}T12:00:00`).toLocaleDateString("en-KE", { weekday: "long", day: "numeric", month: "short" })];
+    }
+    const w = weekStart(t.due_date);
+    if (w < thisWeek) return ["0000", "Earlier weeks (overdue)"];
+    const label = w === thisWeek ? "This week" : `Week of ${new Date(`${w}T12:00:00`).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}`;
+    return [w, label];
+  };
+  const groups = new Map<string, { label: string; rows: Task[] }>();
+  for (const t of rows) {
+    const [k, label] = key(t);
+    if (!groups.has(k)) groups.set(k, { label, rows: [] });
+    groups.get(k)!.rows.push(t);
+  }
+  return (
+    <div className="space-y-4">
+      {[...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, g]) => (
+        <div key={k}>
+          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500">{g.label} <span className="font-normal">({g.rows.length})</span></h3>
+          <div className="space-y-2">{g.rows.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /** Overdue and soonest first (no deadline last), then higher priority, then newest. */
 function byUrgency(a: Task, b: Task) {
