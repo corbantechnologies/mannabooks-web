@@ -11,6 +11,7 @@ import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHe
 import { api, unwrap } from "@/lib/api/client";
 import { useCostCenters } from "@/lib/api/control";
 import { fmt, fmtDate, fmtNonZero, todayIso } from "@/lib/format";
+import { sourceLink } from "@/lib/source-links";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
@@ -46,6 +47,7 @@ export default function JournalDetailPage() {
   if (entry.isLoading) return <Spinner />;
   if (entry.error) return <ErrorState error={entry.error} />;
   const e = entry.data!;
+  const src = sourceLink(slug, e);  // the invoice, bill or payment this entry came from
   if (editing) {
     return (
       <div className="w-full">
@@ -80,8 +82,8 @@ export default function JournalDetailPage() {
       <Card className="mb-4 grid gap-4 p-4 text-sm sm:grid-cols-4">
         <div><p className="text-stone-500">Date</p><p className="font-medium">{fmtDate(e.entry_date)}</p></div>
         <div><p className="text-stone-500">Status</p><Badge tone={TONE[e.status]}>{e.status}</Badge></div>
-        <div><p className="text-stone-500">Source</p><p className="font-medium capitalize">{e.source.replace("_", " ")}</p></div>
-        <div><p className="text-stone-500">Reference</p><p className="font-medium">{e.reference || "-"}</p></div>
+        <div><p className="text-stone-500">Source</p>{src ? <Link href={src.href} className="font-medium text-brand-700 hover:underline">{src.label}</Link> : <p className="font-medium capitalize">{e.source.replace(/_/g, " ")}</p>}</div>
+        <div><p className="text-stone-500">Reference</p>{src && e.reference ? <Link href={src.href} className="font-medium text-brand-700 hover:underline">{e.reference}</Link> : <p className="font-medium">{e.reference || "-"}</p>}</div>
         {e.posted_by_name && <div className="sm:col-span-2"><p className="text-stone-500">Posted</p><p>{e.posted_by_name}, {new Date(e.posted_at!).toLocaleString("en-KE")}</p></div>}
         {e.reversal_of_number && <div className="sm:col-span-2"><p className="text-stone-500">Reverses</p><p className="font-mono">{e.reversal_of_number}</p></div>}
         {e.reversed_by_number && <div className="sm:col-span-2"><p className="text-stone-500">Reversed by</p><p className="font-mono">{e.reversed_by_number}</p></div>}
@@ -90,7 +92,7 @@ export default function JournalDetailPage() {
         <Table head={["Account", "Description", "Debit", "Credit"]}>
           {e.lines.map((l) => (
             <tr key={l.id}>
-              <Td><span className="font-mono text-xs text-stone-500">{l.account_code}</span> {l.account_name}</Td>
+              <Td><Link href={`/w/${slug}/accounting/accounts/${l.account_id}`} className="hover:underline"><span className="font-mono text-xs text-stone-500">{l.account_code}</span> <span className="text-brand-700">{l.account_name}</span></Link></Td>
               <Td className="text-stone-600">{l.description}{l.cost_center_id && centreCode(l.cost_center_id) && <span className="ml-2 rounded bg-stone-100 px-1.5 py-0.5 text-xs text-stone-700" title="Cost centre">{centreCode(l.cost_center_id)}</span>}</Td>
               <Td className="text-right font-mono">{fmtNonZero(l.debit)}</Td>
               <Td className="text-right font-mono">{fmtNonZero(l.credit)}</Td>

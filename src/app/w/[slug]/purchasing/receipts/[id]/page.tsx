@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { PartyLink } from "@/components/party-link";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -30,7 +31,7 @@ export default function GoodsReceiptPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/receipts`} className="text-sm text-stone-500 hover:underline">&larr; Goods received</Link>
-      <PageHeader title={`Goods received ${g.number}`} description={g.supplier_name} guide="goods-received"
+      <PageHeader title={`Goods received ${g.number}`} description={<PartyLink kind="supplier" id={g.supplier_id} name={g.supplier_name} />} guide="goods-received"
         actions={g.status === "posted" && (
           <div className="flex flex-wrap gap-2">
             {can("goodsreceipts.manage") && <Button variant="ghost" className="text-red-600" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
@@ -41,7 +42,7 @@ export default function GoodsReceiptPage() {
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status">{g.status === "void" ? <Badge>Void: {g.void_reason}</Badge> : g.is_billed ? <Badge tone="green">Billed</Badge> : <Badge tone="amber">Waiting for the bill</Badge>}</Meta>
         <Meta label="Date">{fmtDate(g.receipt_date)}</Meta>
-        <Meta label="Order">{g.purchase_order_id ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/orders/${g.purchase_order_id}`}>{g.purchase_order_number}</Link> : "-"}</Meta>
+        <Meta label="Order">{g.purchase_order_id ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/orders/${g.purchase_order_id}`}>{g.purchase_order_number}</Link> : "-"}</Meta>
         <Meta label="Warehouse">{g.warehouse_name}</Meta>
         {g.delivery_note_number && <Meta label="Their delivery note">{g.delivery_note_number}</Meta>}
       </Card>

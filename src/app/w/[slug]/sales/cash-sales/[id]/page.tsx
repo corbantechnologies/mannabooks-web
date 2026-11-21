@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
+import { PartyLink } from "@/components/party-link";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
@@ -34,7 +35,7 @@ export default function CashSalePage() {
       <Link href={`/w/${slug}/sales/cash-sales`} className="text-sm text-stone-500 hover:underline">&larr; Cash sales</Link>
       <PageHeader
         title={`Cash sale ${r.number}`}
-        description={r.customer_name || "Walk-in customer"}
+        description={<PartyLink kind="customer" id={r.customer_id} name={r.customer_name} fallback="Walk-in customer" />}
         guide="cash-sales"
         actions={
           <div className="flex flex-wrap gap-2">

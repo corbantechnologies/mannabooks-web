@@ -21,6 +21,7 @@ import { INVOICE_STATUS, METHODS, useDepositAccounts } from "@/lib/api/sales";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 interface AppliedRow { kind: string; id: string; number: string; date: string; amount: string }
 
@@ -101,7 +102,7 @@ export default function InvoicePage() {
       <Link href={`/w/${slug}/sales/${debit ? "debit-notes" : "invoices"}`} className="text-sm text-stone-500 hover:underline">&larr; {debit ? "Debit notes" : "Invoices"}</Link>
       <PageHeader
         title={inv.number ? `${label} ${inv.number}` : `Draft ${label.toLowerCase()}`}
-        description={debit && inv.original_invoice_number ? `${inv.customer_name} · adds to invoice ${inv.original_invoice_number}` : inv.customer_name}
+        description={<><PartyLink kind="customer" id={inv.customer_id} name={inv.customer_name} />{debit && inv.original_invoice_number ? ` · adds to invoice ${inv.original_invoice_number}` : ""}</>}
         guide="invoices"
         actions={
           <div className="flex flex-wrap gap-2">

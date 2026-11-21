@@ -9,32 +9,14 @@ import { useState } from "react";
 import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
+import { sourceLink } from "@/lib/source-links";
 import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
-
-/** Where each kind of source document opens. Anything else opens its journal entry. */
-const SOURCE_PAGE: Record<string, [string, string]> = {
-  "invoices.Invoice": ["sales/invoices", "Invoice"],
-  "receipts.Receipt": ["sales/cash-sales", "Cash sale"],
-  "creditnotes.CreditNote": ["sales/credit-notes", "Credit note"],
-  "payments.Payment": ["sales/payments", "Payment"],
-  "bills.Bill": ["purchasing/bills", "Bill"],
-  "supplierpayments.SupplierPayment": ["purchasing/payments", "Supplier payment"],
-  "paymentvouchers.PaymentVoucher": ["purchasing/vouchers", "Payment voucher"],
-  "expenses.Expense": ["banking/expenses", "Expense"],
-  "otherincomes.OtherIncome": ["banking/income", "Other income"],
-  "payruns.PayRun": ["payroll", "Payroll"],
-  "stockadjustments.StockAdjustment": ["inventory/adjustments", "Stock adjustment"],
-  "stocktakes.StockTake": ["inventory/stock-takes", "Stock take"],
-};
 
 type Doc = { entry_id: string; date: string; number: string; description: string; reference: string; source: string; source_model: string; source_id: string; kind: string; amount: string };
 
 function docLink(slug: string, d: Doc): { href: string; label: string } {
-  const key = d.source_model.split(".").slice(0, 2).join(".");
-  const page = SOURCE_PAGE[key];
-  if (page && d.source_id) return { href: `/w/${slug}/${page[0]}/${d.source_id}`, label: page[1] };
-  return { href: `/w/${slug}/accounting/journals/${d.entry_id}`, label: d.source === "manual" ? "Journal" : d.source.replace(/_/g, " ") };
+  return sourceLink(slug, d) ?? { href: `/w/${slug}/accounting/journals/${d.entry_id}`, label: d.source === "manual" ? "Journal" : d.source.replace(/_/g, " ") };
 }
 
 /**

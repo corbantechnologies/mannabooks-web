@@ -11822,6 +11822,8 @@ export interface components {
             readonly status: components["schemas"]["JournalStatusEnum"];
             /** @description manual, opening_balance, year_end, invoice, ... */
             readonly source: string;
+            readonly source_model: string;
+            readonly source_id: string;
             lines: components["schemas"]["JournalLine"][];
             readonly total: string;
             /** Format: date-time */

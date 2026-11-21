@@ -50,8 +50,8 @@ export default function MpesaPaymentsPage() {
                 <Td className="font-mono text-xs">{t.account_reference}</Td>
                 <Td className="text-right font-mono">{fmt(t.amount)}</Td>
                 <Td>
-                  {t.payment_id ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/sales/payments/${t.payment_id}`}>{t.payment_number}</Link>
-                    : t.receipt_id ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/sales/cash-sales/${t.receipt_id}`}>{t.receipt_number}</Link>
+                  {t.payment_id ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/sales/payments/${t.payment_id}`}>{t.payment_number}</Link>
+                    : t.receipt_id ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/sales/cash-sales/${t.receipt_id}`}>{t.receipt_number}</Link>
                     : <Badge tone={MPESA_STATUS[t.status ?? "pending"].tone}>{MPESA_STATUS[t.status ?? "pending"].label}</Badge>}
                 </Td>
                 <Td>{t.status === "completed" && !t.is_matched && can("payments.create") && <Button variant="secondary" className="px-2 py-1" onClick={() => setApplying(t)}>Apply</Button>}</Td>

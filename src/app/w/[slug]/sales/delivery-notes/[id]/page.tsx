@@ -16,6 +16,7 @@ import { DELIVERY_STATUS } from "@/lib/api/sales";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 type Status = keyof typeof DELIVERY_STATUS;
 
@@ -41,7 +42,7 @@ export default function DeliveryNotePage() {
       <Link href={`/w/${slug}/sales/delivery-notes`} className="text-sm text-stone-500 hover:underline">&larr; Delivery notes</Link>
       <PageHeader
         title={`Delivery note ${d.number}`}
-        description={d.customer_name}
+        description={<PartyLink kind="customer" id={d.customer_id} name={d.customer_name} />}
         guide="delivery-notes"
         actions={
           <div className="flex flex-wrap gap-2">
@@ -57,7 +58,7 @@ export default function DeliveryNotePage() {
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={DELIVERY_STATUS[d.status as Status].tone}>{DELIVERY_STATUS[d.status as Status].label}</Badge></Meta>
         <Meta label="Date">{fmtDate(d.delivery_date)}</Meta>
-        <Meta label="Invoice">{d.invoice_id ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/sales/invoices/${d.invoice_id}`}>{d.invoice_number}</Link> : "-"}</Meta>
+        <Meta label="Invoice">{d.invoice_id ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/sales/invoices/${d.invoice_id}`}>{d.invoice_number}</Link> : "-"}</Meta>
         <Meta label="Vehicle / driver">{[d.vehicle, d.driver].filter(Boolean).join(" · ") || "-"}</Meta>
         <Meta label="Deliver to">{d.delivery_address || "-"}</Meta>
         <Meta label="Contact">{[d.contact_person, d.contact_phone].filter(Boolean).join(" · ") || "-"}</Meta>

@@ -18,6 +18,7 @@ import { BILL_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 export default function BillPage() {
   const { slug, can } = useWorkspace();
@@ -48,7 +49,7 @@ export default function BillPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/bills`} className="text-sm text-stone-500 hover:underline">&larr; Bills</Link>
-      <PageHeader title={`Bill ${b.supplier_invoice_number || "(draft)"}`} description={`${b.supplier_name}${b.number ? ` · ${b.number}` : ""}`} guide="bills"
+      <PageHeader title={`Bill ${b.supplier_invoice_number || "(draft)"}`} description={<><PartyLink kind="supplier" id={b.supplier_id} name={b.supplier_name} />{b.number ? ` · ${b.number}` : ""}</>} guide="bills"
         actions={
           <div className="flex flex-wrap gap-2">
             {b.status === "draft" && can("bills.create") && <><Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this draft?").then((ok) => ok && remove.mutate())}>Delete</Button><Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button></>}
@@ -65,9 +66,9 @@ export default function BillPage() {
         <Meta label="Due">{fmtDate(b.due_date)}</Meta>
         <Meta label="Paid">{fmt(b.amount_paid)}</Meta>
         <Meta label="Balance">{fmt(b.balance_due)}</Meta>
-        {b.goods_receipt_id && <Meta label="Goods received"><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/receipts/${b.goods_receipt_id}`}>{b.goods_receipt_number}</Link></Meta>}
-        {b.purchase_order_id && <Meta label="Order"><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/orders/${b.purchase_order_id}`}>{b.purchase_order_number}</Link></Meta>}
-        {b.service_order_id && <Meta label="Service order"><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/service-orders/${b.service_order_id}`}>{b.service_order_number}</Link></Meta>}
+        {b.goods_receipt_id && <Meta label="Goods received"><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/receipts/${b.goods_receipt_id}`}>{b.goods_receipt_number}</Link></Meta>}
+        {b.purchase_order_id && <Meta label="Order"><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/orders/${b.purchase_order_id}`}>{b.purchase_order_number}</Link></Meta>}
+        {b.service_order_id && <Meta label="Service order"><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/service-orders/${b.service_order_id}`}>{b.service_order_number}</Link></Meta>}
         <Meta label="eTIMS CU no.">{b.supplier_etims_number || <span className="text-amber-700">Not entered</span>}</Meta>
         <TagsMeta doc={b} />
         {b.void_reason && <Meta label="Void because">{b.void_reason}</Meta>}

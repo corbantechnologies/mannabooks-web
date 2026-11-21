@@ -32,8 +32,11 @@ export function SendToInbox({ kind, id, disabled }: { kind: Kind; id: string; di
   const waiting = p.last_status === "new" || p.last_status === "accepted";
   return (
     <>
-      <Button variant="secondary" disabled={waiting} title={waiting ? `Already in ${p.recipient_name}'s inbox (${p.last_status})` : undefined} onClick={() => { send.reset(); setOpen(true); }}>
-        {waiting ? `In ${p.recipient_name}'s inbox` : `Send to ${p.recipient_name} on MannaBooks`}
+      {/* short label: a long business name made the button push the page sideways; the name is in the tooltip and the form */}
+      <Button variant="secondary" disabled={waiting} className="max-w-full"
+        title={waiting ? `Already in ${p.recipient_name}'s inbox (${p.last_status})` : `Send to ${p.recipient_name}'s Business inbox on MannaBooks`}
+        onClick={() => { send.reset(); setOpen(true); }}>
+        <span className="truncate">{waiting ? "In their inbox" : "Send on MannaBooks"}</span>
       </Button>
       <Modal open={open} title={`Send to ${p.recipient_name}`} onClose={() => setOpen(false)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); send.mutate(); }}>

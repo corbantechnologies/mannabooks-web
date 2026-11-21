@@ -11,6 +11,7 @@ import { ApplyToBills } from "@/components/supplier-advance";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { PartyLink } from "@/components/party-link";
 import { api, unwrap } from "@/lib/api/client";
 import { PAY_METHODS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
@@ -33,7 +34,7 @@ export default function SupplierPaymentPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/payments`} className="text-sm text-stone-500 hover:underline">&larr; Supplier payments</Link>
-      <PageHeader title={`Payment ${p.number}`} description={p.supplier_name} guide="supplier-payments"
+      <PageHeader title={`Payment ${p.number}`} description={<PartyLink kind="supplier" id={p.supplier_id} name={p.supplier_name} />} guide="supplier-payments"
         actions={p.status === "posted" && (
           <div className="flex flex-wrap gap-2">
             {can("supplierpayments.create") && Number(p.unallocated_amount) > 0 && <ApplyToBills paymentId={p.id} supplierId={p.supplier_id} unapplied={p.unallocated_amount ?? "0"} />}
@@ -53,7 +54,7 @@ export default function SupplierPaymentPage() {
       </Card>
       <Card>
         <Table head={["Bill", "Amount"]}>
-          {(p.allocations ?? []).map((a) => <tr key={a.bill_id}><Td><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/bills/${a.bill_id}`}>{a.bill_number}</Link></Td><Td className="text-right font-mono">{fmt(a.amount)}</Td></tr>)}
+          {(p.allocations ?? []).map((a) => <tr key={a.bill_id}><Td><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/bills/${a.bill_id}`}>{a.bill_number}</Link></Td><Td className="text-right font-mono">{fmt(a.amount)}</Td></tr>)}
         </Table>
       </Card>
       <Modal open={voiding} title={`Void ${p.number}`} onClose={() => setVoiding(false)}>

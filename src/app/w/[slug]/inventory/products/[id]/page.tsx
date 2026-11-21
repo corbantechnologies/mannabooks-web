@@ -38,7 +38,7 @@ export default function StockCardPage() {
               <tr key={m.id}>
                 <Td className="whitespace-nowrap">{fmtDate(m.movement_date)}</Td>
                 <Td>{m.kind_label}</Td>
-                <Td>{LINKS[m.source_type] ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}${LINKS[m.source_type]}/${m.source_id}`}>{m.source_number}</Link> : m.source_number}</Td>
+                <Td>{LINKS[m.source_type] ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}${LINKS[m.source_type]}/${m.source_id}`}>{m.source_number}</Link> : m.source_number}</Td>
                 <Td>{m.warehouse_name}</Td>
                 <Td className={`text-right font-mono ${Number(m.quantity) < 0 ? "text-red-600" : "text-green-700"}`}>{Number(m.quantity) > 0 ? "+" : ""}{Number(m.quantity)}</Td>
                 <Td className="text-right font-mono">{fmt(m.unit_cost)}</Td>

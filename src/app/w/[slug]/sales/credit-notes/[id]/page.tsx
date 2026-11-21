@@ -11,6 +11,7 @@ import { RelatedDocuments } from "@/components/related-documents";
 import { SendEmailButton } from "@/components/send-email";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
 import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
+import { PartyLink } from "@/components/party-link";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -34,7 +35,7 @@ export default function CreditNotePage() {
       <Link href={`/w/${slug}/sales/credit-notes`} className="text-sm text-stone-500 hover:underline">&larr; Credit notes</Link>
       <PageHeader
         title={`Credit note ${c.number}`}
-        description={c.customer_name}
+        description={<PartyLink kind="customer" id={c.customer_id} name={c.customer_name} />}
         guide="credit-notes"
         actions={
           <div className="flex flex-wrap gap-2">
@@ -47,7 +48,7 @@ export default function CreditNotePage() {
       <RelatedDocuments kind="credit_note" id={id} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">
         <Meta label="Date">{fmtDate(c.issue_date)}</Meta>
-        <Meta label="Invoice">{c.invoice_id ? <Link href={`/w/${slug}/sales/invoices/${c.invoice_id}`} className="font-mono text-xs hover:underline">{c.invoice_number}</Link> : "-"}</Meta>
+        <Meta label="Invoice">{c.invoice_id ? <Link href={`/w/${slug}/sales/invoices/${c.invoice_id}`} className="font-mono text-xs text-brand-700 hover:underline">{c.invoice_number}</Link> : "-"}</Meta>
         <Meta label="Applied to invoice">{fmt(c.applied_amount)}</Meta>
         <Meta label="Kept as credit">{fmt(c.unapplied_amount)}</Meta>
         <EtimsMeta status={c.etims_status} cu={c.etims_cu_invoice_number} />
