@@ -20,3 +20,11 @@ Enter the supplier's **eTIMS CU invoice number** from their invoice: KRA only al
 - VAT goes to *VAT recoverable*, and the total to *Accounts payable*.
 
 A posted bill can be **voided** if nothing has been paid on it.
+
+## Attachments
+
+Every bill, payment voucher, supplier payment, expense and journal has an **Attachments** box. Choose what the file is (**eTIMS invoice**, **Supplier invoice**, **Receipt**, **Payment proof** such as the M-Pesa message or bank slip, or **Other**), then **Add a file**. On a phone you can take a photo.
+
+Attachments are optional: the supplier's eTIMS CU number on the bill stays the main record, and is what MannaBooks searches. A bill with neither the eTIMS number nor an eTIMS file shows a reminder, because claiming its input VAT needs one.
+
+Anyone who can see the document can open its files. Whoever added a file, or the owner, can remove it, and every removal is in the audit log.

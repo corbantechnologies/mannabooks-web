@@ -14,6 +14,7 @@ import { fmt, fmtDate, fmtNonZero, todayIso } from "@/lib/format";
 import { sourceLink } from "@/lib/source-links";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { Attachments } from "@/components/attachments";
 
 const TONE = { draft: "amber", posted: "green", reversed: "stone" } as const;
 
@@ -79,6 +80,7 @@ export default function JournalDetailPage() {
           </div>
         }
       />
+      <Attachments docType="journal" id={id} side="purchase" canAdd={can("journals.create")} />
       <Card className="mb-4 grid gap-4 p-4 text-sm sm:grid-cols-4">
         <div><p className="text-stone-500">Date</p><p className="font-medium">{fmtDate(e.entry_date)}</p></div>
         <div><p className="text-stone-500">Status</p><Badge tone={TONE[e.status]}>{e.status}</Badge></div>

@@ -11,6 +11,7 @@ import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PartyLink } from "@/components/party-link";
+import { Attachments } from "@/components/attachments";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
@@ -45,6 +46,7 @@ export default function PaymentPage() {
         )}
       />
       <RelatedDocuments kind="payment" id={id} />
+      <Attachments docType="payment" id={id} side="sales" canAdd={can("payments.create")} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Amount">{fmt(p.amount)}</Meta>
         <Meta label="Date">{fmtDate(p.payment_date)}</Meta>

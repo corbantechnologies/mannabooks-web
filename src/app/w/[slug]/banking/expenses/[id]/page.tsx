@@ -10,6 +10,7 @@ import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { PurchaseLinesView } from "@/components/purchase-lines";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
+import { Attachments } from "@/components/attachments";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -33,6 +34,7 @@ export default function ExpensePage() {
       <Link href={`/w/${slug}/banking/expenses`} className="text-sm text-stone-500 hover:underline">&larr; Expenses</Link>
       <PageHeader title={`Expense ${e.number}`} description={e.payee || e.supplier_name || ""} guide="expenses"
         actions={e.status === "posted" && can("banking.spend") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>} />
+      <Attachments docType="expense" id={id} side="purchase" canAdd={can("banking.spend")} missingEtims={e.status === "posted" && !e.supplier_etims_number && Number(e.tax_total ?? 0) > 0} />
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Date">{fmtDate(e.expense_date)}</Meta>
         <Meta label="Paid from">{e.paid_from_name}</Meta>
