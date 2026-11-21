@@ -18,6 +18,7 @@ import { depositFor } from "@/lib/api/sales";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 export default function VoucherPage() {
   const { slug, can } = useWorkspace();
@@ -41,7 +42,7 @@ export default function VoucherPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/vouchers`} className="text-sm text-stone-500 hover:underline">&larr; Payment vouchers</Link>
-      <PageHeader title={`Payment voucher ${v.number}`} description={v.supplier_name} guide="payment-vouchers"
+      <PageHeader title={`Payment voucher ${v.number}`} description={<PartyLink kind="supplier" id={v.supplier_id} name={v.supplier_name} />} guide="payment-vouchers"
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href={`/w/${slug}/purchasing/vouchers/${v.id}/print`}><Button variant="secondary"><Printer className="h-4 w-4" /> Print</Button></Link>
@@ -59,13 +60,13 @@ export default function VoucherPage() {
         <Meta label="To pay">{fmt(v.net_payable)}</Meta>
         <Meta label="Prepared by">{v.prepared_by_name ?? "-"}</Meta>
         <Meta label="Approved by">{v.approved_by_name ? `${v.approved_by_name}, ${fmtDate(v.approved_at)}` : "-"}</Meta>
-        {v.payment_id && <Meta label="Paid as"><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/payments/${v.payment_id}`}>{v.payment_number}</Link></Meta>}
+        {v.payment_id && <Meta label="Paid as"><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/payments/${v.payment_id}`}>{v.payment_number}</Link></Meta>}
         {v.supplier_bank_details && <Meta label="Pay to">{v.supplier_bank_details}</Meta>}
         {v.notes && <div className="sm:col-span-4"><Meta label="Why">{v.notes}</Meta></div>}
       </Card>
       <Card>
         <Table head={["Their invoice", "Date", "Paying"]}>
-          {v.lines.map((l) => <tr key={l.bill_id}><Td><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/bills/${l.bill_id}`}>{l.bill_number}</Link></Td><Td>{fmtDate(l.bill_date)}</Td><Td className="text-right font-mono">{fmt(l.amount)}</Td></tr>)}
+          {v.lines.map((l) => <tr key={l.bill_id}><Td><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/bills/${l.bill_id}`}>{l.bill_number}</Link></Td><Td>{fmtDate(l.bill_date)}</Td><Td className="text-right font-mono">{fmt(l.amount)}</Td></tr>)}
         </Table>
       </Card>
       <Modal open={paying} title={`Pay ${fmt(v.net_payable)} to ${v.supplier_name}`} onClose={() => setPaying(false)}>

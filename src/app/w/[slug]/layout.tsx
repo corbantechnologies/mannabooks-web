@@ -91,6 +91,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
+import { CameFrom } from "@/components/came-from";
 import { PeriodFixDialog } from "@/components/period-fix-dialog";
 import { PeriodSwitcher } from "@/components/period-switcher";
 import { type JumpItem, QuickJump } from "@/components/quick-jump";
@@ -442,7 +443,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
             </aside>
           </div>
         )}
-        <main className="min-w-0 flex-1 px-3 py-5 sm:px-6 sm:py-6 lg:px-8"><SubscriptionBanner />{children}</main>
+        <main className="min-w-0 flex-1 px-3 py-5 sm:px-6 sm:py-6 lg:px-8"><SubscriptionBanner /><CameFrom />{children}</main>
         <PeriodFixDialog />
       </div>
       </PeriodProvider>

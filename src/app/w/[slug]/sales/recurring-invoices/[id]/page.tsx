@@ -61,7 +61,7 @@ export default function RecurringInvoicePage() {
         <Meta label="Next invoice">{r.status === "ended" ? "-" : fmtDate(r.next_run_date)}</Meta>
         <Meta label="Ends">{r.end_date ? fmtDate(r.end_date) : "When stopped"}</Meta>
         <Meta label="Invoices raised">{r.invoices_created}</Meta>
-        <Meta label="Last invoice">{r.last_invoice_id ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/sales/invoices/${r.last_invoice_id}`}>{r.last_invoice_number || "Draft"}</Link> : "-"}</Meta>
+        <Meta label="Last invoice">{r.last_invoice_id ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/sales/invoices/${r.last_invoice_id}`}>{r.last_invoice_number || "Draft"}</Link> : "-"}</Meta>
         <Meta label="On each run">{r.auto_issue ? "Issued automatically" : "Saved as a draft"}</Meta>
       </Card>
       <Card>

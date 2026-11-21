@@ -91,7 +91,7 @@ export default function ProjectPage() {
                 <Table head={["Date", "Entry", "Account", "Amount"]}>
                   {s.recent.map((r, i) => (
                     <tr key={i}><Td className="whitespace-nowrap text-xs">{fmtDate(r.date)}</Td>
-                      <Td><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/accounting/journals/${r.entry_id}`}>{r.number}</Link><span className="block text-xs text-stone-500">{r.description}</span></Td>
+                      <Td><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/accounting/journals/${r.entry_id}`}>{r.number}</Link><span className="block text-xs text-stone-500">{r.description}</span></Td>
                       <Td className="text-xs">{r.account}</Td>
                       <Td className={clsx("text-right font-mono", r.kind === "cost" && "text-stone-600")}>{r.kind === "cost" ? `(${fmt(r.amount)})` : fmt(r.amount)}</Td></tr>
                   ))}

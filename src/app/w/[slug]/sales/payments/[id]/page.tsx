@@ -10,6 +10,7 @@ import { SendEmailButton } from "@/components/send-email";
 import { RelatedDocuments } from "@/components/related-documents";
 import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { PartyLink } from "@/components/party-link";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
@@ -34,7 +35,7 @@ export default function PaymentPage() {
       <Link href={`/w/${slug}/sales/payments`} className="text-sm text-stone-500 hover:underline">&larr; Payments</Link>
       <PageHeader
         title={`Payment ${p.number}`}
-        description={p.customer_name}
+        description={<PartyLink kind="customer" id={p.customer_id} name={p.customer_name} />}
         guide="payments"
         actions={p.status === "posted" && (
           <div className="flex flex-wrap gap-2">
@@ -56,7 +57,7 @@ export default function PaymentPage() {
       <Card>
         <Table head={["Invoice", "Amount"]}>
           {(p.allocations ?? []).map((a) => (
-            <tr key={a.invoice_id}><Td><Link href={`/w/${slug}/sales/invoices/${a.invoice_id}`} className="font-mono text-xs hover:underline">{a.invoice_number}</Link></Td><Td className="text-right font-mono">{fmt(a.amount)}</Td></tr>
+            <tr key={a.invoice_id}><Td><Link href={`/w/${slug}/sales/invoices/${a.invoice_id}`} className="font-mono text-xs text-brand-700 hover:underline">{a.invoice_number}</Link></Td><Td className="text-right font-mono">{fmt(a.amount)}</Td></tr>
           ))}
           {(p.allocations ?? []).length === 0 && <tr><Td colSpan={2} className="text-stone-500">Not applied to any invoice.</Td></tr>}
         </Table>

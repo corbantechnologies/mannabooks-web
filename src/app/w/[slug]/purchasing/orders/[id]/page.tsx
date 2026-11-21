@@ -22,6 +22,7 @@ import { PO_STATUS, POSTED_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 export default function PurchaseOrderPage() {
   const { slug, can, context } = useWorkspace();
@@ -48,7 +49,7 @@ export default function PurchaseOrderPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/orders`} className="text-sm text-stone-500 hover:underline">&larr; Purchase orders</Link>
-      <PageHeader title={`Purchase order ${o.number}`} description={o.supplier_name} guide="purchase-orders"
+      <PageHeader title={`Purchase order ${o.number}`} description={<PartyLink kind="supplier" id={o.supplier_id} name={o.supplier_name} />} guide="purchase-orders"
         actions={
           <div className="flex flex-wrap gap-2">
             {o.status === "draft" && can("purchaseorders.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate("approve")}>Approve</Button>}
@@ -84,7 +85,7 @@ export default function PurchaseOrderPage() {
           <Card>
             <Table head={["Date", "Number", "Value", "Status"]}>
               {receipts.data!.results.map((g) => (
-                <tr key={g.id}><Td>{fmtDate(g.receipt_date)}</Td><Td><Link className="font-mono text-xs hover:underline" href={`/w/${slug}/purchasing/receipts/${g.id}`}>{g.number}</Link></Td>
+                <tr key={g.id}><Td>{fmtDate(g.receipt_date)}</Td><Td><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/receipts/${g.id}`}>{g.number}</Link></Td>
                   <Td className="text-right font-mono">{fmt(g.total_value)}</Td><Td><Badge tone={POSTED_STATUS[g.status ?? "posted"].tone}>{POSTED_STATUS[g.status ?? "posted"].label}</Badge></Td></tr>
               ))}
             </Table>

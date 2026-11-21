@@ -19,6 +19,7 @@ import { fmtDate } from "@/lib/format";
 import { QUOTE_STATUS } from "@/lib/api/sales";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 export default function QuotationPage() {
   const { slug, can, context } = useWorkspace();
@@ -57,7 +58,7 @@ export default function QuotationPage() {
       <Link href={`/w/${slug}/sales/quotations`} className="text-sm text-stone-500 hover:underline">&larr; Quotations</Link>
       <PageHeader
         title={`Quotation ${q.number}`}
-        description={q.customer_name}
+        description={<PartyLink kind="customer" id={q.customer_id} name={q.customer_name} />}
         guide="quotations"
         actions={
           <div className="flex flex-wrap gap-2">

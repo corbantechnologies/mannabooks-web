@@ -124,7 +124,11 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
           </Field>
         )}
         <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="Due on" hint="Blank: no deadline."><Input type="date" value={f.due_date} onChange={set("due_date")} /></Field>
+          {/* phone date pickers' "Reset" puts back the date just picked, so clearing it needs our own button */}
+          <Field label="Due on" hint={f.due_date ? undefined : "Blank: no deadline."}>
+            <Input type="date" value={f.due_date} onChange={set("due_date")} />
+            {f.due_date && <button type="button" className="mt-1 text-xs text-brand-700 hover:underline" onClick={() => setF((p) => ({ ...p, due_date: "", due_time: "" }))}>Clear: no deadline</button>}
+          </Field>
           <Field label="By (time)" hint="Blank: end of the day." error={fieldError(save.error, "due_time")}><Input type="time" value={f.due_time} disabled={!f.due_date} onChange={set("due_time")} /></Field>
           <Field label="Priority"><Select value={f.priority} onChange={set("priority")}><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></Select></Field>
         </div>

@@ -60,7 +60,7 @@ export default function RemindersPage() {
               {sent.data!.results.map((s) => (
                 <tr key={s.id}>
                   <Td className="whitespace-nowrap">{fmtDate(s.created_at)}</Td>
-                  <Td><Link href={`/w/${slug}/sales/invoices/${s.invoice_id}`} className="font-mono text-xs hover:underline">{s.invoice_number}</Link></Td>
+                  <Td><Link href={`/w/${slug}/sales/invoices/${s.invoice_id}`} className="font-mono text-xs text-brand-700 hover:underline">{s.invoice_number}</Link></Td>
                   <Td>{s.customer_name}</Td>
                   <Td>{s.sent_to} {s.error && <Badge tone="red">Failed</Badge>}</Td>
                   <Td className="text-stone-500">{s.rule_name ?? "Sent by hand"}</Td>

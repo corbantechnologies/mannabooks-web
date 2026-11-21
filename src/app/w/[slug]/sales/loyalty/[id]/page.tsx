@@ -51,7 +51,7 @@ export default function MemberPage() {
               <tr key={t.id}>
                 <Td className="whitespace-nowrap">{fmtDate(t.created_at)}</Td>
                 <Td>{KIND[t.kind]}{t.description ? <span className="text-stone-500"> · {t.description}</span> : null}</Td>
-                <Td>{t.document_id && DOC[t.document_type ?? ""] ? <Link className="font-mono text-xs hover:underline" href={`/w/${slug}/sales/${DOC[t.document_type!]}/${t.document_id}`}>{t.document_number}</Link> : "-"}</Td>
+                <Td>{t.document_id && DOC[t.document_type ?? ""] ? <Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/sales/${DOC[t.document_type!]}/${t.document_id}`}>{t.document_number}</Link> : "-"}</Td>
                 <Td className={`text-right font-mono ${t.points < 0 ? "text-red-600" : "text-green-700"}`}>{t.points > 0 ? `+${t.points}` : t.points}</Td>
                 <Td>{t.kind === "earn" && t.expires_on ? `${fmtDate(t.expires_on)}${t.remaining !== t.points ? ` (${t.remaining} left)` : ""}` : ""}</Td>
               </tr>

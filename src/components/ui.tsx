@@ -62,9 +62,22 @@ const NUMERIC = new Set(["number", "decimal", "numeric"]);
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   const numeric = NUMERIC.has(String(props.type ?? "")) || NUMERIC.has(String(props.inputMode ?? ""));
+  // While someone types in a number box, show what they typed. Forms often turn "" into 0 straight away, which made
+  // the box impossible to clear; the form's own value shows again when they leave the box.
+  const [draft, setDraft] = useState<string | null>(null);
+  const shown = numeric && draft !== null && props.value !== undefined && Number(draft || 0) === Number(props.value || 0) ? draft : props.value;
   return (
     <input
       {...props}
+      value={shown}
+      onChange={(e) => {
+        if (numeric) setDraft(e.target.value);
+        props.onChange?.(e);
+      }}
+      onBlur={(e) => {
+        if (numeric) setDraft(null);
+        props.onBlur?.(e);
+      }}
       onFocus={(e) => {
         // A number box holding 0 gets selected, so typing replaces the 0 instead of adding to it.
         if (numeric && e.currentTarget.value !== "" && Number(e.currentTarget.value) === 0) e.currentTarget.select();
@@ -108,18 +121,19 @@ export function PageHeader({
   actions,
 }: {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   guide?: string;
   actions?: React.ReactNode;
 }) {
   const workspace = useParams<{ slug?: string }>()?.slug;
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div>
+      <div className="min-w-0">
         <h1 className="text-xl font-semibold text-stone-900 break-words">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-stone-600">{description}</p>}
       </div>
-      <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+      {/* buttons wrap onto a new line instead of pushing the page sideways */}
+      <div className="flex min-w-0 flex-wrap items-center gap-2 sm:max-w-[65%] sm:justify-end">
         {guide && (
           <Link
             href={workspace ? `/w/${workspace}/guide/${guide}` : `/guide/${guide}`}

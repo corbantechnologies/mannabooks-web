@@ -20,6 +20,7 @@ import { SO_STATUS } from "@/lib/api/purchasing";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { PartyLink } from "@/components/party-link";
 
 export default function ServiceOrderPage() {
   const { slug, can } = useWorkspace();
@@ -53,7 +54,7 @@ export default function ServiceOrderPage() {
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/service-orders`} className="text-sm text-stone-500 hover:underline">&larr; Service orders</Link>
-      <PageHeader title={`Service order ${o.number}`} description={o.supplier_name} guide="service-orders"
+      <PageHeader title={`Service order ${o.number}`} description={<PartyLink kind="supplier" id={o.supplier_id} name={o.supplier_name} />} guide="service-orders"
         actions={
           <div className="flex flex-wrap gap-2">
             {o.status !== "draft" && o.status !== "cancelled" && can("purchaseorders.create") && <SendEmailButton docType="service_order" id={o.id} />}

@@ -51,7 +51,7 @@ export default function ShiftPage() {
             <Table head={["Receipt", "Customer", "Paid by", "Total", ""]}>
               {(sales.data?.results ?? []).map((r) => (
                 <tr key={r.id}>
-                  <Td><Link href={`/w/${slug}/sales/cash-sales/${r.id}`} className="font-mono text-xs hover:underline">{r.number}</Link></Td>
+                  <Td><Link href={`/w/${slug}/sales/cash-sales/${r.id}`} className="font-mono text-xs text-brand-700 hover:underline">{r.number}</Link></Td>
                   <Td>{r.customer_name || "Walk-in"}</Td>
                   <Td>{METHODS.find((m) => m.value === r.method)?.label}</Td>
                   <Td className="text-right font-mono">{fmt(r.total)}</Td>
