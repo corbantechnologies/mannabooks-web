@@ -12452,6 +12452,36 @@ export interface components {
          * @enum {string}
          */
         Method126Enum: "cash" | "mpesa" | "bank" | "card";
+        MonthDocument: {
+            /** Format: uuid */
+            entry_id: string;
+            /** Format: date */
+            date: string;
+            number: string;
+            description: string;
+            reference: string;
+            source: string;
+            source_model: string;
+            source_id: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        MonthDraft: {
+            kind: components["schemas"]["MonthDraftKindEnum"];
+            id: string;
+            /** Format: date */
+            date: string;
+            label: string;
+            /** Format: decimal */
+            amount: string | null;
+        };
+        /**
+         * @description * `invoice` - invoice
+         *     * `bill` - bill
+         *     * `journal` - journal
+         * @enum {string}
+         */
+        MonthDraftKindEnum: "invoice" | "bill" | "journal";
         MonthSummary: {
             /** Format: uuid */
             period_id: string;
@@ -12482,6 +12512,13 @@ export interface components {
             unmatched_lines: number;
             /** @description Earlier months still open */
             earlier_open: string[];
+            status: string;
+            fiscal_year_name: string;
+            /** @description The month's pay run status, none if not started, null with no payroll */
+            payroll: string | null;
+            drafts: components["schemas"]["MonthDraft"][];
+            documents: components["schemas"]["MonthDocument"][];
+            documents_limit: number;
         };
         MovementAccount: {
             /** Format: uuid */

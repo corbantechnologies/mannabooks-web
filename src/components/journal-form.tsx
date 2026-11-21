@@ -10,7 +10,7 @@ import { AccountOptions, useAccounts } from "@/lib/api/accounting";
 import { useCostCenters } from "@/lib/api/control";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { JournalEntry } from "@/lib/api/types";
-import { fmt, todayIso } from "@/lib/format";
+import { fmt, startDate } from "@/lib/format";
 import { stack } from "@/lib/stack";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
@@ -35,7 +35,7 @@ export function JournalForm({ entry }: { entry?: JournalEntry }) {
   const centreList = can("budgets.view") ? (centres.data ?? []).filter((c) => c.is_active !== false) : [];
   const tagged = centreList.length > 0;
   const [head, setHead] = useState({
-    entry_date: entry?.entry_date ?? todayIso(),
+    entry_date: entry?.entry_date ?? startDate(),
     description: entry?.description ?? "",
     reference: entry?.reference ?? "",
   });

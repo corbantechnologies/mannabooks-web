@@ -22,6 +22,16 @@ export function todayIso(): string {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 }
 
+/**
+ * The date a new document starts on: ?date=YYYY-MM-DD when a page sent it (a month's page, to record into that
+ * month), otherwise today. Forms render after the workspace loads, in the browser, so the address is there to read.
+ */
+export function startDate(): string {
+  if (typeof window === "undefined") return todayIso();
+  const d = new URLSearchParams(window.location.search).get("date");
+  return d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : todayIso();
+}
+
 export function toCsv(rows: (string | number)[][]): string {
   return rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
 }

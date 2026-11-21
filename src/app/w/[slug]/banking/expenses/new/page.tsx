@@ -13,7 +13,7 @@ import { Button, Card, Field, FormError, Input, PageHeader, Select, Textarea } f
 import { useBankAccounts } from "@/lib/api/banking";
 import { api, unwrap } from "@/lib/api/client";
 import { PAY_METHODS, useSuppliers } from "@/lib/api/purchasing";
-import { todayIso } from "@/lib/format";
+import { startDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 export default function NewExpensePage() {
@@ -22,7 +22,7 @@ export default function NewExpensePage() {
   const accounts = useBankAccounts(slug);
   const suppliers = useSuppliers(slug);
   const defaultVat = useDefaultVat(slug);
-  const [head, setHead] = useState({ expense_date: todayIso(), paid_from_id: "", payee: "", supplier_id: "", method: "mpesa", reference: "", supplier_etims_number: "", notes: "" });
+  const [head, setHead] = useState({ expense_date: startDate(), paid_from_id: "", payee: "", supplier_id: "", method: "mpesa", reference: "", supplier_etims_number: "", notes: "" });
   const [tags, setTags] = useState({ cost_center_id: "", project_id: "" });
   const [includeTax, setIncludeTax] = useState(true);
   const [stored, setStored] = useState<BuyLine[] | null>(null);
