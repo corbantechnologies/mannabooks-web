@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -40,12 +41,6 @@ export default function SupplierPage() {
         <Meta label="KRA PIN">{s.kra_pin || "-"}</Meta>
         <Meta label="Withholding tax">{s.withholding_tax_rate_name ?? "None"}</Meta>
       </Card>
-      {s.bank_details && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold">Pay to</h2>
-          <PayTo details={s.bank_details} />
-        </section>
-      )}
       <h2 className="mb-2 text-sm font-semibold">Statement</h2>
       <Card>
         <Table head={["Date", "Document", "Their ref.", "Billed", "Paid", "Balance"]}>
@@ -63,6 +58,16 @@ export default function SupplierPage() {
           <tr className="bg-stone-50 font-semibold"><Td colSpan={5}>Balance owed</Td><Td className="text-right font-mono">{fmt(closing_balance)}</Td></tr>
         </Table>
       </Card>
+      {/* the statement matters most here; the payment details fold away until needed (they're open on the voucher) */}
+      {s.bank_details && (
+        <details className="group mt-6">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-stone-900 [&::-webkit-details-marker]:hidden">
+            <ChevronRight className="h-4 w-4 text-stone-500 transition-transform group-open:rotate-90" /> Pay to
+            <span className="font-normal text-stone-500">· their bank and M-Pesa details</span>
+          </summary>
+          <div className="mt-2"><PayTo details={s.bank_details} /></div>
+        </details>
+      )}
       <Modal size="lg" open={editing} title={`Edit ${s.name}`} onClose={() => setEditing(false)}>
         <SupplierForm supplier={s} onSaved={() => { toast.success("Supplier saved"); setEditing(false); }} onCancel={() => setEditing(false)} />
       </Modal>
