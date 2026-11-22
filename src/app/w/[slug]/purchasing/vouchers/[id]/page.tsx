@@ -20,6 +20,7 @@ import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 import { PartyLink } from "@/components/party-link";
 import { Attachments } from "@/components/attachments";
+import { PayTo } from "@/components/pay-to";
 
 export default function VoucherPage() {
   const { slug, can } = useWorkspace();
@@ -63,9 +64,14 @@ export default function VoucherPage() {
         <Meta label="Prepared by">{v.prepared_by_name ?? "-"}</Meta>
         <Meta label="Approved by">{v.approved_by_name ? `${v.approved_by_name}, ${fmtDate(v.approved_at)}` : "-"}</Meta>
         {v.payment_id && <Meta label="Paid as"><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/payments/${v.payment_id}`}>{v.payment_number}</Link></Meta>}
-        {v.supplier_bank_details && <Meta label="Pay to">{v.supplier_bank_details}</Meta>}
         {v.notes && <div className="sm:col-span-4"><Meta label="Why">{v.notes}</Meta></div>}
       </Card>
+      {v.supplier_bank_details && (
+        <section className="mb-4">
+          <h2 className="mb-2 text-sm font-semibold">Pay to</h2>
+          <PayTo details={v.supplier_bank_details} />
+        </section>
+      )}
       <Card>
         <Table head={["Their invoice", "Date", "Paying"]}>
           {v.lines.map((l) => <tr key={l.bill_id}><Td><Link className="font-mono text-xs text-brand-700 hover:underline" href={`/w/${slug}/purchasing/bills/${l.bill_id}`}>{l.bill_number}</Link></Td><Td>{fmtDate(l.bill_date)}</Td><Td className="text-right font-mono">{fmt(l.amount)}</Td></tr>)}

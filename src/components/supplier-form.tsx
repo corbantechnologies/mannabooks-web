@@ -8,6 +8,7 @@ import type { Supplier } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { Button, Field, FormError, Input, Select, Textarea } from "./ui";
+import { PAY_TO_EXAMPLE } from "./pay-to";
 
 export function SupplierForm({ supplier, onSaved, onCancel }: { supplier?: Supplier; onSaved: (s: Supplier) => void; onCancel: () => void }) {
   const { slug } = useWorkspace();
@@ -52,7 +53,9 @@ export function SupplierForm({ supplier, onSaved, onCancel }: { supplier?: Suppl
           </Field>
         </div>
       </div>
-      <Field label="Bank or M-Pesa details for payments"><Textarea rows={2} value={form.bank_details} onChange={set("bank_details")} /></Field>
+      <Field label="Bank or M-Pesa details for payments" hint="One detail per line as Label: value, and a blank line between accounts. Each shows with a Copy button when paying.">
+        <Textarea rows={8} className="font-mono text-sm" placeholder={PAY_TO_EXAMPLE} value={form.bank_details} onChange={set("bank_details")} />
+      </Field>
       <Field label="Address"><Textarea rows={2} value={form.address} onChange={set("address")} /></Field>
       {supplier && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))} /> Active</label>}
       <FormError error={save.error} />

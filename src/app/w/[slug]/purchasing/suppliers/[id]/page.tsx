@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Meta } from "@/components/document-view";
 import { SupplierForm } from "@/components/supplier-form";
 import { Button, Card, EmptyState, ErrorState, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { PayTo } from "@/components/pay-to";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, fmtNonZero } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -38,8 +39,13 @@ export default function SupplierPage() {
         <Meta label="Phone">{s.phone || "-"}</Meta>
         <Meta label="KRA PIN">{s.kra_pin || "-"}</Meta>
         <Meta label="Withholding tax">{s.withholding_tax_rate_name ?? "None"}</Meta>
-        {s.bank_details && <Meta label="Pay to">{s.bank_details}</Meta>}
       </Card>
+      {s.bank_details && (
+        <section className="mb-6">
+          <h2 className="mb-2 text-sm font-semibold">Pay to</h2>
+          <PayTo details={s.bank_details} />
+        </section>
+      )}
       <h2 className="mb-2 text-sm font-semibold">Statement</h2>
       <Card>
         <Table head={["Date", "Document", "Their ref.", "Billed", "Paid", "Balance"]}>
