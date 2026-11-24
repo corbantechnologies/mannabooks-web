@@ -9,7 +9,7 @@ import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { Button, Field, FormError, Modal, Textarea } from "./ui";
 
-type Kind = "invoice" | "quotation" | "purchase_order";
+type Kind = "invoice" | "quotation" | "purchase_order" | "remittance";
 
 /**
  * "Send to their MannaBooks": shown only when the customer's or supplier's KRA PIN matches another business on MannaBooks.

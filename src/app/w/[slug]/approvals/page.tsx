@@ -40,6 +40,7 @@ export default function ApprovalsPage() {
           </button>
         ))}
       </div>
+      {box === "waiting" && <TasksToCheck />}
       {list.isLoading ? <Spinner /> : list.error ? <ErrorState error={list.error} /> : rows.length === 0 ? (
         <Card><EmptyState title={box === "waiting" ? "Nothing is waiting for you" : "No requests"}>{box === "waiting" ? "When something needs your approval it shows here, and you get an email." : null}</EmptyState></Card>
       ) : (
@@ -74,5 +75,31 @@ export default function ApprovalsPage() {
       )}
       <DecideModal req={deciding?.req ?? null} decision={deciding?.decision ?? "approved"} onClose={() => setDeciding(null)} />
     </div>
+  );
+}
+
+/** Tasks this person gave that are done and waiting for their check: signing off work, next to signing off documents. */
+function TasksToCheck() {
+  const { slug } = useWorkspace();
+  const q = useQuery({
+    queryKey: ["tasks", slug, "to_check", true],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box: "to_check", open: true, page_size: 200 } as never } })),
+  });
+  const rows = q.data?.results ?? [];
+  if (!rows.length) return null;
+  return (
+    <section className="mb-5">
+      <h2 className="mb-2 text-sm font-semibold">Tasks done, waiting for your check ({rows.length})</h2>
+      <Card className="divide-y divide-stone-100">
+        {rows.map((t) => (
+          <Link key={t.id} href={`/w/${slug}/tasks/${t.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm hover:bg-stone-50">
+            <span className="min-w-0 flex-1 font-medium text-stone-900">{t.title}</span>
+            <span className="text-stone-500">{t.assigned_to_name ?? t.department_name}{t.done_at ? `, done ${fmtDate(t.done_at)}` : ""}</span>
+            {t.done_late && <Badge tone="amber">Late</Badge>}
+            <span className="text-brand-700">Check &rarr;</span>
+          </Link>
+        ))}
+      </Card>
+    </section>
   );
 }

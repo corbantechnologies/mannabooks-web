@@ -40,7 +40,7 @@ export function SendInvoicesToInbox({ customerId }: { customerId: string }) {
   const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   return (
     <>
-      <Button variant="secondary" onClick={() => { setPicked(fresh); send.reset(); setOpen(true); }}><Send className="h-4 w-4" /> Send invoices to {q.data.recipient_name}</Button>
+      <span title={`Send invoices to ${q.data.recipient_name} on MannaBooks`}><Button variant="secondary" onClick={() => { setPicked(fresh); send.reset(); setOpen(true); }}><Send className="h-4 w-4" /> Send to their inbox</Button></span>
       <Modal open={open} size="lg" title={`Send invoices to ${q.data.recipient_name} on MannaBooks`} onClose={() => setOpen(false)}>
         {q.isLoading ? <Spinner /> : (
           <div className="space-y-4 text-sm">

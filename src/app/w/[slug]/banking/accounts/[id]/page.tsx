@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { StatementImport } from "@/components/statement-import";
 import { OWNER_KINDS, useOwners } from "@/lib/api/owners";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { MinBalance } from "@/components/min-balance";
 import { AccountOptions, useAccounts } from "@/lib/api/accounting";
 import { LINE_STATUS } from "@/lib/api/banking";
 import { api, unwrap } from "@/lib/api/client";
@@ -60,6 +61,7 @@ export default function BankAccountPage() {
             {open ? <Link href={`/w/${slug}/banking/reconciliations/${open.id}`}><Button>Continue reconciling</Button></Link> : <Button onClick={() => { start.reset(); setReconciling(true); }}>Reconcile</Button>}
           </div>
         )} />
+      <MinBalance id={a.id} value={a.min_balance} below={!!a.below_minimum} canEdit={can("banking.reconcile") || can("banking.spend")} />
       <div className="mb-4 flex gap-2">
         <Button variant={tab === "statement" ? "primary" : "secondary"} onClick={() => setTab("statement")}>Statement lines</Button>
         <Button variant={tab === "books" ? "primary" : "secondary"} onClick={() => setTab("books")}>Transactions in the books</Button>

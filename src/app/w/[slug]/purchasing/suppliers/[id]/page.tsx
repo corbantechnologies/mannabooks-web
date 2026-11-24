@@ -11,6 +11,7 @@ import { Meta } from "@/components/document-view";
 import { SupplierForm } from "@/components/supplier-form";
 import { Button, Card, EmptyState, ErrorState, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PayTo } from "@/components/pay-to";
+import { ActionMenu } from "@/components/action-menu";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, fmtNonZero } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -29,9 +30,13 @@ export default function SupplierPage() {
       <PageHeader title={s.name} description={s.number} guide="suppliers"
         actions={
           <div className="flex flex-wrap gap-2">
-            {can("suppliers.manage") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
-            {can("purchaseorders.create") && <Link href={`/w/${slug}/purchasing/orders/new?supplier=${s.id}`}><Button variant="secondary">New order</Button></Link>}
-            {can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new?supplier=${s.id}`}><Button variant="secondary">Enter bill</Button></Link>}
+            <ActionMenu actions={[{ label: "Edit", onClick: () => setEditing(true), hidden: !can("suppliers.manage") }]} />
+            <ActionMenu label="New" actions={[
+              { label: "Bill", href: `/w/${slug}/purchasing/bills/new?supplier=${s.id}`, hidden: !can("bills.create") },
+              { label: "Purchase order (LPO)", href: `/w/${slug}/purchasing/orders/new?supplier=${s.id}`, hidden: !can("purchaseorders.create") },
+              { label: "Service order", href: `/w/${slug}/purchasing/service-orders/new?supplier=${s.id}`, hidden: !can("purchaseorders.create") },
+              { label: "Expense paid", href: `/w/${slug}/banking/expenses/new?supplier=${s.id}`, hidden: !can("banking.spend") },
+            ]} />
             {can("paymentvouchers.create") && <Link href={`/w/${slug}/purchasing/vouchers/new?supplier=${s.id}`}><Button>Pay</Button></Link>}
           </div>
         } />

@@ -13,3 +13,7 @@ A **supplier** is anyone you buy from. Each gets a number (SUP-0001) and a runni
 ## Balance and statement
 
 Open a supplier to see every bill and payment with a running balance, and buttons to raise an order, enter a bill or pay them.
+
+## Adding many at once
+
+**Add many** on the Suppliers page works like the one for customers: one supplier per row, typed or pasted from Excel, saved together, with duplicates (same name or KRA PIN) stopped. **Import** brings in a spreadsheet instead.

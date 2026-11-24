@@ -58,3 +58,7 @@ Click a department, in **Organisation > Departments** or in **All departments**,
 - **Pay:** person by person.
 
 People see the head and people with the right to see departments. The money (documents, spending and budget) needs the right to see reports and isn't shown to someone limited to one department; pay needs the right to see payroll. Everything follows the year or month chosen at the top.
+
+## People in a department
+
+When you create or edit a department, tick its people under **People in it**. Ticking someone moves them in from any other department; unticking takes them out.

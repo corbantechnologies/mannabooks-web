@@ -49,3 +49,11 @@ Repeating tasks count in the same on-time record as reports. A task that was sta
 ## Submitting your report
 
 Open **Work reports > My reports**, choose the report, and write it, attach a file (PDF, Word, Excel, PowerPoint or a photo, up to 10 MB), or both. Then **Submit report**. It works on a phone too. If it is sent back, the reason is shown at the top; change it and submit again.
+
+## Sending reports to more than one person
+
+When you set up a request, **Also goes to** adds more people who receive every report and overdue note, and can review them. For example, a request for the secretaries that goes to you and the CEO.
+
+## Changing who, later
+
+On a request's page, **Change who**: who is asked, who the reports are for (work reports managers only), and who they also go to. Someone added gets the current round straight away; someone taken off loses only rounds they haven't started.

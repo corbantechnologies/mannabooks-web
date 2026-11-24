@@ -60,3 +60,8 @@ ID numbers show in full only to payroll staff and the person themself; others se
 
 - **Employees: view** sees everyone; **Employees: manage** adds and edits.
 - **Employees: view own** (Self-service) sees only themselves.
+
+## Employment type and more than one department
+
+- **Employment**: permanent (salaried), fixed-term contract (with the date it ends), casual, work for hire, volunteer, or intern.
+- **Department** is the main one: pay and wages count against it. **Also works in** adds other departments, so a CEO who also leads a division, or a director in a Directors department, counts as one of its people. They see its tasks, show on its page and on My department.

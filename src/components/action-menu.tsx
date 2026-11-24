@@ -20,7 +20,7 @@ export interface MenuAction {
  * Secondary actions in one "More" menu, so a document page shows only its main action as a button.
  * Closes on a choice, a click outside or Escape.
  */
-export function ActionMenu({ actions, label = "More" }: { actions: MenuAction[]; label?: string }) {
+export function ActionMenu({ actions, label = "More", primary = false }: { actions: MenuAction[]; label?: string; primary?: boolean }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -36,7 +36,7 @@ export function ActionMenu({ actions, label = "More" }: { actions: MenuAction[];
   const item = (a: MenuAction) => clsx("block w-full px-3 py-2 text-left text-sm hover:bg-stone-50 max-sm:px-4 max-sm:py-3 max-sm:text-base", a.danger ? "text-red-600" : "text-stone-800");
   return (
     <div className="relative" ref={box}>
-      <Button variant="secondary" onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open}>
+      <Button variant={primary ? "primary" : "secondary"} onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open}>
         {label} <ChevronDown className="h-4 w-4" />
       </Button>
       {open && (

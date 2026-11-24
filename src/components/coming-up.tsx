@@ -10,7 +10,7 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-const KIND: Record<string, string> = { bill: "Bill", voucher: "Voucher", salaries: "Salaries", statutory: "Statutory", vat: "VAT", invoice: "Invoice" };
+const KIND: Record<string, string> = { bill: "Bill", voucher: "Voucher", salaries: "Salaries", statutory: "Statutory", vat: "VAT", invoice: "Invoice", portfolio_bill: "Portfolio billing", portfolio_renewal: "Supplier renewal" };
 
 /**
  * What's due to pay and to collect, soonest first: bills, approved vouchers, salaries, PAYE/SHIF/NSSF/Housing Levy by the 9th,

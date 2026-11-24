@@ -37,6 +37,7 @@ export default function PrintQuotationPage() {
         total={q!.total}
         currency={q!.currency ?? ""}
         footer={q!.notes}
+        terms={q!.terms}
         howToPay
       />
     </div>

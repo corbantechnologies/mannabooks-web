@@ -38,3 +38,7 @@ A payslip with nothing to pay stops approval, so nobody is approved at zero by m
 NSSF is 6% of pay up to the upper limit, from both employee and employer. SHIF is 2.75% of gross pay (at least KES 300). The Housing Levy is 1.5% from each. PAYE is charged on pay after NSSF, SHIF and the Housing Levy, in bands from 10% to 35%, less personal relief of KES 2,400. Open a payslip and choose *How the tax was worked out* to see each step. A deduction switched off for someone is simply left out: for example, with NSSF, SHIF and the Housing Levy off, PAYE is charged on the whole taxable pay.
 
 An approved payroll can be **reopened** to correct it until it is paid.
+
+## Percentage bonuses
+
+In an employee's monthly allowances, press **%** next to the amount to make it a share of their basic salary, such as *Performance bonus, 10%*. Each payroll works it out from that month's basic salary and shows it on the payslip as *Performance bonus (10%)*.

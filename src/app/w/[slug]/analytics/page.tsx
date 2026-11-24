@@ -6,6 +6,7 @@ import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { MonthChart } from "@/components/charts";
 import { Badge, Card, ErrorState, Input, PageHeader, Select, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
@@ -30,7 +31,7 @@ const PRESETS: Record<Exclude<Preset, "range">, () => { from: string; to: string
  * Overdue is always as of today. Each part shows only to people allowed to see it.
  */
 export default function AnalyticsPage() {
-  const { slug, context } = useWorkspace();
+  const { slug, context, can } = useWorkspace();
   const cur = context.workspace.currency;
   const [preset, setPreset] = useState<Preset>("this");
   const [range, setRange] = useState(month(0));
@@ -155,6 +156,7 @@ export default function AnalyticsPage() {
           </Section>
         )}
       </div>
+      {can("reports.view") && !context.limited_department && <MonthlyChart />}
       {sales && <p className="mt-4 text-xs text-stone-500">Sales are before VAT: invoices, debit notes and cash sales. {running ? `The change compares ${p} so far with the same number of days of ${sales.previous_label}.` : `The change compares ${p} with ${sales.previous_label}.`} Overdue and what is owed are always as of today.</p>}
     </div>
   );
@@ -221,5 +223,29 @@ function Docs({ docs, slug, empty, accepted }: { docs: Doc[]; slug: string; empt
         </li>
       ))}
     </ul>
+  );
+}
+
+/** The last 12 months: income and costs as bars, cash and bank at each month's end as a line. */
+function MonthlyChart() {
+  const { slug } = useWorkspace();
+  const h = useQuery({
+    queryKey: ["history", slug, 12],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/history/", { params: { path: { workspace: slug }, query: { months: 12 } } })),
+  });
+  if (!h.data?.length) return null;
+  const rows = h.data.map((r) => ({ label: r.label, income: Number(r.income), costs: Number(r.costs), cash: Number(r.cash) }));
+  return (
+    <Card className="mt-4 p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-sm font-semibold">The last 12 months</h2>
+        <Link href={`/w/${slug}/banking/projection`} className="text-xs text-brand-700 hover:underline">Where cash is heading &rarr;</Link>
+      </div>
+      <MonthChart rows={rows} series={[
+        { key: "income", label: "Income", color: "#10b981", kind: "bar" },
+        { key: "costs", label: "Costs", color: "#f87171", kind: "bar" },
+        { key: "cash", label: "Cash and bank (month end)", color: "#1e3a8a", kind: "line" },
+      ]} />
+    </Card>
   );
 }

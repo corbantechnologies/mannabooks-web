@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, Rows3, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,7 +26,7 @@ export default function SuppliersPage() {
   return (
     <div className="w-full">
       <PageHeader title="Suppliers" description={`Who you buy from, and what you owe each of them (in ${context.workspace.currency}).`} guide="suppliers"
-        actions={can("suppliers.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New supplier</Button>} />
+        actions={can("suppliers.manage") && <div className="flex flex-wrap gap-2"><Link href={`/w/${slug}/data?kind=suppliers`}><Button variant="secondary"><Upload className="h-4 w-4" /> Import</Button></Link><Link href={`/w/${slug}/purchasing/suppliers/bulk`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Add many</Button></Link><Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New supplier</Button></div>} />
       <div className="mb-4 max-w-sm"><Input placeholder="Search name, phone or KRA PIN" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (

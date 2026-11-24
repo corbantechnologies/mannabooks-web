@@ -33,7 +33,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
   const [head, setHead] = useState({
     supplier_id: existing?.supplier_id ?? supplierId ?? "", date: (kind === "bill" ? bill?.bill_date : kind === "service" ? so?.order_date : po?.order_date) ?? startDate(),
     second: (kind === "bill" ? bill?.due_date : kind === "service" ? so?.required_by : po?.expected_date) ?? "",
-    warehouse_id: (kind === "order" ? po?.warehouse_id : bill?.warehouse_id) ?? "", reference: existing?.reference ?? "", notes: existing?.notes ?? "",
+    warehouse_id: (kind === "order" ? po?.warehouse_id : bill?.warehouse_id) ?? "", reference: existing?.reference ?? "", notes: existing?.notes ?? "", terms: existing?.terms ?? "",
     scope: so?.scope ?? "", supplier_invoice_number: bill?.supplier_invoice_number ?? "", supplier_etims_number: bill?.supplier_etims_number ?? "",
   });
   const [tags, setTags] = useState(tagsOf(existing));
@@ -46,7 +46,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
 
   const save = useMutation({
     mutationFn: async (andPost: boolean) => {
-      const common = { supplier_id: head.supplier_id, prices_include_tax: includeTax, reference: head.reference, notes: head.notes, lines: buyLinesToRequest(lines), ...tagsBody(tags) };
+      const common = { supplier_id: head.supplier_id, prices_include_tax: includeTax, reference: head.reference, notes: head.notes, ...(kind !== "bill" && (existing || head.terms.trim()) ? { terms: head.terms } : {}), lines: buyLinesToRequest(lines), ...tagsBody(tags) };
       if (kind === "order") {
         const body = { ...common, order_date: head.date, expected_date: head.second || null, warehouse_id: head.warehouse_id || null };
         const r = existing
@@ -106,6 +106,11 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
       </Card>
       <PurchaseLinesEditor slug={slug} lines={lines} setLines={setLines} includeTax={includeTax} setIncludeTax={setIncludeTax} accounts={kind !== "order"} />
       <Field label="Notes"><Textarea value={head.notes} onChange={set("notes")} /></Field>
+      {kind !== "bill" && (
+        <Field label="Terms and conditions for the supplier" hint={existing ? "Printed on the order." : "Blank: your standard terms are filled in when you save."}>
+          <Textarea rows={3} value={head.terms} onChange={set("terms")} placeholder={existing ? "" : "Your standard terms"} />
+        </Field>
+      )}
       <FormError error={save.error} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button>

@@ -13,6 +13,7 @@ import { Meta } from "@/components/document-view";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PartyLink } from "@/components/party-link";
 import { Attachments } from "@/components/attachments";
+import { SendToInbox } from "@/components/send-to-inbox";
 import { api, unwrap } from "@/lib/api/client";
 import { PAY_METHODS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
@@ -40,6 +41,7 @@ export default function SupplierPaymentPage() {
           <div className="flex flex-wrap gap-2">
             {can("supplierpayments.create") && Number(p.unallocated_amount) > 0 && <ApplyToBills paymentId={p.id} supplierId={p.supplier_id} unapplied={p.unallocated_amount ?? "0"} />}
             {can("supplierpayments.create") && <SendEmailButton docType="supplier_payment" id={p.id} label="Email remittance" />}
+            {can("supplierpayments.view") && <SendToInbox kind="remittance" id={p.id} />}
             {can("supplierpayments.void") && <Button variant="secondary" onClick={() => { voidIt.reset(); setVoiding(true); }}>Void</Button>}
           </div>
         )} />

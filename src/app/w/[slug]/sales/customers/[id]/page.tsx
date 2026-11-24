@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,8 @@ import { CustomerForm } from "@/components/customer-form";
 import { ShareLinkModal } from "@/components/share-link";
 import { Meta } from "@/components/document-view";
 import { SendInvoicesToInbox } from "@/components/send-invoices-to-inbox";
-import { Button, Card, EmptyState, ErrorState, Field, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Card, EmptyState, ErrorState, Field, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { ActionMenu } from "@/components/action-menu";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate, fmtNonZero } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -29,6 +30,15 @@ export default function CustomerPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/loyalty/members/", { params: { path: { workspace: slug }, query: { customer: id } } })),
   });
   const member = loyalty.data?.results[0];
+  const router = useRouter();
+  const portfolio = useQuery({
+    queryKey: ["portfolio-of", slug, id], retry: false, enabled: can("portfolios.view") || can("customers.view"),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/portfolios/for-customer/{customer_id}/", { params: { path: { workspace: slug, customer_id: id } } })),
+  });
+  const startPortfolio = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/", { params: { path: { workspace: slug } }, body: { customer_id: id } as never })),
+    onSuccess: (p) => router.push(`/w/${slug}/portfolios/${p.id}`), onError: (e) => toast.error(e.message),
+  });
   const statement = useQuery({
     queryKey: ["customer-statement", slug, id, from],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/customers/{id}/statement/", { params: { path: { workspace: slug, id }, query: { from: from || undefined } } })),
@@ -46,11 +56,20 @@ export default function CustomerPage() {
         guide="customers"
         actions={
           <div className="flex flex-wrap gap-2">
-            {can("customers.manage") && <Button variant="secondary" onClick={() => setEditing(true)}>Edit</Button>}
-            {can("customers.manage") && <Button variant="secondary" onClick={() => setSharing(true)}>Share statement</Button>}
             <SendInvoicesToInbox customerId={c.id} />
-            {can("payments.create") && <Link href={`/w/${slug}/sales/payments/new?customer=${c.id}`}><Button variant="secondary">Record payment</Button></Link>}
-            {can("invoices.create") && <Link href={`/w/${slug}/sales/invoices/new?customer=${c.id}`}><Button>New invoice</Button></Link>}
+            <ActionMenu actions={[
+              { label: "Edit", onClick: () => setEditing(true), hidden: !can("customers.manage") },
+              { label: "Share statement", onClick: () => setSharing(true), hidden: !can("customers.manage") },
+              { label: "Client portfolio", href: portfolio.data ? `/w/${slug}/portfolios/${portfolio.data.id}` : undefined, hidden: !portfolio.data },
+              { label: "Start a client portfolio", onClick: () => startPortfolio.mutate(), hidden: !!portfolio.data || portfolio.isLoading || !can("portfolios.manage") },
+            ]} />
+            <ActionMenu label="New" primary actions={[
+              { label: "Invoice", href: `/w/${slug}/sales/invoices/new?customer=${c.id}`, hidden: !can("invoices.create") },
+              { label: "Quotation", href: `/w/${slug}/sales/quotations/new?customer=${c.id}`, hidden: !can("quotations.create") && !can("quotations.manage") },
+              { label: "Payment received", href: `/w/${slug}/sales/payments/new?customer=${c.id}`, hidden: !can("payments.create") },
+              { label: "Cash sale", href: `/w/${slug}/sales/cash-sales/new?customer=${c.id}`, hidden: !can("receipts.create") },
+              { label: "Delivery note", href: `/w/${slug}/sales/delivery-notes/new?customer=${c.id}`, hidden: !can("deliverynotes.manage") },
+            ]} />
           </div>
         }
       />

@@ -40,7 +40,7 @@ export default function TaskPage() {
   const t = q.data!;
   const st = TASK_STATUS[t.status ?? "todo"];
   return (
-    <div className="w-full max-w-3xl space-y-4">
+    <div className="w-full space-y-4">
       <Link href={`/w/${slug}/tasks`} className="text-sm text-stone-500 hover:underline">&larr; Tasks</Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -52,6 +52,7 @@ export default function TaskPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {t.locked && <Badge tone="amber">🔒 Locked: {t.locked}</Badge>}
           {t.priority !== "normal" && <Badge tone={t.priority === "high" ? "red" : "stone"}>{t.priority === "high" ? "High priority" : "Low priority"}</Badge>}
           <Badge tone={st.tone}>{st.label}</Badge>
           {t.can_manage && (t.status === "todo" || t.status === "in_progress") && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Change</Button>}

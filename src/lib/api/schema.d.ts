@@ -2013,6 +2013,79 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/calendar/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The company calendar between two dates (at most about three months): events, deadlines, leave, paydays, holidays. */
+        get: operations["w_calendar_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/calendar/events/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_calendar_events_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/calendar/events/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_calendar_events_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_calendar_events_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_calendar_events_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/cards/connection/": {
         parameters: {
             query?: never;
@@ -2482,6 +2555,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/customers/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_customers_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/dashboard/coming-up/": {
         parameters: {
             query?: never;
@@ -2491,6 +2586,23 @@ export interface paths {
         };
         /** @description What's due to pay and to collect, soonest first, with what's overdue. Each item shows only if your role can see it. */
         get: operations["w_dashboard_coming_up_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/department-tasks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Tasks by department, for the Overview: everyone's with tasks.view, otherwise the departments you head. */
+        get: operations["w_dashboard_department_tasks_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3213,6 +3325,129 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_exchange_rates_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description `?box=mine` (default), `decide` (waiting for approval), `pay` (approved, to pay back) or `all`. */
+        get: operations["w_expense_claims_list"];
+        put?: never;
+        /** @description `?box=mine` (default), `decide` (waiting for approval), `pay` (approved, to pay back) or `all`. */
+        post: operations["w_expense_claims_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        get: operations["w_expense_claims_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        delete: operations["w_expense_claims_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        patch: operations["w_expense_claims_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/decide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Approve the claim, leaving out any lines that are not business expenses (each with a reason). */
+        post: operations["w_expense_claims_decide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/lines/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Add a line to a draft (multipart, with its receipt). */
+        post: operations["w_expense_claims_lines_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/lines/{line_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description See a line's receipt, or remove the line from a draft. */
+        get: operations["w_expense_claims_lines_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description See a line's receipt, or remove the line from a draft. */
+        delete: operations["w_expense_claims_lines_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Pay an approved claim back now, from a bank, M-Pesa or cash account, or put it on the person's next payslip. */
+        post: operations["w_expense_claims_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/submit/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        post: operations["w_expense_claims_submit_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/expenses/": {
@@ -4584,6 +4819,40 @@ export interface paths {
         patch: operations["w_members_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/messages/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description My in-app messages, newest first. `?unread=true` for just the unread ones. */
+        get: operations["w_messages_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/messages/read/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Mark messages read: the ones listed, or all of mine. */
+        post: operations["w_messages_read_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/mpesa/connection/": {
         parameters: {
             query?: never;
@@ -5543,6 +5812,338 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/portfolios/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Client portfolios you can see (all of them with Client portfolios: view, else the ones you lead). */
+        get: operations["w_portfolios_list"];
+        put?: never;
+        /** @description Client portfolios you can see (all of them with Client portfolios: view, else the ones you lead). */
+        post: operations["w_portfolios_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_portfolios_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/{id}/documents/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_documents_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/{id}/invoice/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
+        get: operations["w_portfolios_invoice_retrieve"];
+        put?: never;
+        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
+        post: operations["w_portfolios_invoice_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/{id}/services/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_services_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/apps/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_apps_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_apps_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/apps/{id}/resources/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_apps_resources_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/costs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_costs_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/documents/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_portfolios_documents_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_documents_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_documents_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/for-customer/{customer_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The portfolio of one customer, if it has one and you may see it. */
+        get: operations["w_portfolios_for_customer_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/resources/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_resources_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_resources_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/services/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_portfolios_services_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_services_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/services/{id}/apps/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_services_apps_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/services/{id}/costs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Put part of a real supplier bill against a service, or one app under it. */
+        post: operations["w_portfolios_services_costs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/pos/registers/": {
         parameters: {
             query?: never;
@@ -5973,6 +6574,26 @@ export interface paths {
          *     nothing is saved and `errors` says which rows (by position) and why.
          */
         post: operations["w_products_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/products/bulk-delete/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Remove many products at once. One never used is deleted; one already on invoices, quotations, receipts, bills or
+         *     stock is made inactive instead, because the books need it. Every one is recorded in the audit log.
+         */
+        post: operations["w_products_bulk_delete_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6850,6 +7471,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/reports/cash-forecast/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Where cash is heading month by month, and the first month it goes below the floor (default: the accounts' minimums). */
+        get: operations["w_reports_cash_forecast_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/glance/": {
         parameters: {
             query?: never;
@@ -6859,6 +7497,23 @@ export interface paths {
         };
         /** @description The business at a glance: sales this month, quotes waiting, money owed and coming due, cash. Parts follow permissions. */
         get: operations["w_reports_glance_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Income, costs and cash at the end of each of the last 12 months, for the charts. */
+        get: operations["w_reports_history_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7760,6 +8415,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/suppliers/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_suppliers_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/support/": {
         parameters: {
             query?: never;
@@ -7838,13 +8515,15 @@ export interface paths {
         };
         /**
          * @description `?box=mine` (mine, and untaken tasks of my departments: the default), `given` (I gave to others),
-         *     `department` (every task of the departments I head), or `all` (everything I may see).
+         *     `department` (every task of the departments I head), `to_check` (done and waiting for me to accept or send back),
+         *     or `all` (everything I may see).
          */
         get: operations["w_tasks_list"];
         put?: never;
         /**
          * @description `?box=mine` (mine, and untaken tasks of my departments: the default), `given` (I gave to others),
-         *     `department` (every task of the departments I head), or `all` (everything I may see).
+         *     `department` (every task of the departments I head), `to_check` (done and waiting for me to accept or send back),
+         *     or `all` (everything I may see).
          */
         post: operations["w_tasks_create"];
         delete?: never;
@@ -7977,6 +8656,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/chain/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Several tasks at once for the same people, each opening on a date or after earlier ones are done (a chain). */
+        post: operations["w_tasks_chain_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tasks/departments/": {
         parameters: {
             query?: never;
@@ -8001,7 +8697,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Task numbers: `?scope=company|department|team|me` (what you may see; default the widest), `?days=30|90|365` (blank: all). */
+        /**
+         * @description Task numbers: `?scope=company|department|team|me` (what you may see; default the widest), `?days=30|90|365` (blank: all),
+         *     or `?period=week|month|year`: tasks due this week (Monday to Sunday), this month or this year.
+         */
         get: operations["w_tasks_insights_retrieve"];
         put?: never;
         post?: never;
@@ -8137,6 +8836,57 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_units_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/voided/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every voided document you may see, of every kind: who voided it, when, why, and whether its entries were removed or reversed. */
+        get: operations["w_voided_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/voided/copy/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Copy a voided invoice or bill as a new draft, linked both ways. */
+        post: operations["w_voided_copy_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/voided/links/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description For a document page: what it replaces, or what replaced it. */
+        get: operations["w_voided_links_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/warehouses/": {
@@ -8587,9 +9337,10 @@ export interface components {
          *     * `payment_voucher` - Payment vouchers
          *     * `pay_run` - Payroll
          *     * `budget` - Budgets
+         *     * `expense_claim` - Staff expense claims
          * @enum {string}
          */
-        ApprovalDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget";
+        ApprovalDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget" | "expense_claim";
         ApprovalLevel: {
             kind: components["schemas"]["ApprovalLevelKindEnum"];
             /** Format: uuid */
@@ -8859,6 +9610,12 @@ export interface components {
             /** @description Per the books */
             readonly balance: string;
             /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
+            readonly below_minimum: boolean;
+            /**
              * @description Statement lines not yet matched
              * @default 0
              */
@@ -8883,6 +9640,11 @@ export interface components {
             /** @description Or the till / paybill number */
             account_number?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
         };
         BankStatementLine: {
             /** Format: uuid */
@@ -8971,6 +9733,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -9094,6 +9858,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** @description Leave out to copy them from the goods received, order or service order */
             lines?: components["schemas"]["BillLineRequest"][];
             /** Format: uuid */
@@ -9136,8 +9902,23 @@ export interface components {
             /** @description MannaBooks' paybill number, for paying from the M-Pesa menu */
             paybill: string;
         };
+        /**
+         * @description * `monthly` - Monthly
+         *     * `quarterly` - Every 3 months
+         *     * `half_yearly` - Every 6 months
+         *     * `yearly` - Yearly
+         *     * `one_off` - One-off
+         * @enum {string}
+         */
+        BillingCycleEnum: "monthly" | "quarterly" | "half_yearly" | "yearly" | "one_off";
         /** @enum {unknown} */
         BlankEnum: "";
+        /**
+         * @description * `removed` - removed
+         *     * `reversed` - reversed
+         * @enum {string}
+         */
+        BooksEnum: "removed" | "reversed";
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Branch: {
             /** Format: uuid */
@@ -9446,6 +10227,72 @@ export interface components {
             /** Format: date-time */
             last_active: string | null;
         };
+        CalendarEvent: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            details?: string;
+            /** Format: date */
+            starts_on: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CalendarEventRequest: {
+            title: string;
+            details?: string;
+            /** Format: date */
+            starts_on: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+        };
+        CalendarItem: {
+            kind: components["schemas"]["CalendarItemKindEnum"];
+            id: string;
+            title: string;
+            /** Format: date */
+            date: string;
+            /** Format: date */
+            end: string | null;
+            /** Format: time */
+            time: string | null;
+            detail: string;
+            who: string;
+            /** @description Within the workspace, e.g. /tasks/<id> */
+            link: string;
+            editable: boolean;
+        };
+        /**
+         * @description * `event` - event
+         *     * `task` - task
+         *     * `report` - report
+         *     * `leave` - leave
+         *     * `money` - money
+         *     * `holiday` - holiday
+         * @enum {string}
+         */
+        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "holiday";
         Candidate: {
             /** Format: uuid */
             journal_line_id: string;
@@ -9625,11 +10472,12 @@ export interface components {
          *     * `accounts` - accounts
          *     * `money` - money
          *     * `tasks` - tasks
+         *     * `department_tasks` - department_tasks
          *     * `inbox` - inbox
          *     * `role` - role
          * @enum {string}
          */
-        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "inbox" | "role";
+        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "department_tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -9822,10 +10670,81 @@ export interface components {
              */
             share: string;
         };
+        /**
+         * @description * `low` - low
+         *     * `normal` - normal
+         *     * `high` - high
+         * @enum {string}
+         */
+        ChainStepPriorityEnum: "low" | "normal" | "high";
+        ChainStepRequest: {
+            title: string;
+            /** @default  */
+            details: string;
+            /** Format: date */
+            due_date?: string | null;
+            /** Format: time */
+            due_time?: string | null;
+            /** Format: date */
+            opens_on?: string | null;
+            /** @default normal */
+            priority: components["schemas"]["ChainStepPriorityEnum"];
+            /** @description Positions of earlier steps it waits for */
+            after?: number[];
+            checklist?: string[];
+        };
         ChangePasswordRequest: {
             current_password?: string;
             new_password: string;
         };
+        ClaimLine: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: uuid */
+            readonly account_id: string | null;
+            readonly account_name: string;
+            /** Format: uuid */
+            readonly project_id: string | null;
+            readonly project_name: string;
+            readonly has_receipt: boolean;
+            receipt_name?: string;
+            status?: components["schemas"]["ClaimLineStatusEnum"];
+            readonly status_label: string;
+            reject_reason?: string;
+        };
+        ClaimLineInputRequest: {
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: binary */
+            receipt?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+        };
+        ClaimLineRequest: {
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            receipt_name?: string;
+            status?: components["schemas"]["ClaimLineStatusEnum"];
+            reject_reason?: string;
+        };
+        /**
+         * @description * `pending` - Waiting
+         *     * `approved` - Approved
+         *     * `rejected` - Not a business expense
+         * @enum {string}
+         */
+        ClaimLineStatusEnum: "pending" | "approved" | "rejected";
         CloseShiftRequest: {
             /** Format: decimal */
             counted_cash: string;
@@ -9873,9 +10792,11 @@ export interface components {
          *     * `statutory` - statutory
          *     * `vat` - vat
          *     * `invoice` - invoice
+         *     * `portfolio_bill` - portfolio_bill
+         *     * `portfolio_renewal` - portfolio_renewal
          * @enum {string}
          */
-        ComingUpItemKindEnum: "bill" | "voucher" | "salaries" | "statutory" | "vat" | "invoice";
+        ComingUpItemKindEnum: "bill" | "voucher" | "salaries" | "statutory" | "vat" | "invoice" | "portfolio_bill" | "portfolio_renewal";
         CompanyGroup: {
             /** Format: uuid */
             readonly id: string;
@@ -10003,6 +10924,23 @@ export interface components {
             /** Format: uuid */
             invoice_id: string;
         };
+        /**
+         * @description * `bill` - bill
+         *     * `invoice` - invoice
+         * @enum {string}
+         */
+        CopyKindEnum: "bill" | "invoice";
+        CopyRequest: {
+            kind: components["schemas"]["CopyKindEnum"];
+            /** Format: uuid */
+            id: string;
+        };
+        CopyResult: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            link: string;
+        };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         CostCenter: {
             /** Format: uuid */
@@ -10028,6 +10966,15 @@ export interface components {
             description?: string;
             is_active?: boolean;
         };
+        /**
+         * @description * `monthly` - Monthly
+         *     * `quarterly` - Every 3 months
+         *     * `half_yearly` - Every 6 months
+         *     * `yearly` - Yearly
+         *     * `one_off` - One-off
+         * @enum {string}
+         */
+        CostCycleEnum: "monthly" | "quarterly" | "half_yearly" | "yearly" | "one_off";
         Costing: {
             /** Format: decimal */
             batch_cost: string;
@@ -10130,6 +11077,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -10183,6 +11132,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** @description Leave out to credit the whole invoice */
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
@@ -10240,11 +11191,17 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
             /** @description What the customer owes now (negative: in credit) */
             readonly balance: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        CustomerBulkRequest: {
+            /** @description Up to 100 new customers; saved together or not at all */
+            rows: components["schemas"]["CustomerRequest"][];
         };
         CustomerRequest: {
             name: string;
@@ -10266,6 +11223,8 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
         };
         /**
@@ -10404,6 +11363,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             readonly received_by: string;
             /** Format: date-time */
             readonly dispatched_at: string | null;
@@ -10445,6 +11406,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["DeliveryNoteLineRequest"][];
         };
         /**
@@ -10470,6 +11433,8 @@ export interface components {
             is_active?: boolean;
             /** @default 0 */
             readonly employee_count: number;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -10538,6 +11503,8 @@ export interface components {
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
         };
         DepartmentRow: {
             /** Format: uuid */
@@ -10576,6 +11543,16 @@ export interface components {
             done_on_time: number;
             done_late: number;
             handed_back: number;
+        };
+        DepartmentTasks: {
+            /** Format: uuid */
+            department_id: string;
+            name: string;
+            open: number;
+            /** @description Given to the department, nobody has taken it yet */
+            untaken: number;
+            high: number;
+            overdue: number;
         };
         DepartmentsOverview: {
             /** Format: date */
@@ -10691,6 +11668,15 @@ export interface components {
             /** Format: uuid */
             department_id?: string | null;
             readonly department_name: string;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            readonly other_department_names: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -10717,7 +11703,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -10795,6 +11781,14 @@ export interface components {
             job_title?: string;
             /** Format: uuid */
             department_id?: string | null;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -10822,7 +11816,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -10853,6 +11847,16 @@ export interface components {
          * @enum {string}
          */
         EmployeeStatusEnum: "active" | "on_leave" | "exited";
+        /**
+         * @description * `permanent` - Permanent (salaried)
+         *     * `contract` - Fixed-term contract
+         *     * `casual` - Casual
+         *     * `work_for_hire` - Work for hire
+         *     * `volunteer` - Volunteer
+         *     * `intern` - Intern or attachment
+         * @enum {string}
+         */
+        EmploymentTypeEnum: "permanent" | "contract" | "casual" | "work_for_hire" | "volunteer" | "intern";
         /**
          * @description * `A` - A: Exempt
          *     * `B` - B: 16%
@@ -11000,6 +12004,52 @@ export interface components {
             project_id?: string | null;
             readonly project_name: string;
         };
+        ExpenseClaim: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title: string;
+            /** Format: uuid */
+            readonly employee_id: string;
+            readonly employee_name: string;
+            readonly status: components["schemas"]["ExpenseClaimStatusEnum"];
+            readonly status_label: string;
+            /** Format: decimal */
+            readonly total: string;
+            /** Format: decimal */
+            readonly approved_total: string;
+            /** Format: date-time */
+            readonly submitted_at: string | null;
+            readonly decided_by_name: string;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            readonly decision_note: string;
+            /** Format: date */
+            readonly paid_at: string | null;
+            readonly paid_from_name: string;
+            /** Format: uuid */
+            readonly payslip_id: string | null;
+            readonly lines: components["schemas"]["ClaimLine"][];
+            readonly mine: boolean;
+            readonly can_decide: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        ExpenseClaimRequest: {
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title: string;
+        };
+        /**
+         * @description * `draft` - Draft
+         *     * `submitted` - Waiting for approval
+         *     * `approved` - Approved, to pay back
+         *     * `on_payslip` - To be paid on the next payslip
+         *     * `paid` - Paid back
+         *     * `rejected` - Not approved
+         * @enum {string}
+         */
+        ExpenseClaimStatusEnum: "draft" | "submitted" | "approved" | "on_payslip" | "paid" | "rejected";
         /**
          * @description * `cash` - Cash
          *     * `mpesa` - M-Pesa
@@ -11216,6 +12266,54 @@ export interface components {
          * @enum {string}
          */
         FixedAssetStatusEnum: "active" | "fully_depreciated" | "disposed";
+        Forecast: {
+            /** Format: date */
+            today: string;
+            /** Format: decimal */
+            cash_now: string;
+            /** Format: decimal */
+            floor: string | null;
+            /**
+             * Format: date
+             * @description The first month cash ends below the floor
+             */
+            first_below: string | null;
+            months: components["schemas"]["ForecastMonth"][];
+            assumptions: components["schemas"]["ForecastAssumptions"];
+        };
+        ForecastAssumptions: {
+            /** Format: decimal */
+            cash_sales_a_month: string;
+            /** Format: decimal */
+            spending_a_month: string;
+            /** Format: decimal */
+            payroll_a_month: string;
+        };
+        ForecastMonth: {
+            /** Format: date */
+            month: string;
+            label: string;
+            /** Format: decimal */
+            opening: string;
+            /** Format: decimal */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
+            /** Format: decimal */
+            closing: string;
+            /**
+             * Format: decimal
+             * @description Customer invoices falling due
+             */
+            customers: string;
+            /**
+             * Format: decimal
+             * @description Supplier bills falling due
+             */
+            bills: string;
+            /** Format: decimal */
+            payroll: string;
+        };
         /**
          * @description * `pickup` - Pickup
          *     * `delivery` - Delivery
@@ -11540,6 +12638,26 @@ export interface components {
             kra_pin: string;
             currency: string;
         };
+        HistoryMonth: {
+            /** Format: date */
+            month: string;
+            label: string;
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            costs: string;
+            /**
+             * Format: decimal
+             * @description Cash and bank at the month's end
+             */
+            cash: string;
+        };
+        /**
+         * @description * `account` - account
+         *     * `payslip` - payslip
+         * @enum {string}
+         */
+        HowEnum: "account" | "payslip";
         ImportJob: {
             /** Format: uuid */
             readonly id: string;
@@ -11592,9 +12710,10 @@ export interface components {
          * @description * `invoice` - Invoice
          *     * `quotation` - Quotation
          *     * `purchase_order` - Purchase order (LPO)
+         *     * `remittance` - Remittance advice
          * @enum {string}
          */
-        InboxKindEnum: "invoice" | "quotation" | "purchase_order";
+        InboxKindEnum: "invoice" | "quotation" | "purchase_order" | "remittance";
         InboxLine: {
             description: string;
             quantity: string;
@@ -11827,6 +12946,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -11900,6 +13021,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -12072,6 +13195,14 @@ export interface components {
          * @enum {string}
          */
         KindA2fEnum: "etims" | "supplier_invoice" | "receipt" | "payment_proof" | "lpo" | "delivery" | "contract" | "withholding" | "other";
+        /**
+         * @description * `contract` - Contract
+         *     * `agreement` - Agreement
+         *     * `sla` - Service level agreement (SLA)
+         *     * `other` - Other
+         * @enum {string}
+         */
+        KindF74Enum: "contract" | "agreement" | "sla" | "other";
         Layout: {
             cards: components["schemas"]["CardsEnum"][];
             readonly available: components["schemas"]["Card"][];
@@ -12343,6 +13474,10 @@ export interface components {
             /** @default false */
             allow_over: boolean;
         };
+        Link: {
+            id: string;
+            number: string;
+        };
         LinkMpesaRequest: {
             /** @description The payment already recorded for it, e.g. PAY-2026-0005 */
             payment_number: string;
@@ -12396,6 +13531,10 @@ export interface components {
             paid_count: number;
             paid_total: string;
             view_count: number;
+        };
+        Links: {
+            replaces: components["schemas"]["Link"] | null;
+            replaced_by: components["schemas"]["Link"] | null;
         };
         LoginRequest: {
             /** Format: email */
@@ -12538,6 +13677,10 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionKindEnum: "earn" | "redeem" | "expire" | "adjust" | "reverse";
+        MarkReadRequest: {
+            /** @description Blank: all of mine */
+            ids?: string[];
+        };
         Member: {
             /** Format: uuid */
             user_id: string;
@@ -12663,6 +13806,8 @@ export interface components {
             /** @description Earlier months still open */
             earlier_open: string[];
             status: string;
+            /** @description Documents dated in the month that were voided */
+            voided: number;
             fiscal_year_name: string;
             /** @description The month's pay run status, none if not started, null with no payroll */
             payroll: string | null;
@@ -12866,12 +14011,27 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
             /** Format: date-time */
             readonly created_at: string;
             readonly role: string | null;
+        };
+        Notification: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            body?: string;
+            /** @description The page it is about, within the app */
+            link?: string;
+            readonly read: boolean;
+            /** Format: date-time */
+            read_at?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
         };
         OnlineOrder: {
             /** Format: uuid */
@@ -13743,6 +14903,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["ExchangeRate"][];
         };
+        PaginatedExpenseClaimList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ExpenseClaim"][];
+        };
         PaginatedExpenseList: {
             /** @example 123 */
             count: number;
@@ -14027,6 +15202,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MyWorkspace"][];
+        };
+        PaginatedNotificationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Notification"][];
         };
         PaginatedOnlineOrderList: {
             /** @example 123 */
@@ -14802,6 +15992,11 @@ export interface components {
             /** @description Or the till / paybill number */
             account_number?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
         };
         PatchedBillOfMaterialsRequest: {
             /** Format: uuid */
@@ -14819,6 +16014,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** @description Leave out to copy them from the goods received, order or service order */
             lines?: components["schemas"]["BillLineRequest"][];
             /** Format: uuid */
@@ -14868,6 +16065,24 @@ export interface components {
             department_id?: string | null;
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
+        };
+        PatchedCalendarEventRequest: {
+            title?: string;
+            details?: string;
+            /** Format: date */
+            starts_on?: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
         };
         PatchedCatalogueRequest: {
             /** @description For example: Laptops for Acme Ltd */
@@ -14951,6 +16166,8 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
         };
         PatchedDealRequest: {
@@ -14988,6 +16205,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["DeliveryNoteLineRequest"][];
         };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
@@ -15005,6 +16224,8 @@ export interface components {
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
         };
         PatchedEmployeeRequest: {
             first_name?: string;
@@ -15021,6 +16242,14 @@ export interface components {
             job_title?: string;
             /** Format: uuid */
             department_id?: string | null;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -15048,7 +16277,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -15082,6 +16311,10 @@ export interface components {
              * @description 1 unit of the currency in the base currency
              */
             rate?: string;
+        };
+        PatchedExpenseClaimRequest: {
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title?: string;
         };
         PatchedFixedAssetRequest: {
             name?: string;
@@ -15151,6 +16384,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15386,6 +16621,75 @@ export interface components {
             is_active?: boolean;
             sort?: number;
         };
+        PatchedPortfolioAppInRequest: {
+            name?: string;
+            is_active?: boolean;
+            notes?: string;
+        };
+        PatchedPortfolioDocumentPatchRequest: {
+            title?: string;
+            kind?: components["schemas"]["KindF74Enum"];
+            /** Format: uuid */
+            service_id?: string | null;
+            /** Format: date */
+            expires_on?: string | null;
+        };
+        PatchedPortfolioInRequest: {
+            /** Format: uuid */
+            customer_id?: string;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /** Format: decimal */
+            target_margin?: string;
+            notes?: string;
+        };
+        PatchedPortfolioResourceInRequest: {
+            kind?: components["schemas"]["PortfolioResourceInKindEnum"];
+            label?: string;
+            unit?: string;
+            /** Format: decimal */
+            quantity?: string;
+            /** Format: decimal */
+            unit_cost?: string;
+            /** Format: decimal */
+            unit_price?: string;
+            reason?: string;
+        };
+        PatchedPortfolioServiceInRequest: {
+            name?: string;
+            kind?: components["schemas"]["PortfolioServiceInKindEnum"];
+            status?: components["schemas"]["Status6d8Enum"];
+            /** Format: uuid */
+            product_id?: string | null;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: decimal */
+            quantity?: string;
+            /** Format: decimal */
+            price?: string;
+            billing_cycle?: components["schemas"]["BillingCycleEnum"];
+            /** Format: date */
+            contract_start?: string | null;
+            /** Format: date */
+            contract_end?: string | null;
+            /** Format: date */
+            next_bill_date?: string | null;
+            /** Format: date */
+            prepaid_from?: string | null;
+            /** Format: date */
+            prepaid_to?: string | null;
+            /** Format: decimal */
+            cost?: string;
+            cost_cycle?: components["schemas"]["CostCycleEnum"];
+            /** Format: uuid */
+            supplier_id?: string | null;
+            /** Format: date */
+            supplier_renewal_date?: string | null;
+            remind_days?: number;
+            notes?: string;
+            /** @description Why the price, quantity or cost changed (kept in the history) */
+            reason?: string;
+        };
         PatchedPosRegisterRequest: {
             name?: string;
             /** Format: uuid */
@@ -15515,6 +16819,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["OrderLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15539,6 +16845,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15597,6 +16905,15 @@ export interface components {
              * @description Due by this time on the due date. Blank: by the end of the day
              */
             due_time?: string | null;
+            /** @description Exactly these people are asked from now on */
+            people_ids?: string[];
+            /**
+             * Format: uuid
+             * @description Whom the reports are for. Null: whoever set it up
+             */
+            requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
         };
         PatchedRoleRequest: {
             name?: string;
@@ -15616,6 +16933,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["PurchaseLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15780,6 +17099,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
         };
         PayItem: {
             name: string;
@@ -15823,6 +17144,13 @@ export interface components {
         PayOrderRequest: {
             /** @description Blank: the order's phone */
             phone?: string;
+        };
+        PayRequest: {
+            how: components["schemas"]["HowEnum"];
+            /** Format: uuid */
+            account_id?: string | null;
+            /** Format: date */
+            paid_on?: string;
         };
         PayRequestRequest: {
             plan: string;
@@ -16644,6 +17972,455 @@ export interface components {
             status: string;
             mpesa_receipt: string;
         };
+        PortfolioActivityRow: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            subject: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PortfolioAlready: {
+            /** Format: uuid */
+            invoice_id: string;
+            number: string;
+        };
+        PortfolioAppInRequest: {
+            name?: string;
+            is_active?: boolean;
+            notes?: string;
+        };
+        PortfolioAppOut: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            is_active: boolean;
+            notes: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_cost_actual: string | null;
+            /** Format: decimal */
+            monthly_price: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            /** Format: decimal */
+            fair_monthly: string | null;
+            loses_money: boolean;
+            resources: components["schemas"]["PortfolioResourceOut"][];
+        };
+        PortfolioBilled: {
+            /** Format: date */
+            month: string;
+            /** Format: uuid */
+            invoice_id: string | null;
+            number: string;
+            status: string;
+            /** Format: decimal */
+            total: string;
+        };
+        PortfolioCostInRequest: {
+            /** Format: uuid */
+            bill_id: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: date */
+            month: string;
+            /** Format: uuid */
+            app_id?: string | null;
+            note?: string;
+        };
+        PortfolioCostOut: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            bill_id: string;
+            bill_number: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: date */
+            month: string;
+            /** Format: uuid */
+            app_id: string | null;
+            note: string;
+        };
+        PortfolioDateItem: {
+            kind: components["schemas"]["PortfolioDateItemKindEnum"];
+            label: string;
+            /** Format: date */
+            date: string;
+            /** Format: decimal */
+            amount: string | null;
+            /** Format: uuid */
+            service_id: string | null;
+            overdue: boolean;
+        };
+        /**
+         * @description * `bill_client` - bill_client
+         *     * `pay_supplier` - pay_supplier
+         *     * `contract_end` - contract_end
+         *     * `document_expiry` - document_expiry
+         * @enum {string}
+         */
+        PortfolioDateItemKindEnum: "bill_client" | "pay_supplier" | "contract_end" | "document_expiry";
+        PortfolioDetail: {
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            yearly_revenue: string;
+            /** Format: decimal */
+            yearly_cost: string;
+            /** Format: decimal */
+            yearly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            /**
+             * Format: decimal
+             * @description What the client would pay a month at your standard margin
+             */
+            fair_monthly: string;
+            /**
+             * Format: decimal
+             * @description fair_monthly minus what they pay now
+             */
+            repricing_gap: string;
+            /** @description Services and apps that cost more than they bring in */
+            losing: number;
+            services: components["schemas"]["PortfolioServiceOut"][];
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customer_id: string;
+            customer_name: string;
+            /** Format: uuid */
+            lead_id: string | null;
+            lead_name: string;
+            /** @description Dates in the next 30 days (or overdue) */
+            due_soon: number;
+            /** Format: decimal */
+            target_margin: string;
+            notes: string;
+            /** Format: date */
+            today: string;
+            can_manage: boolean;
+            dates: components["schemas"]["PortfolioDateItem"][];
+            documents: components["schemas"]["PortfolioDocumentOut"][];
+            history: components["schemas"]["PortfolioHistory"][];
+            invoices: components["schemas"]["PortfolioBilled"][];
+            tasks: components["schemas"]["PortfolioTaskRow"][];
+            activities: components["schemas"]["PortfolioActivityRow"][];
+            recurring_invoices: components["schemas"]["PortfolioNamed"][];
+        };
+        PortfolioDocumentInRequest: {
+            title: string;
+            /** @default contract */
+            kind: components["schemas"]["KindF74Enum"];
+            /** Format: binary */
+            file: string;
+            /** Format: uuid */
+            service_id?: string | null;
+            /** Format: date */
+            expires_on?: string | null;
+        };
+        PortfolioDocumentOut: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            kind: string;
+            kind_label: string;
+            name: string;
+            size: number;
+            /** Format: uuid */
+            service_id: string | null;
+            /** Format: date */
+            expires_on: string | null;
+            expiring: boolean;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PortfolioHistory: {
+            /** Format: uuid */
+            id: string;
+            what: string;
+            field: string;
+            old_value: string;
+            new_value: string;
+            reason: string;
+            /** Format: date */
+            changed_on: string;
+            by: string;
+        };
+        PortfolioId: {
+            /** Format: uuid */
+            id: string;
+        };
+        PortfolioInRequest: {
+            /** Format: uuid */
+            customer_id?: string;
+            /** Format: uuid */
+            lead_id?: string | null;
+            /** Format: decimal */
+            target_margin?: string;
+            notes?: string;
+        };
+        PortfolioMade: {
+            /** Format: uuid */
+            invoice_id: string;
+        };
+        PortfolioMonthRequest: {
+            /**
+             * Format: date
+             * @description Any day in the month to bill
+             */
+            month: string;
+        };
+        PortfolioNamed: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
+        PortfolioPrepaid: {
+            /** Format: decimal */
+            total: string;
+            /** Format: decimal */
+            earned: string;
+            /** Format: decimal */
+            left: string;
+            days_left: number;
+        };
+        PortfolioPreview: {
+            /** Format: date */
+            month: string;
+            already: components["schemas"]["PortfolioAlready"] | null;
+            lines: components["schemas"]["PortfolioPreviewLine"][];
+            /** Format: decimal */
+            total: string;
+            warning: string;
+        };
+        PortfolioPreviewLine: {
+            /** Format: uuid */
+            service_id: string;
+            description: string;
+            /** Format: decimal */
+            quantity: string;
+            /** Format: decimal */
+            unit_price: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        /**
+         * @description * `vcpu` - vCPU
+         *     * `ram` - RAM
+         *     * `storage` - Storage
+         *     * `bandwidth` - Bandwidth
+         *     * `backups` - Backups
+         *     * `custom` - Other
+         * @enum {string}
+         */
+        PortfolioResourceInKindEnum: "vcpu" | "ram" | "storage" | "bandwidth" | "backups" | "custom";
+        PortfolioResourceInRequest: {
+            kind?: components["schemas"]["PortfolioResourceInKindEnum"];
+            label?: string;
+            unit?: string;
+            /** Format: decimal */
+            quantity?: string;
+            /** Format: decimal */
+            unit_cost?: string;
+            /** Format: decimal */
+            unit_price?: string;
+            reason?: string;
+        };
+        PortfolioResourceOut: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            kind_label: string;
+            label: string;
+            unit: string;
+            /** Format: decimal */
+            quantity: string;
+            /** Format: decimal */
+            unit_cost: string;
+            /** Format: decimal */
+            unit_price: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_price: string;
+        };
+        PortfolioRow: {
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            yearly_revenue: string;
+            /** Format: decimal */
+            yearly_cost: string;
+            /** Format: decimal */
+            yearly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            /**
+             * Format: decimal
+             * @description What the client would pay a month at your standard margin
+             */
+            fair_monthly: string;
+            /**
+             * Format: decimal
+             * @description fair_monthly minus what they pay now
+             */
+            repricing_gap: string;
+            /** @description Services and apps that cost more than they bring in */
+            losing: number;
+            services: number;
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customer_id: string;
+            customer_name: string;
+            /** Format: uuid */
+            lead_id: string | null;
+            lead_name: string;
+            /** @description Dates in the next 30 days (or overdue) */
+            due_soon: number;
+        };
+        /**
+         * @description * `core_product` - Core product
+         *     * `retainer` - Maintenance retainer
+         *     * `renewal` - Renewal (domain, SSL)
+         *     * `prepaid` - Prepaid managed service
+         *     * `hosting` - Hosting
+         *     * `other` - Other
+         * @enum {string}
+         */
+        PortfolioServiceInKindEnum: "core_product" | "retainer" | "renewal" | "prepaid" | "hosting" | "other";
+        PortfolioServiceInRequest: {
+            name?: string;
+            kind?: components["schemas"]["PortfolioServiceInKindEnum"];
+            status?: components["schemas"]["Status6d8Enum"];
+            /** Format: uuid */
+            product_id?: string | null;
+            /** Format: uuid */
+            tax_rate_id?: string | null;
+            /** Format: decimal */
+            quantity?: string;
+            /** Format: decimal */
+            price?: string;
+            billing_cycle?: components["schemas"]["BillingCycleEnum"];
+            /** Format: date */
+            contract_start?: string | null;
+            /** Format: date */
+            contract_end?: string | null;
+            /** Format: date */
+            next_bill_date?: string | null;
+            /** Format: date */
+            prepaid_from?: string | null;
+            /** Format: date */
+            prepaid_to?: string | null;
+            /** Format: decimal */
+            cost?: string;
+            cost_cycle?: components["schemas"]["CostCycleEnum"];
+            /** Format: uuid */
+            supplier_id?: string | null;
+            /** Format: date */
+            supplier_renewal_date?: string | null;
+            remind_days?: number;
+            notes?: string;
+            /** @description Why the price, quantity or cost changed (kept in the history) */
+            reason?: string;
+        };
+        PortfolioServiceOut: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            kind: string;
+            kind_label: string;
+            status: string;
+            status_label: string;
+            /** Format: uuid */
+            product_id: string | null;
+            product_name: string;
+            /** Format: uuid */
+            tax_rate_id: string | null;
+            /** Format: decimal */
+            quantity: string;
+            /** Format: decimal */
+            price: string;
+            billing_cycle: string;
+            billing_cycle_label: string;
+            /** Format: date */
+            contract_start: string | null;
+            /** Format: date */
+            contract_end: string | null;
+            /** Format: date */
+            next_bill_date: string | null;
+            /** Format: date */
+            prepaid_from: string | null;
+            /** Format: date */
+            prepaid_to: string | null;
+            /** Format: decimal */
+            cost: string;
+            cost_cycle: string;
+            cost_cycle_label: string;
+            /** Format: uuid */
+            supplier_id: string | null;
+            supplier_name: string;
+            /** Format: date */
+            supplier_renewal_date: string | null;
+            remind_days: number;
+            notes: string;
+            /**
+             * Format: decimal
+             * @description What the client pays each billing cycle
+             */
+            per_cycle: string;
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            one_off_amount: string;
+            /** Format: decimal */
+            monthly_cost_estimate: string;
+            /**
+             * Format: decimal
+             * @description Average from linked supplier bills, last 12 months
+             */
+            monthly_cost_actual: string | null;
+            /**
+             * Format: decimal
+             * @description The actual cost when bills are linked, else the estimate
+             */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            loses_money: boolean;
+            /** Format: decimal */
+            fair_monthly: string | null;
+            /** Format: decimal */
+            fair_per_cycle: string | null;
+            prepaid: components["schemas"]["PortfolioPrepaid"] | null;
+            apps: components["schemas"]["PortfolioAppOut"][];
+            costs: components["schemas"]["PortfolioCostOut"][];
+        };
+        PortfolioTaskRow: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            status: string;
+            /** Format: date */
+            due_date: string | null;
+            who: string;
+        };
         PosRegister: {
             /** Format: uuid */
             readonly id: string;
@@ -16824,6 +18601,14 @@ export interface components {
             is_active?: boolean;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        ProductBulkDeleteRequest: {
+            ids: string[];
+        };
+        ProductBulkDeleteResult: {
+            deleted: number;
+            /** @description On past documents, stock or price lists, so kept but made inactive */
+            deactivated: number;
         };
         ProductBulkRequest: {
             /** @description Up to 50 new products; saved together or not at all */
@@ -17323,6 +19108,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17356,6 +19143,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["OrderLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -17407,6 +19196,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17457,6 +19248,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -17547,6 +19340,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17610,6 +19405,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -17737,7 +19534,7 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
-            readonly status: components["schemas"]["RecurringInvoiceStatusEnum"];
+            readonly status: components["schemas"]["Status6d8Enum"];
             readonly invoices_created: number;
             /** Format: uuid */
             readonly last_invoice_id: string;
@@ -17774,13 +19571,6 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["RecurringLineRequest"][];
         };
-        /**
-         * @description * `active` - Active
-         *     * `paused` - Paused
-         *     * `ended` - Ended
-         * @enum {string}
-         */
-        RecurringInvoiceStatusEnum: "active" | "paused" | "ended";
         RecurringLine: {
             /** Format: uuid */
             readonly id: string;
@@ -17966,6 +19756,11 @@ export interface components {
             readonly requested_by_name: string | null;
             /** @description Who set it up, when that was someone else on the owner's behalf. */
             readonly set_up_by_name: string | null;
+            readonly copy_to_names: string[];
+            /** @description Who is asked, to edit later */
+            readonly people: {
+                [key: string]: unknown;
+            }[];
             readonly has_template: boolean;
             readonly template_name: string;
             readonly counts: {
@@ -18004,6 +19799,8 @@ export interface components {
              * @description Set it up for this team member: the reports go to them
              */
             requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
             /** Format: binary */
             template_file?: string;
         };
@@ -18100,6 +19897,15 @@ export interface components {
              * @description Due by this time on the due date. Blank: by the end of the day
              */
             due_time?: string | null;
+            /** @description Exactly these people are asked from now on */
+            people_ids?: string[];
+            /**
+             * Format: uuid
+             * @description Whom the reports are for. Null: whoever set it up
+             */
+            requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
         };
         ReverseRequest: {
             /** Format: date */
@@ -18431,6 +20237,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -18472,6 +20280,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["PurchaseLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -18679,6 +20489,13 @@ export interface components {
             open_tickets: number;
             urgent_tickets: number;
         };
+        /**
+         * @description * `active` - Active
+         *     * `paused` - Paused
+         *     * `ended` - Ended
+         * @enum {string}
+         */
+        Status6d8Enum: "active" | "paused" | "ended";
         StatutoryRate: {
             /** Format: uuid */
             readonly id: string;
@@ -18926,10 +20743,11 @@ export interface components {
          *     * `service_order` - service_order
          *     * `payment_voucher` - payment_voucher
          *     * `pay_run` - pay_run
+         *     * `expense_claim` - expense_claim
          *     * `budget` - budget
          * @enum {string}
          */
-        SubmitDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget";
+        SubmitDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "expense_claim" | "budget";
         SubmitRequest: {
             document_type: components["schemas"]["SubmitDocumentTypeEnum"];
             /** Format: uuid */
@@ -19108,6 +20926,10 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        SupplierBulkRequest: {
+            /** @description Up to 100 new suppliers; saved together or not at all */
+            rows: components["schemas"]["SupplierRequest"][];
+        };
         SupplierPayment: {
             /** Format: uuid */
             readonly id: string;
@@ -19269,6 +21091,16 @@ export interface components {
             /** Format: uuid */
             readonly assigned_to_id: string | null;
             readonly assigned_to_name: string | null;
+            /** @description Given to an employee with no login yet */
+            readonly waiting_for_login: boolean;
+            /**
+             * Format: date
+             * @description Locked until this date: seen, but it can't be started or done before
+             */
+            readonly opens_on: string | null;
+            /** @description Why it can't be started yet (opens later, or waiting for other tasks); blank when it can */
+            readonly locked: string;
+            readonly depends_on_titles: string[];
             /** Format: uuid */
             readonly department_id: string | null;
             readonly department_name: string | null;
@@ -19361,6 +21193,14 @@ export interface components {
             /** Format: binary */
             file: string;
         };
+        TaskChainRequest: {
+            steps: components["schemas"]["ChainStepRequest"][];
+            assignee_ids?: string[];
+            employee_ids?: string[];
+            department_ids?: string[];
+            /** @default true */
+            needs_check: boolean;
+        };
         TaskChecklistItem: {
             readonly id: number;
             text: string;
@@ -19399,10 +21239,17 @@ export interface components {
         };
         TaskCreateRequest: {
             title: string;
+            /**
+             * Format: date
+             * @description Locked until this date
+             */
+            opens_on?: string | null;
             /** @default  */
             details: string;
             /** @description Memberships who do it, one task each. Blank (and no department): yourself */
             assignee_ids?: string[];
+            /** @description Employees with no login yet: the task waits and becomes theirs when they join */
+            employee_ids?: string[];
             /** @description Departments: one task each, for anyone in it to take */
             department_ids?: string[];
             /** Format: date */
@@ -19447,6 +21294,8 @@ export interface components {
         };
         TaskPeople: {
             people: components["schemas"]["Assignable"][];
+            /** @description Employees with no login yet */
+            waiting: components["schemas"]["WaitingEmployee"][];
             departments: components["schemas"]["AssignableDepartment"][];
         };
         /**
@@ -19714,6 +21563,31 @@ export interface components {
         VoidRequest: {
             reason: string;
         };
+        VoidRow: {
+            kind: string;
+            kind_label: string;
+            id: string;
+            number: string;
+            /** Format: date */
+            date: string;
+            party: string;
+            /** Format: decimal */
+            amount: string;
+            reason: string;
+            voided_by: string;
+            /** Format: date-time */
+            voided_at: string;
+            /**
+             * @description Removed (its month was open) or reversed (its month was closed)
+             *
+             *     * `removed` - removed
+             *     * `reversed` - reversed
+             */
+            books: components["schemas"]["BooksEnum"];
+            link: string;
+            can_copy: boolean;
+            replaced_by: string | null;
+        };
         /**
          * @description * `approve` - approve
          *     * `pay` - pay
@@ -19754,6 +21628,12 @@ export interface components {
             bill_id: string;
             /** Format: decimal */
             amount: string;
+        };
+        WaitingEmployee: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            job_title: string;
         };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Warehouse: {
@@ -19824,6 +21704,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
@@ -19859,6 +21741,16 @@ export interface components {
             unclosed_years: string[];
             /** @description Documents from other businesses waiting in the inbox */
             inbox_new: number;
+            /**
+             * @description Unread in-app messages
+             * @default 0
+             */
+            messages_unread: number;
+            /**
+             * @description Tasks this person gave that are done, waiting for their check
+             * @default 0
+             */
+            tasks_to_check: number;
             /** @description Online shop orders not yet looked at */
             online_orders_new: number;
             /** @description Modules that can be switched on: key, label, description */
@@ -19914,6 +21806,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
         };
         _DeptBudget: {
             id: string;
@@ -22372,8 +24266,9 @@ export interface operations {
                  *     * `payment_voucher` - Payment vouchers
                  *     * `pay_run` - Payroll
                  *     * `budget` - Budgets
+                 *     * `expense_claim` - Staff expense claims
                  */
-                document_type?: "budget" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
+                document_type?: "budget" | "expense_claim" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
                 is_active?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -22637,7 +24532,7 @@ export interface operations {
     w_approvals_status_retrieve: {
         parameters: {
             query: {
-                document_type: "budget" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
+                document_type: "budget" | "expense_claim" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
                 object_id: string;
             };
             header?: never;
@@ -23860,6 +25755,132 @@ export interface operations {
             };
         };
     };
+    w_calendar_list: {
+        parameters: {
+            query: {
+                from: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                to: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarItem"][];
+                };
+            };
+        };
+    };
+    w_calendar_events_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarEventRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CalendarEventRequest"];
+                "multipart/form-data": components["schemas"]["CalendarEventRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
+    w_calendar_events_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
+    w_calendar_events_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_calendar_events_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCalendarEventRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCalendarEventRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCalendarEventRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
     w_cards_connection_retrieve: {
         parameters: {
             query?: never;
@@ -24820,6 +26841,38 @@ export interface operations {
             };
         };
     };
+    w_customers_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CustomerBulkRequest"];
+                "multipart/form-data": components["schemas"]["CustomerBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Customer"][];
+                };
+            };
+        };
+    };
     w_dashboard_coming_up_retrieve: {
         parameters: {
             query?: {
@@ -24840,6 +26893,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ComingUp"];
+                };
+            };
+        };
+    };
+    w_dashboard_department_tasks_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartmentTasks"][];
                 };
             };
         };
@@ -26195,6 +28274,294 @@ export interface operations {
             };
         };
     };
+    w_expense_claims_list: {
+        parameters: {
+            query?: {
+                box?: "all" | "decide" | "mine" | "pay";
+                employee?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `draft` - Draft
+                 *     * `submitted` - Waiting for approval
+                 *     * `approved` - Approved, to pay back
+                 *     * `on_payslip` - To be paid on the next payslip
+                 *     * `paid` - Paid back
+                 *     * `rejected` - Not approved
+                 */
+                status?: "approved" | "draft" | "on_payslip" | "paid" | "rejected" | "submitted";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedExpenseClaimList"];
+                };
+            };
+        };
+    };
+    w_expense_claims_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenseClaimRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ExpenseClaimRequest"];
+                "multipart/form-data": components["schemas"]["ExpenseClaimRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_expense_claims_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedExpenseClaimRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedExpenseClaimRequest"];
+                "multipart/form-data": components["schemas"]["PatchedExpenseClaimRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_decide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DecideRequest"];
+                "multipart/form-data": components["schemas"]["DecideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ClaimLineInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                line_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                line_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_expense_claims_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PayRequest"];
+                "multipart/form-data": components["schemas"]["PayRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_submit_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
     w_expenses_list: {
         parameters: {
             query?: {
@@ -27042,8 +29409,9 @@ export interface operations {
                  * @description * `invoice` - Invoice
                  *     * `quotation` - Quotation
                  *     * `purchase_order` - Purchase order (LPO)
+                 *     * `remittance` - Remittance advice
                  */
-                kind?: "invoice" | "purchase_order" | "quotation";
+                kind?: "invoice" | "purchase_order" | "quotation" | "remittance";
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -27263,8 +29631,9 @@ export interface operations {
                  * @description * `invoice` - Invoice
                  *     * `quotation` - Quotation
                  *     * `purchase_order` - Purchase order (LPO)
+                 *     * `remittance` - Remittance advice
                  */
-                kind?: "invoice" | "purchase_order" | "quotation";
+                kind?: "invoice" | "purchase_order" | "quotation" | "remittance";
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -28811,6 +31180,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Membership"];
+                };
+            };
+        };
+    };
+    w_messages_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                unread?: boolean;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedNotificationList"];
+                };
+            };
+        };
+    };
+    w_messages_read_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["MarkReadRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MarkReadRequest"];
+                "multipart/form-data": components["schemas"]["MarkReadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -30673,6 +33102,586 @@ export interface operations {
             };
         };
     };
+    w_portfolios_list: {
+        parameters: {
+            query?: {
+                mine?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioRow"][];
+                };
+            };
+        };
+    };
+    w_portfolios_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_portfolios_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_documents_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["PortfolioDocumentInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_invoice_retrieve: {
+        parameters: {
+            query?: {
+                month?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioPreview"];
+                };
+            };
+        };
+    };
+    w_portfolios_invoice_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PortfolioMonthRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioMonthRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioMonthRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioMade"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioServiceInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioServiceInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioServiceInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_apps_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_apps_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioAppInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioAppInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioAppInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_apps_resources_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioResourceInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioResourceInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioResourceInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_costs_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_documents_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    w_portfolios_documents_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_documents_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioDocumentPatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioDocumentPatchRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioDocumentPatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_for_customer_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customer_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioId"];
+                };
+            };
+        };
+    };
+    w_portfolios_resources_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_resources_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioResourceInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioResourceInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioResourceInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioServiceInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioServiceInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioServiceInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_apps_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioAppInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioAppInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioAppInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_costs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PortfolioCostInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioCostInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioCostInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
     w_pos_registers_list: {
         parameters: {
             query?: {
@@ -31510,6 +34519,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Product"][];
+                };
+            };
+        };
+    };
+    w_products_bulk_delete_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductBulkDeleteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProductBulkDeleteRequest"];
+                "multipart/form-data": components["schemas"]["ProductBulkDeleteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductBulkDeleteResult"];
                 };
             };
         };
@@ -33214,6 +36250,30 @@ export interface operations {
             };
         };
     };
+    w_reports_cash_forecast_retrieve: {
+        parameters: {
+            query?: {
+                floor?: number;
+                months?: number;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forecast"];
+                };
+            };
+        };
+    };
     w_reports_glance_retrieve: {
         parameters: {
             query?: {
@@ -33236,6 +36296,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Glance"];
+                };
+            };
+        };
+    };
+    w_reports_history_list: {
+        parameters: {
+            query?: {
+                months?: number;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryMonth"][];
                 };
             };
         };
@@ -34849,6 +37936,38 @@ export interface operations {
             };
         };
     };
+    w_suppliers_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SupplierBulkRequest"];
+                "multipart/form-data": components["schemas"]["SupplierBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Supplier"][];
+                };
+            };
+        };
+    };
     w_support_list: {
         parameters: {
             query?: {
@@ -34982,7 +38101,7 @@ export interface operations {
         parameters: {
             query?: {
                 assigned_to?: string;
-                box?: "all" | "department" | "given" | "mine";
+                box?: "all" | "department" | "given" | "mine" | "to_check";
                 /** @description Only tasks still to do or in progress */
                 open?: boolean;
                 /** @description Which field to use when ordering the results. */
@@ -35387,6 +38506,42 @@ export interface operations {
             };
         };
     };
+    w_tasks_chain_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskChainRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskChainRequest"];
+                "multipart/form-data": components["schemas"]["TaskChainRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTaskList"];
+                };
+            };
+        };
+    };
     w_tasks_departments_list: {
         parameters: {
             query?: {
@@ -35417,6 +38572,7 @@ export interface operations {
         parameters: {
             query?: {
                 days?: number;
+                period?: "month" | "week" | "year";
                 scope?: "company" | "department" | "me" | "team";
             };
             header?: never;
@@ -35697,6 +38853,86 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
+    w_voided_list: {
+        parameters: {
+            query?: {
+                from?: string;
+                kind?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoidRow"][];
+                };
+            };
+        };
+    };
+    w_voided_copy_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CopyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CopyRequest"];
+                "multipart/form-data": components["schemas"]["CopyRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CopyResult"];
+                };
+            };
+        };
+    };
+    w_voided_links_retrieve: {
+        parameters: {
+            query: {
+                id: string;
+                kind: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Links"];
                 };
             };
         };

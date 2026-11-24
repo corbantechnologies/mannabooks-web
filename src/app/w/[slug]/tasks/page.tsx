@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Plus } from "lucide-react";
+import { ChevronRight, Plus, Rows3 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,29 +16,39 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-type Box = "mine" | "given" | "department" | "all" | "insights";
+type Box = "mine" | "given" | "to_check" | "department" | "all" | "insights";
 type Action = "take" | "hand_back" | "start" | "done" | "accept" | "return" | "cancel" | "reopen";
 
 /** Tasks: things to do by a date (and time), for yourself, your team, or any colleague. */
 export default function TasksPage() {
   const { slug, can, context } = useWorkspace();
   const heads = (context.headed_departments ?? []).length > 0;
-  const [box, setBox] = useState<Box>(() => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("view") === "insights" ? "insights" : "mine"));
+  const [box, setBox] = useState<Box>(() => {
+    const v = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("view") : null;
+    return v === "insights" || v === "to_check" ? v : "mine";
+  });
   const [open, setOpen] = useState(true);
   const [adding, setAdding] = useState(false);
   const [filters, setFilters] = useState<Filters>(readFilters);
+  const openOnly = open && filters.status !== "done" && filters.status !== "cancelled";  // picking Done shows done ones
   const setFilter = (patch: Partial<Filters>) => setFilters((f) => { const next = { ...f, ...patch }; saveFilters(next); return next; });
   const [view, setView] = useState<"list" | "board">(() => {
     try { return localStorage.getItem("mannabooks.tasks-view") === "board" ? "board" : "list"; } catch { return "list"; }
   });
   const chooseView = (v: "list" | "board") => { setView(v); try { localStorage.setItem("mannabooks.tasks-view", v); } catch { /* just for now */ } };
   const q = useQuery({
-    queryKey: ["tasks", slug, box, open], enabled: box !== "insights",
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box, open, page_size: 200 } as never } })),
+    queryKey: ["tasks", slug, box, openOnly], enabled: box !== "insights",
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box, open: openOnly, page_size: 200 } as never } })),
   });
+  const toCheck = useQuery({
+    queryKey: ["tasks", slug, "to_check", true],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box: "to_check", open: true, page_size: 200 } as never } })),
+  });
+  const waiting = toCheck.data?.results.length ?? 0;
   const rows = q.data?.results ?? [];
   const tabs: { key: Box; label: string }[] = [
     { key: "mine", label: "My tasks" }, { key: "given", label: "I gave" },
+    { key: "to_check", label: waiting ? `To check (${waiting})` : "To check" },
     ...(heads || can("tasks.view") ? [{ key: "department" as Box, label: "Departments" }] : []),
     ...(can("tasks.view") ? [{ key: "all" as Box, label: "Everyone's" }] : []),
     { key: "insights", label: "Insights" },
@@ -54,7 +64,10 @@ export default function TasksPage() {
     <div className="w-full">
       <PageHeader title="Tasks" guide="tasks"
         description="Things to do by a date, and a time if it matters. For yourself, the people below you, or any colleague if your role allows. For tasks that repeat, use Work reports."
-        actions={<Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New task</Button>} />
+        actions={<div className="flex flex-wrap gap-2">
+          <Link href={`/w/${slug}/tasks/chain`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Several tasks</Button></Link>
+          <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New task</Button>
+        </div>} />
       <div className="mb-4 flex flex-wrap items-end gap-3 border-b border-stone-200">
         <div className="-mb-px flex gap-1 overflow-x-auto">
           {tabs.map((t) => (
@@ -79,6 +92,15 @@ export default function TasksPage() {
           <Select aria-label="Priority" className="w-36" value={filters.priority} onChange={(e) => setFilter({ priority: e.target.value })}>
             <option value="">Any priority</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option>
           </Select>
+          <Select aria-label="Status" className="w-40" value={filters.status} onChange={(e) => setFilter({ status: e.target.value as Filters["status"] })}>
+            <option value="">Any status</option><option value="todo">Not started</option><option value="in_progress">In progress</option>
+            <option value="to_check">Done, to check</option><option value="done">Done</option><option value="cancelled">Cancelled</option>
+          </Select>
+          <Select aria-label="Who" className="w-44" value={filters.person} onChange={(e) => setFilter({ person: e.target.value })}>
+            <option value="">Anyone</option>
+            {[...new Set(rows.map((t) => t.assigned_to_name).filter((n): n is string => !!n))].sort().map((n) => <option key={n} value={n}>{n}</option>)}
+            {rows.some((t) => !t.assigned_to_name) && <option value={NOBODY}>Nobody yet (department)</option>}
+          </Select>
           <Select aria-label="When due" className="w-40" value={filters.due} onChange={(e) => setFilter({ due: e.target.value as Filters["due"] })}>
             <option value="">Due any time</option><option value="overdue">Overdue</option><option value="today">Due today</option>
             <option value="week">Due this week</option><option value="next">Due next week</option><option value="none">No deadline</option>
@@ -86,11 +108,11 @@ export default function TasksPage() {
           {view === "list" && (
             <Select aria-label="Group by" className="w-44" value={filters.group} onChange={(e) => setFilter({ group: e.target.value as Filters["group"] })}>
               <option value="">No grouping</option><option value="priority">Group by priority</option><option value="date">Group by due date</option>
-              <option value="week">Group by week</option><option value="department">Group by department</option>
+              <option value="week">Group by week</option><option value="department">Group by department</option><option value="person">Group by person</option>
             </Select>
           )}
-          {(filters.q || filters.priority || filters.due) && (
-            <button type="button" className="text-sm text-brand-700 hover:underline" onClick={() => setFilter({ q: "", priority: "", due: "" })}>
+          {(filters.q || filters.priority || filters.status || filters.due || filters.person) && (
+            <button type="button" className="text-sm text-brand-700 hover:underline" onClick={() => setFilter({ q: "", priority: "", status: "", due: "", person: "" })}>
               Clear ({shown.length} of {rows.length})
             </button>
           )}
@@ -99,14 +121,14 @@ export default function TasksPage() {
       {box === "insights" ? <TaskInsights /> : q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
         <>
           {box === "department" && <DepartmentRecord />}
-          <Card><EmptyState title={box === "mine" ? "Nothing to do" : box === "given" ? "You haven't given anyone a task" : "No tasks"}>{box === "mine" ? "Add a task for yourself with New task." : undefined}</EmptyState></Card>
+          <Card><EmptyState title={box === "mine" ? "Nothing to do" : box === "given" ? "You haven't given anyone a task" : box === "to_check" ? "Nothing waiting for your check" : "No tasks"}>{box === "mine" ? "Add a task for yourself with New task." : box === "to_check" ? "When someone finishes a task you gave them, it waits here for you to accept it or send it back." : undefined}</EmptyState></Card>
         </>
       ) : shown.length === 0 ? (
         <Card><EmptyState title="No tasks match">Change the search or filters above.</EmptyState></Card>
       ) : view === "board" ? (
         <div className="space-y-5">
           {box === "department" && <DepartmentRecord />}
-          <TaskBoard rows={sorted} box={box} showFinished={!open} />
+          <TaskBoard rows={sorted} box={box} showFinished={!openOnly} />
         </div>
       ) : (
         <div className="space-y-5">
@@ -123,7 +145,7 @@ export default function TasksPage() {
               {filters.group ? <Grouped rows={listed} group={filters.group} box={box} /> : <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>}
             </section>
           )}
-          {!open && active.length === 0 && <p className="text-sm text-stone-500">Nothing open.</p>}
+          {!open && !filters.status && active.length === 0 && <p className="text-sm text-stone-500">Nothing open.</p>}
           {finished.length > 0 && (
             <section>
               <h2 className="mb-2 text-sm font-semibold text-stone-500">Finished</h2>
@@ -139,8 +161,9 @@ export default function TasksPage() {
 
 const PRIORITY_RANK: Record<string, number> = { high: 0, normal: 1, low: 2 };
 
-type Filters = { q: string; priority: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" };
-const NO_FILTERS: Filters = { q: "", priority: "", due: "", group: "" };
+type Filters = { q: string; priority: string; status: "" | "todo" | "in_progress" | "to_check" | "done" | "cancelled"; person: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" | "person" };
+const NO_FILTERS: Filters = { q: "", priority: "", status: "", person: "", due: "", group: "" };
+const NOBODY = "~nobody";
 const FILTERS_KEY = "mb.tasks.filters";
 
 /** Remembered per person in this browser: the grouping and filters they last used. */
@@ -168,6 +191,8 @@ function matches(t: Task, f: Filters): boolean {
   if (needle && ![t.title, t.details, t.assigned_to_name, t.given_by_name, t.department_name, t.project_name, t.customer_name]
     .some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
   if (f.priority && (t.priority ?? "normal") !== f.priority) return false;
+  if (f.status && t.status !== f.status) return false;
+  if (f.person && (f.person === NOBODY ? !!t.assigned_to_name : t.assigned_to_name !== f.person)) return false;
   if (f.due) {
     const today = iso(new Date());
     const thisWeek = weekStart(today);
@@ -192,6 +217,7 @@ function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["g
       return [String(PRIORITY_RANK[p]), `${p[0].toUpperCase()}${p.slice(1)} priority`];
     }
     if (group === "department") return [t.department_name ?? "~", t.department_name ?? "No department"];
+    if (group === "person") return [t.assigned_to_name ?? "~", t.assigned_to_name ?? "Nobody yet"];
     if (!t.due_date) return ["9999", "No deadline"];
     if (group === "date") {
       if (t.is_overdue) return ["0000", "Overdue"];
@@ -211,10 +237,13 @@ function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["g
   return (
     <div className="space-y-4">
       {[...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, g]) => (
-        <div key={k}>
-          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500">{g.label} <span className="font-normal">({g.rows.length})</span></h3>
+        // each group folds, so a long list doesn't mean scrolling past everything
+        <details key={k} open className="group">
+          <summary className="mb-1.5 flex cursor-pointer list-none items-center gap-1 text-xs font-semibold uppercase tracking-wide text-stone-500 [&::-webkit-details-marker]:hidden">
+            <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" /> {g.label} <span className="font-normal">({g.rows.length})</span>
+          </summary>
           <div className="space-y-2">{g.rows.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
-        </div>
+        </details>
       ))}
     </div>
   );
@@ -274,6 +303,7 @@ function TaskRow({ t, box }: { t: Task; box: Box }) {
         </p>
       </Link>
       <div className="flex items-center gap-2">
+        {t.locked && <Badge tone="amber">🔒 {t.opens_on && t.locked.startsWith("it opens") ? `Opens ${fmtDate(t.opens_on)}` : "Waiting"}</Badge>}
         {t.priority === "high" && <Badge tone="red">High priority</Badge>}
         {options.length ? (
           <select aria-label="Change the status" value="" disabled={act.isPending} onChange={(e) => void pick(e.target.value)}

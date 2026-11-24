@@ -15,7 +15,8 @@ type Scope = "company" | "department" | "team" | "me";
 
 const SCOPE_LABEL: Record<Scope, string> = { company: "Whole company", department: "My departments", team: "My team", me: "Just me" };
 const SCOPE_LABEL_ALL: Record<Scope, string> = { ...SCOPE_LABEL, department: "By department" };
-const DAYS = [{ v: "30", l: "Last 30 days" }, { v: "90", l: "Last 90 days" }, { v: "365", l: "Last year" }, { v: "", l: "All time" }];
+const DAYS = [{ v: "week", l: "Due this week" }, { v: "month", l: "Due this month" }, { v: "year", l: "Due this year" },
+  { v: "30", l: "Last 30 days" }, { v: "90", l: "Last 90 days" }, { v: "365", l: "Last year" }, { v: "", l: "All time" }];
 
 // Task states, so status colours with a label and legend beside them (never colour alone). Text stays in ink colours.
 const PARTS = [
@@ -34,7 +35,7 @@ export function TaskInsights({ compact = false }: { compact?: boolean }) {
   const [days, setDays] = useState("90");
   const q = useQuery({
     queryKey: ["task-insights", slug, scope, days],
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/insights/", { params: { path: { workspace: slug }, query: { scope, days: days ? Number(days) : undefined } } })),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/insights/", { params: { path: { workspace: slug }, query: { scope, ...(/^\d+$/.test(days) ? { days: Number(days) } : days ? { period: days as "week" | "month" | "year" } : {}) } } })),
   });
   const d = q.data;
   const labels = can("tasks.view") ? SCOPE_LABEL_ALL : SCOPE_LABEL;

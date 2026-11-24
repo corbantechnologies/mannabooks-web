@@ -60,6 +60,8 @@ Choose **List** or **Board** above the tasks. The board shows the same tasks in 
 
 In the list, open tasks come first, overdue and soonest due at the top, then higher priority. Tick **Show done and cancelled** to see finished ones in a **Finished** section underneath, latest first.
 
+To see only one kind, choose it in **Status**: Not started, In progress, Done to check, Done or Cancelled. Choosing **Done** lists every done task, without scrolling past the open ones.
+
 ## Insights
 
 The **Insights** tab, and a **Tasks** section on the **Overview**, show the numbers:
@@ -68,7 +70,12 @@ The **Insights** tab, and a **Tasks** section on the **Overview**, show the numb
 - a bar for each person showing how much they carry, done, in progress and not started, so you can see who is overloaded and who has room;
 - tables by department and by person, with how many are done on time.
 
-Choose whose numbers to see, and the period (last 30 or 90 days, last year, or all time):
+Choose whose numbers to see, and the period:
+
+- **Due this week** (Monday to Sunday), **Due this month** or **Due this year**: the tasks with a deadline in that period, whenever they were given;
+- **Last 30 or 90 days**, **Last year** or **All time**: the tasks given in that time.
+
+Who can see which numbers:
 
 - **Whole company** and **By department**: owners, admins and HR (roles with **Tasks: view**);
 - **My departments**: department heads, for their departments and their people;
@@ -81,7 +88,9 @@ Each task in the list has its status as a small dropdown, so you don't have to o
 
 ## Checking a task
 
-Tasks you gave are under **I gave**. When one is marked done, you get an email. Open it, then **Accept** it, or **Send back** with what is still needed. A sent-back task returns to the person as **In progress**.
+When someone finishes a task you gave and asked to check, you get an email, and the task waits under **Tasks > To check** (the tab shows how many). It also shows at the top of **Approvals**. Open it, then **Accept** it, or **Send back** with what is still needed. A sent-back task returns to the person as **In progress**.
+
+A task you didn't ask to check is simply done. It stays under **I gave** for a week after it is finished, so the "Done" email always has a task to open. After that, choose **Status: Done** to find it.
 
 You can also **Change** a task's details or deadline while it is open, **Cancel** it, or **Reopen** a done or cancelled one.
 
@@ -99,3 +108,28 @@ People whose role has the **Tasks: view** permission (admins and HR) get an **Ev
 ## Tasks and work reports
 
 Tasks are for one-off jobs. For something that repeats every day, week or month, or goes to a whole team, use a **repeating task** under **Work reports** (see [Work reports](work-reports)). Those count in each person's on-time record.
+
+## Finding tasks
+
+Search by title, people, department, project or customer, and filter by **who**, **priority** and **when due**. **Group by** priority, due date, week, department or person; each group folds away with its arrow. Your choices are remembered.
+
+## Who can change a task
+
+Only whoever gave a task can change it, check it or cancel it. A tasks manager can too, except on a task given to them or to their own department. Nobody changes a deadline they were given or checks their own work. Tasks waiting for your check also show at the top of **Approvals**, with a count on the menu.
+
+## Several tasks at once (a chain)
+
+**Several tasks** gives a whole list in one go, such as onboarding, a job's stages or month-end. For each task you can set:
+
+- **Opens on**: locked until that date. People see it, but can't start it.
+- **Waits until the one above is done**: locked until the task above it is done, and checked where it needs checking.
+
+Everyone chosen gets their own copy of the list. When a task opens, the person is told. A single task can also have an **Opens on** date.
+
+## People without a login yet
+
+A new hire you've added as an employee, but not yet invited, shows under **No login yet** when you give tasks. The tasks wait for them, marked *no login yet*, and become theirs the moment they accept their invitation.
+
+## Messages
+
+Everything MannaBooks emails you about the business (a task given, a report due, an approval waiting) also lands under the **bell** at the top, with the unread count, and on **Work > Messages**.

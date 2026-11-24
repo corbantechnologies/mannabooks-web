@@ -35,7 +35,7 @@ export default function DepartmentPage() {
   });
   const people = useQuery({
     queryKey: ["employees", slug, "department", id], enabled: can("employees.view"),
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { department: id, page_size: 200 } as never } })),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { in_department: id, page_size: 200 } as never } })),
   });
   const detail = useQuery({
     queryKey: ["dashboard-department", slug, id, from, to], enabled: money,

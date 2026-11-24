@@ -37,9 +37,19 @@ export default function PrintInvoicePage() {
         total={inv!.total}
         currency={inv!.currency ?? ""}
         footer={inv!.notes}
+        terms={inv!.terms}
+        dueWords={dueWords(inv!.issue_date, inv!.due_date)}
         etims={{ status: inv!.etims_status ?? "", cu: inv!.etims_cu_invoice_number, signature: inv!.etims_signature }}
         howToPay={Number(inv!.balance_due) > 0}
       />
     </div>
   );
+}
+
+/** "Payment due by 28 Nov 2026, 30 days from the invoice date." */
+function dueWords(issued?: string | null, due?: string | null): string {
+  if (!issued || !due) return "";
+  const days = Math.round((new Date(`${due}T12:00:00`).getTime() - new Date(`${issued}T12:00:00`).getTime()) / 86400000);
+  const when = new Date(`${due}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return `Payment due by ${when}${days > 0 ? `, ${days} days from the invoice date.` : ", on receipt."}`;
 }

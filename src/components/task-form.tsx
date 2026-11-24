@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ChecklistEditor } from "@/components/checklist-editor";
 import { Button, Field, FormError, Input, Modal, Select, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
@@ -18,7 +19,8 @@ export const TASK_STATUS: Record<string, { label: string; tone: "stone" | "blue"
 
 /** "Due Fri 14 Nov by 15:00", "No deadline". */
 /** Who has it: a person, or "Sales department, nobody yet". */
-export function holder(t: Pick<Task, "assigned_to_name" | "department_name">) {
+export function holder(t: Pick<Task, "assigned_to_name" | "department_name"> & { waiting_for_login?: boolean }) {
+  if (t.waiting_for_login) return `${t.assigned_to_name} (no login yet: it's theirs when they join)`;
   if (t.assigned_to_name) return t.department_name ? `${t.assigned_to_name} (${t.department_name})` : t.assigned_to_name;
   return `${t.department_name} department, nobody has taken it yet`;
 }
@@ -45,12 +47,14 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
   const me = list.find((p) => p.is_me);
   const [chosen, setChosen] = useState<string[]>([]);
   const [chosenDeps, setChosenDeps] = useState<string[]>([]);
+  const [chosenWaiting, setChosenWaiting] = useState<string[]>([]);
+  const waiting = people.data?.waiting ?? [];
   const [f, setF] = useState({
     title: task?.title ?? "", details: task?.details ?? "", due_date: task?.due_date ?? "", due_time: task?.due_time?.slice(0, 5) ?? "",
     priority: task?.priority ?? "normal", needs_check: task?.needs_check ?? true,
-    project_id: task?.project_id ?? "", customer_id: task?.customer_id ?? "", steps: "",
+    project_id: task?.project_id ?? "", customer_id: task?.customer_id ?? "", steps: "", opens_on: task?.opens_on ?? "",
   });
-  const who = chosen.length || chosenDeps.length ? chosen : me ? [me.id] : [];
+  const who = chosen.length || chosenDeps.length || chosenWaiting.length ? chosen : me ? [me.id] : [];
   const onlyMe = who.length === 1 && who[0] === me?.id;
   // someone ticked who is also in a ticked department would get the task twice: ask which
   const [clash, setClash] = useState<{ people: string[]; deps: string[] } | null>(null);
@@ -76,10 +80,10 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
   const save = useMutation({
     mutationFn: async (picked?: { people: string[]; departments: string[] }) => {
       const { steps, ...rest } = f;
-      const body = { ...rest, due_date: f.due_date || null, due_time: f.due_time || null, project_id: f.project_id || null, customer_id: f.customer_id || null,
+      const body = { ...rest, opens_on: f.opens_on || null, due_date: f.due_date || null, due_time: f.due_time || null, project_id: f.project_id || null, customer_id: f.customer_id || null,
         ...(task ? {} : { checklist: steps.split(/\r?\n/).map((x) => x.trim()).filter(Boolean) }) };
       if (task) return [unwrap(await api.PATCH("/api/v1/w/{workspace}/tasks/{id}/", { params: { path: { workspace: slug, id: task.id } }, body: body as never }))];
-      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: picked?.people ?? who, department_ids: picked?.departments ?? chosenDeps } as never })) as unknown as Task[];
+      return unwrap(await api.POST("/api/v1/w/{workspace}/tasks/", { ...wsPath(slug), body: { ...body, assignee_ids: picked?.people ?? who, department_ids: picked?.departments ?? chosenDeps, employee_ids: chosenWaiting } as never })) as unknown as Task[];
     },
     onSuccess: (made) => {
       toast.success(task ? "Task changed" : made.length > 1 ? `${made.length} tasks given` : onlyMe ? "Added to your tasks" : "Task given");
@@ -94,7 +98,7 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submit(); }}>
         <Field label="Task" error={fieldError(save.error, "title")}><Input required autoFocus value={f.title} onChange={set("title")} placeholder="Collect the signed lease from the landlord" /></Field>
         <Field label="Details"><Textarea rows={3} value={f.details} onChange={set("details")} placeholder="Where, who to see, what done looks like." /></Field>
-        {!task && <Field label="Checklist (optional)" hint="One step per line. They tick each off as they go."><Textarea rows={2} value={f.steps} onChange={set("steps")} placeholder={["Draft", "Review with the client", "Send the final PDF"].join("\n")} /></Field>}
+        {!task && <Field label="Checklist (optional)" hint="Press Enter for the next step. Each becomes a box they tick off as they go."><ChecklistEditor value={f.steps} onChange={(v) => setF((p) => ({ ...p, steps: v }))} /></Field>}
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Project (optional)"><Select value={f.project_id} onChange={set("project_id")}><option value="">None</option>{(projects.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>
           <Field label="Customer (optional)"><Select value={f.customer_id} onChange={set("customer_id")}><option value="">None</option>{(customers.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>
@@ -114,10 +118,17 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
               {list.map((p) => (
                 <label key={p.id} className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-stone-50">
                   <input type="checkbox" checked={who.includes(p.id)} onChange={(e) => setChosen((c) => {
-                    const base = c.length || chosenDeps.length ? c : me ? [me.id] : [];
+                    const base = c.length || chosenDeps.length || chosenWaiting.length ? c : me ? [me.id] : [];
                     return e.target.checked ? [...base, p.id] : base.filter((x) => x !== p.id);
                   })} />
                   {p.is_me ? `Me (${p.full_name})` : p.full_name}{p.job_title && <span className="text-xs text-stone-500">{p.job_title}</span>}
+                </label>
+              ))}
+              {waiting.length > 0 && <p className="px-2 pt-2 text-xs font-semibold uppercase text-stone-500">No login yet: the task waits until they join</p>}
+              {waiting.map((w) => (
+                <label key={w.id} className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-stone-50">
+                  <input type="checkbox" checked={chosenWaiting.includes(w.id)} onChange={(e) => setChosenWaiting((c) => (e.target.checked ? [...c, w.id] : c.filter((x) => x !== w.id)))} />
+                  {w.full_name}{w.job_title && <span className="text-xs text-stone-500">{w.job_title}</span>}
                 </label>
               ))}
             </div>
@@ -131,6 +142,9 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
           </Field>
           <Field label="By (time)" hint="Blank: end of the day." error={fieldError(save.error, "due_time")}><Input type="time" value={f.due_time} disabled={!f.due_date} onChange={set("due_time")} /></Field>
           <Field label="Priority"><Select value={f.priority} onChange={set("priority")}><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></Select></Field>
+          <Field label="Opens on (optional)" hint="Locked until then: they see it but can't start it.">
+            <Input type="date" value={f.opens_on} onChange={set("opens_on")} />
+          </Field>
         </div>
         {!(task ? task.for_self : onlyMe) && (
           <label className="flex items-start gap-2 text-sm">

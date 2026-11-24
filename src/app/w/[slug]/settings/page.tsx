@@ -9,6 +9,7 @@ import { LogoSettings } from "@/components/logo-settings";
 import { ModuleSettings } from "@/components/module-settings";
 import { PaymentOptions } from "@/components/payment-options";
 import { StoreSettings } from "@/components/store-settings";
+import { TermsSettings } from "@/components/terms-settings";
 import { WorkingWeekCard } from "@/components/working-week";
 import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
@@ -92,6 +93,8 @@ export default function SettingsPage() {
       <ModuleSettings />
 
       <WorkingWeekCard />
+
+      <TermsSettings canEdit={can("workspace.manage")} />
 
       <div id="shop" className="scroll-mt-20"><StoreSettings /></div>
 
