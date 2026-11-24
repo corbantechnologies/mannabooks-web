@@ -41,3 +41,7 @@ A product used on a document can't be deleted. Mark it **inactive** to stop sell
 
 - Work out your cost first (purchase price, transport, packaging), then add your margin. A 30% margin on cost of 1,000 is a price of 1,300 before VAT.
 - If you quote prices to the public **including VAT**, tick **Prices include VAT** on the document and MannaBooks works out the VAT inside the price.
+
+## Deleting many at once
+
+Tick the products on the list (the box in the heading ticks everything shown, so search or pick a category first), then **Delete**. A product never used is deleted. One already on invoices, quotations, cash sales, bills or stock can't be removed without breaking those records, so it is made **inactive** instead: hidden from new documents, its history kept. You're told how many of each.

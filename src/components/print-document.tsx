@@ -22,6 +22,8 @@ export function PrintDocument({
   total,
   currency,
   footer,
+  terms,
+  dueWords,
   etims,
   howToPay = false,
 }: {
@@ -36,6 +38,9 @@ export function PrintDocument({
   total: string;
   currency: string;
   footer?: string;
+  /** Terms and conditions copied onto the document, and for an invoice the due date in words. */
+  terms?: string | null;
+  dueWords?: string;
   etims?: { status: string; cu?: string; signature?: string };
   /** Print the business's payment options (invoices, quotations, debit notes). */
   howToPay?: boolean;
@@ -129,6 +134,13 @@ export function PrintDocument({
           </section>
         )}
         {footer && <p className="mt-6 whitespace-pre-line text-stone-600">{footer}</p>}
+        {(terms || dueWords) && (
+          <section className="mt-6 border-t border-stone-200 pt-3 text-[11px] text-stone-600">
+            <p className="mb-1 font-semibold uppercase tracking-wide text-stone-500">Terms and conditions</p>
+            {dueWords && <p className="font-medium text-stone-800">{dueWords}</p>}
+            {terms && <p className="whitespace-pre-line">{terms}</p>}
+          </section>
+        )}
         <p className="mt-10 text-center text-xs text-stone-400">Printed {fmtDate(todayIso())} · MannaBooks</p>
       </article>
     </div>

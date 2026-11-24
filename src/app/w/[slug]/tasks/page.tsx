@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Plus } from "lucide-react";
+import { Plus, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -79,6 +79,11 @@ export default function TasksPage() {
           <Select aria-label="Priority" className="w-36" value={filters.priority} onChange={(e) => setFilter({ priority: e.target.value })}>
             <option value="">Any priority</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option>
           </Select>
+          <Select aria-label="Who" className="w-44" value={filters.person} onChange={(e) => setFilter({ person: e.target.value })}>
+            <option value="">Anyone</option>
+            {[...new Set(rows.map((t) => t.assigned_to_name).filter((n): n is string => !!n))].sort().map((n) => <option key={n} value={n}>{n}</option>)}
+            {rows.some((t) => !t.assigned_to_name) && <option value={NOBODY}>Nobody yet (department)</option>}
+          </Select>
           <Select aria-label="When due" className="w-40" value={filters.due} onChange={(e) => setFilter({ due: e.target.value as Filters["due"] })}>
             <option value="">Due any time</option><option value="overdue">Overdue</option><option value="today">Due today</option>
             <option value="week">Due this week</option><option value="next">Due next week</option><option value="none">No deadline</option>
@@ -86,11 +91,11 @@ export default function TasksPage() {
           {view === "list" && (
             <Select aria-label="Group by" className="w-44" value={filters.group} onChange={(e) => setFilter({ group: e.target.value as Filters["group"] })}>
               <option value="">No grouping</option><option value="priority">Group by priority</option><option value="date">Group by due date</option>
-              <option value="week">Group by week</option><option value="department">Group by department</option>
+              <option value="week">Group by week</option><option value="department">Group by department</option><option value="person">Group by person</option>
             </Select>
           )}
-          {(filters.q || filters.priority || filters.due) && (
-            <button type="button" className="text-sm text-brand-700 hover:underline" onClick={() => setFilter({ q: "", priority: "", due: "" })}>
+          {(filters.q || filters.priority || filters.due || filters.person) && (
+            <button type="button" className="text-sm text-brand-700 hover:underline" onClick={() => setFilter({ q: "", priority: "", due: "", person: "" })}>
               Clear ({shown.length} of {rows.length})
             </button>
           )}
@@ -139,8 +144,9 @@ export default function TasksPage() {
 
 const PRIORITY_RANK: Record<string, number> = { high: 0, normal: 1, low: 2 };
 
-type Filters = { q: string; priority: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" };
-const NO_FILTERS: Filters = { q: "", priority: "", due: "", group: "" };
+type Filters = { q: string; priority: string; person: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" | "person" };
+const NO_FILTERS: Filters = { q: "", priority: "", person: "", due: "", group: "" };
+const NOBODY = "~nobody";
 const FILTERS_KEY = "mb.tasks.filters";
 
 /** Remembered per person in this browser: the grouping and filters they last used. */
@@ -168,6 +174,7 @@ function matches(t: Task, f: Filters): boolean {
   if (needle && ![t.title, t.details, t.assigned_to_name, t.given_by_name, t.department_name, t.project_name, t.customer_name]
     .some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
   if (f.priority && (t.priority ?? "normal") !== f.priority) return false;
+  if (f.person && (f.person === NOBODY ? !!t.assigned_to_name : t.assigned_to_name !== f.person)) return false;
   if (f.due) {
     const today = iso(new Date());
     const thisWeek = weekStart(today);
@@ -192,6 +199,7 @@ function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["g
       return [String(PRIORITY_RANK[p]), `${p[0].toUpperCase()}${p.slice(1)} priority`];
     }
     if (group === "department") return [t.department_name ?? "~", t.department_name ?? "No department"];
+    if (group === "person") return [t.assigned_to_name ?? "~", t.assigned_to_name ?? "Nobody yet"];
     if (!t.due_date) return ["9999", "No deadline"];
     if (group === "date") {
       if (t.is_overdue) return ["0000", "Overdue"];
@@ -211,10 +219,13 @@ function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["g
   return (
     <div className="space-y-4">
       {[...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, g]) => (
-        <div key={k}>
-          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500">{g.label} <span className="font-normal">({g.rows.length})</span></h3>
+        // each group folds, so a long list doesn't mean scrolling past everything
+        <details key={k} open className="group">
+          <summary className="mb-1.5 flex cursor-pointer list-none items-center gap-1 text-xs font-semibold uppercase tracking-wide text-stone-500 [&::-webkit-details-marker]:hidden">
+            <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" /> {g.label} <span className="font-normal">({g.rows.length})</span>
+          </summary>
           <div className="space-y-2">{g.rows.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
-        </div>
+        </details>
       ))}
     </div>
   );

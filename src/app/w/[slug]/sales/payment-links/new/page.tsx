@@ -54,7 +54,7 @@ export default function NewPaymentLinkPage() {
     onSuccess: (l) => { toast.success("Payment link ready to share"); router.push(`/w/${slug}/sales/payment-links/${l.id}`); },
   });
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="w-full">
       <Link href={`/w/${slug}/sales/payment-links`} className="text-sm text-stone-500 hover:underline">&larr; Payment links</Link>
       <PageHeader title="New payment link" description="One link takes payments for one thing. Share it on WhatsApp, by email or as a QR code." guide="payment-links" />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>

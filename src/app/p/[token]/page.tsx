@@ -11,7 +11,7 @@ import { fmt, fmtDate } from "@/lib/format";
 
 interface PortalInvoice {
   id: string; number: string; kind: string; issue_date: string; due_date: string; status: string; currency: string;
-  subtotal: string; tax_total: string; total: string; amount_paid: string; balance_due: string; etims_cu_invoice_number: string;
+  subtotal: string; tax_total: string; total: string; amount_paid: string; balance_due: string; etims_cu_invoice_number: string; terms?: string;
   lines: { description: string; quantity: string; unit_price: string; tax_rate_name: string | null; total_amount: string }[];
 }
 
@@ -145,6 +145,12 @@ function PortalInvoiceCard({ token, invoice, mpesa, card, email: knownEmail }: {
         </tbody>
       </table>
       {invoice.etims_cu_invoice_number && <p className="px-4 pb-2 text-xs text-stone-500">KRA eTIMS: {invoice.etims_cu_invoice_number}</p>}
+      {invoice.terms && (
+        <details className="border-t border-stone-100 px-4 py-2 text-xs text-stone-600">
+          <summary className="cursor-pointer font-medium text-stone-700">Terms and conditions</summary>
+          <p className="mt-1 whitespace-pre-line">{invoice.terms}</p>
+        </details>
+      )}
       {open && card && (
         <div className="border-t border-stone-200 p-4">
           {!cardOpen ? (

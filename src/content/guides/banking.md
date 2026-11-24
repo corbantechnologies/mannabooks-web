@@ -28,3 +28,7 @@ Transfers between your own accounts show on each account but are left out of the
 ## Keeping the books right
 
 Once a month, **reconcile** each account against its statement (see *Bank reconciliation*).
+
+## Low-balance warnings
+
+On an account's page, **Set one** next to *No low-balance warning* and type the lowest balance you're comfortable with. When the balance falls below it, the account shows **Below minimum** in red on Cash and banking and on your Overview, and everyone who can see banking gets one email. Another comes only after the balance has recovered and fallen again.

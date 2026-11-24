@@ -127,7 +127,7 @@ function AccountsCard() {
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {rows.map((a) => (
               <Link key={a.id} href={`/w/${slug}/banking/accounts/${a.id}`} className="flex items-center justify-between rounded-md border border-stone-100 px-3 py-2 text-sm hover:border-brand-300">
-                <span className="truncate text-stone-700">{a.name}</span><span className={`font-mono ${Number(a.balance) < 0 ? "text-red-600" : "text-stone-900"}`}>{fmt(a.balance)}</span>
+                <span className="truncate text-stone-700">{a.name}{a.below_minimum && <span className="ml-1.5 text-xs text-red-600">below minimum</span>}</span><span className={`font-mono ${Number(a.balance) < 0 || a.below_minimum ? "text-red-600" : "text-stone-900"}`}>{fmt(a.balance)}</span>
               </Link>
             ))}
           </div>

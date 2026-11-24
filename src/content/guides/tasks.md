@@ -99,3 +99,11 @@ People whose role has the **Tasks: view** permission (admins and HR) get an **Ev
 ## Tasks and work reports
 
 Tasks are for one-off jobs. For something that repeats every day, week or month, or goes to a whole team, use a **repeating task** under **Work reports** (see [Work reports](work-reports)). Those count in each person's on-time record.
+
+## Finding tasks
+
+Search by title, people, department, project or customer, and filter by **who**, **priority** and **when due**. **Group by** priority, due date, week, department or person; each group folds away with its arrow. Your choices are remembered.
+
+## Who can change a task
+
+Only whoever gave a task can change it, check it or cancel it. A tasks manager can too, except on a task given to them or to their own department. Nobody changes a deadline they were given or checks their own work. Tasks waiting for your check also show at the top of **Approvals**, with a count on the menu.

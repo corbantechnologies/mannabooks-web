@@ -40,7 +40,7 @@ export default function TaskPage() {
   const t = q.data!;
   const st = TASK_STATUS[t.status ?? "todo"];
   return (
-    <div className="w-full max-w-3xl space-y-4">
+    <div className="w-full space-y-4">
       <Link href={`/w/${slug}/tasks`} className="text-sm text-stone-500 hover:underline">&larr; Tasks</Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

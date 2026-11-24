@@ -15,7 +15,7 @@ export function CustomerForm({ customer, onSaved, onCancel }: { customer?: Custo
   const [form, setForm] = useState({
     name: customer?.name ?? "", kind: (customer?.kind ?? "company") as "company" | "individual", email: customer?.email ?? "",
     phone: customer?.phone ?? "", kra_pin: customer?.kra_pin ?? "", address: customer?.address ?? "", city: customer?.city ?? "",
-    payment_terms_days: customer?.payment_terms_days ?? 0, price_list_id: customer?.price_list_id ?? "", credit_limit: customer?.credit_limit ?? "0", notes: customer?.notes ?? "",
+    payment_terms_days: customer?.payment_terms_days ?? 0, price_list_id: customer?.price_list_id ?? "", credit_limit: customer?.credit_limit ?? "0", notes: customer?.notes ?? "", terms: customer?.terms ?? "",
     is_active: customer?.is_active ?? true,
   });
   const priceLists = usePriceLists(slug);
@@ -52,6 +52,9 @@ export function CustomerForm({ customer, onSaved, onCancel }: { customer?: Custo
         </Field>
       </div>
       <Field label="Address" error={fieldError(save.error, "address")}><Textarea value={form.address} onChange={set("address")} /></Field>
+      <Field label="Their own terms and conditions (optional)" hint="Only if you agreed different terms with them, e.g. 60 days with no late fee. They replace your standard terms on their documents.">
+        <Textarea rows={3} value={form.terms} onChange={set("terms")} />
+      </Field>
       {customer && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))} /> Active</label>}
       <FormError error={save.error} />
       <div className="flex justify-end gap-2">

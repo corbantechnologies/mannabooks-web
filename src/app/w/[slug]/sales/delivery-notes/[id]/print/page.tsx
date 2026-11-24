@@ -51,6 +51,12 @@ export default function PrintDeliveryNotePage() {
           ))}</tbody>
         </table>
         {d.notes && <p className="mt-4 whitespace-pre-line">{d.notes}</p>}
+        {d.terms && (
+          <section className="mt-6 border-t border-stone-200 pt-3 text-[11px] text-stone-600">
+            <p className="mb-1 font-semibold uppercase tracking-wide text-stone-500">Terms and conditions</p>
+            <p className="whitespace-pre-line">{d.terms}</p>
+          </section>
+        )}
         <section className="mt-16 grid grid-cols-2 gap-10 text-xs">
           <div><p className="border-t border-stone-400 pt-1">Delivered by (name and signature)</p></div>
           <div><p className="border-t border-stone-400 pt-1">Received in good order by (name, signature, date and stamp)</p></div>

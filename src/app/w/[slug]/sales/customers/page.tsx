@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { Plus, Rows3, Search, Upload } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -28,7 +28,7 @@ export default function CustomersPage() {
         title="Customers"
         description={`The people and businesses you sell to, and what each owes you (in ${context.workspace.currency}).`}
         guide="customers"
-        actions={can("customers.manage") && <Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New customer</Button>}
+        actions={can("customers.manage") && <div className="flex flex-wrap gap-2"><Link href={`/w/${slug}/data?kind=customers`}><Button variant="secondary"><Upload className="h-4 w-4" /> Import</Button></Link><Link href={`/w/${slug}/sales/customers/bulk`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Add many</Button></Link><Button onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New customer</Button></div>}
       />
       <div className="relative mb-4 max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-stone-400" />

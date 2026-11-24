@@ -177,15 +177,15 @@ function openRowLink(e: React.MouseEvent<HTMLTableSectionElement>, push: (href: 
   else push(link.getAttribute("href")!);
 }
 
-export function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
+export function Table({ head, children }: { head: React.ReactNode[]; children: React.ReactNode }) {
   const router = useRouter();
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
           <tr>
-            {head.map((h) => (
-              <th key={h} className="whitespace-nowrap px-4 py-2.5 font-medium">
+            {head.map((h, i) => (
+              <th key={typeof h === "string" && h ? h : i} className="whitespace-nowrap px-4 py-2.5 font-medium">
                 {h}
               </th>
             ))}
@@ -197,9 +197,9 @@ export function Table({ head, children }: { head: string[]; children: React.Reac
   );
 }
 
-export function Td({ className, children, colSpan }: { className?: string; children?: React.ReactNode; colSpan?: number }) {
+export function Td({ className, children, colSpan, onClick }: { className?: string; children?: React.ReactNode; colSpan?: number; onClick?: React.MouseEventHandler<HTMLTableCellElement> }) {
   return (
-    <td colSpan={colSpan} className={clsx("px-4 py-3 align-middle text-stone-800", className)}>
+    <td colSpan={colSpan} onClick={onClick} className={clsx("px-4 py-3 align-middle text-stone-800", className)}>
       {children}
     </td>
   );

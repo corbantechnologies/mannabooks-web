@@ -14,7 +14,7 @@ import type { Department } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
-const EMPTY = { name: "", code: "", description: "", head_id: "" as string, modules: [] as string[], is_active: true };
+const EMPTY = { name: "", code: "", description: "", head_id: "" as string, modules: [] as string[], is_active: true, employee_ids: [] as string[] };
 
 export default function DepartmentsPage() {
   const { slug, can } = useWorkspace();
@@ -43,7 +43,7 @@ export default function DepartmentsPage() {
 
   function open(d: Department | "new") {
     save.reset();
-    setForm(d === "new" ? EMPTY : { name: d.name, code: d.code ?? "", description: d.description ?? "", head_id: d.head_id ?? "", modules: (d.modules as string[]) ?? [], is_active: d.is_active ?? true });
+    setForm(d === "new" ? EMPTY : { name: d.name, code: d.code ?? "", description: d.description ?? "", head_id: d.head_id ?? "", modules: (d.modules as string[]) ?? [], is_active: d.is_active ?? true, employee_ids: (d.employee_ids as string[] | undefined) ?? [] });
     setEditing(d);
   }
   const moduleLabels = (catalog.data?.department_modules ?? {}) as Record<string, string>;
@@ -110,6 +110,7 @@ export default function DepartmentsPage() {
               {people.members.length > 0 && <optgroup label="Team members">{people.members.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</optgroup>}
             </Select>
           </Field>
+          {can("employees.view") && <PeopleIn value={form.employee_ids} options={people.employees} onChange={(ids) => setForm((prev) => ({ ...prev, employee_ids: ids }))} />}
           <fieldset>
             <legend className="text-sm font-medium text-stone-700">Modules this department runs</legend>
             <p className="mt-0.5 text-xs text-stone-500">Only for the one team in charge of a module company-wide (for example Finance or HR). Each module has one such department. Leave these empty for a division or business unit: its reports and approvals don&apos;t need them.</p>
@@ -144,5 +145,26 @@ export default function DepartmentsPage() {
         </form>
       </Modal>
     </div>
+  );
+}
+
+/** Who works in the department: ticking someone moves them in (from any other department); unticking takes them out. */
+function PeopleIn({ value, options, onChange }: { value: string[]; options: { value: string; label: string }[]; onChange: (ids: string[]) => void }) {
+  const [find, setFind] = useState("");
+  const shown = options.filter((o) => !find || o.label.toLowerCase().includes(find.toLowerCase()));
+  return (
+    <fieldset>
+      <legend className="text-sm font-medium text-stone-700">People in it {value.length > 0 && <span className="font-normal text-stone-500">({value.length})</span>}</legend>
+      <p className="mt-0.5 text-xs text-stone-500">Ticking someone moves them here from any other department. The head is added by themselves.</p>
+      {options.length > 8 && <Input className="mt-2" placeholder="Find someone" value={find} onChange={(e) => setFind(e.target.value)} />}
+      <div className="mt-2 grid max-h-48 grid-cols-1 gap-1 overflow-y-auto rounded-md border border-stone-200 p-2 sm:grid-cols-2">
+        {shown.length === 0 ? <p className="text-sm text-stone-500">No employees{find ? " match" : " yet"}.</p> : shown.map((o) => (
+          <label key={o.value} className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={value.includes(o.value)} onChange={(e) => onChange(e.target.checked ? [...value, o.value] : value.filter((v) => v !== o.value))} />
+            <span className="truncate">{o.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }

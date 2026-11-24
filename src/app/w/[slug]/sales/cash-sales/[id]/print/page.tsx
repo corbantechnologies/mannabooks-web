@@ -22,6 +22,7 @@ export default function PrintCashSalePage() {
       <PrintDocument
         title="Cash sale receipt"
         number={r.number}
+        terms={r.terms}
         workspace={context.workspace}
         party={{ name: r.customer_name || "Walk-in customer", pin: r.customer_pin }}
         details={[["Date", fmtDate(r.issue_date)], ["Paid by", METHODS.find((m) => m.value === r.method)?.label ?? ""], ["Reference", r.payment_reference ?? ""]]}

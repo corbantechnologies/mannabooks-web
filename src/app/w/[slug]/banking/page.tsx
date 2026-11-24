@@ -45,7 +45,10 @@ export default function BankingPage() {
                     <p className="font-medium">{a.name}</p>
                     <p className="text-xs text-stone-500">{ACCOUNT_KINDS.find((k) => k.value === a.kind)?.label}{a.account_number ? ` · ${a.account_number}` : ""}</p>
                   </div>
-                  {Number(a.unmatched_lines) > 0 && <Badge tone="amber">{a.unmatched_lines} to match</Badge>}
+                  <div className="flex flex-col items-end gap-1">
+                    {a.below_minimum && <Badge tone="red">Below minimum</Badge>}
+                    {Number(a.unmatched_lines) > 0 && <Badge tone="amber">{a.unmatched_lines} to match</Badge>}
+                  </div>
                 </div>
                 <p className={`mt-4 font-mono text-2xl ${Number(a.balance) < 0 ? "text-red-600" : ""}`}>{fmt(a.balance)}</p>
                 <p className="mt-1 text-xs text-stone-500">{a.last_reconciled ? `Reconciled to ${fmtDate(a.last_reconciled)}` : "Never reconciled"}</p>

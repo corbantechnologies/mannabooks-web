@@ -211,13 +211,18 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [{ href: "/projects", label: "Projects", icon: FolderKanban, perm: ["projects.view"] }],
   },
   {
+    section: "Work",
+    items: [
+      { href: "/tasks", label: "Tasks", icon: ListChecks, perm: null },
+      { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
+    ],
+  },
+  {
     section: "People",
     items: [
       { href: "/me", label: "My leave and pay", icon: UserRound, perm: ["leave.request"] },
       { href: "/leave", label: "Leave", icon: CalendarDays, perm: ["leave.view", "leave.approve"] },
       { href: "/advances", label: "Salary advances", icon: HandCoins, perm: ["advances.request"] },
-      { href: "/tasks", label: "Tasks", icon: ListChecks, perm: null },
-      { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
       { href: "/payroll", label: "Payroll", icon: WalletIcon, perm: ["payroll.view"] },
     ],
   },
@@ -345,7 +350,8 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
   const jumpItems: JumpItem[] = everyItem.map((i) => ({ href: base + i.href, label: i.label, section: i.section ?? undefined, icon: i.icon, pinned: prefs.pinned.includes(i.href) }));
 
   // counts shown beside a page, and on its section heading while the section is folded
-  const countOf = (href: string) => (href === "/sales/online-orders" ? context.online_orders_new : href === "/inbox" ? context.inbox_new : 0) || 0;
+  const countOf = (href: string) => (href === "/sales/online-orders" ? context.online_orders_new : href === "/inbox" ? context.inbox_new
+    : href === "/approvals" ? context.tasks_to_check : 0) || 0;
 
   const navLink = ({ href, label, icon: Icon }: NavItem, key: string) => {
     const active = isActive(href);

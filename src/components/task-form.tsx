@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ChecklistEditor } from "@/components/checklist-editor";
 import { Button, Field, FormError, Input, Modal, Select, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
@@ -94,7 +95,7 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submit(); }}>
         <Field label="Task" error={fieldError(save.error, "title")}><Input required autoFocus value={f.title} onChange={set("title")} placeholder="Collect the signed lease from the landlord" /></Field>
         <Field label="Details"><Textarea rows={3} value={f.details} onChange={set("details")} placeholder="Where, who to see, what done looks like." /></Field>
-        {!task && <Field label="Checklist (optional)" hint="One step per line. They tick each off as they go."><Textarea rows={2} value={f.steps} onChange={set("steps")} placeholder={["Draft", "Review with the client", "Send the final PDF"].join("\n")} /></Field>}
+        {!task && <Field label="Checklist (optional)" hint="Press Enter for the next step. Each becomes a box they tick off as they go."><ChecklistEditor value={f.steps} onChange={(v) => setF((p) => ({ ...p, steps: v }))} /></Field>}
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Project (optional)"><Select value={f.project_id} onChange={set("project_id")}><option value="">None</option>{(projects.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>
           <Field label="Customer (optional)"><Select value={f.customer_id} onChange={set("customer_id")}><option value="">None</option>{(customers.data?.results ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></Field>

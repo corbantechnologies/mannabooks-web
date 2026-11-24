@@ -38,7 +38,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
     issue_date: existing?.issue_date ?? startDate(),
     second_date: (billing ? inv?.due_date : quote?.valid_until) ?? "",
     reference: existing?.reference ?? "",
-    notes: existing?.notes ?? "",
+    notes: existing?.notes ?? "", terms: existing?.terms ?? "",
   });
   const [tags, setTags] = useState(tagsOf(existing));
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
@@ -65,7 +65,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
         customer_id: head.customer_id,
         issue_date: head.issue_date,
         reference: head.reference,
-        notes: head.notes,
+        notes: head.notes, ...(existing || head.terms.trim() ? { terms: head.terms } : {}),
         prices_include_tax: includeTax,
         lines: linesToRequest(lines),
         ...wholeDiscountBody(whole),
@@ -117,6 +117,9 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
       </Card>
       <LinesEditor slug={slug} customerId={head.customer_id} lines={lines} setLines={setLines} includeTax={includeTax} setIncludeTax={setIncludeTax} currency={context.workspace.currency ?? "KES"} whole={whole} setWhole={setWhole} />
       <Field label="Notes printed on the document"><Textarea value={head.notes} onChange={(e) => setHead((prev) => ({ ...prev, notes: e.target.value }))} /></Field>
+      <Field label="Terms and conditions" hint={existing ? "Kept with this document once issued." : "Blank: your standard terms (or the customer's own) are filled in when you save. Type here to use different ones."}>
+        <Textarea rows={3} value={head.terms} onChange={(e) => setHead((prev) => ({ ...prev, terms: e.target.value }))} placeholder={existing ? "" : "Your standard terms"} />
+      </Field>
       <FormError error={save.error} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button>

@@ -22,6 +22,15 @@ const EMPTY = { code: "", name: "", kind: "goods" as Kind, category_id: "", trac
 export default function ProductsPage() {
   const { slug, can, context } = useWorkspace();
   const manage = can("products.manage");
+  const [picked, setPicked] = useState<string[]>([]);
+  const bulkDelete = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/products/bulk-delete/", { ...wsPath(slug), body: { ids: picked } })),
+    onSuccess: (r) => {
+      toast.success([r.deleted ? `${r.deleted} deleted` : "", r.deactivated ? `${r.deactivated} made inactive (on past documents)` : ""].filter(Boolean).join(", ") || "Nothing changed");
+      setPicked([]); void list.refetch();
+    },
+    onError: (e) => toast.error(e.message),
+  });
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Product | "new" | null>(null);
   const [form, setForm] = useState(EMPTY);
@@ -97,9 +106,21 @@ export default function ProductsPage() {
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title={search ? "No products match" : "No products yet"} />
         ) : (
-          <Table head={["Code", "Name", "Category", "In stock", `Price (${context.workspace.currency})`, "VAT"]}>
+          <>
+          {manage && picked.length > 0 && (
+            <div className="flex flex-wrap items-center gap-3 border-b border-stone-200 bg-brand-50 px-4 py-2 text-sm">
+              <span className="font-medium">{picked.length} selected</span>
+              <Button variant="danger" className="py-1" loading={bulkDelete.isPending}
+                onClick={() => void ask(`Delete ${picked.length} product${picked.length === 1 ? "" : "s"}? Any already on invoices, quotations, bills or stock are kept and made inactive instead.`, { confirmLabel: "Delete" }).then((ok) => ok && bulkDelete.mutate())}>Delete</Button>
+              <button type="button" className="text-stone-600 hover:underline" onClick={() => setPicked([])}>Clear</button>
+            </div>
+          )}
+          <Table head={[...(manage ? [<input key="all" type="checkbox" aria-label="Select all shown" checked={rows.length > 0 && rows.every((p) => picked.includes(p.id))}
+            onChange={(e) => setPicked(e.target.checked ? rows.map((p) => p.id) : [])} />] : []), "Code", "Name", "Category", "In stock", `Price (${context.workspace.currency})`, "VAT"]}>
             {rows.map((p) => (
               <tr key={p.id} className={manage ? "cursor-pointer hover:bg-stone-50" : ""} onClick={() => manage && open(p)}>
+                {manage && <Td className="w-8" onClick={(e) => e.stopPropagation()}><input type="checkbox" aria-label={`Select ${p.name}`} checked={picked.includes(p.id)}
+                  onChange={(e) => setPicked((x) => (e.target.checked ? [...x, p.id] : x.filter((v) => v !== p.id)))} /></Td>}
                 <Td className="font-mono text-xs">{p.code || "-"}</Td>
                 <Td className="font-medium">{p.name} {!p.is_active && <Badge>Inactive</Badge>}</Td>
                 <Td className="text-stone-600">{p.category_name ?? "-"}</Td>
@@ -109,6 +130,7 @@ export default function ProductsPage() {
               </tr>
             ))}
           </Table>
+          </>
         )}
       </Card>
       <Modal size="lg" open={editing !== null} title={current ? current.name : "New product or service"} onClose={() => setEditing(null)}>

@@ -2482,6 +2482,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/customers/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_customers_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/dashboard/coming-up/": {
         parameters: {
             query?: never;
@@ -5979,6 +6001,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/products/bulk-delete/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Remove many products at once. One never used is deleted; one already on invoices, quotations, receipts, bills or
+         *     stock is made inactive instead, because the books need it. Every one is recorded in the audit log.
+         */
+        post: operations["w_products_bulk_delete_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/projects/": {
         parameters: {
             query?: never;
@@ -7760,6 +7802,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/suppliers/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_suppliers_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/support/": {
         parameters: {
             query?: never;
@@ -8859,6 +8923,12 @@ export interface components {
             /** @description Per the books */
             readonly balance: string;
             /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
+            readonly below_minimum: boolean;
+            /**
              * @description Statement lines not yet matched
              * @default 0
              */
@@ -8883,6 +8953,11 @@ export interface components {
             /** @description Or the till / paybill number */
             account_number?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
         };
         BankStatementLine: {
             /** Format: uuid */
@@ -8971,6 +9046,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -9094,6 +9171,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** @description Leave out to copy them from the goods received, order or service order */
             lines?: components["schemas"]["BillLineRequest"][];
             /** Format: uuid */
@@ -10130,6 +10209,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -10183,6 +10264,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** @description Leave out to credit the whole invoice */
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
@@ -10240,11 +10323,17 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
             /** @description What the customer owes now (negative: in credit) */
             readonly balance: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        CustomerBulkRequest: {
+            /** @description Up to 100 new customers; saved together or not at all */
+            rows: components["schemas"]["CustomerRequest"][];
         };
         CustomerRequest: {
             name: string;
@@ -10266,6 +10355,8 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
         };
         /**
@@ -10404,6 +10495,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             readonly received_by: string;
             /** Format: date-time */
             readonly dispatched_at: string | null;
@@ -10445,6 +10538,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["DeliveryNoteLineRequest"][];
         };
         /**
@@ -10470,6 +10565,8 @@ export interface components {
             is_active?: boolean;
             /** @default 0 */
             readonly employee_count: number;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -10538,6 +10635,8 @@ export interface components {
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
         };
         DepartmentRow: {
             /** Format: uuid */
@@ -11827,6 +11926,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -11900,6 +12001,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -12866,6 +12969,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
@@ -14802,6 +14907,11 @@ export interface components {
             /** @description Or the till / paybill number */
             account_number?: string;
             is_active?: boolean;
+            /**
+             * Format: decimal
+             * @description Warn when the balance falls below this. Blank: no warning
+             */
+            min_balance?: string | null;
         };
         PatchedBillOfMaterialsRequest: {
             /** Format: uuid */
@@ -14819,6 +14929,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** @description Leave out to copy them from the goods received, order or service order */
             lines?: components["schemas"]["BillLineRequest"][];
             /** Format: uuid */
@@ -14951,6 +15063,8 @@ export interface components {
              */
             credit_limit?: string;
             notes?: string;
+            /** @description Their own agreed terms and conditions; used on their documents instead of the standard ones */
+            terms?: string;
             is_active?: boolean;
         };
         PatchedDealRequest: {
@@ -14988,6 +15102,8 @@ export interface components {
             vehicle?: string;
             driver?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["DeliveryNoteLineRequest"][];
         };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
@@ -15005,6 +15121,8 @@ export interface components {
             /** @description Module keys this department runs, e.g. inventory */
             modules?: unknown;
             is_active?: boolean;
+            /** @description The people employed in it. Sent: exactly these are in it (others leave it) */
+            employee_ids?: string[];
         };
         PatchedEmployeeRequest: {
             first_name?: string;
@@ -15151,6 +15269,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15515,6 +15635,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["OrderLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15539,6 +15661,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15616,6 +15740,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["PurchaseLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -15780,6 +15906,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
         };
         PayItem: {
             name: string;
@@ -16825,6 +16953,14 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        ProductBulkDeleteRequest: {
+            ids: string[];
+        };
+        ProductBulkDeleteResult: {
+            deleted: number;
+            /** @description On past documents, stock or price lists, so kept but made inactive */
+            deactivated: number;
+        };
         ProductBulkRequest: {
             /** @description Up to 50 new products; saved together or not at all */
             products: components["schemas"]["ProductRequest"][];
@@ -17323,6 +17459,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17356,6 +17494,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["OrderLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -17407,6 +17547,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17457,6 +17599,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -17547,6 +17691,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -17610,6 +17756,8 @@ export interface components {
             /** @description Customer's order or LPO number */
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions, copied from the customer's or the business's when it was made */
+            terms?: string;
             lines: components["schemas"]["SalesLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -18431,6 +18579,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             /** Format: decimal */
             readonly subtotal: string;
             /** Format: decimal */
@@ -18472,6 +18622,8 @@ export interface components {
             prices_include_tax?: boolean;
             reference?: string;
             notes?: string;
+            /** @description Terms and conditions for the supplier, copied from the business's when it was made */
+            terms?: string;
             lines?: components["schemas"]["PurchaseLineRequest"][];
             /** Format: uuid */
             cost_center_id?: string | null;
@@ -19107,6 +19259,10 @@ export interface components {
             bill_id: string;
             /** Format: decimal */
             amount: string;
+        };
+        SupplierBulkRequest: {
+            /** @description Up to 100 new suppliers; saved together or not at all */
+            rows: components["schemas"]["SupplierRequest"][];
         };
         SupplierPayment: {
             /** Format: uuid */
@@ -19824,6 +19980,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
             /** Format: uuid */
             readonly group_id: string | null;
             readonly group_name: string;
@@ -19859,6 +20017,11 @@ export interface components {
             unclosed_years: string[];
             /** @description Documents from other businesses waiting in the inbox */
             inbox_new: number;
+            /**
+             * @description Tasks this person gave that are done, waiting for their check
+             * @default 0
+             */
+            tasks_to_check: number;
             /** @description Online shop orders not yet looked at */
             online_orders_new: number;
             /** @description Modules that can be switched on: key, label, description */
@@ -19914,6 +20077,8 @@ export interface components {
             store_delivery_fee?: string;
             /** @description Let customers pay when they collect or receive the order */
             store_pay_on_delivery?: boolean;
+            /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
+            document_terms?: unknown;
         };
         _DeptBudget: {
             id: string;
@@ -24816,6 +24981,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Statement"];
+                };
+            };
+        };
+    };
+    w_customers_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CustomerBulkRequest"];
+                "multipart/form-data": components["schemas"]["CustomerBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Customer"][];
                 };
             };
         };
@@ -31514,6 +31711,33 @@ export interface operations {
             };
         };
     };
+    w_products_bulk_delete_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductBulkDeleteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProductBulkDeleteRequest"];
+                "multipart/form-data": components["schemas"]["ProductBulkDeleteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductBulkDeleteResult"];
+                };
+            };
+        };
+    };
     w_projects_list: {
         parameters: {
             query?: {
@@ -34845,6 +35069,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SupplierStatement"];
+                };
+            };
+        };
+    };
+    w_suppliers_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SupplierBulkRequest"];
+                "multipart/form-data": components["schemas"]["SupplierBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Supplier"][];
                 };
             };
         };
