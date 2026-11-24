@@ -14,7 +14,7 @@ import { useWorkspace, wsPath } from "@/lib/workspace";
 
 const EMPTY = {
   first_name: "", last_name: "", other_names: "", email: "", phone: "", national_id: "", kra_pin: "",
-  job_title: "", department_id: "", branch_id: "", reports_to_id: "", hire_date: "", status: "active" as "active" | "on_leave" | "exited",
+  job_title: "", department_id: "", other_department_ids: [] as string[], employment_type: "permanent", contract_end: "", branch_id: "", reports_to_id: "", hire_date: "", status: "active" as "active" | "on_leave" | "exited",
   on_payroll: false, pay_type: "salary" as "salary" | "daily" | "hourly", basic_salary: "", pay_rate: "",
   pay_method: "bank" as "bank" | "mpesa" | "cash", bank_name: "", bank_account_number: "", mpesa_phone: "",
   nssf_number: "", shif_number: "", annual_leave_days: "21", recurring_items: [] as PayItem[],
@@ -27,7 +27,7 @@ type Form = typeof EMPTY;
 function toForm(e: Employee): Form {
   return {
     first_name: e.first_name, last_name: e.last_name, other_names: e.other_names ?? "", email: e.email ?? "", phone: e.phone ?? "",
-    national_id: e.national_id ?? "", kra_pin: e.kra_pin ?? "", job_title: e.job_title ?? "", department_id: e.department_id ?? "",
+    national_id: e.national_id ?? "", kra_pin: e.kra_pin ?? "", job_title: e.job_title ?? "", department_id: e.department_id ?? "", other_department_ids: (e.other_department_ids as string[] | undefined) ?? [], employment_type: e.employment_type ?? "permanent", contract_end: e.contract_end ?? "",
     branch_id: e.branch_id ?? "", reports_to_id: e.reports_to_id ?? "", hire_date: e.hire_date ?? "", status: e.status ?? "active",
     on_payroll: e.on_payroll ?? false, pay_type: e.pay_type ?? "salary", basic_salary: e.basic_salary ? String(Number(e.basic_salary)) : "",
     pay_rate: e.pay_rate && Number(e.pay_rate) ? String(Number(e.pay_rate)) : "", pay_method: e.pay_method ?? "bank",
@@ -89,6 +89,7 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
       const body = {
         ...form,
         department_id: form.department_id || null,
+        contract_end: form.employment_type === "contract" ? form.contract_end || null : null,
         branch_id: form.branch_id || null,
         ...pickedPerson(form.reports_to_id, "reports_to_id", "reports_to_membership_id"),
         hire_date: form.hire_date || null,
@@ -152,6 +153,24 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
             {(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
           </Select>
         </Field>
+        <Field label="Also works in" hint="Other departments they work in. Pay counts against the main department above.">
+          <div className="flex max-h-28 flex-wrap gap-x-4 gap-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
+            {(departments.data?.results ?? []).filter((d) => d.id !== form.department_id).map((d) => (
+              <label key={d.id} className="flex items-center gap-1.5 text-sm">
+                <input type="checkbox" checked={form.other_department_ids.includes(d.id)}
+                  onChange={(e) => setForm((p) => ({ ...p, other_department_ids: e.target.checked ? [...p.other_department_ids, d.id] : p.other_department_ids.filter((x) => x !== d.id) }))} />
+                {d.name}
+              </label>
+            ))}
+          </div>
+        </Field>
+        <Field label="Employment" error={fieldError(save.error, "employment_type")}>
+          <Select value={form.employment_type} onChange={set("employment_type")}>
+            <option value="permanent">Permanent (salaried)</option><option value="contract">Fixed-term contract</option><option value="casual">Casual</option>
+            <option value="work_for_hire">Work for hire</option><option value="volunteer">Volunteer</option><option value="intern">Intern or attachment</option>
+          </Select>
+        </Field>
+        {form.employment_type === "contract" && <Field label="Contract ends" error={fieldError(save.error, "contract_end")}><Input type="date" value={form.contract_end} onChange={set("contract_end")} /></Field>}
         <Field label="Branch" error={fieldError(save.error, "branch_id")}>
           <Select value={form.branch_id} onChange={set("branch_id")}>
             <option value="">None</option>

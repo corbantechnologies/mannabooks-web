@@ -1,7 +1,8 @@
 "use client";
 
 import clsx from "clsx";
-import { BookOpen, Eye, EyeOff, Loader2, X } from "lucide-react";
+import { BookOpen, ChevronDown, Eye, EyeOff, Loader2, X } from "lucide-react";
+import React from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -143,9 +144,80 @@ export function PageHeader({
             <BookOpen className="h-4 w-4" aria-hidden /> Guide
           </Link>
         )}
-        {actions}
+        <HeaderActions>{actions}</HeaderActions>
       </div>
     </div>
+  );
+}
+
+/** The buttons in `actions`, opened out of wrapping divs and fragments; null when something isn't a plain button or link. */
+function headerButtons(node: React.ReactNode): React.ReactElement[] | null {
+  const out: React.ReactElement[] = [];
+  let ok = true;
+  const walk = (n: React.ReactNode) => {
+    React.Children.forEach(n, (child) => {
+      if (!ok || child === null || child === undefined || child === false || child === "") return;
+      if (!React.isValidElement(child)) { ok = false; return; }
+      const el = child as React.ReactElement<{ children?: React.ReactNode; className?: string; variant?: string }>;
+      if (el.type === React.Fragment || el.type === "div") { walk(el.props.children); return; }
+      const inner = el.type === Link ? (React.Children.only(el.props.children) as React.ReactElement<{ variant?: string }>) : el;
+      if (inner && React.isValidElement(inner) && inner.type === Button) out.push(el);
+      else ok = false;  // a select, a menu or anything else: leave the header as it is
+    });
+  };
+  walk(node);
+  return ok ? out : null;
+}
+
+const isPrimary = (el: React.ReactElement) => {
+  const b = (el.type === Link ? React.Children.only((el.props as { children: React.ReactNode }).children) : el) as React.ReactElement<{ variant?: string }>;
+  return !b.props.variant || b.props.variant === "primary";
+};
+
+/**
+ * Page header buttons: with three or more, the main one stays and the rest go into a "More" popover, so the header
+ * stays calm. The buttons themselves are untouched, so what they do doesn't change.
+ */
+function HeaderActions({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const outside = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", outside);
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("mousedown", outside); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  const buttons = headerButtons(children);
+  if (!buttons || buttons.length < 3) return <>{children}</>;
+  let main = -1;
+  buttons.forEach((b, i) => { if (isPrimary(b)) main = i; });
+  if (main < 0) main = buttons.length - 1;
+  const rest = buttons.filter((_, i) => i !== main);
+  const wide = (el: React.ReactElement): React.ReactElement => {
+    if (el.type === Link) {
+      const inner = React.Children.only((el.props as { children: React.ReactNode }).children) as React.ReactElement<{ className?: string }>;
+      return React.cloneElement(el as React.ReactElement<{ className?: string; children?: React.ReactNode }>, { className: "block" },
+        React.cloneElement(inner, { className: clsx(inner.props.className, "w-full justify-start border-0 shadow-none") }));
+    }
+    return React.cloneElement(el as React.ReactElement<{ className?: string }>, { className: clsx((el.props as { className?: string }).className, "w-full justify-start border-0 shadow-none") });
+  };
+  return (
+    <>
+      <div className="relative" ref={box}>
+        <Button type="button" variant="secondary" onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open}>
+          More <ChevronDown className="h-4 w-4" />
+        </Button>
+        {open && (
+          <div role="menu" onClickCapture={() => window.setTimeout(() => setOpen(false), 0)}
+            className="absolute right-0 z-30 mt-1 flex w-60 flex-col gap-0.5 rounded-md border border-stone-200 bg-white p-1 shadow-lg max-sm:fixed max-sm:inset-x-3 max-sm:bottom-3 max-sm:top-auto max-sm:mt-0 max-sm:w-auto max-sm:rounded-xl max-sm:shadow-2xl">
+            {rest.map((el, i) => <React.Fragment key={i}>{wide(el)}</React.Fragment>)}
+          </div>
+        )}
+      </div>
+      {buttons[main]}
+    </>
   );
 }
 

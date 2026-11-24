@@ -18,10 +18,11 @@ export default function NewWorkReportPage() {
   const manage = can("workreports.manage");
   // admins can set a request up for someone else (the CEO, a manager): it is then theirs
   const members = useQuery({
-    queryKey: ["members", slug, "active"], enabled: manage,
+    queryKey: ["members", slug, "active"], retry: false,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/members/", { params: { path: { workspace: slug }, query: { status: "active", page_size: 200 } as never } })),
   });
   const [forId, setForId] = useState("");
+  const [copyTo, setCopyTo] = useState<string[]>([]);
   const forOther = Boolean(forId) && forId !== context.membership_id;
   const forName = (members.data?.results ?? []).find((m) => m.id === forId)?.user.full_name ?? "them";
   const people = useQuery({ queryKey: ["report-people", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/people/", { params: { path: { workspace: slug } } })) });
@@ -39,6 +40,7 @@ export default function NewWorkReportPage() {
       if (f.audience === "people") chosen.forEach((id) => form.append("people_ids", id));
       if (template) form.append("template_file", template);
       if (forOther) form.append("requested_for_membership_id", forId);
+      copyTo.forEach((id) => form.append("copy_to_membership_ids", id));
       return sendForm<ReportRequest>(`/api/v1/w/${slug}/report-requests/`, form);
     },
     onSuccess: (r) => { toast.success(`Asked ${r.assignee_names.length} ${r.assignee_names.length === 1 ? "person" : "people"}`); router.push(`/w/${slug}/work-reports/requests/${r.id}`); },
@@ -71,6 +73,18 @@ export default function NewWorkReportPage() {
               <Select value={forId || context.membership_id} onChange={(e) => setForId(e.target.value)}>
                 {(members.data?.results ?? []).map((m) => <option key={m.id} value={m.id}>{m.id === context.membership_id ? `Me (${m.user.full_name})` : m.user.full_name}</option>)}
               </Select>
+            </Field>
+          )}
+          {(members.data?.results ?? []).length > 1 && (
+            <Field label="Also goes to (optional)" hint="They get every report and overdue note too, and can review them. For example you and the CEO.">
+              <div className="flex max-h-40 flex-wrap gap-x-4 gap-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
+                {(members.data?.results ?? []).filter((m) => m.id !== (forId || context.membership_id)).map((m) => (
+                  <label key={m.id} className="flex items-center gap-1.5 text-sm">
+                    <input type="checkbox" checked={copyTo.includes(m.id)} onChange={(e) => setCopyTo((c) => (e.target.checked ? [...c, m.id] : c.filter((x) => x !== m.id)))} />
+                    {m.user.full_name}
+                  </label>
+                ))}
+              </div>
             </Field>
           )}
           <Field label="Who"><Select value={f.audience} onChange={set("audience")}>

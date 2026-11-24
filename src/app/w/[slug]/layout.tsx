@@ -2,6 +2,8 @@
 
 import clsx from "clsx";
 import {
+  TrendingUp,
+  Bell,
   HandCoins,
   Building2,
   Globe,
@@ -184,6 +186,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [
       { href: "/banking", label: "Accounts", icon: Landmark, perm: ["banking.view"] },
       { href: "/banking/money", label: "Money in and out", icon: ArrowLeftRight, perm: ["banking.view"] },
+      { href: "/banking/projection", label: "Cash projection", icon: TrendingUp, perm: ["reports.view"] },
       { href: "/banking/expenses", label: "Expenses", icon: ArrowUpFromLine, perm: ["banking.view"] },
       { href: "/banking/income", label: "Other income", icon: ArrowDownToLine, perm: ["banking.view"] },
       { href: "/banking/transfers", label: "Transfers", icon: Repeat, perm: ["banking.view"] },
@@ -215,6 +218,8 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [
       { href: "/tasks", label: "Tasks", icon: ListChecks, perm: null },
       { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
+      { href: "/calendar", label: "Calendar", icon: CalendarDays, perm: null },
+      { href: "/messages", label: "Messages", icon: Bell, perm: null },
     ],
   },
   {
@@ -223,6 +228,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/me", label: "My leave and pay", icon: UserRound, perm: ["leave.request"] },
       { href: "/leave", label: "Leave", icon: CalendarDays, perm: ["leave.view", "leave.approve"] },
       { href: "/advances", label: "Salary advances", icon: HandCoins, perm: ["advances.request"] },
+      { href: "/expense-claims", label: "Expense claims", icon: Receipt, perm: null },
       { href: "/payroll", label: "Payroll", icon: WalletIcon, perm: ["payroll.view"] },
     ],
   },
@@ -351,7 +357,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
 
   // counts shown beside a page, and on its section heading while the section is folded
   const countOf = (href: string) => (href === "/sales/online-orders" ? context.online_orders_new : href === "/inbox" ? context.inbox_new
-    : href === "/approvals" ? context.tasks_to_check : 0) || 0;
+    : href === "/approvals" ? context.tasks_to_check : href === "/messages" ? context.messages_unread : 0) || 0;
 
   const navLink = ({ href, label, icon: Icon }: NavItem, key: string) => {
     const active = isActive(href);

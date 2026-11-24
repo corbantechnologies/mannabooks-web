@@ -32,3 +32,14 @@ Once a month, **reconcile** each account against its statement (see *Bank reconc
 ## Low-balance warnings
 
 On an account's page, **Set one** next to *No low-balance warning* and type the lowest balance you're comfortable with. When the balance falls below it, the account shows **Below minimum** in red on Cash and banking and on your Overview, and everyone who can see banking gets one email. Another comes only after the balance has recovered and fallen again.
+
+## Cash projection
+
+**Cash and banking > Cash projection** shows where cash is heading if nothing new is decided, month by month for 3 to 18 months. It starts from cash and bank today and, each month:
+
+- adds what customers owe, in the month each invoice is due (anything overdue in the first month), and your average cash sales and other income;
+- takes off supplier bills, in the month each is due, the payroll (from the latest one), and your average spending paid directly.
+
+Set **Warn me below** (or leave it to your accounts' minimums) and it tells you the first month cash would go below it, with the chart turning red past that line. It knows only what is in the books: a guide, not a promise.
+
+**Analytics** also shows the last 12 months as a chart: income and costs as bars, cash at each month's end as a line.

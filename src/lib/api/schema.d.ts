@@ -2013,6 +2013,79 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/calendar/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The company calendar between two dates (at most about three months): events, deadlines, leave, paydays, holidays. */
+        get: operations["w_calendar_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/calendar/events/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_calendar_events_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/calendar/events/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        get: operations["w_calendar_events_retrieve"];
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_calendar_events_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_calendar_events_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/cards/connection/": {
         parameters: {
             query?: never;
@@ -2513,6 +2586,23 @@ export interface paths {
         };
         /** @description What's due to pay and to collect, soonest first, with what's overdue. Each item shows only if your role can see it. */
         get: operations["w_dashboard_coming_up_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/department-tasks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Tasks by department, for the Overview: everyone's with tasks.view, otherwise the departments you head. */
+        get: operations["w_dashboard_department_tasks_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3235,6 +3325,129 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_exchange_rates_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description `?box=mine` (default), `decide` (waiting for approval), `pay` (approved, to pay back) or `all`. */
+        get: operations["w_expense_claims_list"];
+        put?: never;
+        /** @description `?box=mine` (default), `decide` (waiting for approval), `pay` (approved, to pay back) or `all`. */
+        post: operations["w_expense_claims_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        get: operations["w_expense_claims_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        delete: operations["w_expense_claims_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        patch: operations["w_expense_claims_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/decide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Approve the claim, leaving out any lines that are not business expenses (each with a reason). */
+        post: operations["w_expense_claims_decide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/lines/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Add a line to a draft (multipart, with its receipt). */
+        post: operations["w_expense_claims_lines_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/lines/{line_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description See a line's receipt, or remove the line from a draft. */
+        get: operations["w_expense_claims_lines_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description See a line's receipt, or remove the line from a draft. */
+        delete: operations["w_expense_claims_lines_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Pay an approved claim back now, from a bank, M-Pesa or cash account, or put it on the person's next payslip. */
+        post: operations["w_expense_claims_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/expense-claims/{id}/submit/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Your own claims; your direct reports' (to follow them); everyone's for finance. */
+        post: operations["w_expense_claims_submit_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/expenses/": {
@@ -4604,6 +4817,40 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_members_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/messages/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description My in-app messages, newest first. `?unread=true` for just the unread ones. */
+        get: operations["w_messages_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/messages/read/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Mark messages read: the ones listed, or all of mine. */
+        post: operations["w_messages_read_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/mpesa/connection/": {
@@ -6892,6 +7139,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/reports/cash-forecast/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Where cash is heading month by month, and the first month it goes below the floor (default: the accounts' minimums). */
+        get: operations["w_reports_cash_forecast_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/reports/glance/": {
         parameters: {
             query?: never;
@@ -6901,6 +7165,23 @@ export interface paths {
         };
         /** @description The business at a glance: sales this month, quotes waiting, money owed and coming due, cash. Parts follow permissions. */
         get: operations["w_reports_glance_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Income, costs and cash at the end of each of the last 12 months, for the charts. */
+        get: operations["w_reports_history_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8041,6 +8322,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/chain/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Several tasks at once for the same people, each opening on a date or after earlier ones are done (a chain). */
+        post: operations["w_tasks_chain_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tasks/departments/": {
         parameters: {
             query?: never;
@@ -8651,9 +8949,10 @@ export interface components {
          *     * `payment_voucher` - Payment vouchers
          *     * `pay_run` - Payroll
          *     * `budget` - Budgets
+         *     * `expense_claim` - Staff expense claims
          * @enum {string}
          */
-        ApprovalDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget";
+        ApprovalDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget" | "expense_claim";
         ApprovalLevel: {
             kind: components["schemas"]["ApprovalLevelKindEnum"];
             /** Format: uuid */
@@ -9525,6 +9824,72 @@ export interface components {
             /** Format: date-time */
             last_active: string | null;
         };
+        CalendarEvent: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            details?: string;
+            /** Format: date */
+            starts_on: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CalendarEventRequest: {
+            title: string;
+            details?: string;
+            /** Format: date */
+            starts_on: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+        };
+        CalendarItem: {
+            kind: components["schemas"]["CalendarItemKindEnum"];
+            id: string;
+            title: string;
+            /** Format: date */
+            date: string;
+            /** Format: date */
+            end: string | null;
+            /** Format: time */
+            time: string | null;
+            detail: string;
+            who: string;
+            /** @description Within the workspace, e.g. /tasks/<id> */
+            link: string;
+            editable: boolean;
+        };
+        /**
+         * @description * `event` - event
+         *     * `task` - task
+         *     * `report` - report
+         *     * `leave` - leave
+         *     * `money` - money
+         *     * `holiday` - holiday
+         * @enum {string}
+         */
+        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "holiday";
         Candidate: {
             /** Format: uuid */
             journal_line_id: string;
@@ -9704,11 +10069,12 @@ export interface components {
          *     * `accounts` - accounts
          *     * `money` - money
          *     * `tasks` - tasks
+         *     * `department_tasks` - department_tasks
          *     * `inbox` - inbox
          *     * `role` - role
          * @enum {string}
          */
-        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "inbox" | "role";
+        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "department_tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -9901,10 +10267,81 @@ export interface components {
              */
             share: string;
         };
+        /**
+         * @description * `low` - low
+         *     * `normal` - normal
+         *     * `high` - high
+         * @enum {string}
+         */
+        ChainStepPriorityEnum: "low" | "normal" | "high";
+        ChainStepRequest: {
+            title: string;
+            /** @default  */
+            details: string;
+            /** Format: date */
+            due_date?: string | null;
+            /** Format: time */
+            due_time?: string | null;
+            /** Format: date */
+            opens_on?: string | null;
+            /** @default normal */
+            priority: components["schemas"]["ChainStepPriorityEnum"];
+            /** @description Positions of earlier steps it waits for */
+            after?: number[];
+            checklist?: string[];
+        };
         ChangePasswordRequest: {
             current_password?: string;
             new_password: string;
         };
+        ClaimLine: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: uuid */
+            readonly account_id: string | null;
+            readonly account_name: string;
+            /** Format: uuid */
+            readonly project_id: string | null;
+            readonly project_name: string;
+            readonly has_receipt: boolean;
+            receipt_name?: string;
+            status?: components["schemas"]["ClaimLineStatusEnum"];
+            readonly status_label: string;
+            reject_reason?: string;
+        };
+        ClaimLineInputRequest: {
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: binary */
+            receipt?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+        };
+        ClaimLineRequest: {
+            /** Format: date */
+            spent_on: string;
+            description: string;
+            /** Format: decimal */
+            amount: string;
+            receipt_name?: string;
+            status?: components["schemas"]["ClaimLineStatusEnum"];
+            reject_reason?: string;
+        };
+        /**
+         * @description * `pending` - Waiting
+         *     * `approved` - Approved
+         *     * `rejected` - Not a business expense
+         * @enum {string}
+         */
+        ClaimLineStatusEnum: "pending" | "approved" | "rejected";
         CloseShiftRequest: {
             /** Format: decimal */
             counted_cash: string;
@@ -10676,6 +11113,16 @@ export interface components {
             done_late: number;
             handed_back: number;
         };
+        DepartmentTasks: {
+            /** Format: uuid */
+            department_id: string;
+            name: string;
+            open: number;
+            /** @description Given to the department, nobody has taken it yet */
+            untaken: number;
+            high: number;
+            overdue: number;
+        };
         DepartmentsOverview: {
             /** Format: date */
             from_date: string;
@@ -10790,6 +11237,15 @@ export interface components {
             /** Format: uuid */
             department_id?: string | null;
             readonly department_name: string;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            readonly other_department_names: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -10816,7 +11272,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -10894,6 +11350,14 @@ export interface components {
             job_title?: string;
             /** Format: uuid */
             department_id?: string | null;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -10921,7 +11385,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -10952,6 +11416,16 @@ export interface components {
          * @enum {string}
          */
         EmployeeStatusEnum: "active" | "on_leave" | "exited";
+        /**
+         * @description * `permanent` - Permanent (salaried)
+         *     * `contract` - Fixed-term contract
+         *     * `casual` - Casual
+         *     * `work_for_hire` - Work for hire
+         *     * `volunteer` - Volunteer
+         *     * `intern` - Intern or attachment
+         * @enum {string}
+         */
+        EmploymentTypeEnum: "permanent" | "contract" | "casual" | "work_for_hire" | "volunteer" | "intern";
         /**
          * @description * `A` - A: Exempt
          *     * `B` - B: 16%
@@ -11099,6 +11573,52 @@ export interface components {
             project_id?: string | null;
             readonly project_name: string;
         };
+        ExpenseClaim: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title: string;
+            /** Format: uuid */
+            readonly employee_id: string;
+            readonly employee_name: string;
+            readonly status: components["schemas"]["ExpenseClaimStatusEnum"];
+            readonly status_label: string;
+            /** Format: decimal */
+            readonly total: string;
+            /** Format: decimal */
+            readonly approved_total: string;
+            /** Format: date-time */
+            readonly submitted_at: string | null;
+            readonly decided_by_name: string;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            readonly decision_note: string;
+            /** Format: date */
+            readonly paid_at: string | null;
+            readonly paid_from_name: string;
+            /** Format: uuid */
+            readonly payslip_id: string | null;
+            readonly lines: components["schemas"]["ClaimLine"][];
+            readonly mine: boolean;
+            readonly can_decide: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        ExpenseClaimRequest: {
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title: string;
+        };
+        /**
+         * @description * `draft` - Draft
+         *     * `submitted` - Waiting for approval
+         *     * `approved` - Approved, to pay back
+         *     * `on_payslip` - To be paid on the next payslip
+         *     * `paid` - Paid back
+         *     * `rejected` - Not approved
+         * @enum {string}
+         */
+        ExpenseClaimStatusEnum: "draft" | "submitted" | "approved" | "on_payslip" | "paid" | "rejected";
         /**
          * @description * `cash` - Cash
          *     * `mpesa` - M-Pesa
@@ -11315,6 +11835,54 @@ export interface components {
          * @enum {string}
          */
         FixedAssetStatusEnum: "active" | "fully_depreciated" | "disposed";
+        Forecast: {
+            /** Format: date */
+            today: string;
+            /** Format: decimal */
+            cash_now: string;
+            /** Format: decimal */
+            floor: string | null;
+            /**
+             * Format: date
+             * @description The first month cash ends below the floor
+             */
+            first_below: string | null;
+            months: components["schemas"]["ForecastMonth"][];
+            assumptions: components["schemas"]["ForecastAssumptions"];
+        };
+        ForecastAssumptions: {
+            /** Format: decimal */
+            cash_sales_a_month: string;
+            /** Format: decimal */
+            spending_a_month: string;
+            /** Format: decimal */
+            payroll_a_month: string;
+        };
+        ForecastMonth: {
+            /** Format: date */
+            month: string;
+            label: string;
+            /** Format: decimal */
+            opening: string;
+            /** Format: decimal */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
+            /** Format: decimal */
+            closing: string;
+            /**
+             * Format: decimal
+             * @description Customer invoices falling due
+             */
+            customers: string;
+            /**
+             * Format: decimal
+             * @description Supplier bills falling due
+             */
+            bills: string;
+            /** Format: decimal */
+            payroll: string;
+        };
         /**
          * @description * `pickup` - Pickup
          *     * `delivery` - Delivery
@@ -11639,6 +12207,26 @@ export interface components {
             kra_pin: string;
             currency: string;
         };
+        HistoryMonth: {
+            /** Format: date */
+            month: string;
+            label: string;
+            /** Format: decimal */
+            income: string;
+            /** Format: decimal */
+            costs: string;
+            /**
+             * Format: decimal
+             * @description Cash and bank at the month's end
+             */
+            cash: string;
+        };
+        /**
+         * @description * `account` - account
+         *     * `payslip` - payslip
+         * @enum {string}
+         */
+        HowEnum: "account" | "payslip";
         ImportJob: {
             /** Format: uuid */
             readonly id: string;
@@ -11691,9 +12279,10 @@ export interface components {
          * @description * `invoice` - Invoice
          *     * `quotation` - Quotation
          *     * `purchase_order` - Purchase order (LPO)
+         *     * `remittance` - Remittance advice
          * @enum {string}
          */
-        InboxKindEnum: "invoice" | "quotation" | "purchase_order";
+        InboxKindEnum: "invoice" | "quotation" | "purchase_order" | "remittance";
         InboxLine: {
             description: string;
             quantity: string;
@@ -12641,6 +13230,10 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionKindEnum: "earn" | "redeem" | "expire" | "adjust" | "reverse";
+        MarkReadRequest: {
+            /** @description Blank: all of mine */
+            ids?: string[];
+        };
         Member: {
             /** Format: uuid */
             user_id: string;
@@ -12977,6 +13570,19 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
             readonly role: string | null;
+        };
+        Notification: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            body?: string;
+            /** @description The page it is about, within the app */
+            link?: string;
+            readonly read: boolean;
+            /** Format: date-time */
+            read_at?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
         };
         OnlineOrder: {
             /** Format: uuid */
@@ -13848,6 +14454,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["ExchangeRate"][];
         };
+        PaginatedExpenseClaimList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ExpenseClaim"][];
+        };
         PaginatedExpenseList: {
             /** @example 123 */
             count: number;
@@ -14132,6 +14753,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MyWorkspace"][];
+        };
+        PaginatedNotificationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Notification"][];
         };
         PaginatedOnlineOrderList: {
             /** @example 123 */
@@ -14981,6 +15617,24 @@ export interface components {
             notes?: string;
             lines?: components["schemas"]["BudgetLineRequest"][];
         };
+        PatchedCalendarEventRequest: {
+            title?: string;
+            details?: string;
+            /** Format: date */
+            starts_on?: string;
+            /**
+             * Format: date
+             * @description Blank: one day
+             */
+            ends_on?: string | null;
+            /**
+             * Format: time
+             * @description Blank: all day
+             */
+            start_time?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+        };
         PatchedCatalogueRequest: {
             /** @description For example: Laptops for Acme Ltd */
             name?: string;
@@ -15139,6 +15793,14 @@ export interface components {
             job_title?: string;
             /** Format: uuid */
             department_id?: string | null;
+            /** @description Departments they also work in; pay and wages count against the main department */
+            other_department_ids?: string[];
+            employment_type?: components["schemas"]["EmploymentTypeEnum"];
+            /**
+             * Format: date
+             * @description For a fixed-term contract: when it ends
+             */
+            contract_end?: string | null;
             /** Format: uuid */
             branch_id?: string | null;
             /** Format: uuid */
@@ -15166,7 +15828,7 @@ export interface components {
              * @description A day or an hour, for a wage
              */
             pay_rate?: string;
-            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable"}] */
+            /** @description Allowances and deductions every month: [{"name", "kind": "earning"|"deduction", "amount", "taxable", "percent"?}]. With "percent", the amount is that share of the basic salary each month (a bonus or commission) */
             recurring_items?: unknown;
             pay_method?: components["schemas"]["PayMethodEnum"];
             bank_name?: string;
@@ -15200,6 +15862,10 @@ export interface components {
              * @description 1 unit of the currency in the base currency
              */
             rate?: string;
+        };
+        PatchedExpenseClaimRequest: {
+            /** @description What it was for, e.g. Field visit to Nakuru */
+            title?: string;
         };
         PatchedFixedAssetRequest: {
             name?: string;
@@ -15721,6 +16387,15 @@ export interface components {
              * @description Due by this time on the due date. Blank: by the end of the day
              */
             due_time?: string | null;
+            /** @description Exactly these people are asked from now on */
+            people_ids?: string[];
+            /**
+             * Format: uuid
+             * @description Whom the reports are for. Null: whoever set it up
+             */
+            requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
         };
         PatchedRoleRequest: {
             name?: string;
@@ -15951,6 +16626,13 @@ export interface components {
         PayOrderRequest: {
             /** @description Blank: the order's phone */
             phone?: string;
+        };
+        PayRequest: {
+            how: components["schemas"]["HowEnum"];
+            /** Format: uuid */
+            account_id?: string | null;
+            /** Format: date */
+            paid_on?: string;
         };
         PayRequestRequest: {
             plan: string;
@@ -18114,6 +18796,11 @@ export interface components {
             readonly requested_by_name: string | null;
             /** @description Who set it up, when that was someone else on the owner's behalf. */
             readonly set_up_by_name: string | null;
+            readonly copy_to_names: string[];
+            /** @description Who is asked, to edit later */
+            readonly people: {
+                [key: string]: unknown;
+            }[];
             readonly has_template: boolean;
             readonly template_name: string;
             readonly counts: {
@@ -18152,6 +18839,8 @@ export interface components {
              * @description Set it up for this team member: the reports go to them
              */
             requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
             /** Format: binary */
             template_file?: string;
         };
@@ -18248,6 +18937,15 @@ export interface components {
              * @description Due by this time on the due date. Blank: by the end of the day
              */
             due_time?: string | null;
+            /** @description Exactly these people are asked from now on */
+            people_ids?: string[];
+            /**
+             * Format: uuid
+             * @description Whom the reports are for. Null: whoever set it up
+             */
+            requested_for_membership_id?: string | null;
+            /** @description Also goes to these team members */
+            copy_to_membership_ids?: string[];
         };
         ReverseRequest: {
             /** Format: date */
@@ -19078,10 +19776,11 @@ export interface components {
          *     * `service_order` - service_order
          *     * `payment_voucher` - payment_voucher
          *     * `pay_run` - pay_run
+         *     * `expense_claim` - expense_claim
          *     * `budget` - budget
          * @enum {string}
          */
-        SubmitDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "budget";
+        SubmitDocumentTypeEnum: "purchase_order" | "service_order" | "payment_voucher" | "pay_run" | "expense_claim" | "budget";
         SubmitRequest: {
             document_type: components["schemas"]["SubmitDocumentTypeEnum"];
             /** Format: uuid */
@@ -19425,6 +20124,16 @@ export interface components {
             /** Format: uuid */
             readonly assigned_to_id: string | null;
             readonly assigned_to_name: string | null;
+            /** @description Given to an employee with no login yet */
+            readonly waiting_for_login: boolean;
+            /**
+             * Format: date
+             * @description Locked until this date: seen, but it can't be started or done before
+             */
+            readonly opens_on: string | null;
+            /** @description Why it can't be started yet (opens later, or waiting for other tasks); blank when it can */
+            readonly locked: string;
+            readonly depends_on_titles: string[];
             /** Format: uuid */
             readonly department_id: string | null;
             readonly department_name: string | null;
@@ -19517,6 +20226,14 @@ export interface components {
             /** Format: binary */
             file: string;
         };
+        TaskChainRequest: {
+            steps: components["schemas"]["ChainStepRequest"][];
+            assignee_ids?: string[];
+            employee_ids?: string[];
+            department_ids?: string[];
+            /** @default true */
+            needs_check: boolean;
+        };
         TaskChecklistItem: {
             readonly id: number;
             text: string;
@@ -19555,10 +20272,17 @@ export interface components {
         };
         TaskCreateRequest: {
             title: string;
+            /**
+             * Format: date
+             * @description Locked until this date
+             */
+            opens_on?: string | null;
             /** @default  */
             details: string;
             /** @description Memberships who do it, one task each. Blank (and no department): yourself */
             assignee_ids?: string[];
+            /** @description Employees with no login yet: the task waits and becomes theirs when they join */
+            employee_ids?: string[];
             /** @description Departments: one task each, for anyone in it to take */
             department_ids?: string[];
             /** Format: date */
@@ -19603,6 +20327,8 @@ export interface components {
         };
         TaskPeople: {
             people: components["schemas"]["Assignable"][];
+            /** @description Employees with no login yet */
+            waiting: components["schemas"]["WaitingEmployee"][];
             departments: components["schemas"]["AssignableDepartment"][];
         };
         /**
@@ -19911,6 +20637,12 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        WaitingEmployee: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+            job_title: string;
+        };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Warehouse: {
             /** Format: uuid */
@@ -20017,6 +20749,11 @@ export interface components {
             unclosed_years: string[];
             /** @description Documents from other businesses waiting in the inbox */
             inbox_new: number;
+            /**
+             * @description Unread in-app messages
+             * @default 0
+             */
+            messages_unread: number;
             /**
              * @description Tasks this person gave that are done, waiting for their check
              * @default 0
@@ -22537,8 +23274,9 @@ export interface operations {
                  *     * `payment_voucher` - Payment vouchers
                  *     * `pay_run` - Payroll
                  *     * `budget` - Budgets
+                 *     * `expense_claim` - Staff expense claims
                  */
-                document_type?: "budget" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
+                document_type?: "budget" | "expense_claim" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
                 is_active?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -22802,7 +23540,7 @@ export interface operations {
     w_approvals_status_retrieve: {
         parameters: {
             query: {
-                document_type: "budget" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
+                document_type: "budget" | "expense_claim" | "pay_run" | "payment_voucher" | "purchase_order" | "service_order";
                 object_id: string;
             };
             header?: never;
@@ -24025,6 +24763,132 @@ export interface operations {
             };
         };
     };
+    w_calendar_list: {
+        parameters: {
+            query: {
+                from: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                to: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarItem"][];
+                };
+            };
+        };
+    };
+    w_calendar_events_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarEventRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CalendarEventRequest"];
+                "multipart/form-data": components["schemas"]["CalendarEventRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
+    w_calendar_events_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
+    w_calendar_events_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_calendar_events_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCalendarEventRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCalendarEventRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCalendarEventRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEvent"];
+                };
+            };
+        };
+    };
     w_cards_connection_retrieve: {
         parameters: {
             query?: never;
@@ -25037,6 +25901,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ComingUp"];
+                };
+            };
+        };
+    };
+    w_dashboard_department_tasks_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartmentTasks"][];
                 };
             };
         };
@@ -26392,6 +27282,294 @@ export interface operations {
             };
         };
     };
+    w_expense_claims_list: {
+        parameters: {
+            query?: {
+                box?: "all" | "decide" | "mine" | "pay";
+                employee?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `draft` - Draft
+                 *     * `submitted` - Waiting for approval
+                 *     * `approved` - Approved, to pay back
+                 *     * `on_payslip` - To be paid on the next payslip
+                 *     * `paid` - Paid back
+                 *     * `rejected` - Not approved
+                 */
+                status?: "approved" | "draft" | "on_payslip" | "paid" | "rejected" | "submitted";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedExpenseClaimList"];
+                };
+            };
+        };
+    };
+    w_expense_claims_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenseClaimRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ExpenseClaimRequest"];
+                "multipart/form-data": components["schemas"]["ExpenseClaimRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_expense_claims_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedExpenseClaimRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedExpenseClaimRequest"];
+                "multipart/form-data": components["schemas"]["PatchedExpenseClaimRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_decide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DecideRequest"];
+                "multipart/form-data": components["schemas"]["DecideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ClaimLineInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                line_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    w_expense_claims_lines_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                line_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_expense_claims_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PayRequest"];
+                "multipart/form-data": components["schemas"]["PayRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
+    w_expense_claims_submit_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenseClaim"];
+                };
+            };
+        };
+    };
     w_expenses_list: {
         parameters: {
             query?: {
@@ -27239,8 +28417,9 @@ export interface operations {
                  * @description * `invoice` - Invoice
                  *     * `quotation` - Quotation
                  *     * `purchase_order` - Purchase order (LPO)
+                 *     * `remittance` - Remittance advice
                  */
-                kind?: "invoice" | "purchase_order" | "quotation";
+                kind?: "invoice" | "purchase_order" | "quotation" | "remittance";
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -27460,8 +28639,9 @@ export interface operations {
                  * @description * `invoice` - Invoice
                  *     * `quotation` - Quotation
                  *     * `purchase_order` - Purchase order (LPO)
+                 *     * `remittance` - Remittance advice
                  */
-                kind?: "invoice" | "purchase_order" | "quotation";
+                kind?: "invoice" | "purchase_order" | "quotation" | "remittance";
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -29008,6 +30188,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Membership"];
+                };
+            };
+        };
+    };
+    w_messages_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                unread?: boolean;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedNotificationList"];
+                };
+            };
+        };
+    };
+    w_messages_read_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["MarkReadRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MarkReadRequest"];
+                "multipart/form-data": components["schemas"]["MarkReadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -33438,6 +34678,30 @@ export interface operations {
             };
         };
     };
+    w_reports_cash_forecast_retrieve: {
+        parameters: {
+            query?: {
+                floor?: number;
+                months?: number;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forecast"];
+                };
+            };
+        };
+    };
     w_reports_glance_retrieve: {
         parameters: {
             query?: {
@@ -33460,6 +34724,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Glance"];
+                };
+            };
+        };
+    };
+    w_reports_history_list: {
+        parameters: {
+            query?: {
+                months?: number;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryMonth"][];
                 };
             };
         };
@@ -35639,6 +36930,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TaskComment"];
+                };
+            };
+        };
+    };
+    w_tasks_chain_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskChainRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TaskChainRequest"];
+                "multipart/form-data": components["schemas"]["TaskChainRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTaskList"];
                 };
             };
         };

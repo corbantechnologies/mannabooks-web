@@ -3,6 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -12,12 +13,14 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { ReportRecipients } from "@/components/report-recipients";
 
 export default function ReportRequestPage() {
   const { slug } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const path = { params: { path: { workspace: slug, id } } };
+  const [changing, setChanging] = useState(false);
   const req = useQuery({ queryKey: ["report-request", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-requests/{id}/", path)) });
   const subs = useQuery({
     queryKey: ["report-submissions", slug, "request", id],
@@ -45,8 +48,11 @@ export default function ReportRequestPage() {
         actions={<div className="flex flex-wrap gap-2">
           {r.has_template && <Button variant="secondary" onClick={() => downloadFile(`/api/v1/w/${slug}/report-requests/${id}/template/`, r.template_name ?? "template").catch((e) => toast.error(e.message))}><Download className="h-4 w-4" /> Template</Button>}
           <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this request?").then((ok) => ok && remove.mutate())}>Delete</Button>
+          <Button variant="secondary" onClick={() => setChanging(true)}>Change who</Button>
           {r.status === "active" ? <Button variant="secondary" onClick={() => update.mutate("closed")}>Close</Button> : <Button variant="secondary" onClick={() => update.mutate("active")}>Reopen</Button>}
         </div>} />
+      <p className="-mt-3 mb-4 text-sm text-stone-600">For {r.requested_by_name ?? "you"}{r.copy_to_names.length ? `, also to ${r.copy_to_names.join(", ")}` : ""}.</p>
+      {changing && <ReportRecipients req={{ id: r.id, people: r.people as { id: string; name: string }[], requested_by_name: r.requested_by_name, copy_to_names: r.copy_to_names }} open onClose={() => setChanging(false)} />}
       {r.instructions && <Card className="mb-4 p-4"><p className="whitespace-pre-line text-sm text-stone-700">{r.instructions}</p></Card>}
       {subs.isLoading ? <Spinner /> : rounds.size === 0 ? <Card><EmptyState title="No rounds yet" /></Card> : [...rounds.entries()].map(([due, list]) => (
         <div key={due} className="mb-4">

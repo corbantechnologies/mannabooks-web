@@ -16,7 +16,16 @@ export function PayItemsEditor({ items, onChange, hint }: { items: PayItem[]; on
         <div key={i} className="grid grid-cols-[1fr_8rem_7rem_auto_auto] items-center gap-2">
           <Input placeholder="Name" value={item.name} readOnly={!!item.advance} title={item.advance ? "Takes back a salary advance. Change the amount, or remove it to take it back next time." : undefined} onChange={(e) => update(i, { name: e.target.value })} />
           <Select value={item.kind} disabled={!!item.advance} onChange={(e) => update(i, { kind: e.target.value as PayItem["kind"] })}><option value="earning">Allowance</option><option value="deduction">Deduction</option></Select>
-          <Input inputMode="decimal" className="text-right" placeholder="Amount" value={String(item.amount)} onChange={(e) => update(i, { amount: e.target.value })} />
+          <div className="flex items-center gap-1">
+            <Input inputMode="decimal" className="text-right" placeholder={item.percent != null ? "%" : "Amount"} title={item.percent != null ? "A share of the basic salary each month" : undefined}
+              value={String(item.percent != null ? item.percent : item.amount)}
+              onChange={(e) => update(i, item.percent != null ? { percent: e.target.value } : { amount: e.target.value })} />
+            {!item.advance && (
+              <button type="button" className={`rounded px-1 text-xs ${item.percent != null ? "bg-brand-700 text-white" : "text-stone-500 hover:bg-stone-100"}`}
+                title="Switch between a fixed amount and a % of the basic salary (e.g. a 10% bonus)"
+                onClick={() => update(i, item.percent != null ? { percent: null } : { percent: "", amount: "0" })}>%</button>
+            )}
+          </div>
           {item.kind === "earning" ? (
             <label className="flex items-center gap-1 text-xs text-stone-600"><input type="checkbox" checked={item.taxable ?? true} onChange={(e) => update(i, { taxable: e.target.checked })} /> Taxed</label>
           ) : <span />}

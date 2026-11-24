@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Plus, ChevronRight } from "lucide-react";
+import { ChevronRight, Plus, Rows3 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -54,7 +54,10 @@ export default function TasksPage() {
     <div className="w-full">
       <PageHeader title="Tasks" guide="tasks"
         description="Things to do by a date, and a time if it matters. For yourself, the people below you, or any colleague if your role allows. For tasks that repeat, use Work reports."
-        actions={<Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New task</Button>} />
+        actions={<div className="flex flex-wrap gap-2">
+          <Link href={`/w/${slug}/tasks/chain`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Several tasks</Button></Link>
+          <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New task</Button>
+        </div>} />
       <div className="mb-4 flex flex-wrap items-end gap-3 border-b border-stone-200">
         <div className="-mb-px flex gap-1 overflow-x-auto">
           {tabs.map((t) => (
@@ -285,6 +288,7 @@ function TaskRow({ t, box }: { t: Task; box: Box }) {
         </p>
       </Link>
       <div className="flex items-center gap-2">
+        {t.locked && <Badge tone="amber">🔒 {t.opens_on && t.locked.startsWith("it opens") ? `Opens ${fmtDate(t.opens_on)}` : "Waiting"}</Badge>}
         {t.priority === "high" && <Badge tone="red">High priority</Badge>}
         {options.length ? (
           <select aria-label="Change the status" value="" disabled={act.isPending} onChange={(e) => void pick(e.target.value)}

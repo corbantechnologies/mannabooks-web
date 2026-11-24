@@ -47,3 +47,7 @@ If your business isn't registered for VAT, the VAT on a supplier's invoice becom
 ## Who can do what
 
 Owners and Admins can do everything. **Accountants** can receive and accept; **Sales** and **Store managers** can send. Accepting also needs the right to create the draft (bills, purchase orders or invoices).
+
+## Remittances
+
+When you pay a supplier who uses MannaBooks, open the payment (Purchasing > Supplier payments) and choose **Send on MannaBooks**. The remittance lists which of their invoices you paid. On their side it arrives in their Business inbox; **Accept** asks which account the money came into and records the payment against their own invoices by number. Anything that matches no open invoice stays as your credit with them. Withholding tax you kept back is noted, so they know to ask for the certificate.

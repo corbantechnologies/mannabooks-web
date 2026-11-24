@@ -20,6 +20,7 @@ const CREATES: Record<string, [string, string, string]> = {
   invoice: ["a draft bill", "purchasing/bills", "bills.create"],
   quotation: ["a draft purchase order", "purchasing/orders", "purchaseorders.create"],
   purchase_order: ["a draft invoice", "sales/invoices", "invoices.create"],
+  remittance: ["a payment received", "sales/payments", "payments.create"],
 };
 
 export default function InboxMessagePage() {
@@ -37,7 +38,7 @@ export default function InboxMessagePage() {
   const [declining, setDeclining] = useState(false);
   const [reason, setReason] = useState("");
   const accept = useMutation({
-    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/{id}/accept/", { ...path, body: { account_id: account || null, paid_from_id: recordPaid ? paidFrom : null } })),
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/{id}/accept/", { ...path, body: { account_id: account || null, paid_from_id: recordPaid || m?.kind === "remittance" ? paidFrom : null } })),
     onSuccess: (m) => { recount(); toast.success((m.payment_ids ?? []).length ? `Accepted: the bill is posted and ${(m.payment_ids ?? []).length === 1 ? "the payment is" : "the payments are"} recorded` : `Accepted: ${CREATES[m.kind][0]} is ready to check`); },
   });
   const decline = useMutation({
@@ -91,7 +92,17 @@ export default function InboxMessagePage() {
       )}
       {decide && (
         <Card className="space-y-3 p-4">
-          <p className="text-sm text-stone-700">Accepting makes {makes} in your books with these lines{m.kind === "invoice" ? ` and ${m.sender_name} as the supplier` : m.kind === "purchase_order" ? ` and ${m.sender_name} as the customer` : ""}. Check it, then post or issue it as usual.</p>
+          {m.kind === "remittance" ? (
+            <>
+              <p className="text-sm text-stone-700">{m.sender_name} paid you. Accepting records the payment received, applied to your invoices listed above by their numbers. Anything that matches no open invoice stays as their credit.</p>
+              <Field label="Received into" hint="The bank, M-Pesa or cash account the money came into.">
+                <Select value={paidFrom} onChange={(e) => setPaidFrom(e.target.value)}>
+                  <option value="">Choose an account</option>
+                  {(banks.data?.results ?? []).filter((b) => b.is_active).map((b) => <option key={b.id} value={b.ledger_account_id}>{b.name}</option>)}
+                </Select>
+              </Field>
+            </>
+          ) : <p className="text-sm text-stone-700">Accepting makes {makes} in your books with these lines{m.kind === "invoice" ? ` and ${m.sender_name} as the supplier` : m.kind === "purchase_order" ? ` and ${m.sender_name} as the customer` : ""}. Check it, then post or issue it as usual.</p>}
           {m.kind === "invoice" && (
             <Field label="Record the bill in" hint="Stock items: Cost of goods sold or Inventory; otherwise the expense it is for.">
               <Select value={account} onChange={(e) => setAccount(e.target.value)}><option value="">Choose an account</option><AccountOptions accounts={accounts.data} /></Select>
@@ -113,7 +124,7 @@ export default function InboxMessagePage() {
           )}
           <FormError error={accept.error} />
           <div className="flex flex-wrap gap-2">
-            <Button loading={accept.isPending} disabled={(m.kind === "invoice" && !account) || (recordPaid && !paidFrom)} onClick={() => accept.mutate()}>{recordPaid ? "Accept and record as paid" : "Accept"}</Button>
+            <Button loading={accept.isPending} disabled={(m.kind === "invoice" && !account) || ((recordPaid || m.kind === "remittance") && !paidFrom)} onClick={() => accept.mutate()}>{recordPaid ? "Accept and record as paid" : "Accept"}</Button>
             <Button variant="secondary" onClick={() => { decline.reset(); setDeclining(true); }}>Decline</Button>
           </div>
         </Card>

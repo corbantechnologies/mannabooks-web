@@ -30,6 +30,8 @@ export const GUIDES: Guide[] = [
   { slug: "leave", title: "Leave", summary: "Asking for, approving and tracking leave.", section: "People", app: "/leave" },
   { slug: "salary-advances", title: "Salary advances", summary: "Pay staff have earned, paid early and taken back on their next payslips.", section: "People", app: "/advances" },
   { slug: "tasks", title: "Tasks", summary: "Give tasks to yourself, your team or any colleague, due by a date and time, and check them when done.", section: "People", app: "/tasks" },
+  { slug: "expense-claims", title: "Expense claims", summary: "Claim back what you spent on the business, with a receipt on each line; finance approves and pays back.", section: "People", app: "/expense-claims" },
+  { slug: "calendar", title: "Calendar", summary: "One timeline: events, deadlines, leave, paydays, tax dates and holidays.", section: "People", app: "/calendar" },
   { slug: "work-reports", title: "Work reports", summary: "Ask your team for regular reports and repeating tasks, and do your own.", section: "People", app: "/work-reports" },
   { slug: "payroll", title: "Payroll", summary: "PAYE, SHIF, NSSF and Housing Levy, payslips and paying staff.", section: "People", app: "/payroll" },
   { slug: "employees", title: "Employees and self-service", summary: "Staff records, reporting lines and giving staff a login.", section: "People", app: "/employees" },

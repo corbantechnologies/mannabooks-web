@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Logo, LogoMark } from "./logo";
+import { MessageBell } from "./message-bell";
 import { UserMenu } from "./user-menu";
 
 export function TopBar({ children }: { children?: React.ReactNode }) {
@@ -21,6 +22,7 @@ export function TopBar({ children }: { children?: React.ReactNode }) {
         <Link href={workspace ? `/w/${workspace}/guide` : "/guide"} className="rounded-md px-2.5 py-1.5 text-sm text-stone-600 hover:bg-stone-100 max-md:hidden">
           Guides
         </Link>
+        {workspace && <MessageBell slug={workspace} />}
         <UserMenu />
       </div>
     </header>

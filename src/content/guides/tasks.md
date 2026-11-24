@@ -107,3 +107,20 @@ Search by title, people, department, project or customer, and filter by **who**,
 ## Who can change a task
 
 Only whoever gave a task can change it, check it or cancel it. A tasks manager can too, except on a task given to them or to their own department. Nobody changes a deadline they were given or checks their own work. Tasks waiting for your check also show at the top of **Approvals**, with a count on the menu.
+
+## Several tasks at once (a chain)
+
+**Several tasks** gives a whole list in one go, such as onboarding, a job's stages or month-end. For each task you can set:
+
+- **Opens on**: locked until that date. People see it, but can't start it.
+- **Waits until the one above is done**: locked until the task above it is done, and checked where it needs checking.
+
+Everyone chosen gets their own copy of the list. When a task opens, the person is told. A single task can also have an **Opens on** date.
+
+## People without a login yet
+
+A new hire you've added as an employee, but not yet invited, shows under **No login yet** when you give tasks. The tasks wait for them, marked *no login yet*, and become theirs the moment they accept their invitation.
+
+## Messages
+
+Everything MannaBooks emails you about the business (a task given, a report due, an approval waiting) also lands under the **bell** at the top, with the unread count, and on **Work > Messages**.

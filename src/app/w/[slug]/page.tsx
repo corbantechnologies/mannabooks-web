@@ -19,7 +19,7 @@ import { useWorkspace } from "@/lib/workspace";
 
 /** Who can use each card: a card someone can't use is left out of their Overview and their choices. */
 const CARD_PERM: Record<string, string | null> = {
-  coming_up: null, period: "reports.view", accounts: "banking.view", money: "banking.view", tasks: null, inbox: "inbox.view", role: null,
+  coming_up: null, period: "reports.view", accounts: "banking.view", money: "banking.view", tasks: null, department_tasks: null, inbox: "inbox.view", role: null,
 };
 
 export default function OverviewPage() {
@@ -86,6 +86,8 @@ function OverviewCard({ card }: { card: string }) {
       return <MoneyCard />;
     case "tasks":
       return <TaskInsights compact />;
+    case "department_tasks":
+      return <DepartmentTasksCard />;
     case "inbox":
       return <InboxCard />;
     case "role":
@@ -166,6 +168,42 @@ function MoneyCard() {
           ))}
         </div>
       )}
+    </Card>
+  );
+}
+
+/** Each department's open tasks: how many nobody has taken, how many are high priority or overdue. */
+function DepartmentTasksCard() {
+  const { slug } = useWorkspace();
+  const q = useQuery({
+    queryKey: ["department-tasks", slug],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/dashboard/department-tasks/", { params: { path: { workspace: slug } } })),
+  });
+  const rows = q.data ?? [];
+  if (q.isLoading) return <Card className="p-5"><Spinner /></Card>;
+  if (!rows.length) return null;
+  return (
+    <Card>
+      <div className="flex items-center justify-between border-b border-stone-200 px-4 py-2.5">
+        <h2 className="text-sm font-semibold text-stone-900">Tasks by department</h2>
+        <Link href={`/w/${slug}/tasks`} className="text-xs text-brand-700 hover:underline">Open tasks &rarr;</Link>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="text-xs uppercase tracking-wide text-stone-500"><tr><th className="px-4 py-2 text-left font-medium">Department</th><th className="px-3 py-2 text-right font-medium">Open</th><th className="px-3 py-2 text-right font-medium">Not taken</th><th className="px-3 py-2 text-right font-medium">High priority</th><th className="px-3 py-2 text-right font-medium">Overdue</th></tr></thead>
+          <tbody className="divide-y divide-stone-100">
+            {rows.map((r) => (
+              <tr key={r.department_id}>
+                <td className="px-4 py-2"><Link href={`/w/${slug}/departments/${r.department_id}`} className="hover:underline">{r.name}</Link></td>
+                <td className="px-3 py-2 text-right font-mono">{r.open}</td>
+                <td className={`px-3 py-2 text-right font-mono ${r.untaken ? "font-semibold text-amber-700" : "text-stone-400"}`}>{r.untaken}</td>
+                <td className={`px-3 py-2 text-right font-mono ${r.high ? "text-red-700" : "text-stone-400"}`}>{r.high}</td>
+                <td className={`px-3 py-2 text-right font-mono ${r.overdue ? "font-semibold text-red-700" : "text-stone-400"}`}>{r.overdue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Card>
   );
 }
