@@ -4,7 +4,7 @@
  * src/content/use-cases.ts; guide slugs to src/content/guides.
  */
 import {
-  Briefcase, Factory, GraduationCap, HardHat, HeartHandshake, HeartPulse, type LucideIcon, Network, Scissors, Sprout, Store, Truck,
+  BedDouble, Briefcase, Factory, GraduationCap, HardHat, HeartHandshake, HeartPulse, type LucideIcon, Network, Scissors, Sprout, Store, Truck,
   UtensilsCrossed, Warehouse,
 } from "lucide-react";
 
@@ -226,6 +226,50 @@ export const INDUSTRIES: Industry[] = [
     faqs: [
       { q: "Can I bill a client in stages?", a: "Yes. Raise an invoice for each stage against the same project; the project report adds them up." },
       { q: "Can tenants pay by M-Pesa?", a: "Yes. They pay your paybill with the invoice number as the account number, and the payment matches itself to the invoice." },
+    ],
+  },
+  {
+    slug: "rentals-short-stays", icon: BedDouble, name: "Rentals and short stays",
+    tagline: "Profit per unit, rent that bills itself, and Airbnb payouts that match the bank.",
+    headline: "Accounting for Airbnb hosts, serviced apartments and landlords",
+    intro: "Keep bookings on Airbnb or Booking.com and run the money in MannaBooks. Each unit gets its own income, costs and profit. Long-term tenants get their rent invoice every month without retyping, and pay by M-Pesa.",
+    who: ["Airbnb and Booking.com hosts", "Serviced apartments", "Holiday homes and cottages", "Landlords with long-term tenants", "Sub-letting and rent-to-rent operators", "Small guest houses"],
+    uses: ["A project per unit, with its income, costs and profit", "Platform payouts recorded with the platform's fee as a cost", "Recurring rent invoices for long-term tenants", "Tenant statements and M-Pesa payments by private link", "Payment links for deposits on direct bookings", "Bank reconciliation to check every payout arrived", "Tasks with checklists for cleaning between guests", "Payroll for caretakers and cleaners"],
+    problems: [
+      { title: "Not knowing which unit makes money", text: "Make each unit a project. Payouts, cleaning, utilities, repairs and service charge are tagged to it, and the project report shows each unit's profit for any period." },
+      { title: "Payouts that never get checked", text: "Record each payout with the platform's fee, then match it to the bank statement. A booking that was never paid out stands out." },
+      { title: "Chasing rent every month", text: "A recurring invoice raises each tenant's rent on the same day every month. Tenants see their statement on a private link and pay by M-Pesa, and reminders go to anyone behind." },
+    ],
+    day: [
+      { title: "A guest checks out", text: "A cleaning task goes to the cleaner with the turnover checklist, and the manager checks it when it's done." },
+      { title: "The payout lands", text: "Record it as a sale against the unit, with the platform's fee as an expense, then match it in the bank." },
+      { title: "Pay the costs", text: "Electricity tokens, water, Wi-Fi, laundry and repairs are entered against the unit they belong to." },
+      { title: "Rent day", text: "Long-term tenants' invoices go out on their own; M-Pesa payments match themselves." },
+      { title: "Month end", text: "The project report shows each unit's income, costs and profit, side by side." },
+    ],
+    example: {
+      business: "A two-bedroom Airbnb",
+      intro: "In one month the flat is booked for 18 nights at KES 6,500 a night. The platform keeps a 3% host fee. Each turnover costs KES 1,000 to clean, utilities and Wi-Fi come to KES 9,500, and the host pays KES 45,000 rent for the flat.",
+      steps: [
+        "The flat is set up as a project called \"Westlands 2BR\".",
+        "Each payout is recorded as a sale on the project, and the platform's fee as an expense on it.",
+        "Cleaning, utilities and the flat's rent are entered as expenses on the same project.",
+        "The bank statement is matched, so every payout is confirmed in the account.",
+        "The project report shows what the flat really made this month.",
+      ],
+      figures: [["Bookings (18 nights × 6,500)", "KES 117,000.00"], ["Platform fee (3%)", "KES 3,510.00"], ["Cleaning (18 × 1,000)", "KES 18,000.00"], ["Utilities and Wi-Fi", "KES 9,500.00"], ["Rent for the flat", "KES 45,000.00"], ["Profit for the month", "KES 40,990.00"]],
+      note: "Rental income has its own tax rules in Kenya, and short stays may have others. Ask your accountant which apply to you before you set up your tax accounts.",
+    },
+    plan: "biashara", planNote: "Sales, recurring rent, M-Pesa, banking, projects and payroll are all in Biashara. After setting up, switch on Projects in Settings > Modules so each unit can have one. Choose Kampuni for fixed assets (furniture and fit-out), budgets per unit and approvals.",
+    goal: "Send invoices and get paid",
+    useCases: ["job-costing", "recurring-billing", "collect-payments", "get-paid-by-mpesa", "run-payroll", "vat-and-kra"],
+    guides: ["projects", "cash-sales", "expenses", "recurring-invoices", "customer-portal", "payment-links", "bank-reconciliation", "tasks"],
+    faqs: [
+      { q: "Does MannaBooks take bookings or sync with Airbnb?", a: "No. Keep your bookings and calendar on Airbnb, Booking.com or your channel manager. MannaBooks is for the money: payouts, costs, rent, staff and profit per unit." },
+      { q: "How do I see rent per property for long-term tenants?", a: "Recurring invoices aren't tagged to a project yet. Make a product for each property's rent, such as \"Rent: Block A\", with its own income account, and use it on that property's rent invoices. The income statement then shows rent per property." },
+      { q: "Where do tenants' security deposits go?", a: "Record a deposit against a liability account, such as \"Tenant deposits held\", not as income. It stays there until you refund it or use it for damages, so your income isn't overstated." },
+      { q: "Can guests who book directly pay by M-Pesa?", a: "Yes. Send a payment link for the deposit or the full stay. They pay by M-Pesa and the money goes straight to your own till or paybill." },
+      { q: "I run several units. Do I need a business for each?", a: "No. One business, one project per unit. If each property is its own company, use separate businesses and see them together as a group on Kampuni." },
     ],
   },
   {

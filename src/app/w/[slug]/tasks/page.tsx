@@ -30,7 +30,8 @@ export default function TasksPage() {
   const [open, setOpen] = useState(true);
   const [adding, setAdding] = useState(false);
   const [filters, setFilters] = useState<Filters>(readFilters);
-  const openOnly = open && filters.status !== "done" && filters.status !== "cancelled";  // picking Done shows done ones
+  // picking Done, or grouping by status, brings in the finished ones too
+  const openOnly = open && filters.status !== "done" && filters.status !== "cancelled" && filters.group !== "status";
   const setFilter = (patch: Partial<Filters>) => setFilters((f) => { const next = { ...f, ...patch }; saveFilters(next); return next; });
   const [view, setView] = useState<"list" | "board">(() => {
     try { return localStorage.getItem("mannabooks.tasks-view") === "board" ? "board" : "list"; } catch { return "list"; }
@@ -107,7 +108,7 @@ export default function TasksPage() {
           </Select>
           {view === "list" && (
             <Select aria-label="Group by" className="w-44" value={filters.group} onChange={(e) => setFilter({ group: e.target.value as Filters["group"] })}>
-              <option value="">No grouping</option><option value="priority">Group by priority</option><option value="date">Group by due date</option>
+              <option value="">No grouping</option><option value="status">Group by status</option><option value="priority">Group by priority</option><option value="date">Group by due date</option>
               <option value="week">Group by week</option><option value="department">Group by department</option><option value="person">Group by person</option>
             </Select>
           )}
@@ -139,14 +140,14 @@ export default function TasksPage() {
               <div className="space-y-2">{pool.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
             </section>
           )}
-          {listed.length > 0 && (
+          {(listed.length > 0 || (filters.group === "status" && finished.length > 0)) && (
             <section>
               {pool.length > 0 && <h2 className="mb-2 text-sm font-semibold">Mine</h2>}
-              {filters.group ? <Grouped rows={listed} group={filters.group} box={box} /> : <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>}
+              {filters.group ? <Grouped rows={filters.group === "status" ? [...listed, ...finished] : listed} group={filters.group} box={box} /> : <div className="space-y-2">{listed.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>}
             </section>
           )}
           {!open && !filters.status && active.length === 0 && <p className="text-sm text-stone-500">Nothing open.</p>}
-          {finished.length > 0 && (
+          {finished.length > 0 && filters.group !== "status" && (
             <section>
               <h2 className="mb-2 text-sm font-semibold text-stone-500">Finished</h2>
               <div className="space-y-2 opacity-80">{finished.map((t) => <TaskRow key={t.id} t={t} box={box} />)}</div>
@@ -161,7 +162,7 @@ export default function TasksPage() {
 
 const PRIORITY_RANK: Record<string, number> = { high: 0, normal: 1, low: 2 };
 
-type Filters = { q: string; priority: string; status: "" | "todo" | "in_progress" | "to_check" | "done" | "cancelled"; person: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "priority" | "date" | "week" | "department" | "person" };
+type Filters = { q: string; priority: string; status: "" | "todo" | "in_progress" | "to_check" | "done" | "cancelled"; person: string; due: "" | "overdue" | "today" | "week" | "next" | "none"; group: "" | "status" | "priority" | "date" | "week" | "department" | "person" };
 const NO_FILTERS: Filters = { q: "", priority: "", status: "", person: "", due: "", group: "" };
 const NOBODY = "~nobody";
 const FILTERS_KEY = "mb.tasks.filters";
@@ -215,6 +216,11 @@ function Grouped({ rows, group, box }: { rows: Task[]; group: Exclude<Filters["g
     if (group === "priority") {
       const p = t.priority ?? "normal";
       return [String(PRIORITY_RANK[p]), `${p[0].toUpperCase()}${p.slice(1)} priority`];
+    }
+    if (group === "status") {  // in the order work moves: waiting on you first, finished last
+      const order = ["to_check", "in_progress", "todo", "done", "cancelled"];
+      const i = order.indexOf(t.status);
+      return [String(i < 0 ? 9 : i), TASK_STATUS[t.status]?.label ?? t.status];
     }
     if (group === "department") return [t.department_name ?? "~", t.department_name ?? "No department"];
     if (group === "person") return [t.assigned_to_name ?? "~", t.assigned_to_name ?? "Nobody yet"];

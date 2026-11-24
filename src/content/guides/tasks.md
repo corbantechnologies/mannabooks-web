@@ -62,6 +62,8 @@ In the list, open tasks come first, overdue and soonest due at the top, then hig
 
 To see only one kind, choose it in **Status**: Not started, In progress, Done to check, Done or Cancelled. Choosing **Done** lists every done task, without scrolling past the open ones.
 
+**Group by status** puts the list under headings in the order work moves: Done to check, In progress, To do, Done and Cancelled, finished tasks included. Each heading folds, so you can close the ones you don't need.
+
 ## Insights
 
 The **Insights** tab, and a **Tasks** section on the **Overview**, show the numbers:
