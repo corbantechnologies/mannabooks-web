@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
 import { RelatedDocuments } from "@/components/related-documents";
+import { VoidLinks } from "@/components/void-links";
 import { SendEmailDialog, openPdf } from "@/components/send-email";
 import { SendToInbox } from "@/components/send-to-inbox";
 import { DocumentLines, EtimsMeta, Meta } from "@/components/document-view";
@@ -129,6 +130,7 @@ export default function InvoicePage() {
         }
       />
       <RelatedDocuments kind="invoice" id={id} />
+      <VoidLinks kind="invoice" id={id} voided={inv.status === "void"} />
       {inv.status !== "draft" && <Attachments docType="invoice" id={inv.id} side="sales" canAdd={can("invoices.create")}
         missingEtims={!inv.etims_cu_invoice_number && (context.workspace.vat_registered ?? false)} />}
       <SendEmailDialog docType="invoice" id={inv.id} open={emailing} onClose={() => setEmailing(false)} />

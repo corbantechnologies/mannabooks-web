@@ -88,6 +88,7 @@ import {
   UserCog,
   Users,
   X,
+  Ban,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -130,6 +131,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     section: "Sales",
     items: [
       { href: "/sales/customers", label: "Customers", icon: Store, perm: ["customers.view"] },
+      { href: "/portfolios", label: "Client portfolios", icon: Briefcase, perm: ["portfolios.view", "customers.view"] },
       { href: "/sales/products", label: "Products", icon: Package, perm: ["products.view"] },
       { href: "/sales/quotations", label: "Quotations", icon: ScrollText, perm: ["quotations.view"] },
       { href: "/sales/catalogues", label: "Catalogues", icon: BookImage, perm: ["quotations.view"] },
@@ -198,6 +200,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [
       { href: "/accounting/chart", label: "Chart of accounts", icon: ListTree, perm: ["ledgeraccounts.view"] },
       { href: "/accounting/journals", label: "Journal entries", icon: NotebookPen, perm: ["journals.view"] },
+      { href: "/accounting/voided", label: "Voided documents", icon: Ban, perm: ["invoices.view", "bills.view", "banking.view"] },
       { href: "/accounting/reports", label: "Reports", icon: ChartPie, perm: ["reports.view"] },
       { href: "/accounting/trial-balance", label: "Trial balance", icon: Scale, perm: ["reports.view"] },
       { href: "/accounting/budgets", label: "Budgets", icon: Target, perm: ["budgets.view"] },

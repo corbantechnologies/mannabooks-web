@@ -60,6 +60,8 @@ Choose **List** or **Board** above the tasks. The board shows the same tasks in 
 
 In the list, open tasks come first, overdue and soonest due at the top, then higher priority. Tick **Show done and cancelled** to see finished ones in a **Finished** section underneath, latest first.
 
+To see only one kind, choose it in **Status**: Not started, In progress, Done to check, Done or Cancelled. Choosing **Done** lists every done task, without scrolling past the open ones.
+
 ## Insights
 
 The **Insights** tab, and a **Tasks** section on the **Overview**, show the numbers:
@@ -68,7 +70,12 @@ The **Insights** tab, and a **Tasks** section on the **Overview**, show the numb
 - a bar for each person showing how much they carry, done, in progress and not started, so you can see who is overloaded and who has room;
 - tables by department and by person, with how many are done on time.
 
-Choose whose numbers to see, and the period (last 30 or 90 days, last year, or all time):
+Choose whose numbers to see, and the period:
+
+- **Due this week** (Monday to Sunday), **Due this month** or **Due this year**: the tasks with a deadline in that period, whenever they were given;
+- **Last 30 or 90 days**, **Last year** or **All time**: the tasks given in that time.
+
+Who can see which numbers:
 
 - **Whole company** and **By department**: owners, admins and HR (roles with **Tasks: view**);
 - **My departments**: department heads, for their departments and their people;
@@ -81,7 +88,9 @@ Each task in the list has its status as a small dropdown, so you don't have to o
 
 ## Checking a task
 
-Tasks you gave are under **I gave**. When one is marked done, you get an email. Open it, then **Accept** it, or **Send back** with what is still needed. A sent-back task returns to the person as **In progress**.
+When someone finishes a task you gave and asked to check, you get an email, and the task waits under **Tasks > To check** (the tab shows how many). It also shows at the top of **Approvals**. Open it, then **Accept** it, or **Send back** with what is still needed. A sent-back task returns to the person as **In progress**.
+
+A task you didn't ask to check is simply done. It stays under **I gave** for a week after it is finished, so the "Done" email always has a task to open. After that, choose **Status: Done** to find it.
 
 You can also **Change** a task's details or deadline while it is open, **Cancel** it, or **Reopen** a done or cancelled one.
 

@@ -71,6 +71,12 @@ export default function MonthPage() {
         <Stat label="Money out" value={fmt(m.money_out)} />
         <Stat label="Entries" value={String(m.entries)} />
       </div>
+      {m.voided > 0 && (
+        <p className="-mt-3 mb-6 text-sm text-stone-600">
+          {m.voided} {m.voided === 1 ? "document" : "documents"} dated in this month {m.voided === 1 ? "was" : "were"} voided.{" "}
+          <Link className="text-brand-700 hover:underline" href={`/w/${slug}/accounting/voided?from=${m.start_date}&to=${m.end_date}`}>See which</Link>
+        </p>
+      )}
 
       <h2 className="mb-2 text-sm font-semibold">Before closing</h2>
       <Card className="mb-6 divide-y divide-stone-100">

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 import { SupplierAdvances } from "@/components/supplier-advance";
 import { RelatedDocuments } from "@/components/related-documents";
+import { VoidLinks } from "@/components/void-links";
 import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { PurchaseDocForm } from "@/components/purchase-doc-form";
@@ -60,6 +61,7 @@ export default function BillPage() {
           </div>
         } />
       <RelatedDocuments kind="bill" id={id} />
+      <VoidLinks kind="bill" id={id} voided={b.status === "void"} />
       <Attachments docType="bill" id={id} side="purchase" canAdd={can("bills.create")} missingEtims={b.status !== "draft" && !b.supplier_etims_number} />
       {open && <SupplierAdvances billId={b.id} supplierId={b.supplier_id ?? ""} balance={b.balance_due ?? "0"} />}
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-5">

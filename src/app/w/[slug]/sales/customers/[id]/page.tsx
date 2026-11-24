@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -30,6 +30,15 @@ export default function CustomerPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/loyalty/members/", { params: { path: { workspace: slug }, query: { customer: id } } })),
   });
   const member = loyalty.data?.results[0];
+  const router = useRouter();
+  const portfolio = useQuery({
+    queryKey: ["portfolio-of", slug, id], retry: false, enabled: can("portfolios.view") || can("customers.view"),
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/portfolios/for-customer/{customer_id}/", { params: { path: { workspace: slug, customer_id: id } } })),
+  });
+  const startPortfolio = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/", { params: { path: { workspace: slug } }, body: { customer_id: id } as never })),
+    onSuccess: (p) => router.push(`/w/${slug}/portfolios/${p.id}`), onError: (e) => toast.error(e.message),
+  });
   const statement = useQuery({
     queryKey: ["customer-statement", slug, id, from],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/customers/{id}/statement/", { params: { path: { workspace: slug, id }, query: { from: from || undefined } } })),
@@ -51,6 +60,8 @@ export default function CustomerPage() {
             <ActionMenu actions={[
               { label: "Edit", onClick: () => setEditing(true), hidden: !can("customers.manage") },
               { label: "Share statement", onClick: () => setSharing(true), hidden: !can("customers.manage") },
+              { label: "Client portfolio", href: portfolio.data ? `/w/${slug}/portfolios/${portfolio.data.id}` : undefined, hidden: !portfolio.data },
+              { label: "Start a client portfolio", onClick: () => startPortfolio.mutate(), hidden: !!portfolio.data || portfolio.isLoading || !can("portfolios.manage") },
             ]} />
             <ActionMenu label="New" primary actions={[
               { label: "Invoice", href: `/w/${slug}/sales/invoices/new?customer=${c.id}`, hidden: !can("invoices.create") },

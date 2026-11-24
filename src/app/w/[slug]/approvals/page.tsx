@@ -82,10 +82,10 @@ export default function ApprovalsPage() {
 function TasksToCheck() {
   const { slug } = useWorkspace();
   const q = useQuery({
-    queryKey: ["tasks", slug, "given", "to-check"],
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box: "given", open: true, page_size: 200 } as never } })),
+    queryKey: ["tasks", slug, "to_check", true],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box: "to_check", open: true, page_size: 200 } as never } })),
   });
-  const rows = (q.data?.results ?? []).filter((t) => t.status === "to_check");
+  const rows = q.data?.results ?? [];
   if (!rows.length) return null;
   return (
     <section className="mb-5">
