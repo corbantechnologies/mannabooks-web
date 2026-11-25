@@ -1455,6 +1455,217 @@ export interface paths {
         patch: operations["w_attachments_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/clock/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Clock in, clock out, or start and end a break, now. The time is the server's, on the business's clock. */
+        post: operations["w_attendance_clock_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/corrections/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own corrections (box=mine), the ones waiting for you to decide (to_decide), or all you may see. */
+        get: operations["w_attendance_corrections_list"];
+        put?: never;
+        /** @description Ask for a fix to one of your days. Your supervisor or department head decides. */
+        post: operations["w_attendance_corrections_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/corrections/{id}/decide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        post: operations["w_attendance_corrections_decide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/me/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your attendance today: whether you are in, your times and minutes, and where you are now. */
+        get: operations["w_attendance_me_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/offices/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_offices_list"];
+        put?: never;
+        /** @description Add an office network. Leave the address blank to add the one you are on now (do it from the office Wi-Fi). */
+        post: operations["w_attendance_offices_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/offices/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_offices_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/overrides/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_overrides_list"];
+        /** @description A department's or a person's own hours, grace or break (blank fields follow the level above). */
+        put: operations["w_attendance_overrides_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/overrides/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_overrides_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/people/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Who's in now (today), or the register for a day: everyone you may see (your team, the departments you head,
+         *     or everyone with Attendance: view), with their status, times and whether they are active in MannaBooks now.
+         */
+        get: operations["w_attendance_people_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/people/{employee_id}/days/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One person's days between two dates (yours, or someone you may see). */
+        get: operations["w_attendance_people_days_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/register/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description The supervisor's day register: Present, Half day or Absent for people who don't clock in themselves. */
+        post: operations["w_attendance_register_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/settings/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_settings_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description HR's rules for the business. Every change goes in the audit log. */
+        patch: operations["w_attendance_settings_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/audit-logs/": {
         parameters: {
             query?: never;
@@ -9725,6 +9936,274 @@ export interface components {
             for_customer: boolean;
         };
         /**
+         * @description * `in` - in
+         *     * `out` - out
+         *     * `break_start` - break_start
+         *     * `break_end` - break_end
+         * @enum {string}
+         */
+        AttendanceClockActionEnum: "in" | "out" | "break_start" | "break_end";
+        AttendanceClockRequest: {
+            action: components["schemas"]["AttendanceClockActionEnum"];
+            note?: string;
+        };
+        AttendanceCorrection: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly employee: string;
+            readonly employee_name: string;
+            /** Format: date */
+            day: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            readonly kind_label: string;
+            /** Format: time */
+            time: string;
+            reason: string;
+            readonly status: components["schemas"]["AttendanceCorrectionStatusEnum"];
+            readonly status_label: string;
+            readonly decided_by_name: string;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            readonly decline_reason: string;
+            readonly can_decide: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        AttendanceCorrectionRequest: {
+            /** Format: date */
+            day: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            /** Format: time */
+            time: string;
+            reason: string;
+        };
+        /**
+         * @description * `pending` - Waiting
+         *     * `approved` - Approved
+         *     * `declined` - Declined
+         * @enum {string}
+         */
+        AttendanceCorrectionStatusEnum: "pending" | "approved" | "declined";
+        AttendanceDay: {
+            /** Format: date */
+            day: string;
+            /** @description in, on_break, gone_home, no_clock_out, not_in_yet, expected, absent, on_leave, off, present, half_day */
+            status: string;
+            state: string;
+            /** Format: date-time */
+            first_in: string | null;
+            /** Format: date-time */
+            last_out: string | null;
+            minutes: number;
+            break_minutes: number;
+            late_minutes: number;
+            elsewhere: boolean;
+            auto_closed: boolean;
+            events: components["schemas"]["AttendanceEvent"][];
+        };
+        /**
+         * @description * `approve` - approve
+         *     * `decline` - decline
+         * @enum {string}
+         */
+        AttendanceDecideDecisionEnum: "approve" | "decline";
+        AttendanceDecideRequest: {
+            decision: components["schemas"]["AttendanceDecideDecisionEnum"];
+            reason?: string;
+        };
+        AttendanceEvent: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            kind_label: string;
+            /** Format: date-time */
+            at: string;
+            method: string;
+            method_label: string;
+            at_office: boolean | null;
+            note: string;
+        };
+        AttendanceMe: {
+            enabled: boolean;
+            tracked: boolean;
+            /** Format: uuid */
+            employee_id: string | null;
+            pattern: string;
+            /** Format: time */
+            start_time: string | null;
+            /** Format: time */
+            end_time: string | null;
+            /** Format: decimal */
+            weekly_hours: string;
+            break_buttons: boolean;
+            /** @description Where you are now: null when no office networks are set */
+            at_office: boolean | null;
+            today: components["schemas"]["AttendanceDay"] | null;
+            week_minutes: number;
+            /** @description Has a team (or Attendance: manage): shows Who's in now and the register */
+            can_approve: boolean;
+        };
+        AttendanceOfficeNetwork: {
+            /** Format: uuid */
+            readonly id: string;
+            label?: string;
+            /** @description Blank: the network you are on now */
+            address?: string;
+            /** Format: uuid */
+            branch?: string | null;
+            readonly branch_name: string;
+        };
+        AttendanceOfficeNetworkRequest: {
+            label?: string;
+            /** @description Blank: the network you are on now */
+            address?: string;
+            /** Format: uuid */
+            branch?: string | null;
+        };
+        AttendanceOverride: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            readonly department_name: string;
+            /** Format: uuid */
+            employee_id?: string | null;
+            readonly employee_name: string;
+            pattern?: components["schemas"]["PatternEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            tracked?: boolean | null;
+        };
+        AttendanceOverrideRequest: {
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: uuid */
+            employee_id?: string | null;
+            pattern?: components["schemas"]["PatternEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            tracked?: boolean | null;
+        };
+        AttendancePersonDay: {
+            /** Format: date */
+            day: string;
+            /** @description in, on_break, gone_home, no_clock_out, not_in_yet, expected, absent, on_leave, off, present, half_day */
+            status: string;
+            state: string;
+            /** Format: date-time */
+            first_in: string | null;
+            /** Format: date-time */
+            last_out: string | null;
+            minutes: number;
+            break_minutes: number;
+            late_minutes: number;
+            elsewhere: boolean;
+            auto_closed: boolean;
+            events: components["schemas"]["AttendanceEvent"][];
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            job_title: string;
+            employment_type: string;
+            has_login: boolean;
+            active_now: boolean;
+            /** Format: date-time */
+            last_active_at: string | null;
+            register_mark: string | null;
+            can_approve: boolean;
+        };
+        AttendanceRegisterRequest: {
+            /** Format: date */
+            day: string;
+            rows: components["schemas"]["AttendanceRegisterRowRequest"][];
+        };
+        AttendanceRegisterRowRequest: {
+            /** Format: uuid */
+            employee_id: string;
+            mark: components["schemas"]["MarkEnum"] | components["schemas"]["BlankEnum"];
+            note?: string;
+        };
+        AttendanceSettings: {
+            /** @description Attendance is switched on (part of the People add-on) */
+            enabled?: boolean;
+            /**
+             * Format: date
+             * @description The first day tracked: days before it never count as absent
+             */
+            started_on?: string | null;
+            pattern?: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string;
+            /** Format: time */
+            end_time?: string;
+            /**
+             * Format: decimal
+             * @description Flexible hours: hours expected a week
+             */
+            weekly_hours?: string;
+            /**
+             * Format: time
+             * @description Flexible hours: everyone in from (optional)
+             */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            /**
+             * Format: decimal
+             * @description Flexible hours: a minimum a day (optional)
+             */
+            daily_min_hours?: string | null;
+            /** @description Clocking in this long after the start time isn't late */
+            grace_minutes?: number;
+            /** @description The fixed unpaid break taken off each day */
+            break_minutes?: number;
+            /** @description Show Start break and End break; a day with them uses the real break */
+            break_buttons?: boolean;
+            /**
+             * @description Clocking in away from the office networks
+             *
+             *     * `flag` - Allow it, marked Elsewhere
+             *     * `refuse` - Refuse it
+             */
+            elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description A forgotten clock-out closes this long after the end time */
+            auto_close_hours?: number;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a full day
+             */
+            full_day_hours?: string;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a half day
+             */
+            half_day_hours?: string;
+            /** @description Employment types whose time is tracked */
+            tracked_types?: unknown;
+        };
+        /**
          * @description * `team` - Everyone who reports to me
          *     * `department` - A department
          *     * `people` - People I choose
@@ -10657,13 +11136,14 @@ export interface components {
          *     * `period` - period
          *     * `accounts` - accounts
          *     * `money` - money
+         *     * `goals` - goals
          *     * `tasks` - tasks
          *     * `department_tasks` - department_tasks
          *     * `inbox` - inbox
          *     * `role` - role
          * @enum {string}
          */
-        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "department_tasks" | "inbox" | "role";
+        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "goals" | "tasks" | "department_tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -11859,6 +12339,12 @@ export interface components {
             subject: string;
             message: string;
         };
+        /**
+         * @description * `flag` - Allow it, marked Elsewhere
+         *     * `refuse` - Refuse it
+         * @enum {string}
+         */
+        ElsewhereEnum: "flag" | "refuse";
         EmailChangeConfirmRequest: {
             token: string;
         };
@@ -13535,6 +14021,14 @@ export interface components {
          */
         JournalStatusEnum: "draft" | "posted" | "reversed";
         /**
+         * @description * `in` - Clocked in
+         *     * `out` - Clocked out
+         *     * `break_start` - Break started
+         *     * `break_end` - Break ended
+         * @enum {string}
+         */
+        Kind1ceEnum: "in" | "out" | "break_start" | "break_end";
+        /**
          * @description * `customers` - Customers
          *     * `suppliers` - Suppliers
          *     * `products` - Products and services
@@ -14060,6 +14554,14 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionKindEnum: "earn" | "redeem" | "expire" | "adjust" | "reverse";
+        /**
+         * @description * `present` - Present
+         *     * `half_day` - Half day
+         *     * `absent` - Absent
+         *     * `` - Clear
+         * @enum {string}
+         */
+        MarkEnum: "present" | "half_day" | "absent";
         MarkReadRequest: {
             /** @description Blank: all of mine */
             ids?: string[];
@@ -16404,6 +16906,64 @@ export interface components {
             /** @description Sent with the document when it is emailed to the customer */
             for_customer?: boolean;
         };
+        PatchedAttendanceSettingsRequest: {
+            /** @description Attendance is switched on (part of the People add-on) */
+            enabled?: boolean;
+            /**
+             * Format: date
+             * @description The first day tracked: days before it never count as absent
+             */
+            started_on?: string | null;
+            pattern?: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string;
+            /** Format: time */
+            end_time?: string;
+            /**
+             * Format: decimal
+             * @description Flexible hours: hours expected a week
+             */
+            weekly_hours?: string;
+            /**
+             * Format: time
+             * @description Flexible hours: everyone in from (optional)
+             */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            /**
+             * Format: decimal
+             * @description Flexible hours: a minimum a day (optional)
+             */
+            daily_min_hours?: string | null;
+            /** @description Clocking in this long after the start time isn't late */
+            grace_minutes?: number;
+            /** @description The fixed unpaid break taken off each day */
+            break_minutes?: number;
+            /** @description Show Start break and End break; a day with them uses the real break */
+            break_buttons?: boolean;
+            /**
+             * @description Clocking in away from the office networks
+             *
+             *     * `flag` - Allow it, marked Elsewhere
+             *     * `refuse` - Refuse it
+             */
+            elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description A forgotten clock-out closes this long after the end time */
+            auto_close_hours?: number;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a full day
+             */
+            full_day_hours?: string;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a half day
+             */
+            half_day_hours?: string;
+            /** @description Employment types whose time is tracked */
+            tracked_types?: unknown;
+        };
         PatchedBankAccountRequest: {
             name?: string;
             kind?: components["schemas"]["BankAccountKindEnum"];
@@ -17577,6 +18137,13 @@ export interface components {
             /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
             document_terms?: unknown;
         };
+        /**
+         * @description * `` - As above
+         *     * `fixed` - Fixed hours
+         *     * `flexible` - Flexible hours
+         * @enum {string}
+         */
+        PatternEnum: "fixed" | "flexible";
         PayItem: {
             name: string;
             kind: components["schemas"]["PayItemKindEnum"];
@@ -25228,6 +25795,421 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Attachment"];
+                };
+            };
+        };
+    };
+    w_attendance_clock_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceClockRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceClockRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceClockRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceDay"];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_list: {
+        parameters: {
+            query?: {
+                box?: "all" | "mine" | "to_decide";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"][];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceCorrectionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceCorrectionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceCorrectionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_decide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceDecideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceDecideRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceDecideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"];
+                };
+            };
+        };
+    };
+    w_attendance_me_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceMe"];
+                };
+            };
+        };
+    };
+    w_attendance_offices_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOfficeNetwork"][];
+                };
+            };
+        };
+    };
+    w_attendance_offices_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AttendanceOfficeNetworkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceOfficeNetworkRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceOfficeNetworkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOfficeNetwork"];
+                };
+            };
+        };
+    };
+    w_attendance_offices_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_overrides_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOverride"][];
+                };
+            };
+        };
+    };
+    w_attendance_overrides_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AttendanceOverrideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceOverrideRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceOverrideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOverride"];
+                };
+            };
+        };
+    };
+    w_attendance_overrides_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_people_list: {
+        parameters: {
+            query?: {
+                day?: string;
+                department?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendancePersonDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_people_days_list: {
+        parameters: {
+            query?: {
+                from?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                employee_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_register_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceRegisterRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceRegisterRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceRegisterRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendancePersonDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_settings_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSettings"];
+                };
+            };
+        };
+    };
+    w_attendance_settings_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAttendanceSettingsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendanceSettingsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAttendanceSettingsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSettings"];
                 };
             };
         };

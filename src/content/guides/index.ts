@@ -30,6 +30,7 @@ export const GUIDES: Guide[] = [
   { slug: "leave", title: "Leave", summary: "Asking for, approving and tracking leave.", section: "People", app: "/leave" },
   { slug: "salary-advances", title: "Salary advances", summary: "Pay staff have earned, paid early and taken back on their next payslips.", section: "People", app: "/advances" },
   { slug: "tasks", title: "Tasks", summary: "Give tasks to yourself, your team or any colleague, due by a date and time, and check them when done.", section: "People", app: "/tasks" },
+  { slug: "attendance", title: "Attendance", summary: "Clock in and out from your phone, see who's in now, keep the day register, and set your own rules.", section: "People", app: "/attendance" },
   { slug: "goals", title: "Goals", summary: "Company, department and personal goals for a month, quarter or year, measured from the books or by milestones.", section: "People", app: "/goals" },
   { slug: "expense-claims", title: "Expense claims", summary: "Claim back what you spent on the business, with a receipt on each line; finance approves and pays back.", section: "People", app: "/expense-claims" },
   { slug: "calendar", title: "Calendar", summary: "One timeline: events, deadlines, leave, paydays, tax dates and holidays.", section: "People", app: "/calendar" },
