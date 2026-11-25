@@ -1648,6 +1648,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/rota/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Who is on which shift, day by day (two weeks from Monday by default), for the people you may see. */
+        get: operations["w_attendance_rota_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/attendance/settings/": {
         parameters: {
             query?: never;
@@ -1664,6 +1681,77 @@ export interface paths {
         head?: never;
         /** @description HR's rules for the business. Every change goes in the audit log. */
         patch: operations["w_attendance_settings_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/shift-assignments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Put people on a shift from one date to another. Someone already on a shift in those dates is refused, by name. */
+        post: operations["w_attendance_shift_assignments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/shift-assignments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_shift_assignments_destroy"];
+        options?: never;
+        head?: never;
+        /** @description End someone's time on a shift early (or extend it). */
+        patch: operations["w_attendance_shift_assignments_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/shifts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_shifts_list"];
+        put?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        post: operations["w_attendance_shifts_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/shifts/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_shifts_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        patch: operations["w_attendance_shifts_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/attendance/timesheets/": {
@@ -9993,6 +10081,32 @@ export interface components {
              */
             for_customer: boolean;
         };
+        AttendanceAssignRequest: {
+            /** Format: uuid */
+            shift_id: string;
+            employee_ids: string[];
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            note?: string;
+        };
+        AttendanceAssignment: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            shift_id: string;
+            shift_name: string;
+            /** Format: uuid */
+            employee_id: string;
+            employee_name: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            note: string;
+            can_manage: boolean;
+        };
         /**
          * @description * `in` - in
          *     * `out` - out
@@ -10058,6 +10172,8 @@ export interface components {
             late_minutes: number;
             elsewhere: boolean;
             auto_closed: boolean;
+            /** @description The shift they were on that day, if any */
+            shift_name: string;
             events: components["schemas"]["AttendanceEvent"][];
         };
         /**
@@ -10178,6 +10294,8 @@ export interface components {
             late_minutes: number;
             elsewhere: boolean;
             auto_closed: boolean;
+            /** @description The shift they were on that day, if any */
+            shift_name: string;
             events: components["schemas"]["AttendanceEvent"][];
             /** Format: uuid */
             employee_id: string;
@@ -10202,6 +10320,30 @@ export interface components {
             employee_id: string;
             mark: components["schemas"]["MarkEnum"] | components["schemas"]["BlankEnum"];
             note?: string;
+        };
+        AttendanceRota: {
+            days: string[];
+            rows: components["schemas"]["AttendanceRotaRow"][];
+            assignments: components["schemas"]["AttendanceAssignment"][];
+        };
+        AttendanceRotaCell: {
+            /** Format: date */
+            day: string;
+            /** Format: uuid */
+            shift_id: string | null;
+            shift_name: string;
+            /** Format: uuid */
+            assignment_id: string | null;
+            /** @description On the shift, but not one of its days */
+            off: boolean;
+        };
+        AttendanceRotaRow: {
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            can_manage: boolean;
+            cells: components["schemas"]["AttendanceRotaCell"][];
         };
         AttendanceSettings: {
             /** @description Attendance is switched on (part of the People add-on) */
@@ -10279,6 +10421,58 @@ export interface components {
             extra_needs_approval?: boolean;
             /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
             alerts?: unknown;
+        };
+        AttendanceShift: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            readonly department_name: string;
+            /** @default fixed */
+            pattern: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            days?: number[] | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            /** @default true */
+            is_active: boolean;
+            /** @description Ends the next morning */
+            readonly overnight: boolean;
+            /** @description On it today */
+            readonly people_now: number;
+            readonly can_manage: boolean;
+        };
+        AttendanceShiftRequest: {
+            name: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** @default fixed */
+            pattern: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            days?: number[] | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            /** @default true */
+            is_active: boolean;
         };
         AttendanceTimesheet: {
             /** Format: uuid */
@@ -17025,6 +17219,10 @@ export interface components {
             /** @description Sent with the document when it is emailed to the customer */
             for_customer?: boolean;
         };
+        PatchedAttendanceAssignmentPatchRequest: {
+            /** Format: date */
+            end_date?: string;
+        };
         PatchedAttendanceSettingsRequest: {
             /** @description Attendance is switched on (part of the People add-on) */
             enabled?: boolean;
@@ -17101,6 +17299,28 @@ export interface components {
             extra_needs_approval?: boolean;
             /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
             alerts?: unknown;
+        };
+        PatchedAttendanceShiftRequest: {
+            name?: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** @default fixed */
+            pattern: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            days?: number[] | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            /** @default true */
+            is_active: boolean;
         };
         PatchedBankAccountRequest: {
             name?: string;
@@ -26304,6 +26524,31 @@ export interface operations {
             };
         };
     };
+    w_attendance_rota_retrieve: {
+        parameters: {
+            query?: {
+                days?: number;
+                department?: string;
+                from?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceRota"];
+                };
+            };
+        };
+    };
     w_attendance_settings_retrieve: {
         parameters: {
             query?: never;
@@ -26348,6 +26593,189 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AttendanceSettings"];
+                };
+            };
+        };
+    };
+    w_attendance_shift_assignments_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceAssignRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceAssignRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceAssignRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceAssignment"][];
+                };
+            };
+        };
+    };
+    w_attendance_shift_assignments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_shift_assignments_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAttendanceAssignmentPatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendanceAssignmentPatchRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAttendanceAssignmentPatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceAssignment"];
+                };
+            };
+        };
+    };
+    w_attendance_shifts_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceShift"][];
+                };
+            };
+        };
+    };
+    w_attendance_shifts_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceShiftRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceShiftRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceShiftRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceShift"];
+                };
+            };
+        };
+    };
+    w_attendance_shifts_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_shifts_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAttendanceShiftRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendanceShiftRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAttendanceShiftRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceShift"];
                 };
             };
         };

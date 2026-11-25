@@ -34,7 +34,7 @@ export function ClockCard({ showLink = false }: { showLink?: boolean }) {
     <Card className="p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-stone-500">Today{me.pattern === "fixed" && me.start_time ? `, ${me.start_time.slice(0, 5)} to ${me.end_time?.slice(0, 5)}` : `, flexible: ${Number(me.weekly_hours)} h a week`}</p>
+          <p className="text-sm text-stone-500">{day?.shift_name ? `${day.shift_name} shift` : "Today"}{me.pattern === "fixed" && me.start_time ? `, ${me.start_time.slice(0, 5)} to ${me.end_time?.slice(0, 5)}` : `, flexible: ${Number(me.weekly_hours)} h a week`}</p>
           <p className="mt-1 text-xl font-semibold">
             {st === "out" ? "Not clocked in" : st === "done" ? "Clocked out" : st === "on_break" ? "On a break" : "Clocked in"}
             {status && st !== "out" && <span className="ml-2 align-middle"><Badge tone={status[1]}>{status[0]}</Badge></span>}

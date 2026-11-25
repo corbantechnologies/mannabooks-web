@@ -9,7 +9,7 @@ MannaBooks has a free plan and three paid plans. Every new business starts with 
 | **Duka** | Shops, restaurants, stores | Adds the till, stock, buying, recipes and the online shop; 5 team members |
 | **Kampuni** | Growing and multi-branch firms | Everything, including budgets, approvals, fixed assets and company groups; 15 team members |
 
-See today's prices on **Organisation > Plan and billing** or the public pricing page. Payroll is an add-on charged per employee on the payroll. **Accountants and self-service staff never use up a seat.**
+See today's prices on **Organisation > Plan and billing** or the public pricing page. Payroll is an add-on charged per employee on the payroll. **Attendance and shifts** come free with every paid plan until the end of 2026; from 2027 they become the paid People add-on. **Accountants and self-service staff never use up a seat.**
 
 ## Paying
 

@@ -19,3 +19,10 @@ New employee and Change employee follow this (`employees/new`, `employees/[id]/e
 Phone widths: every page must work at 375px with no sideways scrolling of the page itself. Wide tables scroll inside their
 card; header buttons wrap (`flex flex-wrap`); money cards are two across until `xl` (`sm:grid-cols-2 xl:grid-cols-4`) and
 big figures use `break-words text-xl tabular-nums sm:text-2xl`.
+
+# Full width
+
+Workspace pages fill the content area: the page wrapper is `w-full`, never `mx-auto max-w-*` or `w-full max-w-*`. Use more
+grid columns on wide screens (`lg:grid-cols-2`, `2xl:grid-cols-4`) instead of a narrow column with empty space beside it.
+Only these keep a width: print and PDF views laid out for A4, the payslip and other document-style views, guide articles (reading
+width), modals, and single inputs such as a search box (`max-w-sm`).

@@ -29,6 +29,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Cash sales", text: "A receipt for money taken on the spot, by cash, M-Pesa, card or bank.", guide: "cash-sales" },
       { name: "Discounts", text: "A percentage or an amount off a line, or off the whole document. The discount is shared over the lines, so KRA sees it on each one.", guide: "invoices", isNew: true },
       { name: "Price lists", text: "Wholesale, contract or member prices that fill in by themselves for the right customers.", guide: "price-lists" },
+      { name: "Client portfolios", text: "Each client's services and projects, your price and cost, the margin, renewals and contracts, and the month's invoice.", guide: "client-portfolios", isNew: true },
       { name: "Recurring invoices", text: "Rent, fees, retainers and service charges invoiced every month without lifting a finger.", guide: "recurring-invoices" },
       { name: "Statements and reminders", text: "Customer statements and polite payment reminders before and after the due date.", guide: "reminders" },
       { name: "Credit notes and delivery notes", text: "Returns and corrections done properly, and delivery notes customers sign.", guide: "credit-notes" },
@@ -82,7 +83,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
   },
   {
     id: "people", icon: Wallet, title: "Payroll and people", module: "people",
-    summary: "Kenyan payroll that is right every month, for permanent staff and casual workers alike.",
+    summary: "Kenyan payroll that is right every month, attendance and shifts, and goals for everyone, for permanent staff and casual workers alike.",
     items: [
       { name: "PAYE, SHIF, NSSF and Housing Levy", text: "Worked out for you, with the remittance schedules and payslips staff open on their phones.", guide: "payroll" },
       { name: "Casual and waged workers", text: "Pay by the month, the day or the hour, in casual pay runs whenever you need one. Monthly casuals too.", guide: "payroll", isNew: true },
@@ -92,6 +93,12 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Staff self-service", text: "Staff update their own contact details; changes to bank or M-Pesa details wait for HR to approve.", guide: "self-service", isNew: true },
       { name: "Tasks", text: "Give a task to yourself, your team or any colleague, due by a date and time, with a priority, in progress, done and your check. Overdue tasks are flagged within the hour.", guide: "tasks", isNew: true },
       { name: "Work reports", text: "Ask for weekly or monthly reports, and set repeating tasks, with reminders, review and an overdue list. Admins can set them up for someone else.", guide: "work-reports" },
+      { name: "Attendance", text: "Staff clock in and out from their own phone, with breaks and an office-network check. See who's in now, keep the day register, and approve corrections. Grace, alerts and extra hours are your own rules. Free on every paid plan until the end of 2026.", guide: "attendance", isNew: true },
+      { name: "Shifts and rotas", text: "Day, night or flexible shifts, with people put on them from one date to another. Night shifts run past midnight, and a two-week rota shows who works when.", guide: "attendance", isNew: true },
+      { name: "Attendance into payroll", text: "Months closed and approved by HR give the days and hours worked to casual pay and salary advances, with extra hours at your own rates.", guide: "payroll", isNew: true },
+      { name: "Goals", text: "Company, department and personal goals for a month, quarter or year, measured straight from the books or by milestones and check-ins.", guide: "goals", isNew: true },
+      { name: "Expense claims", text: "Staff claim back what they spent, with a receipt on each line. Finance approves and pays it back.", guide: "expense-claims" },
+      { name: "Company calendar", text: "Events, deadlines, leave, paydays, tax dates, client renewals and public holidays on one timeline.", guide: "calendar" },
     ],
   },
   {

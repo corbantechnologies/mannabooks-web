@@ -1,6 +1,6 @@
 # Attendance
 
-Attendance records when people start and finish work, from their own phone or computer, and works out each day against their hours. Open it from **People > Attendance**. Attendance is part of the People add-on.
+Attendance records when people start and finish work, from their own phone or computer, and works out each day against their hours. Open it from **People > Attendance**. Attendance comes with every paid plan that has payroll, at no extra cost until the end of 2026. From 2027 it becomes part of the paid People add-on, and you'll be told the price well before then.
 
 ## Clocking in and out
 
@@ -28,6 +28,16 @@ For people who don't clock in themselves, such as casuals without a phone, super
 ## Corrections to decide
 
 **Corrections** lists the fixes your team has asked for. **Approve** adds the corrected time; **Decline** asks for a reason, which the person sees. You get a message in the bell when one arrives.
+
+## Shifts
+
+**Shifts** (on Attendance, for HR, department heads and supervisors) shows the **rota**: who is on which shift, day by day, two weeks at a time.
+
+- **New shift:** a name, and either **fixed times** or **flexible hours a week**. A shift that ends before it starts, such as *Night, 22:00 to 06:00*, runs into the next morning and counts as the day it started. Tick the days it covers (none ticked: each person's usual working days), and give it its own grace or break if it needs one. A shift can be for the whole business or one department.
+- **Put people on a shift** for a date range, such as the night rota for two weeks or a special project for a month. While someone is on a shift, its hours, days, grace and break replace their usual ones: lateness, absences, alerts, Who's in now, Months and pay all follow it. Afterwards they go back to their usual hours by themselves.
+- A person is on one shift at a time. Someone already on a shift in the chosen dates is named, so you can end that one first (**End today**) or choose other dates.
+- **Who sets shifts:** HR (*Attendance: manage*) for anyone. A department head for their own department, and puts their own people on its shifts.
+- A shift people have been on is kept for the record. Untick **In use** to switch it off.
 
 ## Months and pay
 
