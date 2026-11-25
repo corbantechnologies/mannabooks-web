@@ -32,7 +32,7 @@ export default function CreditNotesPage() {
         guide="credit-notes"
         actions={can("creditnotes.create") && <Link href={`/w/${slug}/sales/credit-notes/new`}><Button><Plus className="h-4 w-4" /> New credit note</Button></Link>}
       />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["issued", "Issued"], ["void", "Void"]]} />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/credit-notes/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["issued", "Issued"], ["void", "Void"]]} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No credit notes found" />

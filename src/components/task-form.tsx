@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import { ChecklistEditor } from "@/components/checklist-editor";
 import { Button, Field, FormError, Input, Modal, Select, Textarea } from "@/components/ui";
+import { DAY_STATUS } from "@/lib/attendance";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { useWorkspace, wsPath } from "@/lib/workspace";
@@ -42,7 +43,10 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/projects/", { params: { path: { workspace: slug }, query: { page_size: 200 } as never } })) });
   const customers = useQuery({ queryKey: ["customers", slug, "pick"], retry: false,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/customers/", { params: { path: { workspace: slug }, query: { page_size: 300 } as never } })) });
-  const list = people.data?.people ?? [];
+  // people who are in today come first, the lightest load at the top (attendance, when it is on)
+  const IN = ["in", "on_break", "present", "half_day", "expected"];
+  const list = [...(people.data?.people ?? [])].sort((a, b) => Number(b.is_me) - Number(a.is_me)
+    || Number(IN.includes(b.today ?? "") ) - Number(IN.includes(a.today ?? "")) || a.open_tasks - b.open_tasks);
   const deps = people.data?.departments ?? [];
   const me = list.find((p) => p.is_me);
   const [chosen, setChosen] = useState<string[]>([]);
@@ -122,6 +126,11 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
                     return e.target.checked ? [...base, p.id] : base.filter((x) => x !== p.id);
                   })} />
                   {p.is_me ? `Me (${p.full_name})` : p.full_name}{p.job_title && <span className="text-xs text-stone-500">{p.job_title}</span>}
+                  <span className="ml-auto flex shrink-0 items-center gap-2 text-xs text-stone-500">
+                    {p.today && DAY_STATUS[p.today] && <span className={p.today === "in" || p.today === "on_break" || p.today === "present" ? "text-emerald-700" : p.today === "absent" || p.today === "on_leave" || p.today === "not_in_yet" ? "text-amber-700" : ""}>{DAY_STATUS[p.today][0]}</span>}
+                    {p.active_now && <span className="h-2 w-2 rounded-full bg-emerald-500" title="Active now" />}
+                    <span title="Open tasks">{p.open_tasks} open</span>
+                  </span>
                 </label>
               ))}
               {waiting.length > 0 && <p className="px-2 pt-2 text-xs font-semibold uppercase text-stone-500">No login yet: the task waits until they join</p>}

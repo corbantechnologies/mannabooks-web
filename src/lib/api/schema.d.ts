@@ -1455,6 +1455,271 @@ export interface paths {
         patch: operations["w_attachments_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/clock/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Clock in, clock out, or start and end a break, now. The time is the server's, on the business's clock. */
+        post: operations["w_attendance_clock_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/corrections/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own corrections (box=mine), the ones waiting for you to decide (to_decide), or all you may see. */
+        get: operations["w_attendance_corrections_list"];
+        put?: never;
+        /** @description Ask for a fix to one of your days. Your supervisor or department head decides. */
+        post: operations["w_attendance_corrections_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/corrections/{id}/decide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        post: operations["w_attendance_corrections_decide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/me/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your attendance today: whether you are in, your times and minutes, and where you are now. */
+        get: operations["w_attendance_me_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/offices/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_offices_list"];
+        put?: never;
+        /** @description Add an office network. Leave the address blank to add the one you are on now (do it from the office Wi-Fi). */
+        post: operations["w_attendance_offices_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/offices/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_offices_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/overrides/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_overrides_list"];
+        /** @description A department's or a person's own hours, grace or break (blank fields follow the level above). */
+        put: operations["w_attendance_overrides_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/overrides/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        delete: operations["w_attendance_overrides_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/people/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Who's in now (today), or the register for a day: everyone you may see (your team, the departments you head,
+         *     or everyone with Attendance: view), with their status, times and whether they are active in MannaBooks now.
+         */
+        get: operations["w_attendance_people_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/people/{employee_id}/days/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One person's days between two dates (yours, or someone you may see). */
+        get: operations["w_attendance_people_days_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/register/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description The supervisor's day register: Present, Half day or Absent for people who don't clock in themselves. */
+        post: operations["w_attendance_register_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/settings/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone uses their own attendance; seeing and approving others follows the reporting line, or Attendance: view/manage. */
+        get: operations["w_attendance_settings_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description HR's rules for the business. Every change goes in the audit log. */
+        patch: operations["w_attendance_settings_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/timesheets/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The month for everyone you may see (and yourself): days, lateness, hours and extra hours, open or approved. */
+        get: operations["w_attendance_timesheets_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/timesheets/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Approve a person's month (the supervisor or department head). Extra hours can be adjusted as approved. The month is
+         *     then locked and payroll uses it.
+         */
+        post: operations["w_attendance_timesheets_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/timesheets/reopen/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description HR opens an approved month again (before its payroll is approved). */
+        post: operations["w_attendance_timesheets_reopen_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/audit-logs/": {
         parameters: {
             query?: never;
@@ -3618,6 +3883,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/fiscal-years/coverage/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Documents dated outside every financial year: they show only under All years and in no year's reports. */
+        get: operations["w_fiscal_years_coverage_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/fixed-assets/": {
         parameters: {
             query?: never;
@@ -3824,6 +4106,129 @@ export interface paths {
         };
         /** @description What is left on a voucher, for the till or a payment. Anyone who can take money can check one. */
         get: operations["w_gift_vouchers_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_list"];
+        put?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        post: operations["w_goals_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        delete: operations["w_goals_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        patch: operations["w_goals_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/check-ins/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A progress note. For a number you update, its value becomes the goal's figure. The goal's people can check in. */
+        post: operations["w_goals_check_ins_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/close/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Drop a goal that no longer matters (with a reason), or open it again. Achieved or missed is worked out at the end. */
+        post: operations["w_goals_close_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/milestones/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        post: operations["w_goals_milestones_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/milestones/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        delete: operations["w_goals_milestones_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Tick or untick (the goal's owner can too), or change the words and date (whoever looks after the goal). */
+        patch: operations["w_goals_milestones_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_summary_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5904,6 +6309,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/portfolios/{id}/projects/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_projects_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/portfolios/{id}/services/": {
         parameters: {
             query?: never;
@@ -6047,6 +6474,29 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/projects/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Its services stay, on their own. */
+        delete: operations["w_portfolios_projects_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_projects_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/portfolios/resources/{id}/": {
@@ -9491,6 +9941,10 @@ export interface components {
             readonly is_me: boolean;
             /** @description The departments whose tasks they can take (their own, and any they head) */
             readonly department_ids: string[];
+            /** @description Attendance today (in, on_break, not_in_yet, absent, on_leave, off...); null when not tracked */
+            readonly today: string | null;
+            readonly active_now: boolean;
+            readonly open_tasks: number;
         };
         AssignableDepartment: {
             /** Format: uuid */
@@ -9538,6 +9992,335 @@ export interface components {
              * @default false
              */
             for_customer: boolean;
+        };
+        /**
+         * @description * `in` - in
+         *     * `out` - out
+         *     * `break_start` - break_start
+         *     * `break_end` - break_end
+         * @enum {string}
+         */
+        AttendanceClockActionEnum: "in" | "out" | "break_start" | "break_end";
+        AttendanceClockRequest: {
+            action: components["schemas"]["AttendanceClockActionEnum"];
+            note?: string;
+        };
+        AttendanceCorrection: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly employee: string;
+            readonly employee_name: string;
+            /** Format: date */
+            day: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            readonly kind_label: string;
+            /** Format: time */
+            time: string;
+            reason: string;
+            readonly status: components["schemas"]["AttendanceCorrectionStatusEnum"];
+            readonly status_label: string;
+            readonly decided_by_name: string;
+            /** Format: date-time */
+            readonly decided_at: string | null;
+            readonly decline_reason: string;
+            readonly can_decide: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        AttendanceCorrectionRequest: {
+            /** Format: date */
+            day: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            /** Format: time */
+            time: string;
+            reason: string;
+        };
+        /**
+         * @description * `pending` - Waiting
+         *     * `approved` - Approved
+         *     * `declined` - Declined
+         * @enum {string}
+         */
+        AttendanceCorrectionStatusEnum: "pending" | "approved" | "declined";
+        AttendanceDay: {
+            /** Format: date */
+            day: string;
+            /** @description in, on_break, gone_home, no_clock_out, not_in_yet, expected, absent, on_leave, off, present, half_day */
+            status: string;
+            state: string;
+            /** Format: date-time */
+            first_in: string | null;
+            /** Format: date-time */
+            last_out: string | null;
+            minutes: number;
+            break_minutes: number;
+            late_minutes: number;
+            elsewhere: boolean;
+            auto_closed: boolean;
+            events: components["schemas"]["AttendanceEvent"][];
+        };
+        /**
+         * @description * `approve` - approve
+         *     * `decline` - decline
+         * @enum {string}
+         */
+        AttendanceDecideDecisionEnum: "approve" | "decline";
+        AttendanceDecideRequest: {
+            decision: components["schemas"]["AttendanceDecideDecisionEnum"];
+            reason?: string;
+        };
+        AttendanceEvent: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["Kind1ceEnum"];
+            kind_label: string;
+            /** Format: date-time */
+            at: string;
+            method: string;
+            method_label: string;
+            at_office: boolean | null;
+            note: string;
+        };
+        AttendanceMe: {
+            enabled: boolean;
+            tracked: boolean;
+            /** Format: uuid */
+            employee_id: string | null;
+            pattern: string;
+            /** Format: time */
+            start_time: string | null;
+            /** Format: time */
+            end_time: string | null;
+            /** Format: decimal */
+            weekly_hours: string;
+            break_buttons: boolean;
+            /** @description Where you are now: null when no office networks are set */
+            at_office: boolean | null;
+            today: components["schemas"]["AttendanceDay"] | null;
+            week_minutes: number;
+            /** @description Has a team (or Attendance: manage): shows Who's in now and the register */
+            can_approve: boolean;
+        };
+        AttendanceOfficeNetwork: {
+            /** Format: uuid */
+            readonly id: string;
+            label?: string;
+            /** @description Blank: the network you are on now */
+            address?: string;
+            /** Format: uuid */
+            branch?: string | null;
+            readonly branch_name: string;
+        };
+        AttendanceOfficeNetworkRequest: {
+            label?: string;
+            /** @description Blank: the network you are on now */
+            address?: string;
+            /** Format: uuid */
+            branch?: string | null;
+        };
+        AttendanceOverride: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            readonly department_name: string;
+            /** Format: uuid */
+            employee_id?: string | null;
+            readonly employee_name: string;
+            pattern?: components["schemas"]["PatternEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            tracked?: boolean | null;
+        };
+        AttendanceOverrideRequest: {
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: uuid */
+            employee_id?: string | null;
+            pattern?: components["schemas"]["PatternEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: time */
+            start_time?: string | null;
+            /** Format: time */
+            end_time?: string | null;
+            /** Format: decimal */
+            weekly_hours?: string | null;
+            /** Format: time */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            grace_minutes?: number | null;
+            break_minutes?: number | null;
+            tracked?: boolean | null;
+        };
+        AttendancePersonDay: {
+            /** Format: date */
+            day: string;
+            /** @description in, on_break, gone_home, no_clock_out, not_in_yet, expected, absent, on_leave, off, present, half_day */
+            status: string;
+            state: string;
+            /** Format: date-time */
+            first_in: string | null;
+            /** Format: date-time */
+            last_out: string | null;
+            minutes: number;
+            break_minutes: number;
+            late_minutes: number;
+            elsewhere: boolean;
+            auto_closed: boolean;
+            events: components["schemas"]["AttendanceEvent"][];
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            job_title: string;
+            employment_type: string;
+            has_login: boolean;
+            active_now: boolean;
+            /** Format: date-time */
+            last_active_at: string | null;
+            register_mark: string | null;
+            can_approve: boolean;
+        };
+        AttendanceRegisterRequest: {
+            /** Format: date */
+            day: string;
+            rows: components["schemas"]["AttendanceRegisterRowRequest"][];
+        };
+        AttendanceRegisterRowRequest: {
+            /** Format: uuid */
+            employee_id: string;
+            mark: components["schemas"]["MarkEnum"] | components["schemas"]["BlankEnum"];
+            note?: string;
+        };
+        AttendanceSettings: {
+            /** @description Attendance is switched on (part of the People add-on) */
+            enabled?: boolean;
+            /**
+             * Format: date
+             * @description The first day tracked: days before it never count as absent
+             */
+            started_on?: string | null;
+            pattern?: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string;
+            /** Format: time */
+            end_time?: string;
+            /**
+             * Format: decimal
+             * @description Flexible hours: hours expected a week
+             */
+            weekly_hours?: string;
+            /**
+             * Format: time
+             * @description Flexible hours: everyone in from (optional)
+             */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            /**
+             * Format: decimal
+             * @description Flexible hours: a minimum a day (optional)
+             */
+            daily_min_hours?: string | null;
+            /** @description Clocking in this long after the start time isn't late */
+            grace_minutes?: number;
+            /** @description The fixed unpaid break taken off each day */
+            break_minutes?: number;
+            /** @description Show Start break and End break; a day with them uses the real break */
+            break_buttons?: boolean;
+            /**
+             * @description Clocking in away from the office networks
+             *
+             *     * `flag` - Allow it, marked Elsewhere
+             *     * `refuse` - Refuse it
+             */
+            elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description A forgotten clock-out closes this long after the end time */
+            auto_close_hours?: number;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a full day
+             */
+            full_day_hours?: string;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a half day
+             */
+            half_day_hours?: string;
+            /** @description Employment types whose time is tracked */
+            tracked_types?: unknown;
+            /**
+             * Format: decimal
+             * @description Extra hours start beyond this many hours worked in a week
+             */
+            extra_after_hours?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, normal days
+             */
+            extra_rate?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, rest days and public holidays
+             */
+            rest_rate?: string;
+            /** @description Extra hours count only once approved with the month */
+            extra_needs_approval?: boolean;
+            /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
+            alerts?: unknown;
+        };
+        AttendanceTimesheet: {
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            pay_type: string;
+            /** Format: date */
+            month: string;
+            status: string;
+            days_worked: number;
+            half_days: number;
+            absent: number;
+            on_leave: number;
+            late_days: number;
+            late_minutes: number;
+            no_clock_out: number;
+            minutes: number;
+            /**
+             * Format: decimal
+             * @description Days or hours a waged payslip pays
+             */
+            units: string | null;
+            /** @description Worked out, or approved once the month is */
+            extra_normal_minutes: number;
+            extra_rest_minutes: number;
+            approved_by_name: string | null;
+            /** Format: date-time */
+            approved_at: string | null;
+            note: string;
+            can_approve: boolean;
+            month_ended: boolean;
+        };
+        AttendanceTimesheetActionRequest: {
+            /** Format: uuid */
+            employee_id: string;
+            /** Format: date */
+            month: string;
+            /** @description Approve: extra minutes on normal days (blank: as worked out) */
+            extra_normal_minutes?: number;
+            extra_rest_minutes?: number;
+            note?: string;
         };
         /**
          * @description * `team` - Everyone who reports to me
@@ -10289,10 +11072,11 @@ export interface components {
          *     * `report` - report
          *     * `leave` - leave
          *     * `money` - money
+         *     * `portfolio` - portfolio
          *     * `holiday` - holiday
          * @enum {string}
          */
-        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "holiday";
+        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "portfolio" | "holiday";
         Candidate: {
             /** Format: uuid */
             journal_line_id: string;
@@ -10471,13 +11255,14 @@ export interface components {
          *     * `period` - period
          *     * `accounts` - accounts
          *     * `money` - money
+         *     * `goals` - goals
          *     * `tasks` - tasks
          *     * `department_tasks` - department_tasks
          *     * `inbox` - inbox
          *     * `role` - role
          * @enum {string}
          */
-        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "tasks" | "department_tasks" | "inbox" | "role";
+        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "goals" | "tasks" | "department_tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -10697,6 +11482,24 @@ export interface components {
             current_password?: string;
             new_password: string;
         };
+        CheckInOut: {
+            /** Format: uuid */
+            id: string;
+            /** Format: decimal */
+            value: string | null;
+            note: string;
+            by_name: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        CheckInRequest: {
+            /**
+             * Format: decimal
+             * @description The new figure, for a number you update
+             */
+            value?: string | null;
+            note?: string;
+        };
         ClaimLine: {
             /** Format: uuid */
             readonly id: string;
@@ -10773,7 +11576,7 @@ export interface components {
              *     * `out` - out
              *     * `in` - in
              */
-            direction: components["schemas"]["DirectionEnum"];
+            direction: components["schemas"]["ComingUpItemDirectionEnum"];
             title: string;
             party: string;
             /** Format: date */
@@ -10785,6 +11588,12 @@ export interface components {
             overdue: boolean;
             note: string;
         };
+        /**
+         * @description * `out` - out
+         *     * `in` - in
+         * @enum {string}
+         */
+        ComingUpItemDirectionEnum: "out" | "in";
         /**
          * @description * `bill` - bill
          *     * `voucher` - voucher
@@ -11056,6 +11865,22 @@ export interface components {
             valid_until?: string | null;
             max_redemptions?: number | null;
             is_active?: boolean;
+        };
+        Coverage: {
+            /** @description Documents dated outside every financial year (void ones left out) */
+            outside: number;
+            /** @description Of those, dated before the first year */
+            before_first: number;
+            /** Format: date */
+            earliest: string | null;
+            kinds: components["schemas"]["CoverageKind"][];
+            /** @description The year to add before the first one, when documents are dated before it */
+            previous_year_name: string | null;
+        };
+        CoverageKind: {
+            kind: string;
+            label: string;
+            count: number;
         };
         CreditNote: {
             /** Format: uuid */
@@ -11594,12 +12419,6 @@ export interface components {
             entries: number;
             assets: number;
         };
-        /**
-         * @description * `out` - out
-         *     * `in` - in
-         * @enum {string}
-         */
-        DirectionEnum: "out" | "in";
         DocumentEmail: {
             /** Format: uuid */
             readonly id: string;
@@ -11639,6 +12458,12 @@ export interface components {
             subject: string;
             message: string;
         };
+        /**
+         * @description * `flag` - Allow it, marked Elsewhere
+         *     * `refuse` - Refuse it
+         * @enum {string}
+         */
+        ElsewhereEnum: "flag" | "refuse";
         EmailChangeConfirmRequest: {
             token: string;
         };
@@ -12551,6 +13376,157 @@ export interface components {
             collected: string | null;
             previous_label: string;
         };
+        GoalCloseRequest: {
+            outcome: components["schemas"]["OutcomeEnum"] | components["schemas"]["BlankEnum"];
+            reason?: string;
+        };
+        GoalDetail: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            level: string;
+            level_label: string;
+            /** Format: uuid */
+            department_id: string | null;
+            department_name: string;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            /** Format: uuid */
+            parent_id: string | null;
+            parent_title: string;
+            period: string;
+            period_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            measure: string;
+            measure_label: string;
+            direction: string;
+            unit: string;
+            /** @description Measured in money from the books; figures are hidden from people without reports access */
+            money: boolean;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            /** Format: decimal */
+            target: string | null;
+            /** Format: decimal */
+            value: string | null;
+            /** Format: decimal */
+            percent: string;
+            /** Format: decimal */
+            time_percent: string;
+            status: string;
+            status_label: string;
+            outcome: string;
+            outcome_reason: string;
+            can_manage: boolean;
+            children: number;
+            /** Format: decimal */
+            manual_value: string | null;
+            milestones: components["schemas"]["Milestone"][];
+            check_ins: components["schemas"]["CheckInOut"][];
+            child_goals: components["schemas"]["GoalRow"][];
+        };
+        /**
+         * @description * `at_least` - At least
+         *     * `at_most` - At most
+         * @enum {string}
+         */
+        GoalInDirectionEnum: "at_least" | "at_most";
+        GoalInRequest: {
+            title?: string;
+            description?: string;
+            level?: components["schemas"]["LevelEnum"];
+            /** Format: uuid */
+            department_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A membership: whose goal it is
+             */
+            owner_id?: string | null;
+            /** Format: uuid */
+            parent_id?: string | null;
+            period?: components["schemas"]["PeriodEnum"];
+            /**
+             * Format: date
+             * @description Any day in the month, quarter or year the goal is for
+             */
+            anchor?: string;
+            measure?: components["schemas"]["MeasureEnum"];
+            direction?: components["schemas"]["GoalInDirectionEnum"];
+            /** Format: decimal */
+            target?: string;
+            unit?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            /** @description New goal: its checklist, one per line */
+            milestones?: string[];
+        };
+        GoalRow: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            level: string;
+            level_label: string;
+            /** Format: uuid */
+            department_id: string | null;
+            department_name: string;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            /** Format: uuid */
+            parent_id: string | null;
+            parent_title: string;
+            period: string;
+            period_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            measure: string;
+            measure_label: string;
+            direction: string;
+            unit: string;
+            /** @description Measured in money from the books; figures are hidden from people without reports access */
+            money: boolean;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            /** Format: decimal */
+            target: string | null;
+            /** Format: decimal */
+            value: string | null;
+            /** Format: decimal */
+            percent: string;
+            /** Format: decimal */
+            time_percent: string;
+            status: string;
+            status_label: string;
+            outcome: string;
+            outcome_reason: string;
+            can_manage: boolean;
+            children: number;
+        };
+        GoalSummary: {
+            total: number;
+            on_track: number;
+            at_risk: number;
+            behind: number;
+            goals: components["schemas"]["GoalRow"][];
+        };
         GoodsReceipt: {
             /** Format: uuid */
             readonly id: string;
@@ -12784,6 +13760,11 @@ export interface components {
             /** Format: uuid */
             document_id: string;
             message?: string;
+            /**
+             * Format: uuid
+             * @description When their KRA PIN matches more than one business: which one (remembered for next time)
+             */
+            to_workspace_id?: string | null;
         };
         /**
          * @description * `new` - New
@@ -13159,6 +14140,14 @@ export interface components {
          */
         JournalStatusEnum: "draft" | "posted" | "reversed";
         /**
+         * @description * `in` - Clocked in
+         *     * `out` - Clocked out
+         *     * `break_start` - Break started
+         *     * `break_end` - Break ended
+         * @enum {string}
+         */
+        Kind1ceEnum: "in" | "out" | "break_start" | "break_end";
+        /**
          * @description * `customers` - Customers
          *     * `suppliers` - Suppliers
          *     * `products` - Products and services
@@ -13435,6 +14424,13 @@ export interface components {
             /** Format: decimal */
             balance: string;
         };
+        /**
+         * @description * `company` - Company
+         *     * `department` - Department
+         *     * `person` - Person
+         * @enum {string}
+         */
+        LevelEnum: "company" | "department" | "person";
         Limit: {
             /** Format: uuid */
             id: string;
@@ -13677,10 +14673,32 @@ export interface components {
          * @enum {string}
          */
         LoyaltyTransactionKindEnum: "earn" | "redeem" | "expire" | "adjust" | "reverse";
+        /**
+         * @description * `present` - Present
+         *     * `half_day` - Half day
+         *     * `absent` - Absent
+         *     * `` - Clear
+         * @enum {string}
+         */
+        MarkEnum: "present" | "half_day" | "absent";
         MarkReadRequest: {
             /** @description Blank: all of mine */
             ids?: string[];
         };
+        /**
+         * @description * `revenue` - Revenue (sales before VAT)
+         *     * `costs` - Costs (cost of sales and expenses)
+         *     * `profit` - Net profit
+         *     * `cash_collected` - Cash collected from customers
+         *     * `new_customers` - New customers
+         *     * `deals_won` - Deals won
+         *     * `invoices_issued` - Invoices issued
+         *     * `tasks_on_time` - Tasks done on time (%)
+         *     * `milestones` - Milestones (a checklist)
+         *     * `manual` - A number you update
+         * @enum {string}
+         */
+        MeasureEnum: "revenue" | "costs" | "profit" | "cash_collected" | "new_customers" | "deals_won" | "invoices_issued" | "tasks_on_time" | "milestones" | "manual";
         Member: {
             /** Format: uuid */
             user_id: string;
@@ -13745,6 +14763,23 @@ export interface components {
          * @enum {string}
          */
         Method126Enum: "cash" | "mpesa" | "bank" | "card";
+        Milestone: {
+            /** Format: uuid */
+            id: string;
+            text: string;
+            /** Format: date */
+            due_date: string | null;
+            done: boolean;
+            /** Format: date-time */
+            done_at: string | null;
+            done_by_name: string;
+        };
+        MilestoneInRequest: {
+            text?: string;
+            /** Format: date */
+            due_date?: string | null;
+            done?: boolean;
+        };
         MonthDocument: {
             /** Format: uuid */
             entry_id: string;
@@ -14293,6 +15328,12 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
         };
+        /**
+         * @description * `dropped` - Dropped
+         *     * `` - Open again
+         * @enum {string}
+         */
+        OutcomeEnum: "dropped";
         Owner: {
             /** Format: uuid */
             readonly id: string;
@@ -15984,6 +17025,83 @@ export interface components {
             /** @description Sent with the document when it is emailed to the customer */
             for_customer?: boolean;
         };
+        PatchedAttendanceSettingsRequest: {
+            /** @description Attendance is switched on (part of the People add-on) */
+            enabled?: boolean;
+            /**
+             * Format: date
+             * @description The first day tracked: days before it never count as absent
+             */
+            started_on?: string | null;
+            pattern?: components["schemas"]["PatternEnum"];
+            /** Format: time */
+            start_time?: string;
+            /** Format: time */
+            end_time?: string;
+            /**
+             * Format: decimal
+             * @description Flexible hours: hours expected a week
+             */
+            weekly_hours?: string;
+            /**
+             * Format: time
+             * @description Flexible hours: everyone in from (optional)
+             */
+            core_start?: string | null;
+            /** Format: time */
+            core_end?: string | null;
+            /**
+             * Format: decimal
+             * @description Flexible hours: a minimum a day (optional)
+             */
+            daily_min_hours?: string | null;
+            /** @description Clocking in this long after the start time isn't late */
+            grace_minutes?: number;
+            /** @description The fixed unpaid break taken off each day */
+            break_minutes?: number;
+            /** @description Show Start break and End break; a day with them uses the real break */
+            break_buttons?: boolean;
+            /**
+             * @description Clocking in away from the office networks
+             *
+             *     * `flag` - Allow it, marked Elsewhere
+             *     * `refuse` - Refuse it
+             */
+            elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description A forgotten clock-out closes this long after the end time */
+            auto_close_hours?: number;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a full day
+             */
+            full_day_hours?: string;
+            /**
+             * Format: decimal
+             * @description Daily-waged: at least this is a half day
+             */
+            half_day_hours?: string;
+            /** @description Employment types whose time is tracked */
+            tracked_types?: unknown;
+            /**
+             * Format: decimal
+             * @description Extra hours start beyond this many hours worked in a week
+             */
+            extra_after_hours?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, normal days
+             */
+            extra_rate?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, rest days and public holidays
+             */
+            rest_rate?: string;
+            /** @description Extra hours count only once approved with the month */
+            extra_needs_approval?: boolean;
+            /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
+            alerts?: unknown;
+        };
         PatchedBankAccountRequest: {
             name?: string;
             kind?: components["schemas"]["BankAccountKindEnum"];
@@ -16372,6 +17490,37 @@ export interface components {
             depreciated_to?: string | null;
             notes?: string;
         };
+        PatchedGoalInRequest: {
+            title?: string;
+            description?: string;
+            level?: components["schemas"]["LevelEnum"];
+            /** Format: uuid */
+            department_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A membership: whose goal it is
+             */
+            owner_id?: string | null;
+            /** Format: uuid */
+            parent_id?: string | null;
+            period?: components["schemas"]["PeriodEnum"];
+            /**
+             * Format: date
+             * @description Any day in the month, quarter or year the goal is for
+             */
+            anchor?: string;
+            measure?: components["schemas"]["MeasureEnum"];
+            direction?: components["schemas"]["GoalInDirectionEnum"];
+            /** Format: decimal */
+            target?: string;
+            unit?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            /** @description New goal: its checklist, one per line */
+            milestones?: string[];
+        };
         /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedInvoiceRequest: {
             /** Format: uuid */
@@ -16479,6 +17628,12 @@ export interface components {
              * @description Sees only this department's documents and reports. Null: the whole business.
              */
             limited_department_id?: string | null;
+        };
+        PatchedMilestoneInRequest: {
+            text?: string;
+            /** Format: date */
+            due_date?: string | null;
+            done?: boolean;
         };
         /** @description What an employee may change on their own record. Contact details apply at once; the rest waits for HR. */
         PatchedMyDetailsRequest: {
@@ -16643,6 +17798,15 @@ export interface components {
             target_margin?: string;
             notes?: string;
         };
+        PatchedPortfolioProjectInRequest: {
+            name?: string;
+            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
+            /** Format: date */
+            start_date?: string | null;
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+        };
         PatchedPortfolioResourceInRequest: {
             kind?: components["schemas"]["PortfolioResourceInKindEnum"];
             label?: string;
@@ -16687,6 +17851,11 @@ export interface components {
             supplier_renewal_date?: string | null;
             remind_days?: number;
             notes?: string;
+            /**
+             * Format: uuid
+             * @description The project it is part of; null for none
+             */
+            project_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -16885,6 +18054,10 @@ export interface components {
             reference?: string;
             notes?: string;
             lines?: components["schemas"]["RecurringLineRequest"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
         };
         PatchedReminderRuleRequest: {
             name?: string;
@@ -17102,6 +18275,13 @@ export interface components {
             /** @description Standard terms by document: {"invoice": "...", "quotation": "...", ...} */
             document_terms?: unknown;
         };
+        /**
+         * @description * `` - As above
+         *     * `fixed` - Fixed hours
+         *     * `flexible` - Flexible hours
+         * @enum {string}
+         */
+        PatternEnum: "fixed" | "flexible";
         PayItem: {
             name: string;
             kind: components["schemas"]["PayItemKindEnum"];
@@ -17609,6 +18789,13 @@ export interface components {
             /** @description Bank account or M-Pesa number */
             readonly pay_to: string;
         };
+        /**
+         * @description * `month` - Month
+         *     * `quarter` - Quarter
+         *     * `year` - Year
+         * @enum {string}
+         */
+        PeriodEnum: "month" | "quarter" | "year";
         PeriodMonth: {
             /** Format: date */
             month: string;
@@ -18109,6 +19296,7 @@ export interface components {
             /** Format: date */
             today: string;
             can_manage: boolean;
+            projects: components["schemas"]["PortfolioProjectOut"][];
             dates: components["schemas"]["PortfolioDateItem"][];
             documents: components["schemas"]["PortfolioDocumentOut"][];
             history: components["schemas"]["PortfolioHistory"][];
@@ -18213,6 +19401,44 @@ export interface components {
             unit_price: string;
             /** Format: decimal */
             amount: string;
+        };
+        PortfolioProjectInRequest: {
+            name?: string;
+            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
+            /** Format: date */
+            start_date?: string | null;
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+        };
+        /**
+         * @description * `active` - Active
+         *     * `on_hold` - On hold
+         *     * `done` - Done
+         * @enum {string}
+         */
+        PortfolioProjectInStatusEnum: "active" | "on_hold" | "done";
+        PortfolioProjectOut: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            status: string;
+            status_label: string;
+            /** Format: date */
+            start_date: string | null;
+            /** Format: date */
+            end_date: string | null;
+            notes: string;
+            services: number;
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            loses_money: boolean;
         };
         /**
          * @description * `vcpu` - vCPU
@@ -18335,6 +19561,11 @@ export interface components {
             supplier_renewal_date?: string | null;
             remind_days?: number;
             notes?: string;
+            /**
+             * Format: uuid
+             * @description The project it is part of; null for none
+             */
+            project_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -18342,6 +19573,9 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
             kind: string;
             kind_label: string;
             status: string;
@@ -18498,6 +19732,13 @@ export interface components {
             /** @description The customer or supplier's business is on MannaBooks */
             available: boolean;
             recipient_name: string;
+            /**
+             * Format: uuid
+             * @description Where it goes; null while a choice is needed
+             */
+            recipient_id: string | null;
+            /** @description Set when their KRA PIN matches more than one business: pick one */
+            choices: components["schemas"]["RecipientChoice"][];
             kra_pin: string;
             last_status: string | null;
             /** Format: date-time */
@@ -19448,6 +20689,11 @@ export interface components {
         ReceiptVoidRequest: {
             reason: string;
         };
+        RecipientChoice: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
         Reconciliation: {
             /** Format: uuid */
             readonly id: string;
@@ -19541,6 +20787,11 @@ export interface components {
             readonly last_invoice_number: string;
             readonly last_error: string;
             lines?: components["schemas"]["RecurringLine"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            readonly project_name: string;
+            /** Format: uuid */
+            cost_center_id?: string | null;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -19570,6 +20821,10 @@ export interface components {
             reference?: string;
             notes?: string;
             lines?: components["schemas"]["RecurringLineRequest"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
         };
         RecurringLine: {
             /** Format: uuid */
@@ -20147,6 +21402,8 @@ export interface components {
         SendManyRequest: {
             invoice_ids: string[];
             message?: string;
+            /** Format: uuid */
+            to_workspace_id?: string | null;
         };
         SendManyResult: {
             sent: string[];
@@ -20171,6 +21428,9 @@ export interface components {
             /** @description The customer's business is on MannaBooks */
             available: boolean;
             recipient_name: string;
+            /** Format: uuid */
+            recipient_id: string | null;
+            choices: components["schemas"]["RecipientChoice"][];
             invoices: components["schemas"]["SendableInvoice"][];
         };
         SendableInvoice: {
@@ -24677,6 +25937,503 @@ export interface operations {
             };
         };
     };
+    w_attendance_clock_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceClockRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceClockRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceClockRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceDay"];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_list: {
+        parameters: {
+            query?: {
+                box?: "all" | "mine" | "to_decide";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"][];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceCorrectionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceCorrectionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceCorrectionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"];
+                };
+            };
+        };
+    };
+    w_attendance_corrections_decide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceDecideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceDecideRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceDecideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceCorrection"];
+                };
+            };
+        };
+    };
+    w_attendance_me_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceMe"];
+                };
+            };
+        };
+    };
+    w_attendance_offices_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOfficeNetwork"][];
+                };
+            };
+        };
+    };
+    w_attendance_offices_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AttendanceOfficeNetworkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceOfficeNetworkRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceOfficeNetworkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOfficeNetwork"];
+                };
+            };
+        };
+    };
+    w_attendance_offices_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_overrides_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOverride"][];
+                };
+            };
+        };
+    };
+    w_attendance_overrides_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AttendanceOverrideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceOverrideRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceOverrideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceOverride"];
+                };
+            };
+        };
+    };
+    w_attendance_overrides_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_attendance_people_list: {
+        parameters: {
+            query?: {
+                day?: string;
+                department?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendancePersonDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_people_days_list: {
+        parameters: {
+            query?: {
+                from?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                employee_id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_register_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceRegisterRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceRegisterRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceRegisterRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendancePersonDay"][];
+                };
+            };
+        };
+    };
+    w_attendance_settings_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSettings"];
+                };
+            };
+        };
+    };
+    w_attendance_settings_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAttendanceSettingsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAttendanceSettingsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAttendanceSettingsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSettings"];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_list: {
+        parameters: {
+            query?: {
+                /** @description Any day in the month (default: last month) */
+                month?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"][];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceTimesheetActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_reopen_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceTimesheetActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"];
+                };
+            };
+        };
+    };
     w_audit_logs_list: {
         parameters: {
             query?: {
@@ -28821,6 +30578,27 @@ export interface operations {
             };
         };
     };
+    w_fiscal_years_coverage_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Coverage"];
+                };
+            };
+        };
+    };
     w_fixed_assets_list: {
         parameters: {
             query?: {
@@ -29205,6 +30983,290 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GiftVoucherCheck"];
+                };
+            };
+        };
+    };
+    w_goals_list: {
+        parameters: {
+            query?: {
+                level?: "company" | "department" | "person";
+                /** @description Only my own goals */
+                mine?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                /** @description Default now: running or still to start */
+                when?: "all" | "ended" | "now";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalRow"][];
+                };
+            };
+        };
+    };
+    w_goals_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["GoalInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoalInRequest"];
+                "multipart/form-data": components["schemas"]["GoalInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_goals_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGoalInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGoalInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGoalInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_check_ins_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CheckInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CheckInRequest"];
+                "multipart/form-data": components["schemas"]["CheckInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_close_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoalCloseRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoalCloseRequest"];
+                "multipart/form-data": components["schemas"]["GoalCloseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["MilestoneInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MilestoneInRequest"];
+                "multipart/form-data": components["schemas"]["MilestoneInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMilestoneInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMilestoneInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMilestoneInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalSummary"];
                 };
             };
         };
@@ -33304,6 +35366,34 @@ export interface operations {
             };
         };
     };
+    w_portfolios_projects_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioProjectInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioProjectInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioProjectInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
     w_portfolios_services_create: {
         parameters: {
             query?: never;
@@ -33522,6 +35612,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortfolioId"];
+                };
+            };
+        };
+    };
+    w_portfolios_projects_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_projects_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioProjectInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioProjectInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioProjectInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
                 };
             };
         };

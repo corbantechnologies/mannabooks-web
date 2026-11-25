@@ -33,7 +33,7 @@ export default function PaymentsPage() {
         guide="payments"
         actions={can("payments.create") && <Link href={`/w/${slug}/sales/payments/new`}><Button><Plus className="h-4 w-4" /> Record payment</Button></Link>}
       />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["posted", "Posted"], ["void", "Void"]]} placeholder="Search number, M-Pesa code or customer" />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/payments/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["posted", "Posted"], ["void", "Void"]]} placeholder="Search number, M-Pesa code or customer" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No payments found" />

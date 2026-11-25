@@ -29,7 +29,7 @@ export default function SupplierPaymentsPage() {
   return (
     <div className="w-full">
       <PageHeader title="Supplier payments" description="Money paid to suppliers. Most are made from approved payment vouchers." guide="supplier-payments" actions={can("supplierpayments.create") && <Link href={`/w/${slug}/purchasing/payments/new`}><Button><Plus className="h-4 w-4" /> Record payment</Button></Link>} />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(POSTED_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/supplier-payments/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(POSTED_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="Nothing here yet" />

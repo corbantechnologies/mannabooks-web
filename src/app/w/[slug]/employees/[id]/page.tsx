@@ -4,9 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 
-import { EmployeeEditor } from "@/components/employee-editor";
+import { AttendanceProfile } from "@/components/attendance-profile";
 import { Badge, Button, Card, ErrorState, Spinner, Table, Td } from "@/components/ui";
 import { REPORT_STATUS } from "@/lib/api/assets";
 import { api, unwrap } from "@/lib/api/client";
@@ -18,7 +17,6 @@ import { useWorkspace } from "@/lib/workspace";
 export default function EmployeeProfilePage() {
   const { slug, can } = useWorkspace();
   const { id } = useParams<{ id: string }>();
-  const [editing, setEditing] = useState(false);
   const record = useQuery({  // the full record, for editing
     queryKey: ["employee", slug, id], enabled: can("employees.manage"),
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/{id}/", { params: { path: { workspace: slug, id } } })),
@@ -45,11 +43,11 @@ export default function EmployeeProfilePage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge tone={p.status === "active" ? "green" : p.status === "on_leave" ? "amber" : "stone"}>{p.status_label}</Badge>{!p.has_login && <Badge>No login</Badge>}
-          {record.data && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Edit{record.data.pending_changes ? " (changes to check)" : ""}</Button>}
+          {record.data && <Link href={`/w/${slug}/employees/${id}/edit`}><Button variant="secondary"><Pencil className="h-4 w-4" /> Edit{record.data.pending_changes ? " (changes to check)" : ""}</Button></Link>}
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
         <Tile label="Reports on time" value={rec?.on_time_percent == null ? "-" : `${rec.on_time_percent}%`} note={rec ? `${rec.on_time} of ${rec.counted} due${rec.missed ? `, ${rec.missed} never came in` : ""}` : "None due yet"} />
         {p.tasks && <Tile label="Tasks done on time" value={p.tasks.on_time_percent == null ? "-" : `${p.tasks.on_time_percent}%`}
           note={`${p.tasks.done_on_time + p.tasks.done_late} done${p.tasks.done_late ? `, ${p.tasks.done_late} late` : ""} · ${p.tasks.open} open${p.tasks.overdue ? ` (${p.tasks.overdue} overdue)` : ""}${p.tasks.taken_from_department ? ` · took ${p.tasks.taken_from_department} from the department` : ""}${p.tasks.handed_back ? `, handed back ${p.tasks.handed_back}` : ""}`} />}
@@ -57,6 +55,8 @@ export default function EmployeeProfilePage() {
         {p.pay && <Tile label={p.pay.pay_type === "salary" ? "Basic salary" : p.pay.pay_type_label} value={fmt(p.pay.pay_type === "salary" ? p.pay.basic_salary : p.pay.pay_rate)} note={p.pay.pay_type === "salary" ? "a month" : p.pay.pay_type === "daily" ? "a day" : "an hour"} />}
         {p.advances && <Tile label="Advance still owed" value={fmt(p.advances.reduce((s, a) => s + Number(a.outstanding), 0))} note={`${p.advances.length} advance${p.advances.length === 1 ? "" : "s"}`} />}
       </div>
+
+      <AttendanceProfile employeeId={id} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Section title="Work reports" empty={!p.work_reports.recent.length && "No reports asked of them yet"}>
@@ -118,7 +118,6 @@ export default function EmployeeProfilePage() {
           </Section>
         )}
       </div>
-      {editing && record.data && <EmployeeEditor employee={record.data} onClose={() => { setEditing(false); void q.refetch(); void record.refetch(); }} />}
     </div>
   );
 }
@@ -127,7 +126,7 @@ function Tile({ label, value, note }: { label: string; value: string; note?: str
   return (
     <Card className="p-4">
       <p className="text-sm text-stone-500">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
+      <p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{value}</p>
       {note && <p className="text-xs text-stone-500">{note}</p>}
     </Card>
   );

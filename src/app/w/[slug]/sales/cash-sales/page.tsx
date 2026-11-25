@@ -33,7 +33,7 @@ export default function CashSalesPage() {
         guide="cash-sales"
         actions={can("receipts.create") && <Link href={`/w/${slug}/sales/cash-sales/new`}><Button><Plus className="h-4 w-4" /> New cash sale</Button></Link>}
       />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["issued", "Issued"], ["void", "Void"]]} placeholder="Search number, customer or M-Pesa code" />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/receipts/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["issued", "Issued"], ["void", "Void"]]} placeholder="Search number, customer or M-Pesa code" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No cash sales found" />

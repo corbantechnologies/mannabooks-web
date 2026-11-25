@@ -12,6 +12,8 @@ By **KRA PIN**. If the KRA PIN on your customer or supplier matches the KRA PIN 
 
 Check the KRA PIN on the customer or supplier if the button doesn't appear. If they aren't on MannaBooks, send the document by email as usual.
 
+**One company, several businesses.** A company can run more than one business on MannaBooks under the same KRA PIN (for example a brand set up as its own business). Then the send form asks **Which of their businesses?** Choose one; MannaBooks remembers it for that customer or supplier, so later documents go to the same place. Nothing is sent until you choose.
+
 ## Sending
 
 1. Open the document and choose **Send to … on MannaBooks**.
@@ -28,11 +30,11 @@ An invoice you have been paid for carries its payments with it: the date, amount
 
 ## Receiving
 
-Documents sent to you appear in **Business inbox**, with a count beside it in the menu (and on its section heading while the section is folded). Everyone whose role can accept documents is emailed when one arrives; invoices sent together arrive as one email. When you decline, the person who sent it is emailed your reason. Open one to see its lines and totals, then:
+Documents sent to you appear in **Business inbox**, with a count of the ones you haven't opened yet beside it in the menu (and on its section heading while the section is folded). Everyone whose role can accept documents is emailed when one arrives; invoices sent together arrive as one email. When you decline, the person who sent it is emailed your reason. Open one to see its lines and totals, then:
 
 | You receive | Accepting creates |
 | --- | --- |
-| A supplier's invoice | A **draft bill**, with the supplier (found by KRA PIN or added for you), their invoice number, dates and lines. Choose the account to record it in. |
+| A supplier's invoice | A **posted bill**, with the supplier (found by KRA PIN or added for you), their invoice number, dates and lines. Choose the account to record it in. It shows straight away under **Bills** and **Coming up** as money to pay. (If it can't be posted yet, for example its month is closed, it stays a draft: open it and post it.) |
 | A supplier's quotation | A **draft purchase order** to that supplier with the quoted lines |
 | A customer's purchase order (LPO) | A **draft invoice** to that customer, with the LPO number as the reference |
 

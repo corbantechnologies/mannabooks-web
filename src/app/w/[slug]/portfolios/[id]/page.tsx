@@ -16,7 +16,7 @@ import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, M
 import { api, unwrap } from "@/lib/api/client";
 import { useAssignees } from "@/lib/api/crm";
 import { fmt, fmtDate } from "@/lib/format";
-import { DATE_KIND, type PortfolioDetail, type PortfolioService } from "@/lib/portfolios";
+import { DATE_KIND, type PortfolioDetail, type PortfolioProject, type PortfolioService } from "@/lib/portfolios";
 import { useWorkspace } from "@/lib/workspace";
 
 const TABS = [["services", "Services"], ["dates", "Dates ahead"], ["repricing", "What if"], ["documents", "Documents"], ["work", "Tasks and notes"], ["history", "History"], ["invoices", "Invoices"]] as const;
@@ -32,6 +32,8 @@ export default function PortfolioPage() {
   const saved = (d: PortfolioDetail) => qc.setQueryData(key, d);
   const [tab, setTab] = useState<(typeof TABS)[number][0]>("services");
   const [editing, setEditing] = useState<PortfolioService | null | undefined>(undefined);
+  const [addTo, setAddTo] = useState("");  // the project a new service goes in
+  const [project, setProject] = useState<PortfolioProject | null | undefined>(undefined);
   const [open, setOpen] = useState<string | null>(null);
   const [invoicing, setInvoicing] = useState(false);
   const [settings, setSettings] = useState(false);
@@ -61,7 +63,7 @@ export default function PortfolioPage() {
           </div>
         } />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         <Stat label="Revenue a month" value={fmt(d.monthly_revenue)} />
         <Stat label="Cost a month" value={fmt(d.monthly_cost)} />
         <Stat label="Margin a month" value={`${fmt(d.monthly_margin)}${d.margin_percent != null ? ` (${Number(d.margin_percent).toFixed(0)}%)` : ""}`} bad={Number(d.monthly_margin) < 0} />
@@ -90,7 +92,30 @@ export default function PortfolioPage() {
             <EmptyState title="No services yet">{d.can_manage ? <Button className="mt-2" onClick={() => setEditing(null)}><Plus className="h-4 w-4" /> Add a service</Button> : undefined}</EmptyState>
           ) : (
             <Table head={["Service", "They pay", "A month", "Costs you a month", "Margin", "Next dates", ""]}>
-              {d.services.map((s) => (
+              {[...d.projects.map((pr) => ({ pr, rows: d.services.filter((s) => s.project_id === pr.id) })),
+                ...(d.projects.length ? [{ pr: null, rows: d.services.filter((s) => !s.project_id) }] : [{ pr: null, rows: d.services }])]
+                .filter((g) => g.pr || g.rows.length).map(({ pr, rows }) => (
+                <Fragment key={pr?.id ?? "none"}>
+                  {(pr || d.projects.length > 0) && (
+                    <tr className="bg-stone-100/70">
+                      <Td colSpan={2}>
+                        <span className="font-semibold text-stone-900">{pr ? pr.name : "Services on their own"}</span>
+                        {pr && <span className="block text-xs text-stone-500">{pr.status_label} · {pr.services} {pr.services === 1 ? "service" : "services"}{pr.end_date ? ` · to ${fmtDate(pr.end_date)}` : ""}</span>}
+                      </Td>
+                      <Td className="text-right font-mono font-semibold">{pr ? fmt(pr.monthly_revenue) : ""}</Td>
+                      <Td className="text-right font-mono">{pr ? fmt(pr.monthly_cost) : ""}</Td>
+                      <Td className={clsx("text-right font-mono", pr?.loses_money && "text-red-700")}>{pr ? fmt(pr.monthly_margin) : ""}{pr?.margin_percent != null && <span className="block text-xs">{Number(pr.margin_percent).toFixed(0)}%</span>}</Td>
+                      <Td colSpan={2} className="text-right">
+                        {pr && d.can_manage && (
+                          <span className="flex flex-wrap justify-end gap-2 text-xs">
+                            <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(pr.id); setEditing(null); }}>Add a service</button>
+                            <button type="button" className="text-brand-700 hover:underline" onClick={() => setProject(pr)}>Change</button>
+                          </span>
+                        )}
+                      </Td>
+                    </tr>
+                  )}
+                  {rows.map((s) => (
                 <Fragment key={s.id}>
                   <tr className={clsx("cursor-pointer hover:bg-stone-50", s.status !== "active" && "opacity-60")} onClick={() => setOpen(open === s.id ? null : s.id)}>
                     <Td>
@@ -114,10 +139,18 @@ export default function PortfolioPage() {
                     </Td></tr>
                   )}
                 </Fragment>
+                  ))}
+                </Fragment>
               ))}
             </Table>
           )}
-          {d.can_manage && d.services.length > 0 && <div className="p-3"><Button variant="secondary" onClick={() => setEditing(null)}><Plus className="h-4 w-4" /> Add a service</Button></div>}
+          {d.can_manage && (
+            <div className="flex flex-wrap gap-2 p-3">
+              {d.services.length > 0 && <Button variant="secondary" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button>}
+              <Button variant="secondary" onClick={() => setProject(null)}><Plus className="h-4 w-4" /> New project</Button>
+              <span className="self-center text-xs text-stone-500">A project groups several services, such as an app with its hosting and support.</span>
+            </div>
+          )}
         </Card>
       )}
 
@@ -212,7 +245,9 @@ export default function PortfolioPage() {
         </Card>
       )}
 
-      {editing !== undefined && <ServiceForm key={editing?.id ?? "new"} portfolioId={id} service={editing} open onClose={() => setEditing(undefined)} onSaved={saved} />}
+      {editing !== undefined && <ServiceForm key={editing?.id ?? `new-${addTo}`} portfolioId={id} service={editing} open onClose={() => setEditing(undefined)} onSaved={saved}
+        projects={d.projects} projectId={addTo} />}
+      {project !== undefined && <ProjectForm key={project?.id ?? "new"} portfolioId={id} project={project} onClose={() => setProject(undefined)} onSaved={saved} />}
       {invoicing && <MakeInvoice data={d} open onClose={() => setInvoicing(false)} />}
       {settings && <SettingsModal d={d} onClose={() => setSettings(false)} onSaved={saved} />}
     </div>
@@ -294,5 +329,43 @@ function Stat({ label, value, bad }: { label: string; value: string; bad?: boole
       <p className="text-xs text-stone-500">{label}</p>
       <p className={clsx("font-mono text-base", bad && "text-red-700")}>{value}</p>
     </Card>
+  );
+}
+
+/** A project groups several of the client's services. Deleting it keeps the services, on their own. */
+function ProjectForm({ portfolioId, project, onClose, onSaved }: {
+  portfolioId: string; project: PortfolioProject | null; onClose: () => void; onSaved: (p: PortfolioDetail) => void;
+}) {
+  const { slug } = useWorkspace();
+  const [f, setF] = useState({ name: project?.name ?? "", status: project?.status ?? "active", start_date: project?.start_date ?? "", end_date: project?.end_date ?? "", notes: project?.notes ?? "" });
+  const body = { ...f, status: f.status as "active" | "on_hold" | "done", start_date: f.start_date || null, end_date: f.end_date || null };
+  const save = useMutation({
+    mutationFn: async () => project
+      ? unwrap(await api.PATCH("/api/v1/w/{workspace}/portfolios/projects/{id}/", { params: { path: { workspace: slug, id: project.id } }, body }))
+      : unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/{id}/projects/", { params: { path: { workspace: slug, id: portfolioId } }, body })),
+    onSuccess: (p) => { onSaved(p); onClose(); },
+  });
+  const remove = useMutation({
+    mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/portfolios/projects/{id}/", { params: { path: { workspace: slug, id: project!.id } } })),
+    onSuccess: (p) => { onSaved(p); onClose(); },
+  });
+  return (
+    <Modal open title={project ? `Change ${project.name}` : "New project"} onClose={onClose}>
+      <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+        <Field label="Project"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="e.g. Members app" /></Field>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Field label="Status"><Select value={f.status} onChange={(e) => setF({ ...f, status: e.target.value })}><option value="active">Active</option><option value="on_hold">On hold</option><option value="done">Done</option></Select></Field>
+          <Field label="Starts"><Input type="date" value={f.start_date} onChange={(e) => setF({ ...f, start_date: e.target.value })} /></Field>
+          <Field label="Ends"><Input type="date" value={f.end_date} onChange={(e) => setF({ ...f, end_date: e.target.value })} /></Field>
+        </div>
+        <Field label="Notes"><Textarea rows={2} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} /></Field>
+        <FormError error={save.error ?? remove.error} />
+        <div className="flex flex-wrap justify-between gap-2">
+          {project ? <Button type="button" variant="secondary" loading={remove.isPending}
+            onClick={async () => { if (await ask(`Delete the project ${project.name}? Its services stay, as services on their own.`, { confirmLabel: "Delete project", danger: true })) remove.mutate(); }}>Delete</Button> : <span />}
+          <div className="flex gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>{project ? "Save" : "Add the project"}</Button></div>
+        </div>
+      </form>
+    </Modal>
   );
 }

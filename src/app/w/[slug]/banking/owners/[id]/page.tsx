@@ -50,7 +50,7 @@ export default function OwnerStatementPage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
         <Tile label="Capital put in" value={balances.capital} />
         <Tile label="Paid for shares" value={balances.shares} />
         <Tile label="The business owes them" value={balances.owed_to} warn={Number(balances.owed_to) < 0} />
@@ -91,7 +91,7 @@ function Tile({ label, value, warn }: { label: string; value: string; warn?: boo
   return (
     <Card className={`p-4 ${warn ? "border-amber-300" : ""}`}>
       <p className="text-sm text-stone-500">{label}</p>
-      <p className="text-2xl font-semibold">{fmt(value)}</p>
+      <p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(value)}</p>
       {warn && <p className="text-xs text-amber-700">Below nothing: a repayment is more than the loan. Check the entries.</p>}
     </Card>
   );

@@ -12,6 +12,7 @@ import { todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { EditLine, LinesEditor, blankLine, linesFromDocument, linesToRequest, useDefaultVat } from "./lines-editor";
+import { TagPickers, tagsBody, tagsOf } from "./tag-pickers";
 import { Button, Card, Field, FormError, Input, Select, Textarea } from "./ui";
 
 export function RecurringForm({ existing, onDone }: { existing?: RecurringInvoice; onDone?: () => void }) {
@@ -24,6 +25,7 @@ export function RecurringForm({ existing, onDone }: { existing?: RecurringInvoic
     start_date: existing?.start_date ?? todayIso(), end_date: existing?.end_date ?? "", auto_issue: existing?.auto_issue ?? false,
     reference: existing?.reference ?? "", notes: existing?.notes ?? "",
   });
+  const [tags, setTags] = useState(tagsOf(existing));
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
   const [stored, setStored] = useState<EditLine[] | null>(existing?.lines?.length ? linesFromDocument(existing.lines.map((l) => ({ ...l, unit_price: l.unit_price ?? undefined }))) : null);
   const lines = stored ?? [blankLine(defaultVat)];
@@ -31,6 +33,7 @@ export function RecurringForm({ existing, onDone }: { existing?: RecurringInvoic
   const save = useMutation({
     mutationFn: async () => {
       const body = {
+        ...tagsBody(tags),
         ...head, end_date: head.end_date || null, prices_include_tax: includeTax,
         lines: linesToRequest(lines).map((l) => ({ product_id: l.product_id, description: l.description, quantity: l.quantity, unit_price: l.unit_price, discount_percent: l.discount_percent, tax_rate_id: l.tax_rate_id })),
       };
@@ -67,6 +70,7 @@ export function RecurringForm({ existing, onDone }: { existing?: RecurringInvoic
         </label>
       </Card>
       <LinesEditor slug={slug} customerId={head.customer_id} lines={lines} setLines={setLines} includeTax={includeTax} setIncludeTax={setIncludeTax} currency={context.workspace.currency ?? "KES"} />
+      <TagPickers value={tags} onChange={setTags} />
       <Field label="Notes printed on each invoice"><Textarea value={head.notes} onChange={set("notes")} /></Field>
       <FormError error={save.error} />
       <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => (onDone ? onDone() : router.back())}>Cancel</Button><Button type="submit" loading={save.isPending}>Save schedule</Button></div>

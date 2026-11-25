@@ -58,7 +58,7 @@ function Waiting({ label, count, href }: { label: string; count: number; href: s
     <Link href={href}>
       <Card className={`p-4 transition-colors hover:border-brand-300 ${count ? "border-amber-300" : ""}`}>
         <p className="text-sm text-stone-500">{label}</p>
-        <p className="text-2xl font-semibold">{count}</p>
+        <p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{count}</p>
       </Card>
     </Link>
   );

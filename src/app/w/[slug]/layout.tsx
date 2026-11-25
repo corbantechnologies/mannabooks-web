@@ -20,6 +20,7 @@ import {
   CheckCheck,
   FolderKanban,
   ListChecks,
+  Clock,
   Tags,
   Target,
   BadgeCheck,
@@ -220,6 +221,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     section: "Work",
     items: [
       { href: "/tasks", label: "Tasks", icon: ListChecks, perm: null },
+      { href: "/goals", label: "Goals", icon: Target, perm: null },
       { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
       { href: "/calendar", label: "Calendar", icon: CalendarDays, perm: null },
       { href: "/messages", label: "Messages", icon: Bell, perm: null },
@@ -230,6 +232,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     items: [
       { href: "/me", label: "My leave and pay", icon: UserRound, perm: ["leave.request"] },
       { href: "/leave", label: "Leave", icon: CalendarDays, perm: ["leave.view", "leave.approve"] },
+      { href: "/attendance", label: "Attendance", icon: Clock, perm: null },
       { href: "/advances", label: "Salary advances", icon: HandCoins, perm: ["advances.request"] },
       { href: "/expense-claims", label: "Expense claims", icon: Receipt, perm: null },
       { href: "/payroll", label: "Payroll", icon: WalletIcon, perm: ["payroll.view"] },

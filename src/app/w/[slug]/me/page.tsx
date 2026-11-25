@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { ClockCard } from "@/components/clock-card";
 import { Badge, Button, Card, Field, FormError, Input, Modal, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { LEAVE_STATUS, LEAVE_TYPES } from "@/lib/api/people";
@@ -42,6 +43,7 @@ export default function MePage() {
   return (
     <div className="mx-auto max-w-md space-y-5">
       <h1 className="text-xl font-semibold">My leave, pay and details</h1>
+      <ClockCard showLink />
       <Card className="p-4">
         {balance.isLoading ? <Spinner /> : b && (
           <div className="flex items-end justify-between">

@@ -6,6 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { Badge, Button, Card, ErrorState, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { YearCoverage } from "@/components/year-coverage";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
@@ -61,6 +62,7 @@ export default function FinancialYearsPage() {
           </div>
         )}
       />
+      <YearCoverage />
       {years.isLoading ? <Spinner /> : years.error ? <ErrorState error={years.error} /> : (
         <Card>
           <Table head={["Year", "From", "To", "Open months", "Status", ""]}>

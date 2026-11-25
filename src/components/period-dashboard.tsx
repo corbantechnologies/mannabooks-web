@@ -57,7 +57,7 @@ export function PeriodDashboard() {
       </div>
       {summary.isLoading ? <Spinner label="Adding up the numbers" /> : summary.error ? <ErrorState error={summary.error} /> : d && (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Tile label="Income" value={d.income} note={`Gross profit ${fmt(d.gross_profit)}`} href="/accounting/reports/profit-and-loss" />
             <Tile label="Net profit" value={d.net_profit} tone={Number(d.net_profit) < 0 ? "bad" : "good"} note={`Costs ${fmt(Number(d.cost_of_sales) + Number(d.expenses))}`} href="/accounting/reports/profit-and-loss" />
             <Tile label="Cash in, less cash out" value={Number(d.cash_in) - Number(d.cash_out)} note={`In ${fmt(d.cash_in)} · out ${fmt(d.cash_out)}`} href="/banking" />

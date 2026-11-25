@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { ListFilters } from "@/components/doc-list";
+import { ListFilters, PeriodShown } from "@/components/doc-list";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
@@ -28,7 +28,7 @@ export default function ExpensesPage() {
   return (
     <div className="w-full">
       <PageHeader title="Expenses" description="Money spent straight from a bank, M-Pesa or cash account: fuel, airtime, rent, bank charges, petty cash." guide="expenses" actions={can("banking.spend") && <Link href={`/w/${slug}/banking/expenses/new`}><Button><Plus className="h-4 w-4" /> Spend money</Button></Link>} />
-      <div className="mb-4 max-w-sm"><Input placeholder="Search payee or reference" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+      <div className="mb-4 flex flex-wrap items-center gap-3"><div className="w-full max-w-sm"><Input placeholder="Search payee or reference" value={search} onChange={(e) => setSearch(e.target.value)} /></div><PeriodShown count={{ path: "/api/v1/w/{workspace}/expenses/", query: { search: search || undefined }, shown: list.data?.count }} /></div>
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="Nothing here yet" />

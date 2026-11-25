@@ -135,3 +135,7 @@ A new hire you've added as an employee, but not yet invited, shows under **No lo
 ## Messages
 
 Everything MannaBooks emails you about the business (a task given, a report due, an approval waiting) also lands under the **bell** at the top, with the unread count, and on **Work > Messages**.
+
+What lands there: every email MannaBooks sends you about this business, for example a task given to you, done or sent back, a comment or file on a task, a deadline coming or passed, a work report due, an approval or expense claim waiting for you, leave to approve, a document in your Business inbox, and client portfolio reminders.
+
+Opening the bell counts what it shows as read once you close it, so the number goes down without marking each one. Clicking a message opens what it is about. **Mark all read** clears everything at once, and **Work > Messages** keeps the full list.

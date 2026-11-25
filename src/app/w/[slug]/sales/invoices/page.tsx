@@ -36,7 +36,7 @@ export default function InvoicesPage() {
         guide="invoices"
         actions={can("invoices.create") && <Link href={`/w/${slug}/sales/invoices/new`}><Button><Plus className="h-4 w-4" /> New invoice</Button></Link>}
       />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(INVOICE_STATUS).map(([k, v]) => [k, v.label])} />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/invoices/", query: { kind: "invoice", search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(INVOICE_STATUS).map(([k, v]) => [k, v.label])} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No invoices found" />

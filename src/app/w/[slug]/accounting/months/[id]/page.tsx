@@ -63,7 +63,7 @@ export default function MonthPage() {
       {!open && <p className="mb-4 rounded-md bg-stone-100 px-3 py-2 text-sm text-stone-700">This month is closed, so nothing can be recorded in it. Reopen it on Financial years to make changes.</p>}
       {open && <p className="-mt-3 mb-4 text-xs text-stone-500">New documents from these buttons are dated {fmtDate(date)}; change the date on the form if needed.</p>}
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         <Stat label="Income" value={fmt(m.income)} />
         <Stat label="Costs" value={fmt(m.expenses)} />
         <Stat label="Profit" value={fmt(m.profit)} bad={Number(m.profit) < 0} />

@@ -63,7 +63,8 @@ function storageKey(slug: string) {
 export function PeriodProvider({ slug, context, children }: { slug: string; context: WorkspaceContext; children: React.ReactNode }) {
   const years = (context.fiscal_years ?? []) as unknown as FiscalYearBrief[];
   const today = todayIso();
-  const current = years.find((y) => y.start_date <= today && today <= y.end_date) ?? years[0] ?? null;
+  // no year covers today (none set up past it yet): show everything rather than an old or future year's empty lists
+  const current = years.find((y) => y.start_date <= today && today <= y.end_date) ?? null;
   // The layout mounts this only in the browser, once the workspace has loaded, so reading storage here is safe.
   const [period, setPeriodState] = useState<Period>(() => {
     try {
@@ -103,4 +104,11 @@ export function usePeriod(): PeriodState {
 export function useDateQuery(field: string): Record<string, string | undefined> {
   const { from, to } = usePeriod();
   return { [`${field}__gte`]: from, [`${field}__lte`]: to };
+}
+
+/** A warning when a document's date falls in no financial year: it can't be posted and would show only under All years. */
+export function useYearWarning(date: string | undefined): string | undefined {
+  const { years } = usePeriod();
+  if (!date || !years.length || years.some((y) => y.start_date <= date && date <= y.end_date)) return undefined;
+  return "This date isn't in any of your financial years, so it can't be posted. Add the year under Accounting > Financial years, or check the date.";
 }
