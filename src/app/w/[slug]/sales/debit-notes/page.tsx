@@ -35,7 +35,7 @@ export default function DebitNotesPage() {
         guide="debit-notes"
         actions={can("invoices.create") && <Link href={`/w/${slug}/sales/debit-notes/new`}><Button><Plus className="h-4 w-4" /> New debit note</Button></Link>}
       />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(INVOICE_STATUS).map(([k, v]) => [k, v.label])} />
+      <ListFilters dated search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(INVOICE_STATUS).map(([k, v]) => [k, v.label])} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No debit notes found" />

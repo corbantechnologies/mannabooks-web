@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
       {glance.error && <div className="mb-3"><ErrorState error={glance.error} /></div>}
       {nothing && <Card className="p-5 text-sm text-stone-600">There is nothing here for your role yet. Your Overview shows what you can work on.</Card>}
 
-      <div className={clsx("mb-6 grid gap-3 transition-opacity sm:grid-cols-2 lg:grid-cols-5", glance.isFetching && "opacity-60")}>
+      <div className={clsx("mb-6 grid gap-3 transition-opacity sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5", glance.isFetching && "opacity-60")}>
         {sales && (sales.started ? (
           <Tile label={`Sales, ${p}`} value={fmt(sales.in_period)} href={link("sales/invoices")}
             note={sales.change_percent === null ? `${sales.previous_label}: ${fmt(sales.previous)}` : undefined}

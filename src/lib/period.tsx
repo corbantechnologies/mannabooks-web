@@ -63,7 +63,8 @@ function storageKey(slug: string) {
 export function PeriodProvider({ slug, context, children }: { slug: string; context: WorkspaceContext; children: React.ReactNode }) {
   const years = (context.fiscal_years ?? []) as unknown as FiscalYearBrief[];
   const today = todayIso();
-  const current = years.find((y) => y.start_date <= today && today <= y.end_date) ?? years[0] ?? null;
+  // no year covers today (none set up past it yet): show everything rather than an old or future year's empty lists
+  const current = years.find((y) => y.start_date <= today && today <= y.end_date) ?? null;
   // The layout mounts this only in the browser, once the workspace has loaded, so reading storage here is safe.
   const [period, setPeriodState] = useState<Period>(() => {
     try {

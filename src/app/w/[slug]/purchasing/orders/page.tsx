@@ -29,7 +29,7 @@ export default function PurchaseOrdersPage() {
   return (
     <div className="w-full">
       <PageHeader title="Purchase orders" description="Orders (LPOs) sent to suppliers for goods. Approve an order, then receive the goods against it." guide="purchase-orders" actions={can("purchaseorders.create") && <Link href={`/w/${slug}/purchasing/orders/new`}><Button><Plus className="h-4 w-4" /> New order</Button></Link>} />
-      <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(PO_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
+      <ListFilters dated search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(PO_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="Nothing here yet" />

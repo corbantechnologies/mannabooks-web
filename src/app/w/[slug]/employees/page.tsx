@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { EmployeeEditor } from "@/components/employee-editor";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { useWorkspace } from "@/lib/workspace";
@@ -17,7 +16,6 @@ export default function EmployeesPage() {
   const { slug, can } = useWorkspace();
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [adding, setAdding] = useState(false);
   const manage = can("employees.manage");
   const viewAll = can("employees.view");
   const list = useQuery({
@@ -33,7 +31,7 @@ export default function EmployeesPage() {
         title={viewAll ? "Employees" : "My employee record"}
         description={viewAll ? "Everyone who works here. Open someone to see their profile and edit their details." : "Your details as HR has them. Ask HR to correct anything wrong."}
         guide="employees"
-        actions={manage && <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New employee</Button>}
+        actions={manage && <Link href={`/w/${slug}/employees/new`}><Button><Plus className="h-4 w-4" /> New employee</Button></Link>}
       />
       {viewAll && (
         <div className="relative mb-4 max-w-sm">
@@ -60,7 +58,6 @@ export default function EmployeesPage() {
           </Table>
         )}
       </Card>
-      {adding && <EmployeeEditor employee="new" onClose={() => setAdding(false)} />}
     </div>
   );
 }

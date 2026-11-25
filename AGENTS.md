@@ -3,3 +3,19 @@
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+# Pop-up (Modal) or page
+
+Use a **Modal** only for a quick, single-purpose step that fits on a laptop screen without scrolling:
+- at most about 8 fields, in one group (no sections);
+- no line items or lists that grow (invoice lines, pay items, resources);
+- nothing people fill in over several sittings or come back to edit often;
+- examples: confirm or decline with a reason, record a payment, add a note, a project's name and dates, pick a month.
+
+Everything else is a **page** with its own URL (`/new`, `/[id]/edit`): several sections, long forms, line items, anything with
+its own Save bar. Pages are also what a phone and the future PWA handle best (a back button, no nested scrolling).
+New employee and Change employee follow this (`employees/new`, `employees/[id]/edit`, `components/employee-editor.tsx`).
+
+Phone widths: every page must work at 375px with no sideways scrolling of the page itself. Wide tables scroll inside their
+card; header buttons wrap (`flex flex-wrap`); money cards are two across until `xl` (`sm:grid-cols-2 xl:grid-cols-4`) and
+big figures use `break-words text-xl tabular-nums sm:text-2xl`.

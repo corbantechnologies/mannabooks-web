@@ -5904,6 +5904,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/portfolios/{id}/projects/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_portfolios_projects_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/portfolios/{id}/services/": {
         parameters: {
             query?: never;
@@ -6047,6 +6069,29 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/projects/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Its services stay, on their own. */
+        delete: operations["w_portfolios_projects_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_portfolios_projects_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/portfolios/resources/{id}/": {
@@ -12784,6 +12829,11 @@ export interface components {
             /** Format: uuid */
             document_id: string;
             message?: string;
+            /**
+             * Format: uuid
+             * @description When their KRA PIN matches more than one business: which one (remembered for next time)
+             */
+            to_workspace_id?: string | null;
         };
         /**
          * @description * `new` - New
@@ -16643,6 +16693,15 @@ export interface components {
             target_margin?: string;
             notes?: string;
         };
+        PatchedPortfolioProjectInRequest: {
+            name?: string;
+            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
+            /** Format: date */
+            start_date?: string | null;
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+        };
         PatchedPortfolioResourceInRequest: {
             kind?: components["schemas"]["PortfolioResourceInKindEnum"];
             label?: string;
@@ -16687,6 +16746,11 @@ export interface components {
             supplier_renewal_date?: string | null;
             remind_days?: number;
             notes?: string;
+            /**
+             * Format: uuid
+             * @description The project it is part of; null for none
+             */
+            project_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -18109,6 +18173,7 @@ export interface components {
             /** Format: date */
             today: string;
             can_manage: boolean;
+            projects: components["schemas"]["PortfolioProjectOut"][];
             dates: components["schemas"]["PortfolioDateItem"][];
             documents: components["schemas"]["PortfolioDocumentOut"][];
             history: components["schemas"]["PortfolioHistory"][];
@@ -18213,6 +18278,44 @@ export interface components {
             unit_price: string;
             /** Format: decimal */
             amount: string;
+        };
+        PortfolioProjectInRequest: {
+            name?: string;
+            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
+            /** Format: date */
+            start_date?: string | null;
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+        };
+        /**
+         * @description * `active` - Active
+         *     * `on_hold` - On hold
+         *     * `done` - Done
+         * @enum {string}
+         */
+        PortfolioProjectInStatusEnum: "active" | "on_hold" | "done";
+        PortfolioProjectOut: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            status: string;
+            status_label: string;
+            /** Format: date */
+            start_date: string | null;
+            /** Format: date */
+            end_date: string | null;
+            notes: string;
+            services: number;
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            loses_money: boolean;
         };
         /**
          * @description * `vcpu` - vCPU
@@ -18335,6 +18438,11 @@ export interface components {
             supplier_renewal_date?: string | null;
             remind_days?: number;
             notes?: string;
+            /**
+             * Format: uuid
+             * @description The project it is part of; null for none
+             */
+            project_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -18342,6 +18450,9 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
             kind: string;
             kind_label: string;
             status: string;
@@ -18498,6 +18609,13 @@ export interface components {
             /** @description The customer or supplier's business is on MannaBooks */
             available: boolean;
             recipient_name: string;
+            /**
+             * Format: uuid
+             * @description Where it goes; null while a choice is needed
+             */
+            recipient_id: string | null;
+            /** @description Set when their KRA PIN matches more than one business: pick one */
+            choices: components["schemas"]["RecipientChoice"][];
             kra_pin: string;
             last_status: string | null;
             /** Format: date-time */
@@ -19448,6 +19566,11 @@ export interface components {
         ReceiptVoidRequest: {
             reason: string;
         };
+        RecipientChoice: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
         Reconciliation: {
             /** Format: uuid */
             readonly id: string;
@@ -20147,6 +20270,8 @@ export interface components {
         SendManyRequest: {
             invoice_ids: string[];
             message?: string;
+            /** Format: uuid */
+            to_workspace_id?: string | null;
         };
         SendManyResult: {
             sent: string[];
@@ -20171,6 +20296,9 @@ export interface components {
             /** @description The customer's business is on MannaBooks */
             available: boolean;
             recipient_name: string;
+            /** Format: uuid */
+            recipient_id: string | null;
+            choices: components["schemas"]["RecipientChoice"][];
             invoices: components["schemas"]["SendableInvoice"][];
         };
         SendableInvoice: {
@@ -33304,6 +33432,34 @@ export interface operations {
             };
         };
     };
+    w_portfolios_projects_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioProjectInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioProjectInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioProjectInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
     w_portfolios_services_create: {
         parameters: {
             query?: never;
@@ -33522,6 +33678,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortfolioId"];
+                };
+            };
+        };
+    };
+    w_portfolios_projects_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_projects_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPortfolioProjectInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioProjectInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioProjectInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
                 };
             };
         };

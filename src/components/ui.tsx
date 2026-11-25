@@ -5,7 +5,7 @@ import { BookOpen, ChevronDown, Eye, EyeOff, Loader2, X } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -251,9 +251,27 @@ function openRowLink(e: React.MouseEvent<HTMLTableSectionElement>, push: (href: 
 
 export function Table({ head, children }: { head: React.ReactNode[]; children: React.ReactNode }) {
   const router = useRouter();
+  const ref = useRef<HTMLTableElement>(null);
+  // Each heading lines up with its column: a column of amounts (right-aligned cells) gets a right-aligned heading.
+  useLayoutEffect(() => {
+    const table = ref.current;
+    const row = table?.tBodies[0]?.rows[0];
+    if (!table || !row) return;
+    const heads = table.tHead?.rows[0]?.cells ?? [];
+    let col = 0;
+    for (const cell of Array.from(row.cells)) {
+      const th = heads[col];
+      if (th && cell.colSpan === 1) {
+        const align = cell.classList.contains("text-right") ? "right" : cell.classList.contains("text-center") ? "center" : "";
+        th.style.textAlign = align;
+      }
+      col += cell.colSpan;
+    }
+  });
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
+      {/* soft lines between columns as well as rows, so a value is easy to follow to its heading */}
+      <table ref={ref} className="w-full text-left text-sm [&_td:not(:first-child)]:border-l [&_td]:border-stone-100 [&_th:not(:first-child)]:border-l [&_th]:border-stone-200">
         <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
           <tr>
             {head.map((h, i) => (

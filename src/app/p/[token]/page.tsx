@@ -56,7 +56,7 @@ export default function PortalPage() {
       {p.scope === "statement" && (
         <Card className="p-4">
           <p className="text-sm text-stone-500">You owe</p>
-          <p className="text-2xl font-semibold">{fmt(p.balance)}</p>
+          <p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(p.balance)}</p>
         </Card>
       )}
       {cardRef && <CardReturn token={token} reference={cardRef} />}

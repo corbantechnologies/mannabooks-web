@@ -52,7 +52,7 @@ export default function CatalogueAnalyticsPage() {
       </Card>
       {report.isLoading ? <Spinner /> : report.error ? <ErrorState error={report.error} /> : (
         <>
-          <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {tiles.map(([label, value, note]) => (
               <Card key={label} className="p-4">
                 <p className="text-sm text-stone-500">{label}</p>

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 import { PayItemsEditor } from "@/components/pay-items";
 import { DayPicker, MON_TO_FRI } from "@/components/working-week";
-import { Button, Field, FormError, Input, Modal, Select } from "@/components/ui";
+import { Button, Card, Field, FormError, Input, PageHeader, Select } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { type PayItem, pickedPerson, usePeoplePicker } from "@/lib/api/people";
 import type { Employee } from "@/lib/api/types";
@@ -74,7 +74,22 @@ function PendingChanges({ employee, onDone }: { employee: Employee; onDone: () =
 }
 
 /** Add an employee, or change one: details, working week, login invitation, changes they asked for, and pay. */
-export function EmployeeEditor({ employee, onClose }: { employee: Employee | "new"; onClose: () => void }) {
+/** A titled block of the employee page. */
+function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <Card className="p-4 sm:p-5">
+      <h2 className="text-sm font-semibold text-stone-900">{title}</h2>
+      {hint && <p className="mt-0.5 text-xs text-stone-500">{hint}</p>}
+      <div className="mt-3 space-y-3">{children}</div>
+    </Card>
+  );
+}
+
+/**
+ * Add or change an employee, on a page of its own (too many fields for a pop-up). `onClose` leaves without saving;
+ * `onSaved` gets the saved record (the new page opens their profile).
+ */
+export function EmployeeEditor({ employee, onClose, onSaved }: { employee: Employee | "new"; onClose: () => void; onSaved?: (e: Employee) => void }) {
   const { slug, can, context } = useWorkspace();
   const p = wsPath(slug);
   const editing = employee;
@@ -117,7 +132,7 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
     },
     onSuccess: (emp) => {
       toast.success("invited" in emp ? `${emp.full_name} saved and invited to sign in` : `${emp.full_name} saved`);
-      onClose();
+      if (onSaved) onSaved(emp as Employee); else onClose();
     },
   });
   const roles = useQuery({ queryKey: ["roles", slug], enabled: can("invitations.manage"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
@@ -136,8 +151,10 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
   const current = editing !== "new" ? editing : null;
 
   return (
-  <Modal size="lg" open title={current ? `${current.full_name} (${current.staff_number})` : "New employee"} onClose={onClose}>
+  <div className="w-full max-w-5xl">
+    <PageHeader title={current ? `Change ${current.full_name}` : "New employee"} description={current ? `Staff number ${current.staff_number}` : "Their details, where they work, and how they are paid."} />
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+      <Section title="Personal details">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Field label="First name" error={fieldError(save.error, "first_name")}><Input required value={form.first_name} onChange={set("first_name")} /></Field>
         <Field label="Last name" error={fieldError(save.error, "last_name")}><Input required value={form.last_name} onChange={set("last_name")} /></Field>
@@ -145,25 +162,14 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
         <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} /></Field>
         <Field label="National ID" error={fieldError(save.error, "national_id")}><Input value={form.national_id} onChange={set("national_id")} /></Field>
         <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" /></Field>
+        <Field label="Emergency contact"><Input value={form.emergency_contact_name} onChange={set("emergency_contact_name")} placeholder="Name" /></Field>
+        <Field label="Emergency contact phone"><Input value={form.emergency_contact_phone} onChange={set("emergency_contact_phone")} /></Field>
+      </div>
+      </Section>
+      <Section title="Work">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Field label="Job title" error={fieldError(save.error, "job_title")}><Input value={form.job_title} onChange={set("job_title")} /></Field>
         <Field label="Hire date" error={fieldError(save.error, "hire_date")}><Input type="date" value={form.hire_date} onChange={set("hire_date")} /></Field>
-        <Field label="Department" error={fieldError(save.error, "department_id")}>
-          <Select value={form.department_id} onChange={set("department_id")}>
-            <option value="">None</option>
-            {(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </Select>
-        </Field>
-        <Field label="Also works in" hint="Other departments they work in. Pay counts against the main department above.">
-          <div className="flex max-h-28 flex-wrap gap-x-4 gap-y-1 overflow-y-auto rounded-md border border-stone-200 p-2">
-            {(departments.data?.results ?? []).filter((d) => d.id !== form.department_id).map((d) => (
-              <label key={d.id} className="flex items-center gap-1.5 text-sm">
-                <input type="checkbox" checked={form.other_department_ids.includes(d.id)}
-                  onChange={(e) => setForm((p) => ({ ...p, other_department_ids: e.target.checked ? [...p.other_department_ids, d.id] : p.other_department_ids.filter((x) => x !== d.id) }))} />
-                {d.name}
-              </label>
-            ))}
-          </div>
-        </Field>
         <Field label="Employment" error={fieldError(save.error, "employment_type")}>
           <Select value={form.employment_type} onChange={set("employment_type")}>
             <option value="permanent">Permanent (salaried)</option><option value="contract">Fixed-term contract</option><option value="casual">Casual</option>
@@ -191,10 +197,33 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
             <option value="exited">Exited</option>
           </Select>
         </Field>
-        <Field label="Emergency contact"><Input value={form.emergency_contact_name} onChange={set("emergency_contact_name")} placeholder="Name" /></Field>
-        <Field label="Emergency contact phone"><Input value={form.emergency_contact_phone} onChange={set("emergency_contact_phone")} /></Field>
       </div>
-      <div className="space-y-2 rounded-md border border-stone-200 p-3">
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <Field label="Department" hint="Their main department: pay counts against it." error={fieldError(save.error, "department_id")}>
+          <Select value={form.department_id} onChange={set("department_id")}>
+            <option value="">None</option>
+            {(departments.data?.results ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+          </Select>
+        </Field>
+        <Field label="Also works in" hint="Other departments they work in, if any.">
+          {(departments.data?.results ?? []).filter((d) => d.id !== form.department_id).length === 0 ? <p className="py-2 text-sm text-stone-500">No other departments.</p> : (
+            <div className="flex flex-wrap gap-2">
+              {(departments.data?.results ?? []).filter((d) => d.id !== form.department_id).map((d) => {
+                const on = form.other_department_ids.includes(d.id);
+                return (
+                  <label key={d.id} className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-sm ${on ? "border-brand-600 bg-brand-50 text-brand-800" : "border-stone-200 text-stone-700 hover:bg-stone-50"}`}>
+                    <input type="checkbox" className="sr-only" checked={on}
+                      onChange={(e) => setForm((p) => ({ ...p, other_department_ids: e.target.checked ? [...p.other_department_ids, d.id] : p.other_department_ids.filter((x) => x !== d.id) }))} />
+                    {d.name}
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </Field>
+      </div>
+      </Section>
+      <div className="space-y-2 rounded-lg border border-stone-200 bg-white p-4">
         <label className="flex items-start gap-2 text-sm">
           <input type="checkbox" className="mt-1" checked={form.own_week}
             onChange={(e) => setForm((p) => ({ ...p, own_week: e.target.checked, working_days: p.working_days.length ? p.working_days : ((context.workspace.working_days as number[] | null) ?? MON_TO_FRI) }))} />
@@ -203,7 +232,7 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
         {form.own_week && <DayPicker value={form.working_days} onChange={(days) => setForm((p) => ({ ...p, working_days: days }))} />}
       </div>
       {editing === "new" && can("invitations.manage") && (
-        <div className="flex flex-wrap items-center gap-3 rounded-md border border-stone-200 p-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-stone-200 bg-white p-4">
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" className="mt-1" checked={inviteNew} disabled={!form.email} onChange={(e) => setInviteNew(e.target.checked)} />
             <span>Invite them to sign in<span className="block text-xs text-stone-500">{form.email ? `An email goes to ${form.email}; their login is linked to this record.` : "Add their email address first."}</span></span>
@@ -217,8 +246,7 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
       )}
       {current && Boolean(current.pending_changes) && manage && <PendingChanges employee={current} onDone={onClose} />}
       {can("payroll.manage") && (
-        <fieldset className="space-y-3 rounded-md border border-stone-200 p-3">
-          <legend className="px-1 text-sm font-semibold">Pay</legend>
+        <Section title="Pay">
           <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={form.on_payroll} onChange={(e) => setForm((p) => ({ ...p, on_payroll: e.target.checked }))} />
             <span>On the monthly payroll<span className="block text-xs text-stone-500">Leave it off for casuals paid now and then: pay them with Casual pay on the Payroll page.</span></span></label>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -251,10 +279,10 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
           </div>
           <PayItemsEditor items={form.recurring_items} onChange={(items) => setForm((p) => ({ ...p, recurring_items: items }))} hint="Every month, e.g. house allowance, SACCO." />
           {fieldError(save.error, "recurring_items") && <p className="text-sm text-red-600">{fieldError(save.error, "recurring_items")}</p>}
-        </fieldset>
+        </Section>
       )}
       <FormError error={save.error} />
-      <div className="flex flex-wrap justify-between gap-2">
+      <div className="sticky bottom-0 z-10 flex flex-wrap justify-between gap-2 rounded-lg border border-stone-200 bg-white/95 px-4 py-3 backdrop-blur">
         {current && !current.has_login && can("invitations.manage") ? (
           <div className="flex items-center gap-2">
             <Select aria-label="Role to give them" className="w-44" value={inviteRole || selfService} onChange={(e) => setInviteRole(e.target.value)}>
@@ -271,6 +299,6 @@ export function EmployeeEditor({ employee, onClose }: { employee: Employee | "ne
         </div>
       </div>
     </form>
-  </Modal>
+  </div>
   );
 }

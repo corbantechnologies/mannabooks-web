@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { RecipientChoice } from "@/components/send-to-inbox";
 import { Badge, Button, Field, FormError, Modal, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
@@ -19,15 +20,16 @@ export function SendInvoicesToInbox({ customerId }: { customerId: string }) {
   const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [message, setMessage] = useState("");
+  const [to, setTo] = useState("");
   const allowed = can("inbox.send") && can("invoices.view");
   const q = useQuery({
     queryKey: ["inbox-sendable", slug, customerId], enabled: allowed,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/inbox/sendable/", { params: { path: { workspace: slug }, query: { customer: customerId } } })),
   });
   const send = useMutation({
-    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/send-many/", { params: { path: { workspace: slug } }, body: { invoice_ids: picked, message } })),
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/inbox/send-many/", { params: { path: { workspace: slug } }, body: { invoice_ids: picked, message, to_workspace_id: to || null } })),
     onSuccess: (r) => {
-      toast.success(`${r.sent.length} sent to ${q.data?.recipient_name}${r.skipped.length ? `; ${r.skipped.length} skipped` : ""}`);
+      toast.success(`${r.sent.length} sent to ${q.data?.choices.find((c) => c.id === to)?.name ?? q.data?.recipient_name}${r.skipped.length ? `; ${r.skipped.length} skipped` : ""}`);
       if (r.skipped.length) toast(r.skipped.map((s) => s.reason).slice(0, 3).join("\n"));
       setPicked([]);
       void qc.invalidateQueries({ queryKey: ["inbox-sendable", slug, customerId] });
@@ -37,14 +39,16 @@ export function SendInvoicesToInbox({ customerId }: { customerId: string }) {
   if (!allowed || !q.data?.available) return null;
   const rows = q.data.invoices;
   const fresh = rows.filter((r) => !r.sent_status || r.sent_status === "declined").map((r) => r.id);
+  const name = q.data.choices.find((c) => c.id === to)?.name ?? (q.data.recipient_name || "their business");
   const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   return (
     <>
-      <span title={`Send invoices to ${q.data.recipient_name} on MannaBooks`}><Button variant="secondary" onClick={() => { setPicked(fresh); send.reset(); setOpen(true); }}><Send className="h-4 w-4" /> Send to their inbox</Button></span>
-      <Modal open={open} size="lg" title={`Send invoices to ${q.data.recipient_name} on MannaBooks`} onClose={() => setOpen(false)}>
+      <span title={`Send invoices to ${name} on MannaBooks`}><Button variant="secondary" onClick={() => { setPicked(fresh); send.reset(); setTo(q.data.recipient_id ?? ""); setOpen(true); }}><Send className="h-4 w-4" /> Send to their inbox</Button></span>
+      <Modal open={open} size="lg" title={`Send invoices to ${name} on MannaBooks`} onClose={() => setOpen(false)}>
         {q.isLoading ? <Spinner /> : (
           <div className="space-y-4 text-sm">
-            <p className="text-stone-600">They arrive in {q.data.recipient_name}&apos;s Business inbox. Paid invoices carry their payments, so {q.data.recipient_name} can record the bill and the payment in one step.</p>
+            <RecipientChoice choices={q.data.choices} value={to} onChange={setTo} />
+            <p className="text-stone-600">They arrive in {name}&apos;s Business inbox. Paid invoices carry their payments, so {name} can record the bill and the payment in one step.</p>
             {rows.length === 0 ? <p className="text-stone-500">No issued invoices for this customer yet.</p> : (
               <div className="max-h-80 overflow-y-auto rounded-md border border-stone-200">
                 <label className="flex items-center gap-2 border-b border-stone-100 bg-stone-50 px-3 py-2 text-xs text-stone-600">
@@ -75,7 +79,7 @@ export function SendInvoicesToInbox({ customerId }: { customerId: string }) {
             <FormError error={send.error} />
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button loading={send.isPending} disabled={picked.length === 0} onClick={() => send.mutate()}>Send {picked.length || ""} {picked.length === 1 ? "invoice" : "invoices"}</Button>
+              <Button loading={send.isPending} disabled={picked.length === 0 || (q.data.choices.length > 1 && !to)} onClick={() => send.mutate()}>Send {picked.length || ""} {picked.length === 1 ? "invoice" : "invoices"}</Button>
             </div>
           </div>
         )}

@@ -43,7 +43,7 @@ export default function AdvancesPage() {
     <div className="space-y-6">
       <PageHeader title="Salary advances" guide="salary-advances"
         description="Pay staff have earned, or will earn this month, paid early and taken back on their next payslips. Their supervisor recommends it; finance approves and pays."
-        actions={<div className="flex gap-2">
+        actions={<div className="flex flex-wrap gap-2">
           {finance && <Button variant="secondary" onClick={() => setRules(true)}>Rules</Button>}
           <Button onClick={() => setAsking(true)}>Ask for an advance</Button>
         </div>} />

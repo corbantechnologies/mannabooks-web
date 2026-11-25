@@ -35,7 +35,7 @@ export default function FoundingAdminPage() {
   return (
     <div className="space-y-5">
       <PageHeader title="Founding customers" description="Applications from the founding page. Call each business, then approve (they're emailed the code and a sign-up link) or decline."
-        actions={<div className="flex gap-2">
+        actions={<div className="flex flex-wrap gap-2">
           <Link href="/founding" target="_blank" className="inline-flex items-center gap-1 rounded-md border border-stone-200 px-3 py-2 text-sm hover:bg-stone-50">Open the page <ExternalLink className="h-3.5 w-3.5" /></Link>
           <Button variant="secondary" onClick={() => setSettings(true)}>Settings</Button>
         </div>} />

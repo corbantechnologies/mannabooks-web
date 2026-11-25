@@ -36,7 +36,7 @@ export default function MoneyPage() {
         description={`Every shilling into and out of your bank, M-Pesa and cash accounts in ${label}, however it was recorded. Change the year or month at the top.`} />
       {q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : d && (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Stat label="At the start" value={sum("opening")} cur={cur} />
             <Stat label="Came in" value={moneyIn} cur={cur} tone="in" />
             <Stat label="Went out" value={moneyOut} cur={cur} tone="out" />

@@ -24,7 +24,7 @@ export default function OwnersPage() {
     <div className="space-y-6">
       <PageHeader title="Owners and directors" guide="owners"
         description="Money between the business and the people who own or run it: capital, shares, loans either way and drawings. Each person has their own account."
-        actions={can("owners.record") && <div className="flex gap-2">
+        actions={can("owners.record") && <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setAdding(true)}><UserPlus className="h-4 w-4" /> Add a person</Button>
           <Button disabled={!rows.length} onClick={() => setRecording(true)}><Plus className="h-4 w-4" /> Record money</Button>
         </div>} />
@@ -32,11 +32,11 @@ export default function OwnersPage() {
         <Card><EmptyState title="No owners or directors yet">Add the people who own or run the business, then record what they put in, lend or take out.</EmptyState></Card>
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="p-4"><p className="text-sm text-stone-500">Capital put in</p><p className="text-2xl font-semibold">{fmt(total("capital"))}</p></Card>
-            <Card className="p-4"><p className="text-sm text-stone-500">Paid for shares</p><p className="text-2xl font-semibold">{fmt(total("shares"))}</p></Card>
-            <Card className="p-4"><p className="text-sm text-stone-500">The business owes them</p><p className="text-2xl font-semibold">{fmt(total("owed_to"))}</p></Card>
-            <Card className="p-4"><p className="text-sm text-stone-500">They owe the business</p><p className="text-2xl font-semibold">{fmt(total("owed_by"))}</p></Card>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <Card className="p-4"><p className="text-sm text-stone-500">Capital put in</p><p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(total("capital"))}</p></Card>
+            <Card className="p-4"><p className="text-sm text-stone-500">Paid for shares</p><p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(total("shares"))}</p></Card>
+            <Card className="p-4"><p className="text-sm text-stone-500">The business owes them</p><p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(total("owed_to"))}</p></Card>
+            <Card className="p-4"><p className="text-sm text-stone-500">They owe the business</p><p className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{fmt(total("owed_by"))}</p></Card>
           </div>
           <Card>
             <Table head={["Name", "Capital", "Shares", "Owed to them", "Owed by them", "Drawings this year", "Last money"]}>

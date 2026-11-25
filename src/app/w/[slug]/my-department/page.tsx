@@ -31,7 +31,7 @@ export default function MyDepartmentPage() {
           return (
             <section key={d.id} className="space-y-4">
               {depts.length > 1 && <h2 className="text-lg font-semibold text-stone-900">{d.name}</h2>}
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Tile label="People" value={String(d.members.length)} note={away.length ? `${away.length} on leave today` : "Everyone in"} />
                 <Tile label="Leave waiting" value={String(d.leave_waiting.length)} note={d.leave_waiting.length ? "for your decision" : "Nothing waiting"} alert={d.leave_waiting.length > 0} href={`/w/${slug}/leave`} />
                 <Tile label="Net this month" value={fmt(d.month.net)} note={`In ${fmt(d.month.income)} · costs ${fmt(d.month.costs)}`} alert={Number(d.month.net) < 0} />

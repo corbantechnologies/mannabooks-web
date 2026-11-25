@@ -19,13 +19,16 @@ export default function MessagesPage() {
   });
   const mark = useMutation({
     mutationFn: async (ids?: string[]) => unwrap(await api.POST("/api/v1/w/{workspace}/messages/read/", { ...wsPath(slug), body: ids ? { ids } : {} })),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["messages", slug] }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["messages", slug] });
+      void qc.invalidateQueries({ queryKey: ["workspace-context", slug] });  // the Messages count in the menu
+    },
   });
   const rows = q.data?.results ?? [];
   return (
     <div className="w-full">
       <PageHeader title="Messages" description="Everything MannaBooks has told you about this business: tasks given to you, reports due, approvals waiting. The same as your emails, kept here."
-        actions={<div className="flex gap-2">
+        actions={<div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setUnreadOnly((v) => !v)}>{unreadOnly ? "Show all" : "Unread only"}</Button>
           <Button variant="secondary" onClick={() => mark.mutate(undefined)}>Mark all read</Button>
         </div>} />

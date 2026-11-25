@@ -24,6 +24,12 @@ The portfolio works out every service's revenue, cost and margin **per month**, 
 
 **Prepaid services** (for example Google Workspace paid for a year): enter the period paid for. The service shows how much is earned so far and how much is left. Billing it from the portfolio fills the period in.
 
+## Projects
+
+A **project** groups several services that belong together, for example *Members app* (the app licence, its hosting and its support) or *Website revamp*. Click **New project**, name it, and give it a status (active, on hold, done) and dates if they help. Then add services to it with **Add a service** on the project's row, or choose the project on any service.
+
+On **Services**, each project shows as a heading with what its services bring in a month, what they cost you and the margin, with its services underneath. Services in no project are listed under *Services on their own*. Deleting a project keeps its services; they move to *Services on their own*.
+
 ## Hosting: apps and resources
 
 Under a hosting service, **Add an app** for each app or site. Give each app its resources: vCPU, RAM, storage, bandwidth, backups, or anything else. Each resource has your cost per unit and the client's price per unit, per month. Each app shows its margin and what it should cost at your standard margin, and an app that loses money is flagged. **Switch off** an app that is paused: it stops being billed and counted, but its history stays.

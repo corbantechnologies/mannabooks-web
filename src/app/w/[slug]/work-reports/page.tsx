@@ -36,7 +36,7 @@ export default function WorkReportsPage() {
     <div className="w-full">
       <PageHeader title="Work reports" guide="work-reports"
         description="Reports your manager asks you for, and the ones you ask your team for: weekly sales, site visits, monthly summaries. Also tasks that repeat. One-off tasks are under Tasks."
-        actions={can("workreports.request") && <div className="flex gap-2">
+        actions={can("workreports.request") && <div className="flex flex-wrap gap-2">
           <Link href={`/w/${slug}/work-reports/new?kind=task`}><Button variant="secondary"><Plus className="h-4 w-4" /> Repeating task</Button></Link>
           <Link href={`/w/${slug}/work-reports/new`}><Button><Plus className="h-4 w-4" /> Ask for a report</Button></Link>
         </div>} />
