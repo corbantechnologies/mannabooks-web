@@ -220,6 +220,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
     section: "Work",
     items: [
       { href: "/tasks", label: "Tasks", icon: ListChecks, perm: null },
+      { href: "/goals", label: "Goals", icon: Target, perm: null },
       { href: "/work-reports", label: "Work reports", icon: FileBarChart, perm: null },
       { href: "/calendar", label: "Calendar", icon: CalendarDays, perm: null },
       { href: "/messages", label: "Messages", icon: Bell, perm: null },

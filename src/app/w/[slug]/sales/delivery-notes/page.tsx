@@ -35,7 +35,7 @@ export default function DeliveryNotesPage() {
         guide="delivery-notes"
         actions={can("deliverynotes.manage") && <Link href={`/w/${slug}/sales/delivery-notes/new`}><Button><Plus className="h-4 w-4" /> New delivery note</Button></Link>}
       />
-      <ListFilters dated search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(DELIVERY_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number, customer, vehicle or driver" />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/delivery-notes/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(DELIVERY_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number, customer, vehicle or driver" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No delivery notes found" />

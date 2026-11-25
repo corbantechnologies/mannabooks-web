@@ -9,6 +9,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useSuppliers, useWarehouses } from "@/lib/api/purchasing";
 import type { Bill, PurchaseOrder, ServiceOrder } from "@/lib/api/types";
 import { startDate } from "@/lib/format";
+import { useYearWarning } from "@/lib/period";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { useDefaultVat } from "./lines-editor";
@@ -36,6 +37,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
     warehouse_id: (kind === "order" ? po?.warehouse_id : bill?.warehouse_id) ?? "", reference: existing?.reference ?? "", notes: existing?.notes ?? "", terms: existing?.terms ?? "",
     scope: so?.scope ?? "", supplier_invoice_number: bill?.supplier_invoice_number ?? "", supplier_etims_number: bill?.supplier_etims_number ?? "",
   });
+  const yearWarning = useYearWarning(head.date);
   const [tags, setTags] = useState(tagsOf(existing));
   const [addingSupplier, setAddingSupplier] = useState(false);
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
@@ -85,7 +87,7 @@ export function PurchaseDocForm({ kind, existing, supplierId }: { kind: Kind; ex
             </Select>
           </Field>
         </div>
-        <Field label={kind === "bill" ? "Bill date" : "Order date"}><Input type="date" required value={head.date} onChange={set("date")} /></Field>
+        <Field label={kind === "bill" ? "Bill date" : "Order date"} hint={yearWarning}><Input type="date" required value={head.date} onChange={set("date")} /></Field>
         <Field label={kind === "bill" ? "Due date" : kind === "service" ? "Needed by" : "Expected delivery"} hint={kind === "bill" ? "Blank: from the supplier's terms." : undefined}>
           <Input type="date" value={head.second} onChange={set("second")} />
         </Field>

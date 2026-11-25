@@ -9,6 +9,7 @@ import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useCustomers } from "@/lib/api/sales";
 import type { Invoice, Quotation } from "@/lib/api/types";
 import { startDate } from "@/lib/format";
+import { useYearWarning } from "@/lib/period";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { EditLine, LinesEditor, WholeDiscount, blankLine, linesFromDocument, linesToRequest, noWholeDiscount, useDefaultVat, wholeDiscountBody } from "./lines-editor";
@@ -40,6 +41,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
     reference: existing?.reference ?? "",
     notes: existing?.notes ?? "", terms: existing?.terms ?? "",
   });
+  const yearWarning = useYearWarning(head.issue_date);
   const [tags, setTags] = useState(tagsOf(existing));
   const [includeTax, setIncludeTax] = useState(existing?.prices_include_tax ?? false);
   const [whole, setWhole] = useState<WholeDiscount>(noWholeDiscount);
@@ -107,7 +109,7 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
             </Select>
           </Field>
         </div>
-        <Field label="Date" error={fieldError(save.error, "issue_date")}><Input type="date" required value={head.issue_date} onChange={(e) => setHead((prev) => ({ ...prev, issue_date: e.target.value }))} /></Field>
+        <Field label="Date" hint={yearWarning} error={fieldError(save.error, "issue_date")}><Input type="date" required value={head.issue_date} onChange={(e) => setHead((prev) => ({ ...prev, issue_date: e.target.value }))} /></Field>
         <Field label={billing ? "Due date" : "Valid until"} hint={billing ? "Blank: from the customer's payment terms." : "Blank: 30 days."}
           error={fieldError(save.error, billing ? "due_date" : "valid_until")}>
           <Input type="date" value={head.second_date} onChange={(e) => setHead((prev) => ({ ...prev, second_date: e.target.value }))} />

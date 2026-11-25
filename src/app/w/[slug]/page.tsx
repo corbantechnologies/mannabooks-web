@@ -7,8 +7,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ComingUp } from "@/components/coming-up";
+import { GoalsCard } from "@/components/goals-card";
 import { PeriodDashboard } from "@/components/period-dashboard";
 import { SetupGuide } from "@/components/setup-guide";
+import { YearCoverage } from "@/components/year-coverage";
 import { TaskInsights } from "@/components/task-insights";
 import { Badge, Button, Card, FormError, Modal, PageHeader, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -43,6 +45,7 @@ export default function OverviewPage() {
         actions={<Button variant="secondary" onClick={() => setCustomising(true)}><SlidersHorizontal className="h-4 w-4" /> Customise</Button>} />
 
       <SetupGuide />
+      <YearCoverage />
 
       {context.unclosed_years.length > 0 && can("fiscalyears.manage") && (
         <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -84,6 +87,8 @@ function OverviewCard({ card }: { card: string }) {
       return <AccountsCard />;
     case "money":
       return <MoneyCard />;
+    case "goals":
+      return <GoalsCard />;
     case "tasks":
       return <TaskInsights compact />;
     case "department_tasks":

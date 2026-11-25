@@ -3618,6 +3618,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/fiscal-years/coverage/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Documents dated outside every financial year: they show only under All years and in no year's reports. */
+        get: operations["w_fiscal_years_coverage_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/fixed-assets/": {
         parameters: {
             query?: never;
@@ -3824,6 +3841,129 @@ export interface paths {
         };
         /** @description What is left on a voucher, for the till or a payment. Anyone who can take money can check one. */
         get: operations["w_gift_vouchers_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_list"];
+        put?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        post: operations["w_goals_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        delete: operations["w_goals_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        patch: operations["w_goals_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/check-ins/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A progress note. For a number you update, its value becomes the goal's figure. The goal's people can check in. */
+        post: operations["w_goals_check_ins_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/close/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Drop a goal that no longer matters (with a reason), or open it again. Achieved or missed is worked out at the end. */
+        post: operations["w_goals_close_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/{id}/milestones/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        post: operations["w_goals_milestones_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/milestones/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        delete: operations["w_goals_milestones_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Tick or untick (the goal's owner can too), or change the words and date (whoever looks after the goal). */
+        patch: operations["w_goals_milestones_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_summary_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10334,10 +10474,11 @@ export interface components {
          *     * `report` - report
          *     * `leave` - leave
          *     * `money` - money
+         *     * `portfolio` - portfolio
          *     * `holiday` - holiday
          * @enum {string}
          */
-        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "holiday";
+        CalendarItemKindEnum: "event" | "task" | "report" | "leave" | "money" | "portfolio" | "holiday";
         Candidate: {
             /** Format: uuid */
             journal_line_id: string;
@@ -10742,6 +10883,24 @@ export interface components {
             current_password?: string;
             new_password: string;
         };
+        CheckInOut: {
+            /** Format: uuid */
+            id: string;
+            /** Format: decimal */
+            value: string | null;
+            note: string;
+            by_name: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        CheckInRequest: {
+            /**
+             * Format: decimal
+             * @description The new figure, for a number you update
+             */
+            value?: string | null;
+            note?: string;
+        };
         ClaimLine: {
             /** Format: uuid */
             readonly id: string;
@@ -10818,7 +10977,7 @@ export interface components {
              *     * `out` - out
              *     * `in` - in
              */
-            direction: components["schemas"]["DirectionEnum"];
+            direction: components["schemas"]["ComingUpItemDirectionEnum"];
             title: string;
             party: string;
             /** Format: date */
@@ -10830,6 +10989,12 @@ export interface components {
             overdue: boolean;
             note: string;
         };
+        /**
+         * @description * `out` - out
+         *     * `in` - in
+         * @enum {string}
+         */
+        ComingUpItemDirectionEnum: "out" | "in";
         /**
          * @description * `bill` - bill
          *     * `voucher` - voucher
@@ -11101,6 +11266,22 @@ export interface components {
             valid_until?: string | null;
             max_redemptions?: number | null;
             is_active?: boolean;
+        };
+        Coverage: {
+            /** @description Documents dated outside every financial year (void ones left out) */
+            outside: number;
+            /** @description Of those, dated before the first year */
+            before_first: number;
+            /** Format: date */
+            earliest: string | null;
+            kinds: components["schemas"]["CoverageKind"][];
+            /** @description The year to add before the first one, when documents are dated before it */
+            previous_year_name: string | null;
+        };
+        CoverageKind: {
+            kind: string;
+            label: string;
+            count: number;
         };
         CreditNote: {
             /** Format: uuid */
@@ -11639,12 +11820,6 @@ export interface components {
             entries: number;
             assets: number;
         };
-        /**
-         * @description * `out` - out
-         *     * `in` - in
-         * @enum {string}
-         */
-        DirectionEnum: "out" | "in";
         DocumentEmail: {
             /** Format: uuid */
             readonly id: string;
@@ -12596,6 +12771,157 @@ export interface components {
             collected: string | null;
             previous_label: string;
         };
+        GoalCloseRequest: {
+            outcome: components["schemas"]["OutcomeEnum"] | components["schemas"]["BlankEnum"];
+            reason?: string;
+        };
+        GoalDetail: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            level: string;
+            level_label: string;
+            /** Format: uuid */
+            department_id: string | null;
+            department_name: string;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            /** Format: uuid */
+            parent_id: string | null;
+            parent_title: string;
+            period: string;
+            period_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            measure: string;
+            measure_label: string;
+            direction: string;
+            unit: string;
+            /** @description Measured in money from the books; figures are hidden from people without reports access */
+            money: boolean;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            /** Format: decimal */
+            target: string | null;
+            /** Format: decimal */
+            value: string | null;
+            /** Format: decimal */
+            percent: string;
+            /** Format: decimal */
+            time_percent: string;
+            status: string;
+            status_label: string;
+            outcome: string;
+            outcome_reason: string;
+            can_manage: boolean;
+            children: number;
+            /** Format: decimal */
+            manual_value: string | null;
+            milestones: components["schemas"]["Milestone"][];
+            check_ins: components["schemas"]["CheckInOut"][];
+            child_goals: components["schemas"]["GoalRow"][];
+        };
+        /**
+         * @description * `at_least` - At least
+         *     * `at_most` - At most
+         * @enum {string}
+         */
+        GoalInDirectionEnum: "at_least" | "at_most";
+        GoalInRequest: {
+            title?: string;
+            description?: string;
+            level?: components["schemas"]["LevelEnum"];
+            /** Format: uuid */
+            department_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A membership: whose goal it is
+             */
+            owner_id?: string | null;
+            /** Format: uuid */
+            parent_id?: string | null;
+            period?: components["schemas"]["PeriodEnum"];
+            /**
+             * Format: date
+             * @description Any day in the month, quarter or year the goal is for
+             */
+            anchor?: string;
+            measure?: components["schemas"]["MeasureEnum"];
+            direction?: components["schemas"]["GoalInDirectionEnum"];
+            /** Format: decimal */
+            target?: string;
+            unit?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            /** @description New goal: its checklist, one per line */
+            milestones?: string[];
+        };
+        GoalRow: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            level: string;
+            level_label: string;
+            /** Format: uuid */
+            department_id: string | null;
+            department_name: string;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            /** Format: uuid */
+            parent_id: string | null;
+            parent_title: string;
+            period: string;
+            period_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            measure: string;
+            measure_label: string;
+            direction: string;
+            unit: string;
+            /** @description Measured in money from the books; figures are hidden from people without reports access */
+            money: boolean;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            /** Format: decimal */
+            target: string | null;
+            /** Format: decimal */
+            value: string | null;
+            /** Format: decimal */
+            percent: string;
+            /** Format: decimal */
+            time_percent: string;
+            status: string;
+            status_label: string;
+            outcome: string;
+            outcome_reason: string;
+            can_manage: boolean;
+            children: number;
+        };
+        GoalSummary: {
+            total: number;
+            on_track: number;
+            at_risk: number;
+            behind: number;
+            goals: components["schemas"]["GoalRow"][];
+        };
         GoodsReceipt: {
             /** Format: uuid */
             readonly id: string;
@@ -13485,6 +13811,13 @@ export interface components {
             /** Format: decimal */
             balance: string;
         };
+        /**
+         * @description * `company` - Company
+         *     * `department` - Department
+         *     * `person` - Person
+         * @enum {string}
+         */
+        LevelEnum: "company" | "department" | "person";
         Limit: {
             /** Format: uuid */
             id: string;
@@ -13731,6 +14064,20 @@ export interface components {
             /** @description Blank: all of mine */
             ids?: string[];
         };
+        /**
+         * @description * `revenue` - Revenue (sales before VAT)
+         *     * `costs` - Costs (cost of sales and expenses)
+         *     * `profit` - Net profit
+         *     * `cash_collected` - Cash collected from customers
+         *     * `new_customers` - New customers
+         *     * `deals_won` - Deals won
+         *     * `invoices_issued` - Invoices issued
+         *     * `tasks_on_time` - Tasks done on time (%)
+         *     * `milestones` - Milestones (a checklist)
+         *     * `manual` - A number you update
+         * @enum {string}
+         */
+        MeasureEnum: "revenue" | "costs" | "profit" | "cash_collected" | "new_customers" | "deals_won" | "invoices_issued" | "tasks_on_time" | "milestones" | "manual";
         Member: {
             /** Format: uuid */
             user_id: string;
@@ -13795,6 +14142,23 @@ export interface components {
          * @enum {string}
          */
         Method126Enum: "cash" | "mpesa" | "bank" | "card";
+        Milestone: {
+            /** Format: uuid */
+            id: string;
+            text: string;
+            /** Format: date */
+            due_date: string | null;
+            done: boolean;
+            /** Format: date-time */
+            done_at: string | null;
+            done_by_name: string;
+        };
+        MilestoneInRequest: {
+            text?: string;
+            /** Format: date */
+            due_date?: string | null;
+            done?: boolean;
+        };
         MonthDocument: {
             /** Format: uuid */
             entry_id: string;
@@ -14343,6 +14707,12 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
         };
+        /**
+         * @description * `dropped` - Dropped
+         *     * `` - Open again
+         * @enum {string}
+         */
+        OutcomeEnum: "dropped";
         Owner: {
             /** Format: uuid */
             readonly id: string;
@@ -16422,6 +16792,37 @@ export interface components {
             depreciated_to?: string | null;
             notes?: string;
         };
+        PatchedGoalInRequest: {
+            title?: string;
+            description?: string;
+            level?: components["schemas"]["LevelEnum"];
+            /** Format: uuid */
+            department_id?: string | null;
+            /**
+             * Format: uuid
+             * @description A membership: whose goal it is
+             */
+            owner_id?: string | null;
+            /** Format: uuid */
+            parent_id?: string | null;
+            period?: components["schemas"]["PeriodEnum"];
+            /**
+             * Format: date
+             * @description Any day in the month, quarter or year the goal is for
+             */
+            anchor?: string;
+            measure?: components["schemas"]["MeasureEnum"];
+            direction?: components["schemas"]["GoalInDirectionEnum"];
+            /** Format: decimal */
+            target?: string;
+            unit?: string;
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            /** @description New goal: its checklist, one per line */
+            milestones?: string[];
+        };
         /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedInvoiceRequest: {
             /** Format: uuid */
@@ -16529,6 +16930,12 @@ export interface components {
              * @description Sees only this department's documents and reports. Null: the whole business.
              */
             limited_department_id?: string | null;
+        };
+        PatchedMilestoneInRequest: {
+            text?: string;
+            /** Format: date */
+            due_date?: string | null;
+            done?: boolean;
         };
         /** @description What an employee may change on their own record. Contact details apply at once; the rest waits for HR. */
         PatchedMyDetailsRequest: {
@@ -16949,6 +17356,10 @@ export interface components {
             reference?: string;
             notes?: string;
             lines?: components["schemas"]["RecurringLineRequest"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
         };
         PatchedReminderRuleRequest: {
             name?: string;
@@ -17673,6 +18084,13 @@ export interface components {
             /** @description Bank account or M-Pesa number */
             readonly pay_to: string;
         };
+        /**
+         * @description * `month` - Month
+         *     * `quarter` - Quarter
+         *     * `year` - Year
+         * @enum {string}
+         */
+        PeriodEnum: "month" | "quarter" | "year";
         PeriodMonth: {
             /** Format: date */
             month: string;
@@ -19664,6 +20082,11 @@ export interface components {
             readonly last_invoice_number: string;
             readonly last_error: string;
             lines?: components["schemas"]["RecurringLine"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            readonly project_name: string;
+            /** Format: uuid */
+            cost_center_id?: string | null;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -19693,6 +20116,10 @@ export interface components {
             reference?: string;
             notes?: string;
             lines?: components["schemas"]["RecurringLineRequest"][];
+            /** Format: uuid */
+            project_id?: string | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
         };
         RecurringLine: {
             /** Format: uuid */
@@ -28949,6 +29376,27 @@ export interface operations {
             };
         };
     };
+    w_fiscal_years_coverage_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Coverage"];
+                };
+            };
+        };
+    };
     w_fixed_assets_list: {
         parameters: {
             query?: {
@@ -29333,6 +29781,290 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GiftVoucherCheck"];
+                };
+            };
+        };
+    };
+    w_goals_list: {
+        parameters: {
+            query?: {
+                level?: "company" | "department" | "person";
+                /** @description Only my own goals */
+                mine?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+                /** @description Default now: running or still to start */
+                when?: "all" | "ended" | "now";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalRow"][];
+                };
+            };
+        };
+    };
+    w_goals_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["GoalInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoalInRequest"];
+                "multipart/form-data": components["schemas"]["GoalInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_goals_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGoalInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGoalInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGoalInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_check_ins_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CheckInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CheckInRequest"];
+                "multipart/form-data": components["schemas"]["CheckInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_close_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoalCloseRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoalCloseRequest"];
+                "multipart/form-data": components["schemas"]["GoalCloseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["MilestoneInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MilestoneInRequest"];
+                "multipart/form-data": components["schemas"]["MilestoneInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_milestones_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMilestoneInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMilestoneInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMilestoneInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalSummary"];
                 };
             };
         };

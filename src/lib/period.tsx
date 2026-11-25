@@ -105,3 +105,10 @@ export function useDateQuery(field: string): Record<string, string | undefined> 
   const { from, to } = usePeriod();
   return { [`${field}__gte`]: from, [`${field}__lte`]: to };
 }
+
+/** A warning when a document's date falls in no financial year: it can't be posted and would show only under All years. */
+export function useYearWarning(date: string | undefined): string | undefined {
+  const { years } = usePeriod();
+  if (!date || !years.length || years.some((y) => y.start_date <= date && date <= y.end_date)) return undefined;
+  return "This date isn't in any of your financial years, so it can't be posted. Add the year under Accounting > Financial years, or check the date.";
+}

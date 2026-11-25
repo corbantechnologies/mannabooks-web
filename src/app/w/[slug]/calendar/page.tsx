@@ -12,13 +12,13 @@ import { api, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
-type Item = { kind: "event" | "task" | "report" | "leave" | "money" | "holiday"; id: string; title: string; date: string; end: string | null; time: string | null; detail: string; who: string; link: string; editable: boolean };
+type Item = { kind: "event" | "task" | "report" | "leave" | "money" | "portfolio" | "holiday"; id: string; title: string; date: string; end: string | null; time: string | null; detail: string; who: string; link: string; editable: boolean };
 
 const TONE: Record<Item["kind"], string> = {
   event: "bg-brand-100 text-brand-900", task: "bg-sky-100 text-sky-900", report: "bg-violet-100 text-violet-900",
-  leave: "bg-amber-100 text-amber-900", money: "bg-rose-100 text-rose-900", holiday: "bg-stone-200 text-stone-800",
+  leave: "bg-amber-100 text-amber-900", money: "bg-rose-100 text-rose-900", portfolio: "bg-teal-100 text-teal-900", holiday: "bg-stone-200 text-stone-800",
 };
-const LEGEND: [Item["kind"], string][] = [["event", "Events"], ["task", "Tasks due"], ["report", "Reports due"], ["leave", "Leave"], ["money", "Pay and tax"], ["holiday", "Holidays"]];
+const LEGEND: [Item["kind"], string][] = [["event", "Events"], ["task", "Tasks due"], ["report", "Reports due"], ["leave", "Leave"], ["money", "Pay and tax"], ["portfolio", "Client renewals"], ["holiday", "Holidays"]];
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 /** The company calendar: events put on by hand, plus deadlines, leave, paydays and holidays from across MannaBooks. */
@@ -52,7 +52,7 @@ export default function CalendarPage() {
   return (
     <div className="w-full">
       <PageHeader title="Calendar" guide="calendar"
-        description="Everything on one timeline: events, task and report deadlines, leave, paydays, tax dates and public holidays. You see what your role allows."
+        description="Everything on one timeline: events, task and report deadlines, leave, paydays, tax dates, client billing and renewals, and public holidays. You see what your role allows."
         actions={<Button onClick={() => setAdding(today)}><Plus className="h-4 w-4" /> Add event</Button>} />
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">

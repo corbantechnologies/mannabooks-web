@@ -35,7 +35,7 @@ export default function QuotationsPage() {
         guide="quotations"
         actions={can("quotations.manage") && <Link href={`/w/${slug}/sales/quotations/new`}><Button><Plus className="h-4 w-4" /> New quotation</Button></Link>}
       />
-      <ListFilters dated search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(QUOTE_STATUS).map(([k, v]) => [k, v.label])} />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/quotations/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(QUOTE_STATUS).map(([k, v]) => [k, v.label])} />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="No quotations found" />
