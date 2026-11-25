@@ -151,11 +151,11 @@ export function EmployeeEditor({ employee, onClose, onSaved }: { employee: Emplo
   const current = editing !== "new" ? editing : null;
 
   return (
-  <div className="w-full max-w-5xl">
+  <div className="w-full">
     <PageHeader title={current ? `Change ${current.full_name}` : "New employee"} description={current ? `Staff number ${current.staff_number}` : "Their details, where they work, and how they are paid."} />
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
       <Section title="Personal details">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         <Field label="First name" error={fieldError(save.error, "first_name")}><Input required value={form.first_name} onChange={set("first_name")} /></Field>
         <Field label="Last name" error={fieldError(save.error, "last_name")}><Input required value={form.last_name} onChange={set("last_name")} /></Field>
         <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
@@ -167,7 +167,7 @@ export function EmployeeEditor({ employee, onClose, onSaved }: { employee: Emplo
       </div>
       </Section>
       <Section title="Work">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         <Field label="Job title" error={fieldError(save.error, "job_title")}><Input value={form.job_title} onChange={set("job_title")} /></Field>
         <Field label="Hire date" error={fieldError(save.error, "hire_date")}><Input type="date" value={form.hire_date} onChange={set("hire_date")} /></Field>
         <Field label="Employment" error={fieldError(save.error, "employment_type")}>
@@ -249,7 +249,7 @@ export function EmployeeEditor({ employee, onClose, onSaved }: { employee: Emplo
         <Section title="Pay">
           <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={form.on_payroll} onChange={(e) => setForm((p) => ({ ...p, on_payroll: e.target.checked }))} />
             <span>On the monthly payroll<span className="block text-xs text-stone-500">Leave it off for casuals paid now and then: pay them with Casual pay on the Payroll page.</span></span></label>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             <Field label="Paid as">
               <Select value={form.pay_type} onChange={(e) => setForm((p) => ({ ...p, pay_type: e.target.value as Form["pay_type"] }))}>
                 <option value="salary">A monthly salary</option><option value="daily">A daily wage</option><option value="hourly">An hourly wage</option>

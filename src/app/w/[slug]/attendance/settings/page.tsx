@@ -30,7 +30,7 @@ export default function AttendanceSettingsPage() {
   const manage = can("attendance.manage");
   const types = (s.tracked_types as string[]) ?? [];
   return (
-    <div className="w-full max-w-5xl space-y-5">
+    <div className="w-full space-y-5">
       <Link href={`/w/${slug}/attendance`} className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800"><ArrowLeft className="h-4 w-4" /> Attendance</Link>
       <PageHeader title="Attendance settings" guide="attendance"
         description="The business's rules. A department or one person can have their own hours, grace and break below. Every change goes in the audit log." />

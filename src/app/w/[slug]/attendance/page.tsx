@@ -9,6 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { AttendanceMonths } from "@/components/attendance-months";
+import { AttendanceShifts } from "@/components/attendance-shifts";
 import { ClockCard } from "@/components/clock-card";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -16,7 +17,7 @@ import { type AttendancePerson, DAY_STATUS, hm, hours } from "@/lib/attendance";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
-type Tab = "mine" | "now" | "register" | "corrections" | "months";
+type Tab = "mine" | "now" | "register" | "corrections" | "months" | "shifts";
 
 /** Attendance: your own days, Who's in now and the day register for your team, and corrections to decide. */
 export default function AttendancePage() {
@@ -26,7 +27,7 @@ export default function AttendancePage() {
   const lead = me.data?.can_approve ?? false;
   const [tab, setTab] = useState<Tab>(() => (params.get("tab") as Tab) || "mine");
   const tabs: [Tab, string][] = [["mine", "My days"], ...(lead ? [["now", "Who's in now"], ["register", "Day register"], ["corrections", "Corrections"]] as [Tab, string][] : []),
-    ["months", lead ? "Months" : "My months"]];
+    ["months", lead ? "Months" : "My months"], ...((lead || can("attendance.manage")) ? [["shifts", "Shifts"]] as [Tab, string][] : [])];
   if (me.isLoading) return <Spinner />;
   if (me.error) return <ErrorState error={me.error} />;
   return (
@@ -51,6 +52,7 @@ export default function AttendancePage() {
           {tab === "register" && <Register />}
           {tab === "corrections" && <Corrections box="to_decide" />}
           {tab === "months" && <AttendanceMonths />}
+          {tab === "shifts" && <AttendanceShifts />}
         </>
       )}
     </div>
@@ -79,7 +81,7 @@ function MyDays({ employeeId, tracked }: { employeeId: string | null; tracked: b
             {(days.data ?? []).filter((d) => d.status !== "not_tracked").map((d) => (
               <tr key={d.day}>
                 <Td className="whitespace-nowrap">{fmtDate(d.day)}</Td>
-                <Td><Badge tone={DAY_STATUS[d.status]?.[1] ?? "stone"}>{DAY_STATUS[d.status]?.[0] ?? d.status}</Badge></Td>
+                <Td><Badge tone={DAY_STATUS[d.status]?.[1] ?? "stone"}>{DAY_STATUS[d.status]?.[0] ?? d.status}</Badge>{d.shift_name && <span className="ml-1 text-xs text-sky-800">{d.shift_name}</span>}</Td>
                 <Td className="text-right font-mono">{hm(d.first_in)}</Td>
                 <Td className="text-right font-mono">{hm(d.last_out)}{d.auto_closed ? " *" : ""}</Td>
                 <Td className="text-right font-mono">{d.minutes ? hours(d.minutes) : "-"}</Td>

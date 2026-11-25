@@ -9,7 +9,7 @@ export type PublicPlan = {
 };
 
 const COMMON = ["Tasks for people and departments, with insights", "Salary advances and staff self-service", "Owners and directors: capital, loans and drawings",
-  "Card payments (Paystack) and payment links", "Work reports"];
+  "Card payments (Paystack) and payment links", "Work reports", "Attendance and shifts (free until the end of 2026)", "Goals"];
 
 /** "Yearly (1 month free)": worked out from the paid plans' prices, so it follows whatever the admin sets. */
 export function yearlyLabel(plans: PublicPlan[]): string {
@@ -20,7 +20,7 @@ export function yearlyLabel(plans: PublicPlan[]): string {
 
 export const MODULE_LABEL: Record<string, string> = {
   sales: "Quotations, invoices, cash sales, M-Pesa", pos: "Till with shifts and loyalty", store: "Online shop", purchasing: "LPOs, bills and suppliers",
-  inventory: "Stock and warehouses", manufacturing: "Recipes and production", banking: "Bank, M-Pesa and expenses", people: "Payroll and leave",
+  inventory: "Stock and warehouses", manufacturing: "Recipes and production", banking: "Bank, M-Pesa and expenses", people: "Payroll, leave and attendance",
   projects: "Projects and job costing", crm: "CRM: leads and deals", control: "Budgets, approvals, fixed assets",
 };
 

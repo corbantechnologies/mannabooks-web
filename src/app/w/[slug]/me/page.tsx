@@ -33,7 +33,7 @@ export default function MePage() {
   });
   if (balance.error) {
     return (
-      <div className="mx-auto max-w-md space-y-5">
+      <div className="w-full space-y-5">
         <MyOwnerAccount />
         <Card className="p-6 text-center text-sm text-stone-600">Your sign-in isn&apos;t linked to an employee record yet. Ask HR to link it, then your leave and payslips appear here.</Card>
       </div>
@@ -41,68 +41,74 @@ export default function MePage() {
   }
   const b = balance.data?.[0];
   return (
-    <div className="mx-auto max-w-md space-y-5">
+    <div className="w-full space-y-5">
       <h1 className="text-xl font-semibold">My leave, pay and details</h1>
-      <ClockCard showLink />
-      <Card className="p-4">
-        {balance.isLoading ? <Spinner /> : b && (
-          <div className="flex items-end justify-between">
-            <div><p className="text-sm text-stone-500">Annual leave left in {b.year}</p><p className="text-3xl font-semibold">{Number(b.remaining)} <span className="text-base font-normal text-stone-500">days</span></p>
-              <p className="text-xs text-stone-500">{Number(b.taken)} taken · {Number(b.pending)} waiting · {Number(b.entitlement)} a year</p></div>
-            <Button onClick={() => setAsking(true)}>Ask for leave</Button>
-          </div>
-        )}
-      </Card>
-      <section>
-        <h2 className="mb-2 text-sm font-semibold">My requests</h2>
-        <div className="space-y-2">
-          {(requests.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">No leave requests yet.</p>}
-          {(requests.data?.results ?? []).map((r) => (
-            <Card key={r.id} className="flex items-center justify-between gap-3 p-3">
-              <div className="min-w-0">
-                <p className="font-medium">{r.leave_type_label} · {Number(r.days)} days</p>
-                <p className="text-xs text-stone-500">{fmtDate(r.start_date)} – {fmtDate(r.end_date)}{r.decision_note ? ` · "${r.decision_note}"` : ""}</p>
+      <div className="grid items-start gap-5 lg:grid-cols-2">
+        <div className="min-w-0 space-y-5">
+          <ClockCard showLink />
+          <Card className="p-4">
+            {balance.isLoading ? <Spinner /> : b && (
+              <div className="flex items-end justify-between">
+                <div><p className="text-sm text-stone-500">Annual leave left in {b.year}</p><p className="text-3xl font-semibold">{Number(b.remaining)} <span className="text-base font-normal text-stone-500">days</span></p>
+                  <p className="text-xs text-stone-500">{Number(b.taken)} taken · {Number(b.pending)} waiting · {Number(b.entitlement)} a year</p></div>
+                <Button onClick={() => setAsking(true)}>Ask for leave</Button>
               </div>
-              <div className="flex shrink-0 flex-col items-end gap-1">
-                <Badge tone={LEAVE_STATUS[r.status ?? "pending"].tone}>{LEAVE_STATUS[r.status ?? "pending"].label}</Badge>
-                {(r.status === "pending" || (r.status === "approved" && r.start_date > todayIso())) && <button className="text-xs text-stone-500 underline" onClick={() => void ask("Cancel this request?").then((ok) => ok && cancel.mutate(r.id))}>Cancel</button>}
-              </div>
-            </Card>
-          ))}
+            )}
+          </Card>
+          <section>
+            <h2 className="mb-2 text-sm font-semibold">My requests</h2>
+            <div className="space-y-2">
+              {(requests.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">No leave requests yet.</p>}
+              {(requests.data?.results ?? []).map((r) => (
+                <Card key={r.id} className="flex items-center justify-between gap-3 p-3">
+                  <div className="min-w-0">
+                    <p className="font-medium">{r.leave_type_label} · {Number(r.days)} days</p>
+                    <p className="text-xs text-stone-500">{fmtDate(r.start_date)} – {fmtDate(r.end_date)}{r.decision_note ? ` · "${r.decision_note}"` : ""}</p>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <Badge tone={LEAVE_STATUS[r.status ?? "pending"].tone}>{LEAVE_STATUS[r.status ?? "pending"].label}</Badge>
+                    {(r.status === "pending" || (r.status === "approved" && r.start_date > todayIso())) && <button className="text-xs text-stone-500 underline" onClick={() => void ask("Cancel this request?").then((ok) => ok && cancel.mutate(r.id))}>Cancel</button>}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
-      <section>
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Salary advances</h2>
-          <button className="text-sm text-brand-700 underline" onClick={() => setAdvancing(true)}>Ask for an advance</button>
+        <div className="min-w-0 space-y-5">
+          <section>
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-sm font-semibold">Salary advances</h2>
+              <button className="text-sm text-brand-700 underline" onClick={() => setAdvancing(true)}>Ask for an advance</button>
+            </div>
+            <div className="space-y-2">
+              {(advances.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">Need some of your pay early? Ask for an advance. It comes off your next payslip.</p>}
+              {(advances.data?.results ?? []).map((a) => (
+                <Link key={a.id} href={`/w/${slug}/advances`}>
+                  <Card className="mb-2 flex items-center justify-between gap-3 p-3 hover:border-brand-600">
+                    <div className="min-w-0"><p className="font-medium">{fmt(a.status === "pending" || a.status === "recommended" || a.status === "declined" ? a.requested_amount : a.amount)}</p>
+                      <p className="text-xs text-stone-500">{fmtDate(a.created_at)}{a.status === "paid" ? ` · ${fmt(a.outstanding)} still to recover` : ""}</p></div>
+                    <Badge tone={ADVANCE_STATUS[a.status ?? "pending"].tone}>{ADVANCE_STATUS[a.status ?? "pending"].label}</Badge>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </section>
+          <section>
+            <h2 className="mb-2 text-sm font-semibold">My payslips</h2>
+            <div className="space-y-2">
+              {(slips.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">No payslips yet.</p>}
+              {(slips.data?.results ?? []).map((s) => (
+                <Link key={s.id} href={`/w/${slug}/payroll/payslips/${s.id}`}>
+                  <Card className="mb-2 flex items-center justify-between p-3 hover:border-brand-600">
+                    <div><p className="font-medium">{s.period}</p><p className="text-xs text-stone-500">Paid {fmtDate(s.pay_date)}</p></div>
+                    <div className="flex items-center gap-2"><span className="font-mono font-semibold">{fmt(s.net_pay)}</span><ChevronRight className="h-4 w-4 text-stone-400" /></div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
-        <div className="space-y-2">
-          {(advances.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">Need some of your pay early? Ask for an advance. It comes off your next payslip.</p>}
-          {(advances.data?.results ?? []).map((a) => (
-            <Link key={a.id} href={`/w/${slug}/advances`}>
-              <Card className="mb-2 flex items-center justify-between gap-3 p-3 hover:border-brand-600">
-                <div className="min-w-0"><p className="font-medium">{fmt(a.status === "pending" || a.status === "recommended" || a.status === "declined" ? a.requested_amount : a.amount)}</p>
-                  <p className="text-xs text-stone-500">{fmtDate(a.created_at)}{a.status === "paid" ? ` · ${fmt(a.outstanding)} still to recover` : ""}</p></div>
-                <Badge tone={ADVANCE_STATUS[a.status ?? "pending"].tone}>{ADVANCE_STATUS[a.status ?? "pending"].label}</Badge>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section>
-        <h2 className="mb-2 text-sm font-semibold">My payslips</h2>
-        <div className="space-y-2">
-          {(slips.data?.results ?? []).length === 0 && <p className="text-sm text-stone-500">No payslips yet.</p>}
-          {(slips.data?.results ?? []).map((s) => (
-            <Link key={s.id} href={`/w/${slug}/payroll/payslips/${s.id}`}>
-              <Card className="mb-2 flex items-center justify-between p-3 hover:border-brand-600">
-                <div><p className="font-medium">{s.period}</p><p className="text-xs text-stone-500">Paid {fmtDate(s.pay_date)}</p></div>
-                <div className="flex items-center gap-2"><span className="font-mono font-semibold">{fmt(s.net_pay)}</span><ChevronRight className="h-4 w-4 text-stone-400" /></div>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
+      </div>
       <MyOwnerAccount />
       {asking && <AskLeave onClose={() => setAsking(false)} />}
       {advancing && <AskAdvance onClose={() => setAdvancing(false)} />}

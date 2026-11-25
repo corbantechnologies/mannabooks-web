@@ -62,7 +62,7 @@ export default function GoalPage() {
   const whose = g.level === "company" ? "The company" : g.level === "department" ? g.department_name : g.owner_name;
   const pct = Math.min(Number(g.percent), 100);
   return (
-    <div className="w-full max-w-5xl space-y-5">
+    <div className="w-full space-y-5">
       <Link href={`/w/${slug}/goals`} className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800"><ArrowLeft className="h-4 w-4" /> Goals</Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">

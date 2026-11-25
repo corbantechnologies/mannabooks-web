@@ -39,7 +39,7 @@ function OpenShift() {
   });
   const tills = (registers.data?.results ?? []).filter((r) => r.is_active);
   return (
-    <div className="max-w-lg">
+    <div className="w-full">
       <PageHeader title="Point of sale" description="Open a shift to start selling. Count the cash in the drawer first." guide="pos"
         actions={can("pos.manage") && <Link href={`/w/${slug}/pos/registers`}><Button variant="secondary"><Settings className="h-4 w-4" /> Tills</Button></Link>} />
       {registers.isLoading ? <Spinner /> : tills.length === 0 ? (

@@ -64,7 +64,7 @@ export function GoalForm({ goal, parentId }: { goal?: GoalDetail; parentId?: str
     onSuccess: (g) => { toast.success(goal ? "Goal saved" : "Goal set"); router.push(`/w/${slug}/goals/${g.id}`); },
   });
   return (
-    <div className="w-full max-w-4xl">
+    <div className="w-full">
       <PageHeader title={goal ? `Change ${goal.title}` : "New goal"} guide="goals"
         description="What you mean to reach, by when, and how MannaBooks measures it as the period goes." />
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
