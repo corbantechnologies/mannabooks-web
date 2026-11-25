@@ -1666,6 +1666,60 @@ export interface paths {
         patch: operations["w_attendance_settings_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/timesheets/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The month for everyone you may see (and yourself): days, lateness, hours and extra hours, open or approved. */
+        get: operations["w_attendance_timesheets_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/timesheets/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Approve a person's month (the supervisor or department head). Extra hours can be adjusted as approved. The month is
+         *     then locked and payroll uses it.
+         */
+        post: operations["w_attendance_timesheets_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/attendance/timesheets/reopen/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description HR opens an approved month again (before its payroll is approved). */
+        post: operations["w_attendance_timesheets_reopen_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/audit-logs/": {
         parameters: {
             query?: never;
@@ -9887,6 +9941,10 @@ export interface components {
             readonly is_me: boolean;
             /** @description The departments whose tasks they can take (their own, and any they head) */
             readonly department_ids: string[];
+            /** @description Attendance today (in, on_break, not_in_yet, absent, on_leave, off...); null when not tracked */
+            readonly today: string | null;
+            readonly active_now: boolean;
+            readonly open_tasks: number;
         };
         AssignableDepartment: {
             /** Format: uuid */
@@ -10202,6 +10260,67 @@ export interface components {
             half_day_hours?: string;
             /** @description Employment types whose time is tracked */
             tracked_types?: unknown;
+            /**
+             * Format: decimal
+             * @description Extra hours start beyond this many hours worked in a week
+             */
+            extra_after_hours?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, normal days
+             */
+            extra_rate?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, rest days and public holidays
+             */
+            rest_rate?: string;
+            /** @description Extra hours count only once approved with the month */
+            extra_needs_approval?: boolean;
+            /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
+            alerts?: unknown;
+        };
+        AttendanceTimesheet: {
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            pay_type: string;
+            /** Format: date */
+            month: string;
+            status: string;
+            days_worked: number;
+            half_days: number;
+            absent: number;
+            on_leave: number;
+            late_days: number;
+            late_minutes: number;
+            no_clock_out: number;
+            minutes: number;
+            /**
+             * Format: decimal
+             * @description Days or hours a waged payslip pays
+             */
+            units: string | null;
+            /** @description Worked out, or approved once the month is */
+            extra_normal_minutes: number;
+            extra_rest_minutes: number;
+            approved_by_name: string | null;
+            /** Format: date-time */
+            approved_at: string | null;
+            note: string;
+            can_approve: boolean;
+            month_ended: boolean;
+        };
+        AttendanceTimesheetActionRequest: {
+            /** Format: uuid */
+            employee_id: string;
+            /** Format: date */
+            month: string;
+            /** @description Approve: extra minutes on normal days (blank: as worked out) */
+            extra_normal_minutes?: number;
+            extra_rest_minutes?: number;
+            note?: string;
         };
         /**
          * @description * `team` - Everyone who reports to me
@@ -16963,6 +17082,25 @@ export interface components {
             half_day_hours?: string;
             /** @description Employment types whose time is tracked */
             tracked_types?: unknown;
+            /**
+             * Format: decimal
+             * @description Extra hours start beyond this many hours worked in a week
+             */
+            extra_after_hours?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, normal days
+             */
+            extra_rate?: string;
+            /**
+             * Format: decimal
+             * @description Times the hourly rate, rest days and public holidays
+             */
+            rest_rate?: string;
+            /** @description Extra hours count only once approved with the month */
+            extra_needs_approval?: boolean;
+            /** @description Each alert's settings; missing keys use ALERT_DEFAULTS */
+            alerts?: unknown;
         };
         PatchedBankAccountRequest: {
             name?: string;
@@ -26210,6 +26348,88 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AttendanceSettings"];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_list: {
+        parameters: {
+            query?: {
+                /** @description Any day in the month (default: last month) */
+                month?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"][];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceTimesheetActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"];
+                };
+            };
+        };
+    };
+    w_attendance_timesheets_reopen_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceTimesheetActionRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceTimesheetActionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceTimesheet"];
                 };
             };
         };

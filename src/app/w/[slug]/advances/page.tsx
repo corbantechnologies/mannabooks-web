@@ -108,7 +108,8 @@ function ApproveAdvance({ adv, onClose }: { adv: Advance; onClose: () => void })
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
         <p className="text-sm text-stone-600">Asked for <b className="font-mono">{fmt(adv.requested_amount)}</b>{adv.reason ? `: ${adv.reason}` : ""}.{adv.recommended_by_name ? ` Recommended by ${adv.recommended_by_name}.` : ""}</p>
         {waged && (
-          <Field label={`${unit} worked since they were last paid${l?.last_paid_on ? ` (${fmtDate(l.last_paid_on)})` : ""}`}>
+          <Field label={`${unit} worked since they were last paid${l?.last_paid_on ? ` (${fmtDate(l.last_paid_on)})` : ""}`}
+            hint={!form.days_worked && l?.units != null ? `Attendance shows ${Number(l.units)}. Type it, or the number you have.` : undefined}>
             <Input inputMode="decimal" autoFocus required value={form.days_worked} onChange={(e) => setForm((p) => ({ ...p, days_worked: e.target.value }))} />
           </Field>
         )}

@@ -6,7 +6,7 @@ MannaBooks works out Kenyan payroll each month: **PAYE**, **SHIF**, **NSSF** and
 
 1. On each employee, open **Pay** and choose how they are **paid**:
     - **A monthly salary:** enter the basic salary.
-    - **A daily or hourly wage:** enter the rate. The days or hours go on each payslip.
+    - **A daily or hourly wage:** enter the rate. The days or hours go on each payslip: with **Attendance** on, they come from the person's approved month (or, for casual pay, the days they worked in the period). You can still change them.
 2. Tick **On the monthly payroll** for everyone paid every month, including waged staff and monthly casuals. Leave it off for casuals paid now and then.
 3. Under **Statutory deductions**, untick what the person doesn't pay. For example, a casual with no NSSF, SHIF or Housing Levy, or someone with none at all. The employer's NSSF and Housing Levy follow the same ticks.
 4. Enter where the money goes (bank, M-Pesa or cash), and their KRA PIN, NSSF and SHIF numbers.
@@ -16,7 +16,7 @@ MannaBooks works out Kenyan payroll each month: **PAYE**, **SHIF**, **NSSF** and
 ## Each month
 
 1. **Pay staff > Monthly payroll** for the month: a payslip is made for everyone on the monthly payroll. Approved unpaid leave reduces basic pay. There is one monthly payroll a month.
-2. **Edit** a payslip for this month's extras (overtime, bonus), the days or hours of a waged worker, or which deductions apply this month. **Add someone** or **Remove** a person while it's a draft. Paid **salary advances** are taken back by themselves as a *Salary advance* line (see the Salary advances guide).
+2. **Edit** a payslip for this month's extras (overtime, bonus), the days or hours of a waged worker, or which deductions apply this month. **Add someone** or **Remove** a person while it's a draft. Paid **salary advances** are taken back by themselves as a *Salary advance* line (see the Salary advances guide). Extra hours approved in **Attendance** come in as an *Extra hours* line.
 3. **Approve**. The payroll is posted to the books: salaries and the employer's NSSF and Housing Levy as costs; PAYE, SHIF, NSSF, Housing Levy, other deductions and net pay as amounts owed. Staff can now see their payslips.
 4. Download the **Bank / M-Pesa list** to pay salaries, then **Record salaries paid**.
 5. Use the **Statutory schedule** to file returns, and **Record paid** for each one when you pay KRA, SHA and NSSF (by the 9th of the next month).

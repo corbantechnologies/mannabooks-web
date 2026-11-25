@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { AttendanceMonths } from "@/components/attendance-months";
 import { ClockCard } from "@/components/clock-card";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -15,7 +16,7 @@ import { type AttendancePerson, DAY_STATUS, hm, hours } from "@/lib/attendance";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
-type Tab = "mine" | "now" | "register" | "corrections";
+type Tab = "mine" | "now" | "register" | "corrections" | "months";
 
 /** Attendance: your own days, Who's in now and the day register for your team, and corrections to decide. */
 export default function AttendancePage() {
@@ -24,7 +25,8 @@ export default function AttendancePage() {
   const me = useQuery({ queryKey: ["attendance-me", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/me/", wsPath(slug))) });
   const lead = me.data?.can_approve ?? false;
   const [tab, setTab] = useState<Tab>(() => (params.get("tab") as Tab) || "mine");
-  const tabs: [Tab, string][] = [["mine", "My days"], ...(lead ? [["now", "Who's in now"], ["register", "Day register"], ["corrections", "Corrections"]] as [Tab, string][] : [])];
+  const tabs: [Tab, string][] = [["mine", "My days"], ...(lead ? [["now", "Who's in now"], ["register", "Day register"], ["corrections", "Corrections"]] as [Tab, string][] : []),
+    ["months", lead ? "Months" : "My months"]];
   if (me.isLoading) return <Spinner />;
   if (me.error) return <ErrorState error={me.error} />;
   return (
@@ -48,6 +50,7 @@ export default function AttendancePage() {
           {tab === "now" && <People />}
           {tab === "register" && <Register />}
           {tab === "corrections" && <Corrections box="to_decide" />}
+          {tab === "months" && <AttendanceMonths />}
         </>
       )}
     </div>

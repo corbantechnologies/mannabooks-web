@@ -94,6 +94,19 @@ export default function AttendanceSettingsPage() {
               <Select className="max-w-md" value={s.elsewhere} onChange={(e) => set("elsewhere", e.target.value)}><option value="flag">Allow it, marked Away from the office</option><option value="refuse">Refuse it</option></Select>
             </Field>
           </Card>
+
+          <Card className="space-y-3 p-4 sm:p-5">
+            <h2 className="text-sm font-semibold">Extra hours</h2>
+            <p className="text-sm text-stone-600">Attendance works out extra hours by the week. The supervisor or department head approves them with the month, and payroll adds them to the payslip at these rates. Check the rates against your contracts and the wages order.</p>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <Field label="Extra after (hours a week)"><Input type="number" min="1" step="0.5" value={String(s.extra_after_hours)} onChange={(e) => set("extra_after_hours", e.target.value)} /></Field>
+              <Field label="Rate on normal days (times)"><Input type="number" min="1" step="0.1" value={String(s.extra_rate)} onChange={(e) => set("extra_rate", e.target.value)} /></Field>
+              <Field label="Rest days and holidays (times)"><Input type="number" min="1" step="0.1" value={String(s.rest_rate)} onChange={(e) => set("rest_rate", e.target.value)} /></Field>
+              <Field label="Needs approval"><Select value={s.extra_needs_approval ? "yes" : "no"} onChange={(e) => set("extra_needs_approval", e.target.value === "yes")}><option value="yes">Yes, with the month</option><option value="no">No: count as worked</option></Select></Field>
+            </div>
+          </Card>
+
+          <Alerts value={s.alerts as unknown as AlertMap} onChange={(v) => set("alerts", v)} />
         </fieldset>
         <FormError error={save.error} />
         {manage && (
@@ -238,5 +251,51 @@ function OverrideForm({ onClose }: { onClose: () => void }) {
         <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
       </form>
     </Modal>
+  );
+}
+
+type AlertMap = Record<string, Record<string, string | number | boolean>>;
+
+const ALERTS: { key: string; title: string; who: string; fields: [string, string, "minutes" | "weekday" | "time"][] }[] = [
+  { key: "not_in", title: "Not clocked in", who: "The person, then their supervisor", fields: [["after_minutes", "Tell them after (minutes past start and grace)", "minutes"], ["supervisor_after_minutes", "Tell the supervisor after (minutes)", "minutes"]] },
+  { key: "no_clock_out", title: "Still clocked in after the end time", who: "The person", fields: [["after_minutes", "After (minutes past the end time)", "minutes"]] },
+  { key: "short_hours", title: "Flexible hours short for the week", who: "The person", fields: [["weekday", "On", "weekday"], ["at", "At", "time"]] },
+  { key: "corrections", title: "A correction to decide", who: "The supervisor or department head", fields: [] },
+  { key: "task_to_absent", title: "A task due today given to someone who isn't in", who: "Whoever gave the task", fields: [] },
+];
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+/** Each alert: on or off, and when. They arrive by email and in the bell. */
+function Alerts({ value, onChange }: { value: AlertMap; onChange: (v: AlertMap) => void }) {
+  const put = (key: string, field: string, v: string | number | boolean) => onChange({ ...value, [key]: { ...value[key], [field]: v } });
+  return (
+    <Card className="space-y-3 p-4 sm:p-5">
+      <h2 className="text-sm font-semibold">Alerts</h2>
+      <p className="text-sm text-stone-600">Each arrives by email and in the bell, once. Alerts about a person go only to them and the people above them.</p>
+      <ul className="divide-y divide-stone-100">
+        {ALERTS.map((a) => {
+          const v = value?.[a.key] ?? {};
+          return (
+            <li key={a.key} className="flex flex-wrap items-end gap-3 py-3">
+              <label className="flex min-w-56 flex-1 items-start gap-2 text-sm">
+                <input type="checkbox" className="mt-1" checked={Boolean(v.on)} onChange={(e) => put(a.key, "on", e.target.checked)} />
+                <span><span className="font-medium">{a.title}</span><span className="block text-xs text-stone-500">Told: {a.who}</span></span>
+              </label>
+              {a.fields.map(([f, label, kind]) => (
+                <Field key={f} label={label}>
+                  {kind === "weekday" ? (
+                    <Select value={String(v[f] ?? 4)} onChange={(e) => put(a.key, f, Number(e.target.value))}>{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</Select>
+                  ) : kind === "time" ? (
+                    <Input type="time" value={String(v[f] ?? "14:00")} onChange={(e) => put(a.key, f, e.target.value)} />
+                  ) : (
+                    <Input type="number" min="0" className="w-28" value={String(v[f] ?? 0)} onChange={(e) => put(a.key, f, Number(e.target.value))} />
+                  )}
+                </Field>
+              ))}
+            </li>
+          );
+        })}
+      </ul>
+    </Card>
   );
 }

@@ -5,6 +5,7 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import { AttendanceProfile } from "@/components/attendance-profile";
 import { Badge, Button, Card, ErrorState, Spinner, Table, Td } from "@/components/ui";
 import { REPORT_STATUS } from "@/lib/api/assets";
 import { api, unwrap } from "@/lib/api/client";
@@ -54,6 +55,8 @@ export default function EmployeeProfilePage() {
         {p.pay && <Tile label={p.pay.pay_type === "salary" ? "Basic salary" : p.pay.pay_type_label} value={fmt(p.pay.pay_type === "salary" ? p.pay.basic_salary : p.pay.pay_rate)} note={p.pay.pay_type === "salary" ? "a month" : p.pay.pay_type === "daily" ? "a day" : "an hour"} />}
         {p.advances && <Tile label="Advance still owed" value={fmt(p.advances.reduce((s, a) => s + Number(a.outstanding), 0))} note={`${p.advances.length} advance${p.advances.length === 1 ? "" : "s"}`} />}
       </div>
+
+      <AttendanceProfile employeeId={id} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Section title="Work reports" empty={!p.work_reports.recent.length && "No reports asked of them yet"}>
