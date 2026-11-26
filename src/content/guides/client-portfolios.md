@@ -28,11 +28,12 @@ The portfolio works out every service's revenue, cost and margin **per month**, 
 
 A **group** is a folder for services that belong together, for example *Members app* (the app licence, its hosting and its support) or *Branch A*. It is just a name and an optional note: the services inside keep their own prices, dates and renewals. (It isn't the same as **Projects** in the menu, which tracks a job's costs in the books.)
 
-- **New group:** click **New group** and name it. It shows straight away, even before it has services.
+- **New group:** click **New group** at the top of the portfolio and name it. It shows straight away, even before it has services.
+- **The Groups tab** lists every group with its services, what it brings in a month, what it costs you and the margin. Click a group's name to open **its own page**: its services, totals, **Add a service**, and under **More**: change the name and note, duplicate or delete it.
 - **Add a service here:** on the group's row, to add a service straight into it. Or choose the group in a service's form.
 - **Move to group:** open a service and pick another group, or **No group**.
 - **Totals:** each group's row shows what its services bring in a month, what they cost you and the margin.
-- **Open and close:** click a group's name to fold its services away, and again to open them.
+- **Open and close:** on the Services tab, click a group's folder icon to fold its services away, and again to open them.
 - **Delete:** under **Change** on the group's row. Its services stay, under *No group*.
 
 ### Duplicate for quick setup
@@ -71,7 +72,7 @@ The lead gets an in-app message before each one. Billing and renewal dates also 
 
 ## The month's invoice
 
-**Make the month's invoice**, then pick the month. The preview lists everything due by the end of that month:
+Under **More**, choose **Make the month's invoice**, then pick the month. The preview lists everything due by the end of that month:
 
 - one billing cycle for each service whose next bill date has come;
 - a line per app for hosting;
