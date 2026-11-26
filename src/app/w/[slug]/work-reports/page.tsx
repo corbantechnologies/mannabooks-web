@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { AllReports } from "@/components/all-reports";
 import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PRIORITY, REPORT_FREQUENCIES, REPORT_STATUS, dueText } from "@/lib/api/assets";
 import { api, unwrap } from "@/lib/api/client";
@@ -14,7 +15,7 @@ import { useWorkspace } from "@/lib/workspace";
 
 export default function WorkReportsPage() {
   const { slug, can } = useWorkspace();
-  const [tab, setTab] = useState<"todo" | "review" | "requests" | "record">("todo");
+  const [tab, setTab] = useState<"todo" | "review" | "all" | "requests" | "record">("todo");
   const subs = useQuery({
     queryKey: ["report-submissions", slug, tab],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/report-submissions/", { params: { path: { workspace: slug }, query: { box: tab === "review" ? "review" : "todo", page_size: 100 } } })),
@@ -31,7 +32,7 @@ export default function WorkReportsPage() {
     enabled: tab === "record",
   });
   const rows = subs.data?.results ?? [];
-  const tabs = [{ key: "todo", label: "Asked of me" }, { key: "review", label: "To review" }, { key: "requests", label: "My requests" }, { key: "record", label: "On time" }] as const;
+  const tabs = [{ key: "todo", label: "Asked of me" }, { key: "review", label: "To review" }, { key: "all", label: "All reports" }, { key: "requests", label: "My requests" }, { key: "record", label: "On time" }] as const;
   return (
     <div className="w-full">
       <PageHeader title="Work reports" guide="work-reports"
@@ -45,7 +46,7 @@ export default function WorkReportsPage() {
           <button key={t.key} onClick={() => setTab(t.key)} className={clsx("shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
         ))}
       </div>
-      {tab === "record" ? (
+      {tab === "all" ? <AllReports slug={slug} /> : tab === "record" ? (
         <div className="space-y-2">
           <p className="text-sm text-stone-600">Reports and tasks handed in by the due date (and time), late, or never, out of all those due so far. A report sent back and handed in again keeps the mark of when it first came in. Lowest first.</p>
           <Card>

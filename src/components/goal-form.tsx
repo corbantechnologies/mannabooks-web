@@ -27,6 +27,7 @@ export function GoalForm({ goal, parentId }: { goal?: GoalDetail; parentId?: str
     level: goal?.level ?? (manage ? "company" : headed.length ? "department" : "person"),
     department_id: goal?.department_id ?? "", owner_id: goal?.owner_id ?? "", parent_id: goal?.parent_id ?? parentId ?? "",
     period: goal?.period ?? "quarter", anchor: goal?.start_date ?? todayIso(),
+    start_date: goal?.start_date ?? todayIso(), end_date: goal?.end_date ?? addDays(todayIso(), 13),
     measure: goal?.measure ?? (manage ? "revenue" : "milestones"), direction: goal?.direction ?? "at_least",
     target: goal?.target ?? "", unit: goal?.unit ?? "", project_id: goal?.project_id ?? "", cost_center_id: goal?.cost_center_id ?? "",
     milestones: "",
@@ -49,7 +50,8 @@ export function GoalForm({ goal, parentId }: { goal?: GoalDetail; parentId?: str
   const save = useMutation({
     mutationFn: async () => {
       const body = {
-        title: f.title, description: f.description, level: f.level as "company", period: f.period as "quarter", anchor: f.anchor,
+        title: f.title, description: f.description, level: f.level as "company", period: f.period as "quarter",
+        ...(f.period === "custom" ? { start_date: f.start_date, end_date: f.end_date } : { anchor: f.anchor }),
         measure: f.measure as "revenue", direction: f.direction as "at_least", target: f.measure === "milestones" ? "0" : f.target || "0", unit: f.unit,
         department_id: f.level === "department" ? f.department_id || null : null,
         owner_id: f.level === "person" ? f.owner_id || null : f.owner_id || null,
@@ -108,8 +110,23 @@ export function GoalForm({ goal, parentId }: { goal?: GoalDetail; parentId?: str
         <Card className="space-y-3 p-4 sm:p-5">
           <h2 className="text-sm font-semibold">Period and measure</h2>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Period"><Select value={f.period} onChange={set("period")}><option value="month">A month</option><option value="quarter">A quarter</option><option value="year">A year</option></Select></Field>
-            <Field label="Which one" hint="Any day in it. Quarters and years follow your financial year."><Input type="date" required value={f.anchor} onChange={set("anchor")} /></Field>
+            <Field label="Period">
+              <Select value={f.period} onChange={set("period")}>
+                <option value="month">A month</option><option value="quarter">A quarter</option><option value="year">A year</option><option value="custom">Custom dates</option>
+              </Select>
+            </Field>
+            {f.period === "custom" ? (
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Starts"><Input type="date" required value={f.start_date} onChange={(e) => {
+                  const start = e.target.value;
+                  setF((p) => ({ ...p, start_date: start, end_date: p.end_date && p.end_date < start ? start : p.end_date }));
+                }} /></Field>
+                <Field label="Ends"><Input type="date" required min={f.start_date} value={f.end_date} onChange={set("end_date")} /></Field>
+              </div>
+            ) : (
+              <Field label="Which one" hint="Any day in it. Quarters and years follow your financial year."><Input type="date" required value={f.anchor} onChange={set("anchor")} /></Field>
+            )}
+            {f.period === "custom" && <Lasts start={f.start_date} end={f.end_date} onEnd={(end) => setF((p) => ({ ...p, end_date: end }))} />}
             <Field label="Measured by" hint={measure.hint}>
               <Select value={f.measure} onChange={(e) => setF((p) => ({ ...p, measure: e.target.value, direction: e.target.value === "costs" ? "at_most" : p.direction }))}>
                 {allowed.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
@@ -150,6 +167,42 @@ export function GoalForm({ goal, parentId }: { goal?: GoalDetail; parentId?: str
           <Button type="submit" loading={save.isPending}>{goal ? "Save" : "Set the goal"}</Button>
         </div>
       </form>
+    </div>
+  );
+}
+
+function addDays(iso: string, n: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Custom dates: shortcuts that set the end from the start ("lasts 2 weeks"), or any length in days or weeks. */
+function Lasts({ start, end, onEnd }: { start: string; end: string; onEnd: (end: string) => void }) {
+  const [n, setN] = useState("");
+  const [unit, setUnit] = useState<"days" | "weeks">("weeks");
+  const days = start && end ? Math.round((Date.parse(end) - Date.parse(start)) / 86400000) + 1 : 0;
+  const pick = (d: number) => start && onEnd(addDays(start, d - 1));
+  const quick = [{ label: "1 week", d: 7 }, { label: "2 weeks", d: 14 }, { label: "30 days", d: 30 }, { label: "6 weeks", d: 42 }, { label: "90 days", d: 90 }];
+  return (
+    <div className="space-y-2 sm:col-span-3">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-stone-600">Lasts</span>
+        {quick.map((q) => (
+          <button key={q.d} type="button" onClick={() => pick(q.d)}
+            className={`rounded-full px-3 py-1 ring-1 ${days === q.d ? "bg-brand-50 font-medium text-brand-800 ring-brand-200" : "ring-stone-200 hover:bg-stone-50"}`}>{q.label}</button>
+        ))}
+        <span className="text-stone-500">or</span>
+        <input type="number" min={1} max={1000} value={n} placeholder="5" aria-label="How many"
+          onChange={(e) => { setN(e.target.value); const v = Number(e.target.value); if (v > 0) pick(unit === "weeks" ? v * 7 : v); }}
+          className="w-16 rounded-md border border-stone-300 px-2 py-1 text-sm" />
+        <select value={unit} aria-label="Days or weeks" onChange={(e) => { const u = e.target.value as "days" | "weeks"; setUnit(u); const v = Number(n); if (v > 0) pick(u === "weeks" ? v * 7 : v); }}
+          className="rounded-md border border-stone-300 px-2 py-1 text-sm">
+          <option value="days">days</option><option value="weeks">weeks</option>
+        </select>
+        <span className="text-stone-500">from the start</span>
+      </div>
+      {days > 0 && <p className="text-xs text-stone-500">{days} day{days === 1 ? "" : "s"}{days % 7 === 0 ? ` (${days / 7} week${days === 7 ? "" : "s"})` : ""}, ending {new Date(`${end}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}.</p>}
     </div>
   );
 }

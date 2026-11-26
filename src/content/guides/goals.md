@@ -1,6 +1,6 @@
 # Goals
 
-Goals say where the company, a department or one person means to be by the end of a month, a quarter or a year. MannaBooks measures each one as the period goes and tells you whether it is **on track**, **at risk** or **behind**. Open them from **Work > Goals**, or see the ones running now on the **Overview**.
+Goals say where the company, a department or one person means to be by the end of a month, a quarter, a year, or any dates you choose. MannaBooks measures each one as the period goes and tells you whether it is **on track**, **at risk** or **behind**. Open them from **Work > Goals**, or see the ones running now on the **Overview**.
 
 ## Setting a goal
 
@@ -8,7 +8,7 @@ Goals say where the company, a department or one person means to be by the end o
 
 1. **Name it** and, if it helps, say why it matters.
 2. **Whose goal:** the whole company, a department, or a person. It can **help reach** a bigger goal, for example a Sales department goal under the company's revenue goal.
-3. **Period:** a month, a quarter or a year. Pick any day in it. Quarters and years follow your financial year.
+3. **Period:** a month, a quarter or a year (pick any day in it; quarters and years follow your financial year), or **Custom dates** for a push of any length. With custom dates, choose the first and last day, or the first day and how long it lasts: **1 week**, **2 weeks**, **30 days**, **6 weeks**, **90 days**, or any number of days or weeks.
 4. **How it is measured**, and the **target**.
 
 Who can set what:

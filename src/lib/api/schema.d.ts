@@ -13653,6 +13653,16 @@ export interface components {
              * @description Any day in the month, quarter or year the goal is for
              */
             anchor?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the first day
+             */
+            start_date?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the last day
+             */
+            end_date?: string;
             measure?: components["schemas"]["MeasureEnum"];
             direction?: components["schemas"]["GoalInDirectionEnum"];
             /** Format: decimal */
@@ -17729,6 +17739,16 @@ export interface components {
              * @description Any day in the month, quarter or year the goal is for
              */
             anchor?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the first day
+             */
+            start_date?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the last day
+             */
+            end_date?: string;
             measure?: components["schemas"]["MeasureEnum"];
             direction?: components["schemas"]["GoalInDirectionEnum"];
             /** Format: decimal */
@@ -19013,9 +19033,10 @@ export interface components {
          * @description * `month` - Month
          *     * `quarter` - Quarter
          *     * `year` - Year
+         *     * `custom` - Custom dates
          * @enum {string}
          */
-        PeriodEnum: "month" | "quarter" | "year";
+        PeriodEnum: "month" | "quarter" | "year" | "custom";
         PeriodMonth: {
             /** Format: date */
             month: string;
@@ -21187,6 +21208,8 @@ export interface components {
             employee_id: string;
             employee_name: string;
             department: string | null;
+            /** Format: uuid */
+            department_id: string | null;
             on_time: number;
             /** @description Handed in after the due date */
             late: number;
@@ -21326,6 +21349,8 @@ export interface components {
             /** Format: uuid */
             readonly employee_id: string;
             readonly employee_name: string;
+            /** @default  */
+            readonly department_name: string;
             readonly period_label: string;
             /** Format: date */
             readonly due_date: string;
@@ -38547,6 +38572,8 @@ export interface operations {
         parameters: {
             query?: {
                 box?: "all" | "review" | "todo";
+                /** @description People in this department */
+                department?: string;
                 employee?: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -38557,6 +38584,10 @@ export interface operations {
                 request?: string;
                 /** @description A search term. */
                 search?: string;
+                /** @description Due on or after */
+                since?: string;
+                /** @description waiting (not handed in yet), handed_in (waiting for review), accepted, returned, late (overdue now or handed in late) */
+                state?: "accepted" | "handed_in" | "late" | "returned" | "waiting";
                 /**
                  * @description * `pending` - Waiting
                  *     * `in_progress` - In progress
@@ -38566,6 +38597,8 @@ export interface operations {
                  *     * `returned` - Sent back
                  */
                 status?: "accepted" | "in_progress" | "late" | "pending" | "returned" | "submitted";
+                /** @description Due on or before */
+                until?: string;
             };
             header?: never;
             path: {
