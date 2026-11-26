@@ -1,8 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import clsx from "clsx";
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Copy, FolderClosed, FolderOpen, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
@@ -16,7 +17,7 @@ import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, M
 import { api, unwrap } from "@/lib/api/client";
 import { useAssignees } from "@/lib/api/crm";
 import { fmt, fmtDate } from "@/lib/format";
-import { DATE_KIND, type PortfolioDetail, type PortfolioProject, type PortfolioService } from "@/lib/portfolios";
+import { DATE_KIND, type PortfolioDetail, type PortfolioGroup, type PortfolioService } from "@/lib/portfolios";
 import { useWorkspace } from "@/lib/workspace";
 
 const TABS = [["services", "Services"], ["dates", "Dates ahead"], ["repricing", "What if"], ["documents", "Documents"], ["work", "Tasks and notes"], ["history", "History"], ["invoices", "Invoices"]] as const;
@@ -32,8 +33,15 @@ export default function PortfolioPage() {
   const saved = (d: PortfolioDetail) => qc.setQueryData(key, d);
   const [tab, setTab] = useState<(typeof TABS)[number][0]>("services");
   const [editing, setEditing] = useState<PortfolioService | null | undefined>(undefined);
-  const [addTo, setAddTo] = useState("");  // the project a new service goes in
-  const [project, setProject] = useState<PortfolioProject | null | undefined>(undefined);
+  const [addTo, setAddTo] = useState("");  // the group a new service goes in
+  const [group, setGroup] = useState<PortfolioGroup | null | undefined>(undefined);
+  const [shut, setShut] = useState<Set<string>>(new Set());  // collapsed groups
+  const toggle = (gid: string) => setShut((s) => { const n = new Set(s); if (n.has(gid)) n.delete(gid); else n.add(gid); return n; });
+  const copyGroup = useMutation({
+    mutationFn: async (g: PortfolioGroup) => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/groups/{id}/duplicate/", { params: { path: { workspace: slug, id: g.id } }, body: {} })),
+    onSuccess: (r, g) => { saved(r); toast.success(`${g.name} copied with its services. Rename it and change what differs.`); },
+    onError: (e) => toast.error(e.message),
+  });
   const [open, setOpen] = useState<string | null>(null);
   const [invoicing, setInvoicing] = useState(false);
   const [settings, setSettings] = useState(false);
@@ -88,39 +96,52 @@ export default function PortfolioPage() {
 
       {tab === "services" && (
         <Card>
-          {d.services.length === 0 ? (
-            <EmptyState title="No services yet">{d.can_manage ? <Button className="mt-2" onClick={() => setEditing(null)}><Plus className="h-4 w-4" /> Add a service</Button> : undefined}</EmptyState>
+          {d.services.length === 0 && d.groups.length === 0 ? (
+            <EmptyState title="No services yet">{d.can_manage ? <Button className="mt-2" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button> : undefined}</EmptyState>
           ) : (
             <Table head={["Service", "They pay", "A month", "Costs you a month", "Margin", "Next dates", ""]}>
-              {[...d.projects.map((pr) => ({ pr, rows: d.services.filter((s) => s.project_id === pr.id) })),
-                ...(d.projects.length ? [{ pr: null, rows: d.services.filter((s) => !s.project_id) }] : [{ pr: null, rows: d.services }])]
-                .filter((g) => g.pr || g.rows.length).map(({ pr, rows }) => (
-                <Fragment key={pr?.id ?? "none"}>
-                  {(pr || d.projects.length > 0) && (
+              {[...d.groups.map((gr) => ({ gr, rows: d.services.filter((s) => s.group_id === gr.id) })),
+                { gr: null, rows: d.services.filter((s) => !s.group_id) }]
+                .filter((g) => g.gr || g.rows.length).map(({ gr, rows }) => {
+                const closed = gr ? shut.has(gr.id) : false;
+                return (
+                <Fragment key={gr?.id ?? "none"}>
+                  {(gr || d.groups.length > 0) && (
                     <tr className="bg-stone-100/70">
                       <Td colSpan={2}>
-                        <span className="font-semibold text-stone-900">{pr ? pr.name : "Services on their own"}</span>
-                        {pr && <span className="block text-xs text-stone-500">{pr.status_label} · {pr.services} {pr.services === 1 ? "service" : "services"}{pr.end_date ? ` · to ${fmtDate(pr.end_date)}` : ""}</span>}
+                        {gr ? (
+                          <button type="button" className="flex items-start gap-1.5 text-left" onClick={() => toggle(gr.id)} aria-expanded={!closed}>
+                            {closed ? <FolderClosed className="mt-0.5 h-4 w-4 shrink-0 text-stone-500" /> : <FolderOpen className="mt-0.5 h-4 w-4 shrink-0 text-stone-500" />}
+                            <span>
+                              <span className="font-semibold text-stone-900">{gr.name}</span>
+                              <span className="block text-xs text-stone-500">{gr.services} {gr.services === 1 ? "service" : "services"}{gr.notes ? ` · ${gr.notes}` : ""}{closed ? " · click to open" : ""}</span>
+                            </span>
+                          </button>
+                        ) : <span className="font-semibold text-stone-900">No group</span>}
                       </Td>
-                      <Td className="text-right font-mono font-semibold">{pr ? fmt(pr.monthly_revenue) : ""}</Td>
-                      <Td className="text-right font-mono">{pr ? fmt(pr.monthly_cost) : ""}</Td>
-                      <Td className={clsx("text-right font-mono", pr?.loses_money && "text-red-700")}>{pr ? fmt(pr.monthly_margin) : ""}{pr?.margin_percent != null && <span className="block text-xs">{Number(pr.margin_percent).toFixed(0)}%</span>}</Td>
+                      <Td className="text-right font-mono font-semibold">{gr ? fmt(gr.monthly_revenue) : ""}</Td>
+                      <Td className="text-right font-mono">{gr ? fmt(gr.monthly_cost) : ""}</Td>
+                      <Td className={clsx("text-right font-mono", gr?.loses_money && "text-red-700")}>{gr ? fmt(gr.monthly_margin) : ""}{gr?.margin_percent != null && <span className="block text-xs">{Number(gr.margin_percent).toFixed(0)}%</span>}</Td>
                       <Td colSpan={2} className="text-right">
-                        {pr && d.can_manage && (
-                          <span className="flex flex-wrap justify-end gap-2 text-xs">
-                            <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(pr.id); setEditing(null); }}>Add a service</button>
-                            <button type="button" className="text-brand-700 hover:underline" onClick={() => setProject(pr)}>Change</button>
+                        {gr && d.can_manage && (
+                          <span className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs">
+                            <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(gr.id); setEditing(null); }}>Add a service here</button>
+                            <button type="button" className="text-brand-700 hover:underline" onClick={() => setGroup(gr)}>Change</button>
+                            <button type="button" className="text-brand-700 hover:underline" disabled={copyGroup.isPending} onClick={() => copyGroup.mutate(gr)}>Duplicate</button>
                           </span>
                         )}
                       </Td>
                     </tr>
                   )}
-                  {rows.map((s) => (
+                  {gr && !closed && rows.length === 0 && (
+                    <tr><Td colSpan={7} className="pl-8 text-sm text-stone-500">No services in this group yet.{d.can_manage && <> <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(gr.id); setEditing(null); }}>Add one</button>, or move one here from its Change panel.</>}</Td></tr>
+                  )}
+                  {!closed && rows.map((s) => (
                 <Fragment key={s.id}>
                   <tr className={clsx("cursor-pointer hover:bg-stone-50", s.status !== "active" && "opacity-60")} onClick={() => setOpen(open === s.id ? null : s.id)}>
                     <Td>
-                      <span className="flex items-center gap-1 font-medium">{open === s.id ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}{s.name}</span>
-                      <span className="block pl-5 text-xs text-stone-500">{s.kind_label}{s.status !== "active" ? ` · ${s.status_label}` : ""}{s.supplier_name ? ` · from ${s.supplier_name}` : ""}</span>
+                      <span className={clsx("flex items-center gap-1 font-medium", gr && "pl-4")}>{open === s.id ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}{s.name}</span>
+                      <span className={clsx("block pl-5 text-xs text-stone-500", gr && "pl-9")}>{s.kind_label}{s.status !== "active" ? ` · ${s.status_label}` : ""}{s.supplier_name ? ` · from ${s.supplier_name}` : ""}</span>
                     </Td>
                     <Td className="text-right font-mono">{fmt(s.per_cycle)}<span className="block text-xs text-stone-500">{s.billing_cycle_label.toLowerCase()}</span></Td>
                     <Td className="text-right font-mono">{s.billing_cycle === "one_off" ? "-" : fmt(s.monthly_revenue)}</Td>
@@ -141,14 +162,15 @@ export default function PortfolioPage() {
                 </Fragment>
                   ))}
                 </Fragment>
-              ))}
+                );
+              })}
             </Table>
           )}
           {d.can_manage && (
             <div className="flex flex-wrap gap-2 p-3">
-              {d.services.length > 0 && <Button variant="secondary" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button>}
-              <Button variant="secondary" onClick={() => setProject(null)}><Plus className="h-4 w-4" /> New project</Button>
-              <span className="self-center text-xs text-stone-500">A project groups several services, such as an app with its hosting and support.</span>
+              {(d.services.length > 0 || d.groups.length > 0) && <Button variant="secondary" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button>}
+              <Button variant="secondary" onClick={() => setGroup(null)}><Plus className="h-4 w-4" /> New group</Button>
+              <span className="self-center text-xs text-stone-500">A group is a folder for some of the client&apos;s services, such as an app with its hosting and support.</span>
             </div>
           )}
         </Card>
@@ -246,8 +268,8 @@ export default function PortfolioPage() {
       )}
 
       {editing !== undefined && <ServiceForm key={editing?.id ?? `new-${addTo}`} portfolioId={id} service={editing} open onClose={() => setEditing(undefined)} onSaved={saved}
-        projects={d.projects} projectId={addTo} />}
-      {project !== undefined && <ProjectForm key={project?.id ?? "new"} portfolioId={id} project={project} onClose={() => setProject(undefined)} onSaved={saved} />}
+        groups={d.groups} groupId={addTo} />}
+      {group !== undefined && <GroupForm key={group?.id ?? "new"} portfolioId={id} group={group} onClose={() => setGroup(undefined)} onSaved={saved} />}
       {invoicing && <MakeInvoice data={d} open onClose={() => setInvoicing(false)} />}
       {settings && <SettingsModal d={d} onClose={() => setSettings(false)} onSaved={saved} />}
     </div>
@@ -277,7 +299,38 @@ function ServicePanel({ s, d, onEdit, onSaved }: { s: PortfolioService; d: Portf
         <div><p className="mb-2 text-sm font-medium">Apps and their resources (a month)</p><AppsEditor service={s} manage={d.can_manage} margin={Number(d.target_margin)} onSaved={onSaved} /></div>
       )}
       <CostLinks service={s} manage={d.can_manage} onSaved={onSaved} />
+      {d.can_manage && <MoveAndCopy s={s} d={d} onSaved={onSaved} />}
       <DeleteService s={s} manage={d.can_manage} onSaved={onSaved} />
+    </div>
+  );
+}
+
+/** Move to group, and Duplicate: a copy (prices, dates, supplier, apps and resources) to change from. */
+function MoveAndCopy({ s, d, onSaved }: { s: PortfolioService; d: PortfolioDetail; onSaved: (p: PortfolioDetail) => void }) {
+  const { slug } = useWorkspace();
+  const path = { params: { path: { workspace: slug, id: s.id } } };
+  const move = useMutation({
+    mutationFn: async (gid: string) => unwrap(await api.PATCH("/api/v1/w/{workspace}/portfolios/services/{id}/", { ...path, body: { group_id: gid || null } })),
+    onSuccess: (r, gid) => { onSaved(r); toast.success(gid ? `Moved to ${d.groups.find((g) => g.id === gid)?.name}` : "Now in no group"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const copy = useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/services/{id}/duplicate/", { ...path, body: {} })),
+    onSuccess: (r) => { onSaved(r); toast.success(`${s.name} (copy) added. Open it and change what differs.`); },
+    onError: (e) => toast.error(e.message),
+  });
+  return (
+    <div className="flex flex-wrap items-end gap-3 border-t border-stone-200 pt-3" onClick={(e) => e.stopPropagation()}>
+      {d.groups.length > 0 && (
+        <Field label="Move to group">
+          <Select className="w-56" value={s.group_id ?? ""} disabled={move.isPending} onChange={(e) => move.mutate(e.target.value)}>
+            <option value="">No group</option>
+            {d.groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+          </Select>
+        </Field>
+      )}
+      <Button variant="secondary" loading={copy.isPending} onClick={() => copy.mutate()}><Copy className="h-4 w-4" /> Duplicate</Button>
+      <span className="self-center text-xs text-stone-500">Duplicate copies the prices, dates, supplier and apps, in the same group.</span>
     </div>
   );
 }
@@ -332,38 +385,32 @@ function Stat({ label, value, bad }: { label: string; value: string; bad?: boole
   );
 }
 
-/** A project groups several of the client's services. Deleting it keeps the services, on their own. */
-function ProjectForm({ portfolioId, project, onClose, onSaved }: {
-  portfolioId: string; project: PortfolioProject | null; onClose: () => void; onSaved: (p: PortfolioDetail) => void;
+/** A group is a folder for some of the client's services: a name and a note. Deleting it keeps the services, with no group. */
+function GroupForm({ portfolioId, group, onClose, onSaved }: {
+  portfolioId: string; group: PortfolioGroup | null; onClose: () => void; onSaved: (p: PortfolioDetail) => void;
 }) {
   const { slug } = useWorkspace();
-  const [f, setF] = useState({ name: project?.name ?? "", status: project?.status ?? "active", start_date: project?.start_date ?? "", end_date: project?.end_date ?? "", notes: project?.notes ?? "" });
-  const body = { ...f, status: f.status as "active" | "on_hold" | "done", start_date: f.start_date || null, end_date: f.end_date || null };
+  const [f, setF] = useState({ name: group?.name ?? "", notes: group?.notes ?? "" });
   const save = useMutation({
-    mutationFn: async () => project
-      ? unwrap(await api.PATCH("/api/v1/w/{workspace}/portfolios/projects/{id}/", { params: { path: { workspace: slug, id: project.id } }, body }))
-      : unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/{id}/projects/", { params: { path: { workspace: slug, id: portfolioId } }, body })),
+    mutationFn: async () => group
+      ? unwrap(await api.PATCH("/api/v1/w/{workspace}/portfolios/groups/{id}/", { params: { path: { workspace: slug, id: group.id } }, body: f }))
+      : unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/{id}/groups/", { params: { path: { workspace: slug, id: portfolioId } }, body: f })),
     onSuccess: (p) => { onSaved(p); onClose(); },
   });
   const remove = useMutation({
-    mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/portfolios/projects/{id}/", { params: { path: { workspace: slug, id: project!.id } } })),
+    mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/portfolios/groups/{id}/", { params: { path: { workspace: slug, id: group!.id } } })),
     onSuccess: (p) => { onSaved(p); onClose(); },
   });
   return (
-    <Modal open title={project ? `Change ${project.name}` : "New project"} onClose={onClose}>
+    <Modal open title={group ? `Change ${group.name}` : "New group"} onClose={onClose}>
       <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-        <Field label="Project"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="e.g. Members app" /></Field>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="Status"><Select value={f.status} onChange={(e) => setF({ ...f, status: e.target.value })}><option value="active">Active</option><option value="on_hold">On hold</option><option value="done">Done</option></Select></Field>
-          <Field label="Starts"><Input type="date" value={f.start_date} onChange={(e) => setF({ ...f, start_date: e.target.value })} /></Field>
-          <Field label="Ends"><Input type="date" value={f.end_date} onChange={(e) => setF({ ...f, end_date: e.target.value })} /></Field>
-        </div>
-        <Field label="Notes"><Textarea rows={2} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} /></Field>
+        <Field label="Group"><Input required maxLength={160} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="e.g. Members app" /></Field>
+        <Field label="Note (optional)"><Textarea rows={2} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} placeholder="e.g. The app, its hosting and support" /></Field>
         <FormError error={save.error ?? remove.error} />
         <div className="flex flex-wrap justify-between gap-2">
-          {project ? <Button type="button" variant="secondary" loading={remove.isPending}
-            onClick={async () => { if (await ask(`Delete the project ${project.name}? Its services stay, as services on their own.`, { confirmLabel: "Delete project", danger: true })) remove.mutate(); }}>Delete</Button> : <span />}
-          <div className="flex gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>{project ? "Save" : "Add the project"}</Button></div>
+          {group ? <Button type="button" variant="secondary" loading={remove.isPending}
+            onClick={async () => { if (await ask(`Delete the group ${group.name}? Its services stay, with no group.`, { confirmLabel: "Delete group", danger: true })) remove.mutate(); }}>Delete</Button> : <span />}
+          <div className="flex gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>{group ? "Save" : "Add the group"}</Button></div>
         </div>
       </form>
     </Modal>
