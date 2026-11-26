@@ -7,25 +7,26 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { GoalCard } from "@/components/goal-card";
+import { GoalReviews } from "@/components/goal-review";
 import { Button, Card, EmptyState, ErrorState, PageHeader, Select, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { useWorkspace } from "@/lib/workspace";
 
-type Tab = "all" | "company" | "department" | "person" | "mine";
+type Tab = "all" | "company" | "department" | "person" | "mine" | "reviews";
 
 /** Goals: the company's, each department's and each person's, with how far along they are against the time gone. */
 export default function GoalsPage() {
-  const { slug } = useWorkspace();
+  const { slug, can } = useWorkspace();
   const [tab, setTab] = useState<Tab>("all");
   const [when, setWhen] = useState<"now" | "ended" | "all">("now");
   const q = useQuery({
-    queryKey: ["goals", slug, when, tab === "all" || tab === "mine" ? "" : tab, tab === "mine"],
+    queryKey: ["goals", slug, when, tab === "all" || tab === "mine" ? "" : tab, tab === "mine"], enabled: tab !== "reviews",
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/goals/", {
-      params: { path: { workspace: slug }, query: { when, level: tab === "all" || tab === "mine" ? undefined : tab, mine: tab === "mine" || undefined } },
+      params: { path: { workspace: slug }, query: { when, level: tab === "all" || tab === "mine" || tab === "reviews" ? undefined : tab, mine: tab === "mine" || undefined } },
     })),
   });
   const rows = q.data ?? [];
-  const tabs: [Tab, string][] = [["all", "All"], ["company", "Company"], ["department", "Departments"], ["person", "People"], ["mine", "Mine"]];
+  const tabs: [Tab, string][] = [["all", "All"], ["company", "Company"], ["department", "Departments"], ["person", "People"], ["mine", "Mine"], ["reviews", "Reviews"]];
   const groups: [string, string][] = [["company", "Company goals"], ["department", "Department goals"], ["person", "Personal goals"]];
   const counts = { on_track: 0, at_risk: 0, behind: 0 } as Record<string, number>;
   for (const g of rows) if (g.status in counts) counts[g.status] += 1;
@@ -41,12 +42,13 @@ export default function GoalsPage() {
               className={clsx("shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", tab === k ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{label}</button>
           ))}
         </div>
-        <div className="ml-auto pb-2">
+        {tab !== "reviews" && <div className="ml-auto pb-2">
           <Select aria-label="When" className="w-44" value={when} onChange={(e) => setWhen(e.target.value as typeof when)}>
             <option value="now">Running now and next</option><option value="ended">Ended</option><option value="all">All</option>
           </Select>
-        </div>
+        </div>}
       </div>
+      {tab === "reviews" ? <GoalReviews slug={slug} canManage={can("goals.manage")} /> : <>
       {when === "now" && rows.length > 0 && (
         <p className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-stone-600">
           <span><span className="font-semibold text-emerald-700">{counts.on_track}</span> on track</span>
@@ -73,6 +75,7 @@ export default function GoalsPage() {
           })}
         </div>
       )}
+      </>}
     </div>
   );
 }

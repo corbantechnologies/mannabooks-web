@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { GoalCard } from "@/components/goal-card";
+import { GoalReviewCard } from "@/components/goal-review";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
@@ -103,6 +104,8 @@ export default function GoalPage() {
         </p>
         {g.description && <p className="mt-3 whitespace-pre-wrap text-sm text-stone-700">{g.description}</p>}
       </Card>
+
+      <GoalReviewCard key={`${g.review.self_at}-${g.review.reviewed_at}`} slug={slug} goal={g} onSaved={saved} />
 
       <div className="grid gap-5 lg:grid-cols-2">
         {(g.measure === "milestones" || g.milestones.length > 0) && (

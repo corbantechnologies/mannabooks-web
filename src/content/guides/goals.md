@@ -53,3 +53,20 @@ When the period ends, a goal shows as **Achieved** or **Missed**. A goal that no
 **Check in** on a goal to say how it is going. For a number you update, give the new figure there. For milestones, tick each step as it is done; whoever looks after the goal can add, change or remove steps.
 
 The goals that help reach a bigger goal are listed on it, so you can see the company goal and every department and personal goal under it.
+
+## Reviews
+
+Once a goal's period ends, or it is closed early, it is reviewed. Dropped goals are not.
+
+1. **The owner looks back:** the person the goal belongs to (or whoever looks after it) writes what went well, what got in the way and what next, and rates it.
+2. **Their manager rates it:** their supervisor or department head adds a rating and a comment. Company goals, and goals nobody else can review, are reviewed by someone with Goals: manage.
+
+The review shows on the goal's page. Both get an email: the owner when the goal ends, and the manager once the owner has written theirs. The owner can change their part until the manager has reviewed it.
+
+**Goals > Reviews** lists the reviews **you have to write**, the ones **waiting for your review**, and **all reviews**, which you can narrow by person and end date. It is useful at appraisal time.
+
+**Review settings** (Goals: manage) set how reviews work in your business:
+
+- whether the owner looks back first, whether the manager rates it, or both;
+- the five rating words (Not met, Partly met, Met, Exceeded, Far exceeded unless you change them);
+- whether reminders are sent.

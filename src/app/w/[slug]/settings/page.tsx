@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -93,6 +94,16 @@ export default function SettingsPage() {
       <ModuleSettings />
 
       <WorkingWeekCard />
+
+      {can("workspace.manage") && (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
+          <div>
+            <h2 className="text-sm font-semibold text-stone-900">Daily checklist</h2>
+            <p className="mt-1 text-sm text-stone-600">The lines everyone&apos;s My day starts with on the Overview, and who each line is for.</p>
+          </div>
+          <Link href={`/w/${slug}/settings/checklist`}><Button variant="secondary">Set the checklist</Button></Link>
+        </Card>
+      )}
 
       <TermsSettings canEdit={can("workspace.manage")} />
 
