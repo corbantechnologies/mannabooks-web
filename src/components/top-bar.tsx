@@ -10,7 +10,7 @@ import { UserMenu } from "./user-menu";
 export function TopBar({ children }: { children?: React.ReactNode }) {
   const workspace = usePathname()?.match(/^\/w\/([^/]+)/)?.[1];  // inside a workspace, guides open in the app
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b border-stone-200 bg-white px-3 sm:px-4">
+    <header className="sticky top-0 z-30 flex h-14 print:hidden items-center justify-between gap-2 border-b border-stone-200 bg-white px-3 sm:px-4">
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <Link href="/workspaces" aria-label="MannaBooks, your workspaces" className="shrink-0">
           <LogoMark className="h-7 w-7 sm:hidden" />

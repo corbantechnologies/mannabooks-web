@@ -60,6 +60,7 @@ export default function PortfolioGroupPage() {
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => setEditing(null)}><Plus className="h-4 w-4" /> Add a service</Button>
             <ActionMenu actions={[
+              { label: "Reports for this group", href: `/w/${slug}/portfolios/reports?portfolio=${id}&group=${gid}` },
               { label: "Change name and note", onClick: () => setChanging(true) },
               { label: "Duplicate the group", onClick: () => copy.mutate() },
               { label: "Delete the group", danger: true, onClick: () => setChanging(true) },

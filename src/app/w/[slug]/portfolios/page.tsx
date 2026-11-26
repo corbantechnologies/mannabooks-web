@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Plus } from "lucide-react";
+import { BarChart3, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -41,7 +41,12 @@ export default function PortfoliosPage() {
     <div className="w-full">
       <PageHeader title="Client portfolios" guide="client-portfolios"
         description="Everything you provide each client: the services, what they pay, what each costs you, the margin, and the dates to bill them and renew with your suppliers."
-        actions={can("portfolios.manage") ? <Button onClick={() => { create.reset(); setAdding(true); }}><Plus className="h-4 w-4" /> New portfolio</Button> : undefined} />
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/w/${slug}/portfolios/reports`}><Button variant="secondary"><BarChart3 className="h-4 w-4" /> Reports</Button></Link>
+            {can("portfolios.manage") && <Button onClick={() => { create.reset(); setAdding(true); }}><Plus className="h-4 w-4" /> New portfolio</Button>}
+          </div>
+        } />
       <div className="mb-4 flex flex-wrap items-center gap-3">
         {all && (
           <div className="flex gap-1 border-b border-stone-200">

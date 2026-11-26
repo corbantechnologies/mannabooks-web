@@ -447,7 +447,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         <QuickJump items={jumpItems} />
       </TopBar>
       <div className="flex">
-        {!sidebarHidden && <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block">{nav}</aside>}
+        {!sidebarHidden && <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-stone-200 bg-white md:block print:hidden">{nav}</aside>}
         {menuOpen && (
           <div className="fixed inset-0 top-14 z-40 md:hidden">
             <button type="button" aria-label="Close menu" className="absolute inset-0 bg-stone-900/30" onClick={() => setMenuOpen(false)} />
@@ -461,7 +461,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
             </aside>
           </div>
         )}
-        <main className="min-w-0 flex-1 px-3 py-5 sm:px-6 sm:py-6 lg:px-8"><SubscriptionBanner /><CameFrom />{children}</main>
+        <main className="min-w-0 flex-1 px-3 py-5 sm:px-6 sm:py-6 lg:px-8 print:p-0"><SubscriptionBanner /><CameFrom />{children}</main>
         <PeriodFixDialog />
       </div>
       </PeriodProvider>
