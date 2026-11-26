@@ -86,11 +86,43 @@ If the client also has a recurring invoice, the preview warns you. Stop the recu
 
 ## History
 
-Every change of price, quantity, cost, billing cycle or status is kept with its date, who made it and why (the form asks when money changes). Use it to show the client when and why their bill changed.
+Every change of price, quantity, cost, billing cycle or status, and every app or resource added or removed on hosting, is kept with its date, who made it and why (the form asks when money changes). **Effect a month** shows how much each change moved what the client pays a month. Use it to show the client when and why their bill changed.
 
-## The portfolio report
+## Reports
 
-**More > Portfolio report** gives a page to print or save as PDF:
+**Reports** on the Client portfolios page (or **More > Reports for this client** on a portfolio, **More > Reports for this group** on a group) opens 16 reports. Each one works for all clients, one client, one of their groups, or one lead's clients: choose at the top. Every report prints, saves as PDF and downloads as CSV, and its filters stay in the page address, so you can bookmark or share it.
+
+For a client or a group:
+
+- **Planned vs actual profit:** month by month, what you planned to earn, what the month's invoices billed, what it really cost from linked supplier bills, and the margin. Then the same per service, lowest margin first.
+- **Statement of services:** for the client, with no costs or margins: their services, prices, how often they're billed, contract dates and next bill. Safe to send them.
+- **Cash forecast:** money in from billing the client against money out to suppliers, month by month for 3 to 24 months, with a running total. Months where more goes out than comes in show in red.
+- **Billed vs collected:** the invoices made from the portfolio, what's paid, what's still owed and how many days late, with what's owed by age.
+- **Prepaid services:** for prepaid services, what's earned and what's still to deliver on a date you choose. Still to deliver is income received in advance in the books.
+- **Hosting resources:** each resource per app with its cost, price and margin, and totals by kind (vCPU, RAM, storage...).
+- **Renewals and expiries:** contracts ending, supplier renewals, prepaid periods ending and documents expiring, with amounts.
+- **Missed billing:** services whose bill date passed without an invoice, recurring services with no bill date, and contracts that are over but still active.
+- **Change log:** every change with its date, reason, who made it and its effect a month.
+
+Across all clients:
+
+- **Recurring revenue:** what clients pay a month and a year by client, group, kind of service, product and lead.
+- **Margin ranking:** clients, groups and services from the lowest margin, with how much more a month would bring each to your standard margin.
+- **Client concentration:** how much of your recurring revenue your biggest one, three and five clients carry.
+- **Supplier exposure:** what you pay each supplier across clients, what's billed on it, what you've paid in 12 months, and the next renewal.
+- **Lead performance:** per lead, their clients, revenue, margin, clients below standard, services losing money, missed bills and dates coming up.
+- **New and lost revenue:** month by month, services added, price rises and add-ons, cuts, and services ended or removed.
+- **Hosting capacity:** total vCPU, RAM, storage and more sold, by kind and by client, to plan your servers.
+
+A few things to know:
+
+- Amounts are before VAT, except Billed vs collected, which shows invoices as the client pays them.
+- Billed by service and by group comes from invoices made after 26 Nov 2026, when MannaBooks started keeping what each service was billed. Older invoices still count in their month.
+- The effect a month of changes made before 26 Nov 2026 is known only for services added then; the reports say when something can't be valued.
+
+## The portfolio summary
+
+**More > Portfolio summary** gives a page to print or save as PDF:
 
 - **For the client:** their services, prices, coming dates, price changes and agreements.
 - **Internal** (tick the box): adds your costs, margins and what each service should cost at your standard margin.

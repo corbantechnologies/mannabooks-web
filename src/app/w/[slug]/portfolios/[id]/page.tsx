@@ -65,7 +65,8 @@ export default function PortfolioPage() {
             <ActionMenu actions={[
               { label: "Make the month's invoice", onClick: () => setInvoicing(true), hidden: !(d.can_manage && can("invoices.create")) },
               { label: "Add a service", onClick: () => { setAddTo(""); setEditing(null); }, hidden: !d.can_manage },
-              { label: "Portfolio report (print or PDF)", href: `/w/${slug}/portfolios/${id}/report` },
+              { label: "Reports for this client", href: `/w/${slug}/portfolios/reports?portfolio=${id}` },
+              { label: "Portfolio summary (print or PDF)", href: `/w/${slug}/portfolios/${id}/report` },
               { label: "Lead, margin and notes", onClick: () => setSettings(true), hidden: !d.can_manage },
               { label: "Delete the portfolio", danger: true, hidden: !can("portfolios.manage"),
                 onClick: () => void ask("Delete this portfolio with its services, documents and history? The customer and their invoices stay.").then((ok) => ok && remove.mutate()) },
@@ -254,12 +255,16 @@ export default function PortfolioPage() {
       {tab === "history" && (
         <Card>
           {d.history.length === 0 ? <EmptyState title="No changes yet" /> : (
-            <Table head={["Date", "What", "Change", "Why", "By"]}>
+            <Table head={["Date", "What", "Change", "Effect a month", "Why", "By"]}>
               {d.history.map((h) => (
                 <tr key={h.id}>
                   <Td>{fmtDate(h.changed_on)}</Td>
                   <Td>{h.what}</Td>
-                  <Td className="text-sm">{h.field === "added" ? `Added at ${h.new_value}` : h.field === "removed" ? "Removed" : <>{h.field}: <span className="font-mono">{h.old_value || "-"}</span> to <span className="font-mono">{h.new_value || "-"}</span></>}</Td>
+                  <Td className="text-sm">{h.field === "added" ? (h.new_value.startsWith("copied") ? `Added, ${h.new_value}` : `Added at ${h.new_value}`)
+                    : h.field === "removed" ? "Removed"
+                    : h.field === "app" || h.field === "resource" ? `${h.field === "app" ? "App" : "Resource"} ${h.new_value}`
+                    : <>{h.field}: <span className="font-mono">{h.old_value || "-"}</span> to <span className="font-mono">{h.new_value || "-"}</span></>}</Td>
+                  <Td className={clsx("text-right font-mono text-sm", Number(h.monthly_value) < 0 && "text-red-700")}>{h.monthly_value == null ? "" : `${Number(h.monthly_value) > 0 ? "+" : ""}${fmt(h.monthly_value)}`}</Td>
                   <Td className="text-sm text-stone-600">{h.reason || "-"}</Td>
                   <Td className="text-sm">{h.by}</Td>
                 </tr>

@@ -6760,6 +6760,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/portfolios/reports/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The client portfolio reports. */
+        get: operations["w_portfolios_reports_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/reports/{key}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One report, for the portfolios you can see, or one client (portfolio), one group, or one lead (lead, or "none"). */
+        get: operations["w_portfolios_reports_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/portfolios/resources/{id}/": {
         parameters: {
             query?: never;
@@ -10189,6 +10223,12 @@ export interface components {
          * @enum {string}
          */
         ApprovalStepDecisionEnum: "approved" | "rejected";
+        /**
+         * @description * `client` - client
+         *     * `business` - business
+         * @enum {string}
+         */
+        AreaEnum: "client" | "business";
         /**
          * @description * `dispose` - dispose
          *     * `undo_disposal` - undo_disposal
@@ -14764,6 +14804,16 @@ export interface components {
          * @enum {string}
          */
         Kind6b8Enum: "report" | "task";
+        /**
+         * @description * `text` - text
+         *     * `money` - money
+         *     * `number` - number
+         *     * `percent` - percent
+         *     * `date` - date
+         *     * `month` - month
+         * @enum {string}
+         */
+        Kind8ebEnum: "text" | "money" | "number" | "percent" | "date" | "month";
         /**
          * @description * `etims` - eTIMS invoice
          *     * `supplier_invoice` - Supplier invoice
@@ -20031,6 +20081,8 @@ export interface components {
             /** Format: date */
             changed_on: string;
             by: string;
+            /** Format: decimal */
+            monthly_value: string | null;
         };
         PortfolioId: {
             /** Format: uuid */
@@ -20094,6 +20146,56 @@ export interface components {
             unit_price: string;
             /** Format: decimal */
             amount: string;
+        };
+        PortfolioReport: {
+            key: string;
+            title: string;
+            description: string;
+            area: string;
+            scope_label: string;
+            period_label: string;
+            /**
+             * Format: date
+             * @description The first month of the period used, for reports with a period
+             */
+            period_start: string | null;
+            /** Format: date */
+            period_end: string | null;
+            client_facing: boolean;
+            /** Format: date */
+            generated_on: string;
+            stats: components["schemas"]["PortfolioReportStat"][];
+            sections: components["schemas"]["PortfolioReportSection"][];
+            notes: string[];
+        };
+        PortfolioReportColumn: {
+            key: string;
+            label: string;
+            kind: components["schemas"]["Kind8ebEnum"];
+        };
+        PortfolioReportInfo: {
+            key: string;
+            title: string;
+            description: string;
+            area: components["schemas"]["AreaEnum"];
+            filters: string[];
+        };
+        PortfolioReportSection: {
+            title: string;
+            note: string;
+            columns: components["schemas"]["PortfolioReportColumn"][];
+            rows: {
+                [key: string]: unknown;
+            }[];
+            total: {
+                [key: string]: unknown;
+            } | null;
+        };
+        PortfolioReportStat: {
+            label: string;
+            value: string | null;
+            kind: components["schemas"]["Kind8ebEnum"];
+            bad: boolean;
         };
         /**
          * @description * `vcpu` - vCPU
@@ -36885,6 +36987,62 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_reports_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioReportInfo"][];
+                };
+            };
+        };
+    };
+    w_portfolios_reports_retrieve: {
+        parameters: {
+            query?: {
+                as_at?: string;
+                end?: string;
+                group?: string;
+                lead?: string;
+                months?: string;
+                portfolio?: string;
+                start?: string;
+            };
+            header?: never;
+            path: {
+                key: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioReport"];
                 };
             };
         };

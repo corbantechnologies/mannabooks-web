@@ -11,6 +11,10 @@ import { fmt, fmtDate } from "@/lib/format";
 import { DATE_KIND } from "@/lib/portfolios";
 import { useWorkspace } from "@/lib/workspace";
 
+// what the client pays: shown to them; costs only on the internal review
+const PRICE_FIELDS = ["price", "quantity", "billing cycle", "price per unit"];
+const COST_FIELDS = ["cost", "cost per unit"];
+
 /**
  * The portfolio report, to print or save as PDF. "For the client" shows their services, prices, dates and price
  * history; "Internal" adds your costs, margins and what each should cost at your standard margin.
@@ -94,11 +98,11 @@ export default function PortfolioReportPage() {
           </>
         )}
 
-        {d.history.some((h) => !["added", "removed"].includes(h.field)) && (
+        {d.history.some((h) => PRICE_FIELDS.includes(h.field) || (internal && COST_FIELDS.includes(h.field))) && (
           <>
             <h2 className="mt-6 mb-1 font-semibold">Price changes</h2>
             <table className="w-full border-collapse"><tbody>
-              {d.history.filter((h) => !["added", "removed"].includes(h.field) && (internal || !h.field.includes("cost"))).map((h) => (
+              {d.history.filter((h) => PRICE_FIELDS.includes(h.field) || (internal && COST_FIELDS.includes(h.field))).map((h) => (
                 <tr key={h.id}><td className={`${td} w-28`}>{fmtDate(h.changed_on)}</td><td className={td}>{h.what}: {h.field} {h.old_value} to {h.new_value}{h.reason ? ` (${h.reason})` : ""}</td></tr>
               ))}
             </tbody></table>
