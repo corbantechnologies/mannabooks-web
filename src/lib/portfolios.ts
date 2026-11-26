@@ -4,7 +4,7 @@ type S = components["schemas"];
 
 export type PortfolioDetail = S["PortfolioDetail"];
 export type PortfolioService = S["PortfolioServiceOut"];
-export type PortfolioProject = S["PortfolioProjectOut"];
+export type PortfolioGroup = S["PortfolioGroupOut"];
 export type PortfolioApp = S["PortfolioAppOut"];
 export type PortfolioResource = S["PortfolioResourceOut"];
 

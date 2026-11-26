@@ -67,7 +67,7 @@ export default function PortfolioReportPage() {
           <tbody>
             {active.map((s) => (
               <tr key={s.id}>
-                <td className={td}>{s.name}<span className="block text-xs text-stone-500">{s.project_name ? `${s.project_name} · ` : ""}{s.kind_label}{s.contract_end ? ` · contract to ${fmtDate(s.contract_end)}` : ""}</span>
+                <td className={td}>{s.name}<span className="block text-xs text-stone-500">{s.group_name ? `${s.group_name} · ` : ""}{s.kind_label}{s.contract_end ? ` · contract to ${fmtDate(s.contract_end)}` : ""}</span>
                   {s.apps.filter((a) => a.is_active).map((a) => <span key={a.id} className="block pl-3 text-xs text-stone-600">{a.name}: {fmt(a.monthly_price)} a month{internal ? ` (cost ${fmt(a.monthly_cost)})` : ""}</span>)}
                 </td>
                 <td className={num}>{fmt(s.per_cycle)}</td>

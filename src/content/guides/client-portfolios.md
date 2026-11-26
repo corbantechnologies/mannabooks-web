@@ -24,11 +24,23 @@ The portfolio works out every service's revenue, cost and margin **per month**, 
 
 **Prepaid services** (for example Google Workspace paid for a year): enter the period paid for. The service shows how much is earned so far and how much is left. Billing it from the portfolio fills the period in.
 
-## Projects
+## Groups
 
-A **project** groups several services that belong together, for example *Members app* (the app licence, its hosting and its support) or *Website revamp*. Click **New project**, name it, and give it a status (active, on hold, done) and dates if they help. Then add services to it with **Add a service** on the project's row, or choose the project on any service.
+A **group** is a folder for services that belong together, for example *Members app* (the app licence, its hosting and its support) or *Branch A*. It is just a name and an optional note: the services inside keep their own prices, dates and renewals. (It isn't the same as **Projects** in the menu, which tracks a job's costs in the books.)
 
-On **Services**, each project shows as a heading with what its services bring in a month, what they cost you and the margin, with its services underneath. Services in no project are listed under *Services on their own*. Deleting a project keeps its services; they move to *Services on their own*.
+- **New group:** click **New group** and name it. It shows straight away, even before it has services.
+- **Add a service here:** on the group's row, to add a service straight into it. Or choose the group in a service's form.
+- **Move to group:** open a service and pick another group, or **No group**.
+- **Totals:** each group's row shows what its services bring in a month, what they cost you and the margin.
+- **Open and close:** click a group's name to fold its services away, and again to open them.
+- **Delete:** under **Change** on the group's row. Its services stay, under *No group*.
+
+### Duplicate for quick setup
+
+When services are alike, set one up and copy it:
+
+- **Duplicate a service:** open it and click **Duplicate**. The copy, *name (copy)*, has the same prices, billing, dates, supplier, and hosted apps with their resources, in the same group. Open the copy and change what differs. Its history, bills and documents aren't copied.
+- **Duplicate a group:** **Duplicate** on the group's row copies the group with a copy of each of its services, for example to set up *Branch B* like *Branch A*. Then rename it with **Change**.
 
 ## Hosting: apps and resources
 
@@ -66,6 +78,8 @@ The lead gets an in-app message before each one. Billing and renewal dates also 
 - renewals in the month they fall.
 
 **Make the draft invoice** creates it. Check it, then issue it as usual. Each billed service moves on to its next bill date, so nothing is billed twice or forgotten. A month can be invoiced once; void that invoice to make it again.
+
+**Group the lines by group:** when the client has groups, tick this to list the lines group by group, each starting with its group's name (for example *Members app: Hosting*). MannaBooks remembers the choice for this client's next invoices.
 
 If the client also has a recurring invoice, the preview warns you. Stop the recurring invoice once the portfolio bills the same services.
 

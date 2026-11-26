@@ -266,12 +266,13 @@ export function MakeInvoice({ data, open, onClose }: { data: PortfolioDetail; op
   const { slug } = useWorkspace();
   const router = useRouter();
   const [month, setMonth] = useState(data.today.slice(0, 7));
+  const [byGroup, setByGroup] = useState(Boolean(data.invoice_by_group));
   const preview = useQuery({
-    queryKey: ["portfolio-invoice", slug, data.id, month], enabled: open,
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/portfolios/{id}/invoice/", { params: { path: { workspace: slug, id: data.id }, query: { month: `${month}-01` } } })),
+    queryKey: ["portfolio-invoice", slug, data.id, month, byGroup], enabled: open,
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/portfolios/{id}/invoice/", { params: { path: { workspace: slug, id: data.id }, query: { month: `${month}-01`, by_group: byGroup } } })),
   });
   const make = useMutation({
-    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/{id}/invoice/", { ...p(slug, data.id), body: { month: `${month}-01` } })),
+    mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/portfolios/{id}/invoice/", { ...p(slug, data.id), body: { month: `${month}-01`, by_group: byGroup } })),
     onSuccess: (r) => router.push(`/w/${slug}/sales/invoices/${r.invoice_id}`),
   });
   const pv = preview.data;
@@ -279,6 +280,12 @@ export function MakeInvoice({ data, open, onClose }: { data: PortfolioDetail; op
     <Modal open={open} title="Make the month's invoice" onClose={onClose} size="lg">
       <div className="space-y-3">
         <Field label="Month" hint="Everything due by the end of this month: one billing cycle per service, a line per app for hosting."><Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} /></Field>
+        {data.groups.length > 0 && (
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-0.5" checked={byGroup} onChange={(e) => setByGroup(e.target.checked)} />
+            <span>Group the lines by group<span className="block text-xs text-stone-500">Each line starts with its group&apos;s name, group by group. Remembered for this client.</span></span>
+          </label>
+        )}
         {pv?.already && <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">This month is already invoiced: <Link className="font-mono underline" href={`/w/${slug}/sales/invoices/${pv.already.invoice_id}`}>{pv.already.number}</Link>.</p>}
         {pv?.warning && <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">{pv.warning}</p>}
         {pv && (pv.lines.length === 0 ? <p className="text-sm text-stone-500">Nothing is due to bill by the end of this month.</p> : (

@@ -29,7 +29,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Cash sales", text: "A receipt for money taken on the spot, by cash, M-Pesa, card or bank.", guide: "cash-sales" },
       { name: "Discounts", text: "A percentage or an amount off a line, or off the whole document. The discount is shared over the lines, so KRA sees it on each one.", guide: "invoices", isNew: true },
       { name: "Price lists", text: "Wholesale, contract or member prices that fill in by themselves for the right customers.", guide: "price-lists" },
-      { name: "Client portfolios", text: "Each client's services and projects, your price and cost, the margin, renewals and contracts, and the month's invoice.", guide: "client-portfolios", isNew: true },
+      { name: "Client portfolios", text: "Each client's services in groups, your price and cost, the margin, renewals and contracts, and the month's invoice.", guide: "client-portfolios", isNew: true },
       { name: "Recurring invoices", text: "Rent, fees, retainers and service charges invoiced every month without lifting a finger.", guide: "recurring-invoices" },
       { name: "Statements and reminders", text: "Customer statements and polite payment reminders before and after the due date.", guide: "reminders" },
       { name: "Credit notes and delivery notes", text: "Returns and corrections done properly, and delivery notes customers sign.", guide: "credit-notes" },

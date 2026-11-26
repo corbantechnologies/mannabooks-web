@@ -6535,25 +6535,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/w/{workspace}/portfolios/{id}/invoice/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
-        get: operations["w_portfolios_invoice_retrieve"];
-        put?: never;
-        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
-        post: operations["w_portfolios_invoice_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/w/{workspace}/portfolios/{id}/projects/": {
+    "/api/v1/w/{workspace}/portfolios/{id}/groups/": {
         parameters: {
             query?: never;
             header?: never;
@@ -6568,7 +6550,25 @@ export interface paths {
          *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
-        post: operations["w_portfolios_projects_create"];
+        post: operations["w_portfolios_groups_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/{id}/invoice/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
+        get: operations["w_portfolios_invoice_retrieve"];
+        put?: never;
+        /** @description GET: what this month's invoice would hold. POST: make it as a draft. */
+        post: operations["w_portfolios_invoice_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6720,7 +6720,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/w/{workspace}/portfolios/projects/{id}/": {
+    "/api/v1/w/{workspace}/portfolios/groups/{id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -6731,7 +6731,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** @description Its services stay, on their own. */
-        delete: operations["w_portfolios_projects_destroy"];
+        delete: operations["w_portfolios_groups_destroy"];
         options?: never;
         head?: never;
         /**
@@ -6740,7 +6740,24 @@ export interface paths {
          *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
-        patch: operations["w_portfolios_projects_partial_update"];
+        patch: operations["w_portfolios_groups_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/groups/{id}/duplicate/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A copy of the group with a copy of each of its services, to change from. */
+        post: operations["w_portfolios_groups_duplicate_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/portfolios/resources/{id}/": {
@@ -6832,6 +6849,23 @@ export interface paths {
         put?: never;
         /** @description Put part of a real supplier bill against a service, or one app under it. */
         post: operations["w_portfolios_services_costs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/portfolios/services/{id}/duplicate/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A copy of the service (prices, cycle, dates, supplier, hosted apps and resources) to change from. */
+        post: operations["w_portfolios_services_duplicate_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -18411,6 +18445,10 @@ export interface components {
             /** Format: date */
             expires_on?: string | null;
         };
+        PatchedPortfolioGroupInRequest: {
+            name?: string;
+            notes?: string;
+        };
         PatchedPortfolioInRequest: {
             /** Format: uuid */
             customer_id?: string;
@@ -18418,15 +18456,6 @@ export interface components {
             lead_id?: string | null;
             /** Format: decimal */
             target_margin?: string;
-            notes?: string;
-        };
-        PatchedPortfolioProjectInRequest: {
-            name?: string;
-            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
-            /** Format: date */
-            start_date?: string | null;
-            /** Format: date */
-            end_date?: string | null;
             notes?: string;
         };
         PatchedPortfolioResourceInRequest: {
@@ -18475,9 +18504,9 @@ export interface components {
             notes?: string;
             /**
              * Format: uuid
-             * @description The project it is part of; null for none
+             * @description The group (folder) it is in; null for none
              */
-            project_id?: string | null;
+            group_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -19925,7 +19954,8 @@ export interface components {
             /** Format: date */
             today: string;
             can_manage: boolean;
-            projects: components["schemas"]["PortfolioProjectOut"][];
+            groups: components["schemas"]["PortfolioGroupOut"][];
+            invoice_by_group: boolean;
             dates: components["schemas"]["PortfolioDateItem"][];
             documents: components["schemas"]["PortfolioDocumentOut"][];
             history: components["schemas"]["PortfolioHistory"][];
@@ -19960,6 +19990,35 @@ export interface components {
             expiring: boolean;
             /** Format: date-time */
             created_at: string;
+        };
+        PortfolioDuplicateRequest: {
+            /** @description Blank: the same name with (copy) */
+            name?: string;
+            /**
+             * Format: uuid
+             * @description A service: the group the copy goes in (default: the same)
+             */
+            group_id?: string | null;
+        };
+        PortfolioGroupInRequest: {
+            name?: string;
+            notes?: string;
+        };
+        PortfolioGroupOut: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            notes: string;
+            services: number;
+            /** Format: decimal */
+            monthly_revenue: string;
+            /** Format: decimal */
+            monthly_cost: string;
+            /** Format: decimal */
+            monthly_margin: string;
+            /** Format: decimal */
+            margin_percent: string | null;
+            loses_money: boolean;
         };
         PortfolioHistory: {
             /** Format: uuid */
@@ -19996,6 +20055,8 @@ export interface components {
              * @description Any day in the month to bill
              */
             month: string;
+            /** @description List the lines group by group (remembered for this client) */
+            by_group?: boolean;
         };
         PortfolioNamed: {
             /** Format: uuid */
@@ -20014,6 +20075,7 @@ export interface components {
         PortfolioPreview: {
             /** Format: date */
             month: string;
+            by_group: boolean;
             already: components["schemas"]["PortfolioAlready"] | null;
             lines: components["schemas"]["PortfolioPreviewLine"][];
             /** Format: decimal */
@@ -20023,6 +20085,8 @@ export interface components {
         PortfolioPreviewLine: {
             /** Format: uuid */
             service_id: string;
+            /** @description The group's name, or blank */
+            group: string;
             description: string;
             /** Format: decimal */
             quantity: string;
@@ -20030,44 +20094,6 @@ export interface components {
             unit_price: string;
             /** Format: decimal */
             amount: string;
-        };
-        PortfolioProjectInRequest: {
-            name?: string;
-            status?: components["schemas"]["PortfolioProjectInStatusEnum"];
-            /** Format: date */
-            start_date?: string | null;
-            /** Format: date */
-            end_date?: string | null;
-            notes?: string;
-        };
-        /**
-         * @description * `active` - Active
-         *     * `on_hold` - On hold
-         *     * `done` - Done
-         * @enum {string}
-         */
-        PortfolioProjectInStatusEnum: "active" | "on_hold" | "done";
-        PortfolioProjectOut: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            status: string;
-            status_label: string;
-            /** Format: date */
-            start_date: string | null;
-            /** Format: date */
-            end_date: string | null;
-            notes: string;
-            services: number;
-            /** Format: decimal */
-            monthly_revenue: string;
-            /** Format: decimal */
-            monthly_cost: string;
-            /** Format: decimal */
-            monthly_margin: string;
-            /** Format: decimal */
-            margin_percent: string | null;
-            loses_money: boolean;
         };
         /**
          * @description * `vcpu` - vCPU
@@ -20192,9 +20218,9 @@ export interface components {
             notes?: string;
             /**
              * Format: uuid
-             * @description The project it is part of; null for none
+             * @description The group (folder) it is in; null for none
              */
-            project_id?: string | null;
+            group_id?: string | null;
             /** @description Why the price, quantity or cost changed (kept in the history) */
             reason?: string;
         };
@@ -20203,8 +20229,8 @@ export interface components {
             id: string;
             name: string;
             /** Format: uuid */
-            project_id: string | null;
-            project_name: string;
+            group_id: string | null;
+            group_name: string;
             kind: string;
             kind_label: string;
             status: string;
@@ -36481,9 +36507,39 @@ export interface operations {
             };
         };
     };
+    w_portfolios_groups_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioGroupInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioGroupInRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioGroupInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
     w_portfolios_invoice_retrieve: {
         parameters: {
             query?: {
+                /** @description Default: what this client's last invoice used */
+                by_group?: boolean;
                 month?: string;
             };
             header?: never;
@@ -36529,34 +36585,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortfolioMade"];
-                };
-            };
-        };
-    };
-    w_portfolios_projects_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                workspace: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PortfolioProjectInRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PortfolioProjectInRequest"];
-                "multipart/form-data": components["schemas"]["PortfolioProjectInRequest"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioDetail"];
                 };
             };
         };
@@ -36783,7 +36811,7 @@ export interface operations {
             };
         };
     };
-    w_portfolios_projects_destroy: {
+    w_portfolios_groups_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -36805,7 +36833,7 @@ export interface operations {
             };
         };
     };
-    w_portfolios_projects_partial_update: {
+    w_portfolios_groups_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -36817,13 +36845,41 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedPortfolioProjectInRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioProjectInRequest"];
-                "multipart/form-data": components["schemas"]["PatchedPortfolioProjectInRequest"];
+                "application/json": components["schemas"]["PatchedPortfolioGroupInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPortfolioGroupInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPortfolioGroupInRequest"];
             };
         };
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_groups_duplicate_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioDuplicateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioDuplicateRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioDuplicateRequest"];
+            };
+        };
+        responses: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -36976,6 +37032,34 @@ export interface operations {
                 "application/json": components["schemas"]["PortfolioCostInRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PortfolioCostInRequest"];
                 "multipart/form-data": components["schemas"]["PortfolioCostInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioDetail"];
+                };
+            };
+        };
+    };
+    w_portfolios_services_duplicate_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PortfolioDuplicateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PortfolioDuplicateRequest"];
+                "multipart/form-data": components["schemas"]["PortfolioDuplicateRequest"];
             };
         };
         responses: {

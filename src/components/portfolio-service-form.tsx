@@ -13,21 +13,21 @@ import { useWorkspace } from "@/lib/workspace";
 const blank = {
   name: "", kind: "other", status: "active", product_id: "", tax_rate_id: "", quantity: "1", price: "0", billing_cycle: "monthly",
   contract_start: "", contract_end: "", next_bill_date: "", prepaid_from: "", prepaid_to: "", cost: "0", cost_cycle: "monthly",
-  supplier_id: "", supplier_renewal_date: "", remind_days: "30", notes: "", project_id: "", reason: "",
+  supplier_id: "", supplier_renewal_date: "", remind_days: "30", notes: "", group_id: "", reason: "",
 };
 
 /** Add a service to a portfolio, or change one. Price, quantity and cost changes ask why, for the history. */
-export function ServiceForm({ portfolioId, service, open, onClose, onSaved, projects = [], projectId = "" }: {
+export function ServiceForm({ portfolioId, service, open, onClose, onSaved, groups = [], groupId = "" }: {
   portfolioId: string; service?: PortfolioService | null; open: boolean; onClose: () => void; onSaved: (p: PortfolioDetail) => void;
-  /** The portfolio's projects, and the one to put a new service in. */
-  projects?: { id: string; name: string }[]; projectId?: string;
+  /** The portfolio's groups, and the one to put a new service in. */
+  groups?: { id: string; name: string }[]; groupId?: string;
 }) {
   const { slug } = useWorkspace();
   const products = useProducts(slug);
   const rates = useVatRates(slug);
   const suppliers = useSuppliers(slug);
   const start = service ? Object.fromEntries(Object.keys(blank).map((k) => [k, String((service as Record<string, unknown>)[k] ?? "")])) as typeof blank : blank;
-  const [f, setF] = useState({ ...start, ...(service ? {} : { project_id: projectId }), reason: "" });
+  const [f, setF] = useState({ ...start, ...(service ? {} : { group_id: groupId }), reason: "" });
   const set = (k: keyof typeof blank) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
   const money = service && (f.price !== String(service.price) || f.quantity !== String(service.quantity) || f.cost !== String(service.cost));
   const save = useMutation({
@@ -47,11 +47,11 @@ export function ServiceForm({ portfolioId, service, open, onClose, onSaved, proj
   return (
     <Modal open={open} title={service ? `Change ${service.name}` : "Add a service"} onClose={onClose} size="lg">
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-        <div className={projects.length ? "grid gap-3 sm:grid-cols-4" : "grid gap-3 sm:grid-cols-3"}>
-          {projects.length > 0 && (
-            <Field label="Project"><Select value={f.project_id} onChange={set("project_id")}>
-              <option value="">None (on its own)</option>
-              {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        <div className={groups.length ? "grid gap-3 sm:grid-cols-4" : "grid gap-3 sm:grid-cols-3"}>
+          {groups.length > 0 && (
+            <Field label="Group"><Select value={f.group_id} onChange={set("group_id")}>
+              <option value="">No group</option>
+              {groups.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </Select></Field>
           )}
           <Field label="Service"><Input required value={f.name} onChange={set("name")} placeholder="e.g. Google Workspace, 12 users" /></Field>

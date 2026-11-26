@@ -100,7 +100,8 @@ export function SalesDocForm({ kind, existing, initialCustomer, original, dealId
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(false); }}>
       <Card className="grid gap-3 p-4 sm:grid-cols-4">
         <div className="sm:col-span-2">
-          <Field label="Customer" error={fieldError(save.error, "customer_id")}>
+          <Field label="Customer" error={fieldError(save.error, "customer_id")}
+            hint={kind === "quotation" && existing && existing.status !== "draft" ? "Changing the customer gives this quotation a new link. The old link stops working." : undefined}>
             <Select required disabled={Boolean(original)} value={head.customer_id} onChange={(e) => void pickCustomer(e.target.value)}>
               <option value="">Choose a customer</option>
               <option value="__new">+ New customer...</option>
