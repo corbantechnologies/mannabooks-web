@@ -2930,6 +2930,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/dashboard/checklist/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Today's checklist: each line, what is waiting, and whether it is done; and the tasks taken for today. */
+        get: operations["w_dashboard_checklist_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/checklist/items/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone has their own checklist; the business's lines need Workspace settings: manage. */
+        get: operations["w_dashboard_checklist_items_list"];
+        put?: never;
+        /** @description Everyone has their own checklist; the business's lines need Workspace settings: manage. */
+        post: operations["w_dashboard_checklist_items_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/checklist/items/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Everyone has their own checklist; the business's lines need Workspace settings: manage. */
+        delete: operations["w_dashboard_checklist_items_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Everyone has their own checklist; the business's lines need Workspace settings: manage. */
+        patch: operations["w_dashboard_checklist_items_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/checklist/items/{id}/hide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Take a business line off your own checklist, or put it back. */
+        post: operations["w_dashboard_checklist_items_hide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/checklist/plan/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Take tasks for today: your own open tasks, in your order. Replaces today's list. */
+        put: operations["w_dashboard_checklist_plan_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/dashboard/checklist/tick/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Everyone has their own checklist; the business's lines need Workspace settings: manage. */
+        post: operations["w_dashboard_checklist_tick_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/dashboard/coming-up/": {
         parameters: {
             query?: never;
@@ -4290,6 +4394,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/goals/{id}/review/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Write or change a review: `self` (the goal's owner looks back and rates it) or `manager` (their manager or head rates it). */
+        post: operations["w_goals_review_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/goals/milestones/{id}/": {
         parameters: {
             query?: never;
@@ -4306,6 +4427,41 @@ export interface paths {
         head?: never;
         /** @description Tick or untick (the goal's owner can too), or change the words and date (whoever looks after the goal). */
         patch: operations["w_goals_milestones_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/reviews/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_reviews_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/goals/settings/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        get: operations["w_goals_settings_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Goals check who may see and change each goal themselves (company, department or person), so every member can use them. */
+        patch: operations["w_goals_settings_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/goals/summary/": {
@@ -10522,7 +10678,7 @@ export interface components {
          *     * `people` - People I choose
          * @enum {string}
          */
-        AudienceEnum: "team" | "department" | "people";
+        Audience1ebEnum: "team" | "department" | "people";
         AuditLog: {
             /** Format: uuid */
             readonly id: string;
@@ -11445,7 +11601,8 @@ export interface components {
          */
         CardTransactionStatusEnum: "pending" | "success" | "failed" | "abandoned";
         /**
-         * @description * `coming_up` - coming_up
+         * @description * `checklist` - checklist
+         *     * `coming_up` - coming_up
          *     * `period` - period
          *     * `accounts` - accounts
          *     * `money` - money
@@ -11456,7 +11613,7 @@ export interface components {
          *     * `role` - role
          * @enum {string}
          */
-        CardsEnum: "coming_up" | "period" | "accounts" | "money" | "goals" | "tasks" | "department_tasks" | "inbox" | "role";
+        CardsEnum: "checklist" | "coming_up" | "period" | "accounts" | "money" | "goals" | "tasks" | "department_tasks" | "inbox" | "role";
         Catalogue: {
             /** Format: uuid */
             readonly id: string;
@@ -11693,6 +11850,107 @@ export interface components {
              */
             value?: string | null;
             note?: string;
+        };
+        ChecklistHideRequest: {
+            hidden: boolean;
+        };
+        ChecklistItem: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly key: string;
+            readonly built_in: boolean;
+            /** @description Counts what is waiting and ticks itself when nothing is */
+            readonly counts: boolean;
+            title?: string;
+            link?: string;
+            audience?: components["schemas"]["ChecklistItemAudienceEnum"];
+            /** Format: uuid */
+            role_id?: string | null;
+            readonly role_name: string;
+            /** Format: uuid */
+            department_id?: string | null;
+            readonly department_name: string;
+            /** Format: uuid */
+            membership_id?: string | null;
+            readonly person_name: string;
+            /** @description A line of your own, only on your checklist */
+            personal?: boolean;
+            position?: number;
+            is_active?: boolean;
+            /** @description You took this business line off your own checklist */
+            readonly hidden: boolean;
+        };
+        /**
+         * @description * `everyone` - everyone
+         *     * `role` - role
+         *     * `department` - department
+         *     * `person` - person
+         * @enum {string}
+         */
+        ChecklistItemAudienceEnum: "everyone" | "role" | "department" | "person";
+        ChecklistItemRequest: {
+            title?: string;
+            link?: string;
+            audience?: components["schemas"]["ChecklistItemAudienceEnum"];
+            /** Format: uuid */
+            role_id?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: uuid */
+            membership_id?: string | null;
+            /** @description A line of your own, only on your checklist */
+            personal?: boolean;
+            position?: number;
+            is_active?: boolean;
+        };
+        ChecklistLine: {
+            /** Format: uuid */
+            id: string;
+            /** @description Built-in line, or blank */
+            key: string;
+            title: string;
+            link: string;
+            /** @description What is waiting, for lines that count */
+            count: number | null;
+            done: boolean;
+            /**
+             * @description nothing: nothing waiting; picked: tasks taken for today
+             *
+             *     * `` -
+             *     * `ticked` - ticked
+             *     * `nothing` - nothing
+             *     * `picked` - picked
+             */
+            how: components["schemas"]["ChecklistLineHowEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: date-time */
+            ticked_at: string | null;
+            personal: boolean;
+        };
+        /**
+         * @description * `` -
+         *     * `ticked` - ticked
+         *     * `nothing` - nothing
+         *     * `picked` - picked
+         * @enum {string}
+         */
+        ChecklistLineHowEnum: "ticked" | "nothing" | "picked";
+        ChecklistPlanRequest: {
+            task_ids: string[];
+        };
+        ChecklistTickRequest: {
+            /** Format: uuid */
+            item_id: string;
+            done: boolean;
+        };
+        ChecklistToday: {
+            /** Format: date */
+            day: string;
+            items: components["schemas"]["ChecklistLine"][];
+            done: number;
+            total: number;
+            picks: components["schemas"]["DayPick"][];
+            /** @description Can set the business's lines (Workspace settings: manage) */
+            can_manage: boolean;
         };
         ClaimLine: {
             /** Format: uuid */
@@ -12252,6 +12510,19 @@ export interface components {
          * @enum {string}
          */
         CycleDceEnum: "monthly" | "yearly";
+        DayPick: {
+            /**
+             * Format: uuid
+             * @description The task
+             */
+            id: string;
+            title: string;
+            status: string;
+            status_label: string;
+            /** Format: date */
+            due_date: string | null;
+            priority: string;
+        };
         Deal: {
             /** Format: uuid */
             readonly id: string;
@@ -13624,6 +13895,7 @@ export interface components {
             children: number;
             /** Format: decimal */
             manual_value: string | null;
+            review: components["schemas"]["GoalReviewOut"];
             milestones: components["schemas"]["Milestone"][];
             check_ins: components["schemas"]["CheckInOut"][];
             child_goals: components["schemas"]["GoalRow"][];
@@ -13653,6 +13925,16 @@ export interface components {
              * @description Any day in the month, quarter or year the goal is for
              */
             anchor?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the first day
+             */
+            start_date?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the last day
+             */
+            end_date?: string;
             measure?: components["schemas"]["MeasureEnum"];
             direction?: components["schemas"]["GoalInDirectionEnum"];
             /** Format: decimal */
@@ -13664,6 +13946,88 @@ export interface components {
             cost_center_id?: string | null;
             /** @description New goal: its checklist, one per line */
             milestones?: string[];
+        };
+        GoalReviewInRequest: {
+            part: components["schemas"]["PartEnum"];
+            rating: number;
+            went_well?: string;
+            hard?: string;
+            next_steps?: string;
+            comment?: string;
+        };
+        GoalReviewOut: {
+            state: components["schemas"]["StateEnum"];
+            state_label: string;
+            self_review: boolean;
+            manager_review: boolean;
+            /** @description The words for ratings 1 to 5 */
+            labels: string[];
+            self_rating: number | null;
+            self_rating_label: string;
+            went_well: string;
+            hard: string;
+            next_steps: string;
+            self_by_name: string;
+            /** Format: date-time */
+            self_at: string | null;
+            rating: number | null;
+            rating_label: string;
+            comment: string;
+            reviewed_by_name: string;
+            /** Format: date-time */
+            reviewed_at: string | null;
+            can_write: boolean;
+            can_review: boolean;
+        };
+        GoalReviewRow: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            description: string;
+            level: string;
+            level_label: string;
+            /** Format: uuid */
+            department_id: string | null;
+            department_name: string;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            /** Format: uuid */
+            parent_id: string | null;
+            parent_title: string;
+            period: string;
+            period_label: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            measure: string;
+            measure_label: string;
+            direction: string;
+            unit: string;
+            /** @description Measured in money from the books; figures are hidden from people without reports access */
+            money: boolean;
+            /** Format: uuid */
+            project_id: string | null;
+            project_name: string;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            /** Format: decimal */
+            target: string | null;
+            /** Format: decimal */
+            value: string | null;
+            /** Format: decimal */
+            percent: string;
+            /** Format: decimal */
+            time_percent: string;
+            status: string;
+            status_label: string;
+            outcome: string;
+            outcome_reason: string;
+            can_manage: boolean;
+            children: number;
+            review: components["schemas"]["GoalReviewOut"];
         };
         GoalRow: {
             /** Format: uuid */
@@ -13713,6 +14077,13 @@ export interface components {
             outcome_reason: string;
             can_manage: boolean;
             children: number;
+        };
+        GoalSettings: {
+            self_review?: boolean;
+            manager_review?: boolean;
+            rating_labels?: string[];
+            remind?: boolean;
+            readonly can_manage: boolean;
         };
         GoalSummary: {
             total: number;
@@ -13822,12 +14193,6 @@ export interface components {
              */
             cash: string;
         };
-        /**
-         * @description * `account` - account
-         *     * `payslip` - payslip
-         * @enum {string}
-         */
-        HowEnum: "account" | "payslip";
         ImportJob: {
             /** Format: uuid */
             readonly id: string;
@@ -17159,6 +17524,12 @@ export interface components {
             results: components["schemas"]["Warehouse"][];
         };
         /**
+         * @description * `self` - The owner's own review
+         *     * `manager` - The manager's review
+         * @enum {string}
+         */
+        PartEnum: "self" | "manager";
+        /**
          * @description * `individual` - Individual
          *     * `company` - Company
          * @enum {string}
@@ -17441,6 +17812,21 @@ export interface components {
             show_stock?: boolean;
             /** Format: date */
             expires_on?: string | null;
+            is_active?: boolean;
+        };
+        PatchedChecklistItemRequest: {
+            title?: string;
+            link?: string;
+            audience?: components["schemas"]["ChecklistItemAudienceEnum"];
+            /** Format: uuid */
+            role_id?: string | null;
+            /** Format: uuid */
+            department_id?: string | null;
+            /** Format: uuid */
+            membership_id?: string | null;
+            /** @description A line of your own, only on your checklist */
+            personal?: boolean;
+            position?: number;
             is_active?: boolean;
         };
         PatchedCompanyGroupRequest: {
@@ -17729,6 +18115,16 @@ export interface components {
              * @description Any day in the month, quarter or year the goal is for
              */
             anchor?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the first day
+             */
+            start_date?: string;
+            /**
+             * Format: date
+             * @description Custom dates: the last day
+             */
+            end_date?: string;
             measure?: components["schemas"]["MeasureEnum"];
             direction?: components["schemas"]["GoalInDirectionEnum"];
             /** Format: decimal */
@@ -17740,6 +18136,12 @@ export interface components {
             cost_center_id?: string | null;
             /** @description New goal: its checklist, one per line */
             milestones?: string[];
+        };
+        PatchedGoalSettingsRequest: {
+            self_review?: boolean;
+            manager_review?: boolean;
+            rating_labels?: string[];
+            remind?: boolean;
         };
         /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedInvoiceRequest: {
@@ -18502,6 +18904,12 @@ export interface components {
          * @enum {string}
          */
         PatternEnum: "fixed" | "flexible";
+        /**
+         * @description * `account` - account
+         *     * `payslip` - payslip
+         * @enum {string}
+         */
+        PayHowEnum: "account" | "payslip";
         PayItem: {
             name: string;
             kind: components["schemas"]["PayItemKindEnum"];
@@ -18546,7 +18954,7 @@ export interface components {
             phone?: string;
         };
         PayRequest: {
-            how: components["schemas"]["HowEnum"];
+            how: components["schemas"]["PayHowEnum"];
             /** Format: uuid */
             account_id?: string | null;
             /** Format: date */
@@ -19013,9 +19421,10 @@ export interface components {
          * @description * `month` - Month
          *     * `quarter` - Quarter
          *     * `year` - Year
+         *     * `custom` - Custom dates
          * @enum {string}
          */
-        PeriodEnum: "month" | "quarter" | "year";
+        PeriodEnum: "month" | "quarter" | "year" | "custom";
         PeriodMonth: {
             /** Format: date */
             month: string;
@@ -21187,6 +21596,8 @@ export interface components {
             employee_id: string;
             employee_name: string;
             department: string | null;
+            /** Format: uuid */
+            department_id: string | null;
             on_time: number;
             /** @description Handed in after the due date */
             late: number;
@@ -21218,7 +21629,7 @@ export interface components {
             due_time?: string | null;
             title: string;
             instructions?: string;
-            audience?: components["schemas"]["AudienceEnum"];
+            audience?: components["schemas"]["Audience1ebEnum"];
             /** Format: uuid */
             department_id?: string | null;
             readonly department_name: string;
@@ -21260,7 +21671,7 @@ export interface components {
             due_time?: string | null;
             title: string;
             instructions?: string;
-            audience?: components["schemas"]["AudienceEnum"];
+            audience?: components["schemas"]["Audience1ebEnum"];
             /** Format: uuid */
             department_id?: string | null;
             people_ids?: string[];
@@ -21326,6 +21737,8 @@ export interface components {
             /** Format: uuid */
             readonly employee_id: string;
             readonly employee_name: string;
+            /** @default  */
+            readonly department_name: string;
             readonly period_label: string;
             /** Format: date */
             readonly due_date: string;
@@ -21920,6 +22333,15 @@ export interface components {
             weighted: string;
             probability: number;
         };
+        /**
+         * @description * `off` - off
+         *     * `not_due` - not_due
+         *     * `to_write` - to_write
+         *     * `to_review` - to_review
+         *     * `done` - done
+         * @enum {string}
+         */
+        StateEnum: "off" | "not_due" | "to_write" | "to_review" | "done";
         Statement: {
             customer: components["schemas"]["Customer"];
             /** Format: decimal */
@@ -29058,6 +29480,213 @@ export interface operations {
             };
         };
     };
+    w_dashboard_checklist_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistToday"];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_items_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description mine: the lines on your checklist (with hidden ones); business: every business line */
+                scope?: "business" | "mine";
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItem"][];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_items_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ChecklistItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChecklistItemRequest"];
+                "multipart/form-data": components["schemas"]["ChecklistItemRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItem"];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_items_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_dashboard_checklist_items_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChecklistItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChecklistItemRequest"];
+                "multipart/form-data": components["schemas"]["PatchedChecklistItemRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItem"];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_items_hide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChecklistHideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChecklistHideRequest"];
+                "multipart/form-data": components["schemas"]["ChecklistHideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistToday"];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_plan_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChecklistPlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChecklistPlanRequest"];
+                "multipart/form-data": components["schemas"]["ChecklistPlanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistToday"];
+                };
+            };
+        };
+    };
+    w_dashboard_checklist_tick_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChecklistTickRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChecklistTickRequest"];
+                "multipart/form-data": components["schemas"]["ChecklistTickRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistToday"];
+                };
+            };
+        };
+    };
     w_dashboard_coming_up_retrieve: {
         parameters: {
             query?: {
@@ -31628,6 +32257,34 @@ export interface operations {
             };
         };
     };
+    w_goals_review_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoalReviewInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoalReviewInRequest"];
+                "multipart/form-data": components["schemas"]["GoalReviewInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
     w_goals_milestones_destroy: {
         parameters: {
             query?: never;
@@ -31674,6 +32331,88 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GoalDetail"];
+                };
+            };
+        };
+    };
+    w_goals_reviews_list: {
+        parameters: {
+            query?: {
+                /** @description to_write: mine to write; to_review: waiting for my review; all: every ended goal I can see */
+                box?: "all" | "to_review" | "to_write";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description Whose goals (a membership) */
+                person?: string;
+                /** @description A search term. */
+                search?: string;
+                /** @description Ended on or after */
+                since?: string;
+                /** @description Ended on or before */
+                until?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalReviewRow"][];
+                };
+            };
+        };
+    };
+    w_goals_settings_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalSettings"];
+                };
+            };
+        };
+    };
+    w_goals_settings_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGoalSettingsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGoalSettingsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGoalSettingsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoalSettings"];
                 };
             };
         };
@@ -38547,6 +39286,8 @@ export interface operations {
         parameters: {
             query?: {
                 box?: "all" | "review" | "todo";
+                /** @description People in this department */
+                department?: string;
                 employee?: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -38557,6 +39298,10 @@ export interface operations {
                 request?: string;
                 /** @description A search term. */
                 search?: string;
+                /** @description Due on or after */
+                since?: string;
+                /** @description waiting (not handed in yet), handed_in (waiting for review), accepted, returned, late (overdue now or handed in late) */
+                state?: "accepted" | "handed_in" | "late" | "returned" | "waiting";
                 /**
                  * @description * `pending` - Waiting
                  *     * `in_progress` - In progress
@@ -38566,6 +39311,8 @@ export interface operations {
                  *     * `returned` - Sent back
                  */
                 status?: "accepted" | "in_progress" | "late" | "pending" | "returned" | "submitted";
+                /** @description Due on or before */
+                until?: string;
             };
             header?: never;
             path: {

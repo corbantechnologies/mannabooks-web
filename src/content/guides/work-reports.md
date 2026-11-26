@@ -38,6 +38,17 @@ For a one-off task, use **Tasks** instead (see [Tasks](tasks)). Use a work repor
 
 Repeating tasks count in the same on-time record as reports. A task that was started but not done by its time still counts as late.
 
+## Looking back: All reports
+
+**Work reports > All reports** lists every report and repeating task you can see, including ones already done, latest due first. You see your own, the ones for your requests, and, with work reports access, everyone's. Narrow the list by:
+
+- **Status:** waiting (not handed in yet), handed in and waiting for review, accepted (done), sent back, or late (overdue now, or handed in after the due date);
+- **Person** and **department**;
+- **Report or task**;
+- **Due from** and **due to** dates.
+
+Click a report to open what was handed in. **Clear filters** shows everything again.
+
 ## The on-time record
 
 **Work reports > On time** shows each person's record over every report due so far: how many came in **on time**, how many came in **late**, how many **never came in**, and the share on time. The lowest are at the top, so the people to follow up are easy to spot. It's useful at appraisal time.

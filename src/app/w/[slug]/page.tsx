@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 import { ComingUp } from "@/components/coming-up";
 import { GoalsCard } from "@/components/goals-card";
+import { MyDayCard } from "@/components/my-day";
 import { PeriodDashboard } from "@/components/period-dashboard";
 import { SetupGuide } from "@/components/setup-guide";
 import { YearCoverage } from "@/components/year-coverage";
@@ -21,7 +22,7 @@ import { useWorkspace } from "@/lib/workspace";
 
 /** Who can use each card: a card someone can't use is left out of their Overview and their choices. */
 const CARD_PERM: Record<string, string | null> = {
-  coming_up: null, period: "reports.view", accounts: "banking.view", money: "banking.view", tasks: null, department_tasks: null, inbox: "inbox.view", role: null,
+  checklist: null, coming_up: null, period: "reports.view", accounts: "banking.view", money: "banking.view", tasks: null, department_tasks: null, inbox: "inbox.view", role: null,
 };
 
 export default function OverviewPage() {
@@ -74,6 +75,8 @@ export default function OverviewPage() {
 function OverviewCard({ card }: { card: string }) {
   const { slug, context } = useWorkspace();
   switch (card) {
+    case "checklist":
+      return <MyDayCard />;
     case "coming_up":
       return <ComingUp compact />;
     case "period":
