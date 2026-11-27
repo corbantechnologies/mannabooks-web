@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { POSTS } from "@/content/blog";
 import { PUBLIC_GUIDES } from "@/content/guides";
 import { INDUSTRIES } from "@/content/industries";
 import { USE_CASES } from "@/content/use-cases";
@@ -17,6 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...INDUSTRIES.map((i) => page(`/industries/${i.slug}`, 0.8)),
     ...USE_CASES.map((u) => page(`/use-cases/${u.slug}`, 0.8)),
     page("/faq", 0.7),
+    page("/blog", 0.8),
+    ...POSTS.map((p) => ({ ...page(`/blog/${p.slug}`, 0.6), lastModified: p.date })),
     page("/moving", 0.6),
     page("/contact", 0.6),
     page("/guide", 0.7),

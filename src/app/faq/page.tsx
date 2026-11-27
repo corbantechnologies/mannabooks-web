@@ -17,6 +17,7 @@ const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
       { q: "Do I need to be an accountant?", a: "No. You record sales, purchases and payments in plain terms; MannaBooks posts them to the books for you. Your accountant can join with their own login." },
       { q: "Does it work on my phone?", a: "Yes. MannaBooks runs in the browser on phones, tablets and computers, and you can add it to your home screen. Staff open payslips and ask for leave on their phones." },
       { q: "Can I bring in my customers and products?", a: "Yes. Import customers, suppliers, products and opening balances from CSV files, which you can save from Excel. MannaBooks checks every row before anything is added." },
+      { q: "We've made lots of transactions already. Do we enter them one by one?", a: "No. Record past money in and out in bulk, one row each: who, when, how much and what for. Each sale becomes a paid invoice and each purchase a paid bill, new customers and suppliers are added as you go, and a bookkeeper can add the eTIMS and invoice numbers later." },
       { q: "Can I run more than one business?", a: "Yes. One login can belong to several businesses, and you switch between them in one click. Groups of companies can also be reported on together." },
     ],
   },

@@ -1,0 +1,47 @@
+[
+  {
+    "slug": "whats-new-27-november-2026",
+    "title": "Catch up on months of transactions in one sitting",
+    "kind": "What's new",
+    "date": "2026-11-28",
+    "week": "Week to Friday 27 November",
+    "summary": "Record past money in and out in bulk, so getting started takes an afternoon. Plus customers who are also suppliers, a better bank account page, attendance on everyone's own clock, goals, client portfolio reports and expense claims.",
+    "description": "Record months of past sales and purchases in bulk, link customers who are also suppliers, and see each bank account's transactions newest first.",
+    "body": "Getting a busy business into MannaBooks used to mean entering every sale and every bill one at a time. Not any more.\n\n## Record past money in bulk\n\nOn **Customer payments** and **Supplier payments**, choose **Actions > Record in bulk** and type the money that already moved, one row each: who, the date, the amount, the account it went into or came from, and what it was for.\n\n- **Money in from a customer** becomes a paid invoice: the sale and its payment, in one go.\n- **Money out to a supplier** becomes a paid bill. Don't have their invoice number yet? Leave it out and add it later.\n- **A name that isn't on your list yet** is added as a customer or supplier as you go.\n- **A payment for older invoices or in advance** goes to their oldest unpaid ones first; anything left stays as credit.\n- Everything saves together, or nothing does, and a problem names its row.\n\nWhat's recorded this way is marked **Details to add**, with its own filter on the invoices and bills lists. Later, a bookkeeper adds the supplier's invoice and eTIMS numbers, the customer's LPO and the descriptions. The amounts stay as they were. Nothing dated before your opening balances can be entered: that money is already in them. See the [guide](/guide/bulk-money).\n\nThere's also **Record in bulk** for **expenses** (a week of fuel, electricity and shopping) and for an **owner's or director's** money.\n\n## Customers who are also suppliers\n\nSome businesses buy from you and sell to you. Link the customer to their supplier record (or make one from it in a click), and both pages show what each side owes and the net. When you've both agreed, **Set off** reduces their invoices and your bills to them by the same amount. No money moves.\n\n## A better bank account page\n\nEach bank, M-Pesa and cash account now opens on its **transactions in the books, newest first**, with filters for dates, money in or out, the type of transaction and a search. Click a transaction to see where the money came from or went, and open the document behind it.\n\n- **Money in, Money out and Transfer** straight from the account.\n- **Export** the account's statement to CSV, or print it.\n- **Our statement template** for banks whose statements are hard to read: fill it in Excel and import it.\n- **Imports match the obvious lines** to the books by themselves.\n\nAnd the bank is now protected: once a transaction is matched to the bank statement, its amount, date and account can't be changed. To correct it, void it with a reason and record it again. Voiding a matched transaction needs its own permission, and reopening a finished reconciliation asks why.\n\n## Attendance on everyone's own clock\n\nTeams in different countries can each work on their own time. A person's hours, the start of their day, late arrivals and reminders follow their own time zone, set by HR or taken from their device. The office network check is now off unless a business switches it on, because people work from anywhere. A forgotten clock-out no longer closes the day while someone is still using MannaBooks, and flexible hours are no longer cut off at 17:00.\n\n## Also this week\n\n- **Who's active**: a small dot beside people's names. Each business chooses who sees it.\n- **Goals** for the company, departments and people, with a review at the end.\n- **Client portfolio reports**, and client projects are now called groups.\n- **Expense claims**: staff claim what they paid, supervisors approve, finance pays.\n- **A page for each month**: what came in and went out, and what's left to close.\n- **Attachments** on documents: receipts, delivery notes, signed copies.\n- **Registers** for licences, insurance, vehicles and subscriptions, with renewal reminders.\n- Forms longer than six fields now open as full pages, with a **Back** link.",
+    "next": [
+      "Upload past transactions from CSV or Excel straight into the bulk pages",
+      "Record in bulk from a customer's or supplier's own page",
+      "One Actions button at the top of every page, for easier use on phones"
+    ]
+  },
+  {
+    "slug": "whats-new-20-november-2026",
+    "title": "Card payments, tasks and a page for your money",
+    "kind": "What's new",
+    "date": "2026-11-20",
+    "week": "Week to Friday 20 November",
+    "summary": "Customers pay invoices by card, tasks for teams and departments, a money in and out page, director logins, finer roles and the founding offer.",
+    "description": "Customers pay invoices by card, tasks for teams and departments, one page for money in and out, and directors see their own account.",
+    "body": "## Card payments\n\nCustomers can now pay invoices and payment links by **card** as well as M-Pesa. The payment finds its invoice and lands in the books by itself. See [card payments](/guide/card-payments).\n\n## Tasks\n\nGive a task to yourself, a colleague or a whole department, with a deadline and, if you want, a check when it's done. Department heads see what's waiting on their team, and nothing slips because it was said in passing. See [tasks](/guide/tasks).\n\n## Money in and out\n\nOne page shows every movement across your bank, M-Pesa and cash accounts, however it was recorded, with where the money came from and where it went.\n\n## Owners and directors\n\nDirectors can now sign in and see **their own account** with the business: what they put in, lent, borrowed and drew.\n\n## Also this week\n\n- **Roles** can be set more finely, and access limited to a department.\n- **Business analytics** shows today against last month at a glance.\n- **Approvals** for accounting documents.\n- **The business inbox** sends invoices straight to customers who also use MannaBooks.\n- **Forgot your password?** Reset it by email.\n- **The founding offer** for the first businesses to join.",
+    "next": [
+      "Client portfolios and goals",
+      "Attendance: clocking in and out from your phone",
+      "Expense claims"
+    ]
+  },
+  {
+    "slug": "whats-new-13-november-2026",
+    "title": "Payroll for every kind of worker, and gift vouchers",
+    "kind": "What's new",
+    "date": "2026-11-13",
+    "week": "Week to Friday 13 November",
+    "summary": "Payroll for casual and waged workers, salary advances, departments, work reports, gift vouchers and discounts.",
+    "description": "Payroll for monthly, daily and hourly workers with PAYE, SHIF, NSSF and Housing Levy, plus salary advances, departments and gift vouchers.",
+    "body": "## Payroll for every kind of worker\n\nPay staff by the month, the day or the hour, with PAYE, SHIF, NSSF and the Housing Levy worked out for each. Choose for each person which deductions apply. Staff can ask for a **salary advance** from their phone; it's recovered from their next pay. See [payroll](/guide/payroll).\n\n## Departments\n\nPut people in departments with a head, and give each head a page for their team: who's on leave, what's waiting for them and their budget.\n\n## Work reports\n\nAsk staff for a weekly or monthly report, and see who has handed theirs in. See [work reports](/guide/work-reports).\n\n## Gift vouchers and discounts\n\nSell gift vouchers or give them away; they're spent at the till or against an invoice, and what's left on each is tracked. Give a discount on a line or on the whole document, as a percentage or an amount.\n\n## Also this week\n\n- **Invite your team** by email, each with the role they need.",
+    "next": [
+      "Card payments",
+      "Tasks for teams and departments",
+      "A page for money in and out"
+    ]
+  }
+]

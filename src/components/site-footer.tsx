@@ -14,6 +14,7 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
       { href: "/industries", label: "Industries" },
       { href: "/use-cases", label: "Use cases" },
       { href: "/faq", label: "Questions and answers" },
+      { href: "/blog", label: "Blog: what's new" },
     ],
   },
   {
@@ -21,6 +22,7 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: "/guide", label: "User guides" },
       { href: "/guide/getting-started", label: "Getting started" },
+      { href: "/guide/bulk-money", label: "Catch up in bulk" },
       { href: "/guide/mpesa", label: "M-Pesa" },
       { href: "/guide/payroll", label: "Kenyan payroll" },
       { href: "/moving", label: "Moving to the new MannaBooks" },

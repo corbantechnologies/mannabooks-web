@@ -14,6 +14,7 @@ export const SITE_LINKS = [
   { href: "/use-cases", label: "Use cases" },
   { href: "/pricing", label: "Pricing" },
   { href: "/guide", label: "Guides" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 

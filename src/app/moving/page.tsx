@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, CheckCircle2, FileSpreadsheet, LifeBuoy, Smartphone, Users } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, FileSpreadsheet, LifeBuoy, Rows3, Smartphone, Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -24,12 +24,13 @@ const STEPS = [
   { icon: FileSpreadsheet, title: "Bring in your lists", text: "Save your customers, suppliers and products from the old MannaBooks or a spreadsheet as CSV files, and import them in Import and export. Every row is checked first.", guide: "import-and-export" },
   { icon: BookOpen, title: "Enter opening balances", text: "Pick the date you switch, and enter each account's balance on that day: bank, M-Pesa, stock, what customers owe you and what you owe suppliers.", guide: "opening-balances" },
   { icon: CheckCircle2, title: "Add invoices still unpaid", text: "Enter customers' unpaid invoices so payments can be matched to them, or include them in each customer's opening balance.", guide: "invoices" },
+  { icon: Rows3, title: "Catch up on what's happened since", text: "Switching partway through the month? Record the money that came in and went out since your opening balances in bulk: each sale becomes a paid invoice and each purchase a paid bill, and new customers and suppliers are added as you go.", guide: "bulk-money" },
   { icon: Smartphone, title: "Connect M-Pesa and invite your team", text: "Connect your paybill or till, then invite your staff with the role each needs.", guide: "mpesa" },
 ];
 
 const FAQS = [
   { q: "What happens to the old MannaBooks?", a: "It keeps working for a while at its own address, so you can look up past records while you move. We'll email you the address and the date it closes, with plenty of notice." },
-  { q: "Will my old data move across automatically?", a: "Not yet. Your lists come across by CSV import, and your balances by opening balances on the date you switch. If your business has a lot of history, contact us and we'll help you plan the move." },
+  { q: "Will my old data move across automatically?", a: "Not yet. Your lists come across by CSV import, your balances by opening balances on the date you switch, and anything since then can be recorded in bulk in one sitting. If your business has a lot of history, contact us and we'll help you plan the move." },
   { q: "When should I switch?", a: "The start of a month is easiest, so the new books begin with a clean period. Keep the old MannaBooks for anything before that date." },
   { q: "Will it cost more?", a: "Every new business gets 30 days of every feature free, and there is a Free plan. Talk to us about the plan that fits your business." },
 ];
@@ -65,7 +66,7 @@ export default function MovingPage() {
 
       <section className="bg-stone-50">
         <div className="mx-auto max-w-4xl px-4 py-16">
-          <h2 className="text-3xl font-bold tracking-tight text-stone-900">Move in five steps</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-stone-900">Move in six steps</h2>
           <ol className="mt-8 space-y-4">
             {STEPS.map(({ icon: Icon, title, text, guide }, i) => (
               <li key={title} className="flex gap-5 rounded-xl border border-stone-200 bg-white p-6">
