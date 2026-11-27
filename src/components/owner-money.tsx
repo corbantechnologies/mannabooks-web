@@ -221,7 +221,7 @@ export function OwnerBulkForm({ ownerId, ownerName, onClose }: { ownerId: string
             );
           }
           return (
-            <div key={r.key} className="space-y-3 rounded-md border border-brand-200 p-3">
+            <div key={r.key} className="space-y-3 rounded-md border border-stone-200 p-3">
               <p className="text-sm font-semibold">Record {i + 1}</p>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Field label="What happened" hint={r.kind === "opening" ? "A balance from before MannaBooks: posts nothing." : kind?.hint}>
