@@ -1893,6 +1893,23 @@ export interface paths {
         patch: operations["w_bank_accounts_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/bank-accounts/{id}/transactions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description One account's transactions in the books, newest first, with the balance after each and what was on the other side. */
+        get: operations["w_bank_accounts_transactions_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/bank-accounts/movements/": {
         parameters: {
             query?: never;
@@ -14741,6 +14758,11 @@ export interface components {
             /** Format: uuid */
             bank_account_id: string;
             rows: components["schemas"]["ImportRowRequest"][];
+            /**
+             * @description Match each line that has exactly one transaction in the books with the same amount within 3 days (or the same reference)
+             * @default true
+             */
+            auto_match: boolean;
         };
         ImportRowRequest: {
             /** Format: date */
@@ -19418,6 +19440,11 @@ export interface components {
              * @description Due by this time on the due date. Blank: by the end of the day
              */
             due_time?: string | null;
+            /**
+             * Format: date
+             * @description Locked until this date (blank: open now)
+             */
+            opens_on?: string | null;
             /** @description The person who gave it accepts it before it counts as done */
             needs_check?: boolean;
             /** @description The person doing it uploads a file (a signed copy, a receipt, a photo) before it can be done */
@@ -24327,6 +24354,74 @@ export interface components {
             /** Format: decimal */
             amount: string;
         };
+        TransactionOtherSide: {
+            account_name: string;
+            account_code: string;
+            /** Format: decimal */
+            debit: string;
+            /** Format: decimal */
+            credit: string;
+            description: string;
+        };
+        TransactionRow: {
+            /** Format: uuid */
+            line_id: string;
+            /** Format: uuid */
+            entry_id: string;
+            number: string;
+            /** Format: date */
+            date: string;
+            description: string;
+            reference: string;
+            source: string;
+            source_model: string;
+            source_id: string;
+            /** @description What recorded it: the document's model (expenses.Expense) or the entry's source (manual) */
+            kind: string;
+            /** Format: decimal */
+            money_in: string | null;
+            /** Format: decimal */
+            money_out: string | null;
+            /**
+             * Format: decimal
+             * @description The account's balance after this transaction
+             */
+            balance: string;
+            /** @description The other lines of the entry: where the money came from or went to */
+            other_side: components["schemas"]["TransactionOtherSide"][];
+            /** Format: date-time */
+            posted_at: string | null;
+        };
+        Transactions: {
+            /** Format: date */
+            from_date: string | null;
+            /** Format: date */
+            to_date: string | null;
+            /** Format: decimal */
+            opening: string;
+            /** Format: decimal */
+            closing: string;
+            /**
+             * Format: decimal
+             * @description All money in for the dates
+             */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
+            /**
+             * Format: decimal
+             * @description Money in of the rows the filters show
+             */
+            shown_in: string;
+            /** Format: decimal */
+            shown_out: string;
+            /** @description The kinds of transaction in the dates, for the filter */
+            kinds: string[];
+            /** @description Newest first */
+            rows: components["schemas"]["TransactionRow"][];
+            /** @description More than 2,000 transactions: narrow the dates */
+            truncated: boolean;
+        };
         TransferLine: {
             /** Format: uuid */
             readonly id: string;
@@ -28487,6 +28582,36 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BankAccount"];
+                };
+            };
+        };
+    };
+    w_bank_accounts_transactions_retrieve: {
+        parameters: {
+            query?: {
+                direction?: "in" | "out";
+                from?: string;
+                /** @description One of the kinds the response lists, e.g. expenses.Expense */
+                kind?: string;
+                /** @description Search the description, reference and entry number */
+                q?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Transactions"];
                 };
             };
         };

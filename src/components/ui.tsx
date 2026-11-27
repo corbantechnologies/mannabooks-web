@@ -346,6 +346,7 @@ export function Modal({
   if (asPage) {
     return (
       <div className="w-full">
+        <button type="button" onClick={() => onClose()} className="text-sm text-stone-500 hover:underline">&larr; Back</button>
         <PageHeader title={title} description={asPage.description} guide={asPage.guide} />
         <Card className="p-4 sm:p-5">{children}</Card>
       </div>

@@ -26,3 +26,25 @@ export function sourceLink(slug: string, src: { source_model?: string | null; so
   const page = SOURCE_PAGE[key];
   return page && src.source_id ? { href: `/w/${slug}/${page[0]}/${src.source_id}`, label: page[1] } : null;
 }
+
+const KIND_LABEL: Record<string, string> = {
+  "banktransfers.BankTransfer": "Transfer",
+  "owners.OwnerTransaction": "Owner money",
+  "mpesatransactions.MpesaTransaction": "M-Pesa payment",
+  "cardpayments.CardPayment": "Card payment",
+  "expenseclaims.ExpenseClaim": "Expense claim",
+  "advances.Advance": "Salary advance",
+  "giftvouchers.GiftVoucherEntry": "Gift voucher",
+  "fiscalyears.FiscalYear": "Year end",
+  manual: "Journal",
+  opening_balance: "Opening balance",
+};
+
+/** A name for what recorded a transaction: "expenses.Expense" -> "Expense", "owner_money" -> "Owner money". */
+export function kindLabel(kind: string): string {
+  const key = kind.split(".").slice(0, 2).join(".");
+  if (KIND_LABEL[key]) return KIND_LABEL[key];
+  if (SOURCE_PAGE[key]) return SOURCE_PAGE[key][1];
+  const last = key.includes(".") ? key.split(".")[1].replace(/([a-z])([A-Z])/g, "$1 $2") : key.replace(/_/g, " ");
+  return last.charAt(0).toUpperCase() + last.slice(1).toLowerCase();
+}

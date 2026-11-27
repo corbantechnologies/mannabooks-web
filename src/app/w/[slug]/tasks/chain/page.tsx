@@ -65,9 +65,10 @@ export default function TaskChainPage() {
                   <ArrowDown className="h-3 w-3" /> Waits until the one above is done
                 </label>
               )}
-              <div className="grid grid-cols-1 gap-2 rounded-md border border-stone-200 p-2 sm:grid-cols-[2rem_1fr_9rem_9rem_7rem_auto] sm:items-end">
-                <span className="hidden pb-2 text-sm text-stone-400 sm:block">{i + 1}</span>
-                <Field label="Task"><Input value={s.title} onChange={(e) => set(i, { title: e.target.value })} placeholder={i === 0 ? "e.g. Sign the contract" : ""} /></Field>
+              <div className="grid grid-cols-1 gap-2 rounded-md border border-stone-200 p-2 sm:grid-cols-3 md:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                <div className="sm:col-span-3 md:col-span-4">
+                  <Field label={`Task ${i + 1}`}><Input value={s.title} onChange={(e) => set(i, { title: e.target.value })} placeholder={i === 0 ? "e.g. Sign the contract" : ""} /></Field>
+                </div>
                 <Field label="Opens on"><Input type="date" value={s.opens_on} onChange={(e) => set(i, { opens_on: e.target.value })} /></Field>
                 <Field label="Due on"><Input type="date" value={s.due_date} onChange={(e) => set(i, { due_date: e.target.value })} /></Field>
                 <Field label="Priority"><Select value={s.priority} onChange={(e) => set(i, { priority: e.target.value as Step["priority"] })}><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></Select></Field>
