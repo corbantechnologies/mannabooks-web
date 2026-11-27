@@ -71,7 +71,7 @@ export default function AttendanceSettingsPage() {
             <div className="grid gap-3 sm:grid-cols-3">
               <Field label="Fixed unpaid break (minutes)" hint="Taken off a full day when the buttons aren't used"><Input type="number" min="0" value={String(s.break_minutes)} onChange={(e) => set("break_minutes", Number(e.target.value))} /></Field>
               <Field label="Break buttons"><Select value={s.break_buttons ? "yes" : "no"} onChange={(e) => set("break_buttons", e.target.value === "yes")}><option value="yes">Show Start and End break</option><option value="no">No buttons: fixed break only</option></Select></Field>
-              <Field label="Close a forgotten clock-out after (hours)" hint="Past the end time; marked No clock-out"><Input type="number" min="1" max="12" value={String(s.auto_close_hours)} onChange={(e) => set("auto_close_hours", Number(e.target.value))} /></Field>
+              <Field label="Close a forgotten clock-out after (hours)" hint="After the end time and their last activity in MannaBooks; marked No clock-out. 0: never"><Input type="number" min="0" max="24" value={String(s.auto_close_hours)} onChange={(e) => set("auto_close_hours", Number(e.target.value))} /></Field>
             </div>
           </Card>
 
@@ -96,7 +96,7 @@ export default function AttendanceSettingsPage() {
           <Card className="space-y-3 p-4 sm:p-5">
             <h2 className="text-sm font-semibold">Clocking in away from the office</h2>
             <Field label="When someone clocks in from outside the office networks below">
-              <Select className="max-w-md" value={s.elsewhere} onChange={(e) => set("elsewhere", e.target.value)}><option value="flag">Allow it, marked Away from the office</option><option value="refuse">Refuse it</option></Select>
+              <Select className="max-w-md" value={s.elsewhere} onChange={(e) => set("elsewhere", e.target.value)}><option value="off">Don&apos;t check: people work from anywhere</option><option value="flag">Allow it, marked Away from the office</option><option value="refuse">Refuse it</option></Select>
             </Field>
           </Card>
 

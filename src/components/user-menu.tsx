@@ -26,7 +26,9 @@ export function UserMenu() {
     queryKey: ["workspace-context", slug], enabled: Boolean(slug && data),
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/context/", { params: { path: { workspace: slug } } })),
   });
-  const status = (slug ? ctx.data?.my_status : null) as (Presence & { can_clock?: boolean }) | null | undefined;
+  // your own dot only means something with Attendance on and your time tracked (you are always "active" yourself)
+  const raw = (slug ? ctx.data?.my_status : null) as (Presence & { can_clock?: boolean }) | null | undefined;
+  const status = raw && raw.state != null ? raw : null;
   const clock = useMutation({
     mutationFn: async (action: ClockAction) => unwrap(await api.POST("/api/v1/w/{workspace}/attendance/clock/", { params: { path: { workspace: slug } }, body: { action } })),
     onSuccess: (_d, action) => {

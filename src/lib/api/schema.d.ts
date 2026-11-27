@@ -11013,11 +11013,12 @@ export interface components {
             /**
              * @description Clocking in away from the office networks
              *
+             *     * `off` - Don't check: people work from anywhere
              *     * `flag` - Allow it, marked Elsewhere
              *     * `refuse` - Refuse it
              */
             elsewhere?: components["schemas"]["ElsewhereEnum"];
-            /** @description A forgotten clock-out closes this long after the end time */
+            /** @description A forgotten clock-out closes this long after the end time and the person's last activity (0: never) */
             auto_close_hours?: number;
             /**
              * Format: decimal
@@ -13423,11 +13424,12 @@ export interface components {
             message: string;
         };
         /**
-         * @description * `flag` - Allow it, marked Elsewhere
+         * @description * `off` - Don't check: people work from anywhere
+         *     * `flag` - Allow it, marked Elsewhere
          *     * `refuse` - Refuse it
          * @enum {string}
          */
-        ElsewhereEnum: "flag" | "refuse";
+        ElsewhereEnum: "off" | "flag" | "refuse";
         EmailChangeConfirmRequest: {
             token: string;
         };
@@ -18221,11 +18223,12 @@ export interface components {
             /**
              * @description Clocking in away from the office networks
              *
+             *     * `off` - Don't check: people work from anywhere
              *     * `flag` - Allow it, marked Elsewhere
              *     * `refuse` - Refuse it
              */
             elsewhere?: components["schemas"]["ElsewhereEnum"];
-            /** @description A forgotten clock-out closes this long after the end time */
+            /** @description A forgotten clock-out closes this long after the end time and the person's last activity (0: never) */
             auto_close_hours?: number;
             /**
              * Format: decimal
