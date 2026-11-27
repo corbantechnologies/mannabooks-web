@@ -8,6 +8,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { TASK_STATUS, TaskForm, dueLabel } from "@/components/task-form";
+import { TaskDeadline, TaskFileBack, TaskWaiting } from "@/components/task-chain";
 import { TaskChecklist, TaskComments, TaskFiles } from "@/components/task-work";
 import { Badge, Button, Card, ErrorState, Field, FormError, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -54,6 +55,7 @@ export default function TaskPage() {
         <div className="flex flex-wrap items-center gap-2">
           {t.locked && <Badge tone="amber">🔒 Locked: {t.locked}</Badge>}
           {t.priority !== "normal" && <Badge tone={t.priority === "high" ? "red" : "stone"}>{t.priority === "high" ? "High priority" : "Low priority"}</Badge>}
+          {t.waiting && <Badge tone="amber">Waiting on {t.waiting.waiting_on}</Badge>}
           <Badge tone={st.tone}>{st.label}</Badge>
           {t.can_manage && (t.status === "todo" || t.status === "in_progress") && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Change</Button>}
         </div>
@@ -66,6 +68,9 @@ export default function TaskPage() {
         </p>
       )}
       {t.details && <Card className="p-4"><p className="whitespace-pre-line text-sm text-stone-700">{t.details}</p></Card>}
+      <TaskFileBack task={t} />
+      <TaskWaiting task={t} onChange={() => void q.refetch()} />
+      <TaskDeadline task={t} onChange={() => void q.refetch()} />
       <TaskChecklist task={t} onChange={() => void q.refetch()} />
       {t.status === "in_progress" && t.check_comment && t.checked_by_name && (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800"><span className="font-medium">{t.checked_by_name} sent it back:</span> {t.check_comment}</p>

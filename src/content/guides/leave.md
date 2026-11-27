@@ -6,6 +6,13 @@ Staff ask for leave from **My leave and pay**, on their phone or computer. Their
 
 Choose the type (annual, sick, maternity, paternity, compassionate, study or unpaid), the first and last day, and a reason. Only the person's **working days** are counted: days off and public holidays aren't. Annual leave can't go over the days left for the year.
 
+## Notice
+
+HR sets how many days ahead each kind of leave must be asked for, under **People > Leave > Leave rules** (for example 14 days for annual leave, none for sick leave), and what happens with less notice:
+
+- **Allow it with a reason** (the starting point): the person says why it can't wait, and the request is marked **Short notice** for the approver.
+- **Don't allow it**: the request is refused, and HR can still enter it for them.
+
 ## Deciding
 
 The request goes to the employee's **supervisor** (*Reports to* on their employee record), or their **department head**. HR managers and the Owner can decide any request. Nobody can approve their own.

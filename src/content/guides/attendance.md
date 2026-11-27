@@ -68,6 +68,23 @@ Each alert can be switched on or off and timed by HR. They arrive by email and i
 | A correction to decide | The supervisor or department head |
 | A task due today given to someone who isn't in | Whoever gave the task |
 
+## The break rule
+
+HR can switch on a **break rule** under Attendance **Settings**: a break of at least so many minutes after so many hours worked in one go (for example 30 minutes after 6 hours). Every part is the business's to set:
+
+- **Remind them before** it's due (15 minutes to start; 0 for no reminder).
+- A **missed break** is flagged on the person's day and in **Hours vs pay**; they're told, and their supervisor too if ticked.
+- **Paid or unpaid**: a paid break counts as work. For unpaid breaks, **take a missed break off the hours anyway** if the rule is that the break is unpaid whether taken or not.
+- Leave a department or person out under **Departments and people with their own hours** (Break rule: doesn't apply).
+
+It needs the **Start break** and **End break** buttons on: they're how MannaBooks knows a break was taken. A pause shorter than the rule's break doesn't count as one.
+
+## Hours vs pay
+
+**Attendance > Hours vs pay** sets each person's hours this month against the hours expected so far and, for those who can see payroll (and each person for themself), against their pay: an hour is worth the monthly salary over the monthly hours (160 to start). Under is below 90% of the hours expected, over is above 110%. It also counts weeks below the floor, weeks near overtime and missed breaks.
+
+Switch on **Hours against pay** in Settings to also send, every Monday, a word about last week to the person (and their supervisor, if ticked): under the **weekly floor** (10 hours to start), or **near overtime** (40 hours to start) so the work can be shared out. Nobody's pay changes here: extra hours are still paid through **Months**, once approved.
+
 ## Giving out tasks
 
 When Attendance is on, the task form shows whether each person is in today, whether they're active now, and how many open tasks they hold. People who are in come first, with the lightest load at the top.

@@ -9,7 +9,10 @@ import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-/** A department head's page: their people, leave waiting, the department's money against its budget, and late work reports. */
+/**
+ * A department head's page: their people, leave waiting, the department's money against its budget, and late work reports.
+ * Someone who works in a department and may see its budget (Budgets: view own) sees its people, money and budget only.
+ */
 export default function MyDepartmentPage() {
   const { slug, context } = useWorkspace();
   const mine = useQuery({
@@ -23,19 +26,23 @@ export default function MyDepartmentPage() {
   return (
     <div className="w-full">
       <PageHeader title={depts.length === 1 ? depts[0].name : "My departments"}
-        description={`The department${depts.length === 1 ? "" : "s"} you head: people, leave, money and reports. Amounts in ${cur}.`} />
+        description={depts.some((d) => d.is_head)
+          ? `The department${depts.length === 1 ? "" : "s"} you head${depts.some((d) => !d.is_head) ? " or work in" : ""}: people, leave, money and reports. Amounts in ${cur}.`
+          : `Your department: its people, and its money against its budget. Amounts in ${cur}.`} />
       {depts.length === 0 && <Card><EmptyState title="You don't head a department">An admin sets the head of each department under Departments.</EmptyState></Card>}
       <div className="space-y-8">
         {depts.map((d) => {
           const away = d.members.filter((m) => m.away_until);
           return (
             <section key={d.id} className="space-y-4">
-              {depts.length > 1 && <h2 className="text-lg font-semibold text-stone-900">{d.name}</h2>}
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {depts.length > 1 && <h2 className="text-lg font-semibold text-stone-900">{d.name}{!d.is_head && <span className="ml-2 text-sm font-normal text-stone-500">you work here</span>}</h2>}
+              <div className={clsx("grid gap-3 sm:grid-cols-2", d.is_head ? "xl:grid-cols-4" : "xl:grid-cols-3")}>
                 <Tile label="People" value={String(d.members.length)} note={away.length ? `${away.length} on leave today` : "Everyone in"} />
-                <Tile label="Leave waiting" value={String(d.leave_waiting.length)} note={d.leave_waiting.length ? "for your decision" : "Nothing waiting"} alert={d.leave_waiting.length > 0} href={`/w/${slug}/leave`} />
+                {d.is_head && <Tile label="Leave waiting" value={String(d.leave_waiting.length)} note={d.leave_waiting.length ? "for your decision" : "Nothing waiting"} alert={d.leave_waiting.length > 0} href={`/w/${slug}/leave`} />}
                 <Tile label="Net this month" value={fmt(d.month.net)} note={`In ${fmt(d.month.income)} · costs ${fmt(d.month.costs)}`} alert={Number(d.month.net) < 0} />
-                <Tile label="Reports late" value={String(d.reports_late.length)} note={`${d.reports_due_soon} due in the next 7 days`} alert={d.reports_late.length > 0} href={`/w/${slug}/work-reports`} />
+                {d.is_head ? <Tile label="Reports late" value={String(d.reports_late.length)} note={`${d.reports_due_soon} due in the next 7 days`} alert={d.reports_late.length > 0} href={`/w/${slug}/work-reports`} />
+                  : <Tile label="Costs this year" value={d.year ? fmt(d.year.costs) : "-"} note={d.budget ? `budget to date ${fmt(d.budget.costs_ytd_budget)}` : "No approved budget"}
+                      alert={!!d.budget && !!d.year && Number(d.year.costs) > Number(d.budget.costs_ytd_budget)} />}
               </div>
               <div className="grid gap-4 lg:grid-cols-2">
                 <Card>
@@ -43,7 +50,7 @@ export default function MyDepartmentPage() {
                   <ul className="divide-y divide-stone-100">
                     {d.members.map((m) => (
                       <li key={m.id} className="flex items-center justify-between gap-3 px-4 py-2 text-sm">
-                        <span className="min-w-0"><Link href={`/w/${slug}/employees/${m.id}`} className="block truncate hover:underline">{m.name}</Link><span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span>
+                        <span className="min-w-0">{d.is_head ? <Link href={`/w/${slug}/employees/${m.id}`} className="block truncate hover:underline">{m.name}</Link> : <span className="block truncate">{m.name}</span>}<span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span>
                         {m.away_until ? <Badge tone="amber">On leave until {fmtDate(m.away_until)}</Badge> : !m.has_login ? <span className="text-xs text-stone-400">No sign-in</span> : null}
                       </li>
                     ))}
@@ -59,12 +66,12 @@ export default function MyDepartmentPage() {
                     </dl>
                   )}
                   <p className="border-t border-stone-100 px-4 py-2 text-xs text-stone-500">
-                    {d.budget ? <>Against <Link className="text-brand-700 hover:underline" href={`/w/${slug}/accounting/budgets/${d.budget.id}`}>{d.budget.name}</Link>, to date. </> : "No approved department budget this year. "}
+                    {d.budget ? <>Against {d.is_head ? <Link className="text-brand-700 hover:underline" href={`/w/${slug}/accounting/budgets/${d.budget.id}`}>{d.budget.name}</Link> : d.budget.name}, to date. </> : "No approved department budget this year. "}
                     Counts everything tagged with {d.name} or one of its cost centres.
                   </p>
                 </Card>
               </div>
-              <div className="grid gap-4 lg:grid-cols-2">
+              {d.is_head && <div className="grid gap-4 lg:grid-cols-2">
                 <Card>
                   <h3 className="border-b border-stone-200 px-4 py-2.5 text-sm font-semibold">Leave waiting</h3>
                   {d.leave_waiting.length === 0 ? <p className="p-4 text-sm text-stone-500">Nothing waiting.</p> : (
@@ -88,7 +95,7 @@ export default function MyDepartmentPage() {
                     </ul>
                   )}
                 </Card>
-              </div>
+              </div>}
             </section>
           );
         })}

@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { AttendanceHoursVsPay } from "@/components/attendance-hours";
 import { AttendanceMonths } from "@/components/attendance-months";
 import { AttendanceShifts } from "@/components/attendance-shifts";
 import { ClockCard } from "@/components/clock-card";
@@ -17,7 +18,7 @@ import { type AttendancePerson, DAY_STATUS, hm, hours } from "@/lib/attendance";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
-type Tab = "mine" | "now" | "register" | "corrections" | "months" | "shifts";
+type Tab = "mine" | "now" | "register" | "corrections" | "months" | "hours" | "shifts";
 
 /** Attendance: your own days, Who's in now and the day register for your team, and corrections to decide. */
 export default function AttendancePage() {
@@ -27,7 +28,7 @@ export default function AttendancePage() {
   const lead = me.data?.can_approve ?? false;
   const [tab, setTab] = useState<Tab>(() => (params.get("tab") as Tab) || "mine");
   const tabs: [Tab, string][] = [["mine", "My days"], ...(lead ? [["now", "Who's in now"], ["register", "Day register"], ["corrections", "Corrections"]] as [Tab, string][] : []),
-    ["months", lead ? "Months" : "My months"], ...((lead || can("attendance.manage")) ? [["shifts", "Shifts"]] as [Tab, string][] : [])];
+    ["months", lead ? "Months" : "My months"], ["hours", "Hours vs pay"], ...((lead || can("attendance.manage")) ? [["shifts", "Shifts"]] as [Tab, string][] : [])];
   if (me.isLoading) return <Spinner />;
   if (me.error) return <ErrorState error={me.error} />;
   return (
@@ -52,6 +53,7 @@ export default function AttendancePage() {
           {tab === "register" && <Register />}
           {tab === "corrections" && <Corrections box="to_decide" />}
           {tab === "months" && <AttendanceMonths />}
+          {tab === "hours" && <AttendanceHoursVsPay />}
           {tab === "shifts" && <AttendanceShifts />}
         </>
       )}
@@ -86,7 +88,7 @@ function MyDays({ employeeId, tracked }: { employeeId: string | null; tracked: b
                 <Td className="text-right font-mono">{hm(d.last_out)}{d.auto_closed ? " *" : ""}</Td>
                 <Td className="text-right font-mono">{d.minutes ? hours(d.minutes) : "-"}</Td>
                 <Td className="text-right font-mono">{d.late_minutes ? hours(d.late_minutes) : "-"}</Td>
-                <Td className="text-xs text-stone-500">{d.elsewhere ? "Away from the office" : ""}</Td>
+                <Td className="text-xs text-stone-500">{d.missed_break && <span className="mr-2 font-medium text-amber-700">No break for {hours(d.longest_stretch)}</span>}{d.elsewhere ? "Away from the office" : ""}</Td>
               </tr>
             ))}
           </Table>

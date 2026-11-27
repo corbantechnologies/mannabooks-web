@@ -106,6 +106,8 @@ export default function AttendanceSettingsPage() {
             </div>
           </Card>
 
+          <BreakRule value={s.alerts as unknown as AlertMap} buttons={Boolean(s.break_buttons)} onChange={(v) => set("alerts", v)} />
+          <HoursVsPay value={s.alerts as unknown as AlertMap} onChange={(v) => set("alerts", v)} />
           <Alerts value={s.alerts as unknown as AlertMap} onChange={(v) => set("alerts", v)} />
         </fieldset>
         <FormError error={save.error} />
@@ -184,7 +186,7 @@ function Overrides({ manage }: { manage: boolean }) {
         {manage && <Button variant="secondary" onClick={() => setEditing(true)}>Add</Button>}
       </div>
       {rows.length === 0 ? <EmptyState title="Everyone follows the settings above" /> : (
-        <Table head={["For", "Pattern", "Hours", "Grace", "Break", "Tracked", ""]}>
+        <Table head={["For", "Pattern", "Hours", "Grace", "Break", "Break rule", "Tracked", ""]}>
           {rows.map((o) => (
             <tr key={o.id}>
               <Td className="font-medium">{o.department_name || o.employee_name}<span className="block text-xs font-normal text-stone-500">{o.department_name ? "Department" : "Person"}</span></Td>
@@ -192,6 +194,7 @@ function Overrides({ manage }: { manage: boolean }) {
               <Td>{o.start_time ? `${t(o.start_time)} to ${t(o.end_time)}` : o.weekly_hours ? `${Number(o.weekly_hours)} h a week` : "As above"}</Td>
               <Td>{o.grace_minutes != null ? `${o.grace_minutes} min` : "As above"}</Td>
               <Td>{o.break_minutes != null ? `${o.break_minutes} min` : "As above"}</Td>
+              <Td>{o.break_rule == null ? "As above" : o.break_rule ? "Applies" : "Doesn't apply"}</Td>
               <Td>{o.tracked == null ? "As their type" : o.tracked ? "Yes" : "No"}</Td>
               <Td className="text-right">{manage && <button type="button" aria-label="Remove" className="text-stone-400 hover:text-red-600" onClick={() => remove.mutate(o.id)}><Trash2 className="h-4 w-4" /></button>}</Td>
             </tr>
@@ -206,7 +209,7 @@ function Overrides({ manage }: { manage: boolean }) {
 function OverrideForm({ onClose }: { onClose: () => void }) {
   const { slug } = useWorkspace();
   const qc = useQueryClient();
-  const [f, setF] = useState({ who: "department", id: "", pattern: "", start_time: "", end_time: "", weekly_hours: "", grace_minutes: "", break_minutes: "", tracked: "" });
+  const [f, setF] = useState({ who: "department", id: "", pattern: "", start_time: "", end_time: "", weekly_hours: "", grace_minutes: "", break_minutes: "", tracked: "", break_rule: "" });
   const depts = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", wsPath(slug))) });
   const people = useQuery({
     queryKey: ["employees", slug, "picker"],
@@ -219,7 +222,7 @@ function OverrideForm({ onClose }: { onClose: () => void }) {
         department_id: f.who === "department" ? f.id : null, employee_id: f.who === "person" ? f.id : null, pattern: f.pattern as "",
         start_time: f.start_time || null, end_time: f.end_time || null, weekly_hours: f.weekly_hours || null,
         grace_minutes: f.grace_minutes === "" ? null : Number(f.grace_minutes), break_minutes: f.break_minutes === "" ? null : Number(f.break_minutes),
-        tracked: f.tracked === "" ? null : f.tracked === "yes",
+        tracked: f.tracked === "" ? null : f.tracked === "yes", break_rule: f.break_rule === "" ? null : f.break_rule === "yes",
       },
     })),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["attendance-overrides", slug] }); toast.success("Saved"); onClose(); },
@@ -244,6 +247,7 @@ function OverrideForm({ onClose }: { onClose: () => void }) {
           <Field label="End"><Input type="time" value={f.end_time} onChange={set("end_time")} /></Field>
           <Field label="Grace (minutes)"><Input type="number" min="0" value={f.grace_minutes} onChange={set("grace_minutes")} placeholder="As above" /></Field>
           <Field label="Break (minutes)"><Input type="number" min="0" value={f.break_minutes} onChange={set("break_minutes")} placeholder="As above" /></Field>
+          <Field label="Break rule"><Select value={f.break_rule} onChange={set("break_rule")}><option value="">As above</option><option value="yes">Applies</option><option value="no">Doesn&apos;t apply</option></Select></Field>
           {f.who === "person" && <Field label="Track their time"><Select value={f.tracked} onChange={set("tracked")}><option value="">As their worker type</option><option value="yes">Yes</option><option value="no">No</option></Select></Field>}
         </div>
         <p className="text-xs text-stone-500">Leave a box blank to follow the level above: the department, then the business.</p>
@@ -296,6 +300,66 @@ function Alerts({ value, onChange }: { value: AlertMap; onChange: (v: AlertMap) 
           );
         })}
       </ul>
+    </Card>
+  );
+}
+
+function num(v: unknown, d: number) { const n = Number(v); return Number.isFinite(n) ? n : d; }
+
+/** The break rule: the company's own. A reminder before a break is due, a missed one flagged, paid or unpaid. */
+function BreakRule({ value, buttons, onChange }: { value: AlertMap; buttons: boolean; onChange: (v: AlertMap) => void }) {
+  const r = value?.break_rule ?? {};
+  const put = (field: string, v: string | number | boolean) => onChange({ ...value, break_rule: { ...r, [field]: v } });
+  return (
+    <Card className="space-y-3 p-4 sm:p-5">
+      <label className="flex items-start gap-2">
+        <input type="checkbox" className="mt-1" checked={Boolean(r.on)} onChange={(e) => put("on", e.target.checked)} />
+        <span><span className="text-sm font-semibold">Break rule</span>
+          <span className="block text-sm text-stone-600">A break after so many hours in one go. People are reminded before it&apos;s due; a missed one is flagged on their day and in Hours vs pay.
+            Leave a department or person out under &ldquo;Departments and people with their own hours&rdquo;.</span></span>
+      </label>
+      {Boolean(r.on) && !buttons && <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">Switch on the Start break and End break buttons above: without them there&apos;s no break to check.</p>}
+      {Boolean(r.on) && (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Field label="A break after (hours in one go)"><Input type="number" min="1" max="16" step="0.5" value={String(num(r.after_hours, 6))} onChange={(e) => put("after_hours", Number(e.target.value))} /></Field>
+          <Field label="The break is at least (minutes)"><Input type="number" min="5" max="240" value={String(num(r.min_break_minutes, 30))} onChange={(e) => put("min_break_minutes", Number(e.target.value))} /></Field>
+          <Field label="Remind them before (minutes)" hint="0: no reminder"><Input type="number" min="0" max="120" value={String(num(r.remind_before_minutes, 15))} onChange={(e) => put("remind_before_minutes", Number(e.target.value))} /></Field>
+          <Field label="The break is">
+            <Select value={r.paid ? "paid" : "unpaid"} onChange={(e) => put("paid", e.target.value === "paid")}><option value="unpaid">Unpaid (taken off the hours)</option><option value="paid">Paid (counts as work)</option></Select>
+          </Field>
+          <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={Boolean(r.tell_supervisor)} onChange={(e) => put("tell_supervisor", e.target.checked)} />
+            <span>Tell their supervisor about a missed break<span className="block text-xs text-stone-500">The person is always told.</span></span></label>
+          {!r.paid && (
+            <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={Boolean(r.deduct_missed)} onChange={(e) => put("deduct_missed", e.target.checked)} />
+              <span>Take a missed break off the hours anyway<span className="block text-xs text-stone-500">The break is unpaid whether it was taken or not.</span></span></label>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/** Hours against pay: an hour's worth, the weekly floor and the near-overtime line. */
+function HoursVsPay({ value, onChange }: { value: AlertMap; onChange: (v: AlertMap) => void }) {
+  const r = value?.hours_vs_pay ?? {};
+  const put = (field: string, v: string | number | boolean) => onChange({ ...value, hours_vs_pay: { ...r, [field]: v } });
+  return (
+    <Card className="space-y-3 p-4 sm:p-5">
+      <label className="flex items-start gap-2">
+        <input type="checkbox" className="mt-1" checked={Boolean(r.on)} onChange={(e) => put("on", e.target.checked)} />
+        <span><span className="text-sm font-semibold">Hours against pay</span>
+          <span className="block text-sm text-stone-600">Each person&apos;s hours set against their salary (Attendance &gt; Hours vs pay), and every Monday a word about last week:
+            under the floor, or near overtime so the work can be shared out. Nobody&apos;s pay changes: it shows, it doesn&apos;t deduct.</span></span>
+      </label>
+      {Boolean(r.on) && (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Field label="Hours in a month" hint="An hour is worth the salary over these"><Input type="number" min="1" max="400" value={String(num(r.monthly_hours, 160))} onChange={(e) => put("monthly_hours", Number(e.target.value))} /></Field>
+          <Field label="Weekly floor (hours)" hint="0: no floor"><Input type="number" min="0" max="80" step="0.5" value={String(num(r.weekly_floor, 10))} onChange={(e) => put("weekly_floor", Number(e.target.value))} /></Field>
+          <Field label="Near overtime from (hours a week)" hint="0: no warning"><Input type="number" min="0" max="100" step="0.5" value={String(num(r.near_extra_hours, 40))} onChange={(e) => put("near_extra_hours", Number(e.target.value))} /></Field>
+          <label className="flex items-start gap-2 self-end text-sm"><input type="checkbox" className="mt-1" checked={Boolean(r.tell_supervisor)} onChange={(e) => put("tell_supervisor", e.target.checked)} />
+            <span>Tell their supervisor too</span></label>
+        </div>
+      )}
     </Card>
   );
 }

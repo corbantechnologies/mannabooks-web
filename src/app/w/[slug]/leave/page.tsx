@@ -1,10 +1,11 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Settings2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, EmptyState, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { LEAVE_STATUS } from "@/lib/api/people";
 import { fmtDate } from "@/lib/format";
@@ -27,17 +28,19 @@ export default function LeavePage() {
     onError: (e) => toast.error(e.message),
   });
   void wsPath;
+  const [rules, setRules] = useState(false);
   const rows = list.data?.results ?? [];
   return (
     <div className="space-y-6">
-      <PageHeader title="Leave" description="Requests from your team. Supervisors decide for the people who report to them; department heads for their department." guide="leave" />
+      <PageHeader title="Leave" description="Requests from your team. Supervisors decide for the people who report to them; department heads for their department." guide="leave"
+        actions={can("leave.approve") ? <Button variant="secondary" onClick={() => setRules(true)}><Settings2 className="h-4 w-4" /> Leave rules</Button> : undefined} />
       <div className="w-56"><Select value={status} onChange={(e) => setStatus(e.target.value)}><option value="pending">Waiting for approval</option><option value="approved">Approved</option><option value="rejected">Declined</option><option value="">All</option></Select></div>
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : rows.length === 0 ? <EmptyState title="Nothing here" /> : (
           <Table head={["Employee", "Leave", "From", "To", "Days", "Reason", "Status", ""]}>
             {rows.map((r) => (
               <tr key={r.id}>
-                <Td className="font-medium">{r.employee_name}</Td><Td>{r.leave_type_label}</Td><Td>{fmtDate(r.start_date)}</Td><Td>{fmtDate(r.end_date)}</Td>
+                <Td className="font-medium">{r.employee_name}</Td><Td>{r.leave_type_label}{r.short_notice && <span className="block"><Badge tone="amber">Short notice</Badge></span>}</Td><Td>{fmtDate(r.start_date)}</Td><Td>{fmtDate(r.end_date)}</Td>
                 <Td className="text-right">{Number(r.days)}</Td><Td className="max-w-xs text-stone-600">{r.reason}</Td>
                 <Td><Badge tone={LEAVE_STATUS[r.status ?? "pending"].tone}>{LEAVE_STATUS[r.status ?? "pending"].label}</Badge></Td>
                 <Td className="whitespace-nowrap">{r.can_decide && <>
@@ -49,6 +52,7 @@ export default function LeavePage() {
           </Table>
         )}
       </Card>
+      {rules && <LeaveRules onClose={() => setRules(false)} />}
       {(balances.data ?? []).length > 0 && (
         <div>
           <h2 className="mb-2 text-sm font-semibold">Annual leave this year</h2>
@@ -60,5 +64,46 @@ export default function LeavePage() {
         </div>
       )}
     </div>
+  );
+}
+
+/** The business's leave rules, set by HR: how much notice each kind of leave needs, and what happens with less. */
+function LeaveRules({ onClose }: { onClose: () => void }) {
+  const { slug } = useWorkspace();
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ["leave-settings", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/settings/", wsPath(slug))) });
+  const [days, setDays] = useState<Record<string, string> | null>(null);
+  const [mode, setMode] = useState<"allow" | "block" | null>(null);
+  const d = q.data;
+  const shown = days ?? Object.fromEntries((d?.types ?? []).map((t) => [t.key, String(d?.notice_days?.[t.key] ?? "")]));
+  const save = useMutation({
+    mutationFn: async () => unwrap(await api.PATCH("/api/v1/w/{workspace}/leave-requests/settings/", {
+      ...wsPath(slug), body: { notice_days: Object.fromEntries(Object.entries(shown).map(([k, v]) => [k, Number(v) || 0])), short_notice: mode ?? d?.short_notice } as never,
+    })),
+    onSuccess: (r) => { qc.setQueryData(["leave-settings", slug], r); toast.success("Leave rules saved"); onClose(); },
+  });
+  return (
+    <Modal open title="Leave rules" onClose={onClose}>
+      {!d ? <Spinner /> : (
+        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+          <p className="text-sm text-stone-600">How many days ahead each kind of leave must be asked for. Blank or 0: no notice needed.</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            {d.types.map((t) => (
+              <Field key={t.key} label={t.label}>
+                <Input type="number" min="0" max="365" inputMode="numeric" placeholder="0" value={shown[t.key] ?? ""} onChange={(e) => setDays({ ...shown, [t.key]: e.target.value })} />
+              </Field>
+            ))}
+          </div>
+          <Field label="When someone asks with less notice">
+            <Select value={mode ?? d.short_notice} onChange={(e) => setMode(e.target.value as "allow" | "block")}>
+              <option value="allow">Allow it with a reason, marked short notice for the approver</option>
+              <option value="block">Don&apos;t allow it (HR can still enter it)</option>
+            </Select>
+          </Field>
+          <FormError error={save.error} />
+          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={save.isPending}>Save</Button></div>
+        </form>
+      )}
+    </Modal>
   );
 }

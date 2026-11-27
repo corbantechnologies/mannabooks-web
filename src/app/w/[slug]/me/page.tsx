@@ -62,7 +62,7 @@ export default function MePage() {
               {(requests.data?.results ?? []).map((r) => (
                 <Card key={r.id} className="flex items-center justify-between gap-3 p-3">
                   <div className="min-w-0">
-                    <p className="font-medium">{r.leave_type_label} · {Number(r.days)} days</p>
+                    <p className="font-medium">{r.leave_type_label} · {Number(r.days)} days{r.short_notice && <span className="ml-1.5 text-xs font-normal text-amber-700">short notice</span>}</p>
                     <p className="text-xs text-stone-500">{fmtDate(r.start_date)} – {fmtDate(r.end_date)}{r.decision_note ? ` · "${r.decision_note}"` : ""}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1">
@@ -120,6 +120,11 @@ export default function MePage() {
 function AskLeave({ onClose }: { onClose: () => void }) {
   const { slug } = useWorkspace();
   const [form, setForm] = useState({ leave_type: "annual", start_date: todayIso(), end_date: todayIso(), reason: "" });
+  const rules = useQuery({ queryKey: ["leave-settings", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/settings/", wsPath(slug))) });
+  const need = Number(rules.data?.notice_days?.[form.leave_type] ?? 0);
+  const given = Math.round((new Date(`${form.start_date}T00:00:00`).getTime() - new Date(`${todayIso()}T00:00:00`).getTime()) / 86400000);
+  const short = need > 0 && given < need;
+  const blocked = short && rules.data?.short_notice === "block";
   const ask = useMutation({
     mutationFn: async () => unwrap(await api.POST("/api/v1/w/{workspace}/leave-requests/", { ...wsPath(slug), body: form as never })),
     onSuccess: (r) => { toast.success(`Asked for ${Number(r.days)} days`); onClose(); },
@@ -132,10 +137,16 @@ function AskLeave({ onClose }: { onClose: () => void }) {
           <Field label="First day"><Input type="date" required value={form.start_date} onChange={(e) => setForm((p) => ({ ...p, start_date: e.target.value }))} /></Field>
           <Field label="Last day"><Input type="date" required value={form.end_date} onChange={(e) => setForm((p) => ({ ...p, end_date: e.target.value }))} /></Field>
         </div>
-        <Field label="Reason (optional)"><Textarea rows={2} value={form.reason} onChange={(e) => setForm((p) => ({ ...p, reason: e.target.value }))} /></Field>
+        {need > 0 && (
+          <p className={short ? "rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900" : "text-xs text-stone-500"}>
+            {LEAVE_TYPES.find((t) => t.value === form.leave_type)?.label} needs {need} days&apos; notice.
+            {short && (blocked ? " These dates are too soon: ask HR if it can't wait." : " These dates are sooner, so say why below and your approver will decide.")}
+          </p>
+        )}
+        <Field label={short && !blocked ? "Why it can't wait" : "Reason (optional)"}><Textarea rows={2} required={short && !blocked} value={form.reason} onChange={(e) => setForm((p) => ({ ...p, reason: e.target.value }))} /></Field>
         <p className="text-xs text-stone-500">Weekends are not counted. Your supervisor is asked to approve it.</p>
         <FormError error={ask.error} />
-        <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={ask.isPending}>Send</Button></div>
+        <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={ask.isPending} disabled={blocked}>Send</Button></div>
       </form>
     </Modal>
   );

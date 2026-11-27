@@ -45,6 +45,22 @@ Your tasks are under **My tasks**, with what's due first. Open one, then:
 - **I've started**: the person who gave it sees **In progress**.
 - **Mark done**, with a note if it helps (what was done, where it is). If they asked to check it, it shows as **Done, to check** until they do.
 
+### Waiting on someone
+
+When you can't go on until someone else does their part, click **Waiting on someone**: choose the colleague (or name someone outside, like *the bank*) and say what you're waiting for. The colleague is told at once and reminded every two days; whoever gave you the task is told it's on hold.
+
+- The task shows **Waiting on** them, and how long. They see it under **Tasks > Waiting > Waiting on you**, and on their **My day** checklist.
+- When they've done their part, they (or you) click **Resume**. Marking the task done also ends the wait.
+- All the time a task waited is added up on the task. **Tasks > Waiting > Who's holding things up** shows, on the tasks you can see, what waits on each person now and how many hours tasks waited on them this month.
+
+### More time
+
+**Ask for more time** sends a new date and the reason to whoever gave you the task. They **Move it** or **Decline** (with a reason) on the task, and you're told either way.
+
+### A file back
+
+Tick **They upload a file back** when giving a task, for example *sign this order*: attach the document, and the person downloads it, does what's asked, and uploads it under **Files**. The task can't be marked done until they have.
+
 ## Working on a task
 
 Open a task to see everything about it:

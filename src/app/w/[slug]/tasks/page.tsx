@@ -10,13 +10,14 @@ import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { TASK_STATUS, type Task, TaskForm, dueLabel, holder } from "@/components/task-form";
+import { TasksWaiting } from "@/components/task-chain";
 import { TaskInsights } from "@/components/task-insights";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
-type Box = "mine" | "given" | "to_check" | "department" | "all" | "insights";
+type Box = "mine" | "given" | "to_check" | "department" | "all" | "insights" | "waiting";
 type Action = "take" | "hand_back" | "start" | "done" | "accept" | "return" | "cancel" | "reopen";
 
 /** Tasks: things to do by a date (and time), for yourself, your team, or any colleague. */
@@ -24,8 +25,9 @@ export default function TasksPage() {
   const { slug, can, context } = useWorkspace();
   const heads = (context.headed_departments ?? []).length > 0;
   const [box, setBox] = useState<Box>(() => {
-    const v = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("view") : null;
-    return v === "insights" || v === "to_check" ? v : "mine";
+    const sp = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const v = sp?.get("view") ?? (sp?.get("tab") === "waiting" ? "waiting" : null);
+    return v === "insights" || v === "to_check" || v === "waiting" ? v : "mine";
   });
   const [open, setOpen] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -38,7 +40,7 @@ export default function TasksPage() {
   });
   const chooseView = (v: "list" | "board") => { setView(v); try { localStorage.setItem("mannabooks.tasks-view", v); } catch { /* just for now */ } };
   const q = useQuery({
-    queryKey: ["tasks", slug, box, openOnly], enabled: box !== "insights",
+    queryKey: ["tasks", slug, box, openOnly], enabled: box !== "insights" && box !== "waiting",
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/", { params: { path: { workspace: slug }, query: { box, open: openOnly, page_size: 200 } as never } })),
   });
   const toCheck = useQuery({
@@ -52,6 +54,7 @@ export default function TasksPage() {
     { key: "to_check", label: waiting ? `To check (${waiting})` : "To check" },
     ...(heads || can("tasks.view") ? [{ key: "department" as Box, label: "Departments" }] : []),
     ...(can("tasks.view") ? [{ key: "all" as Box, label: "Everyone's" }] : []),
+    { key: "waiting", label: "Waiting" },
     { key: "insights", label: "Insights" },
   ];
   const shown = rows.filter((t) => matches(t, filters));
@@ -75,7 +78,7 @@ export default function TasksPage() {
             <button key={t.key} onClick={() => setBox(t.key)} className={clsx("shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-sm", box === t.key ? "border-brand-700 font-medium text-brand-800" : "border-transparent text-stone-500 hover:text-stone-800")}>{t.label}</button>
           ))}
         </div>
-        {box !== "insights" && (
+        {box !== "insights" && box !== "waiting" && (
           <div className="ml-auto flex items-center gap-3 pb-2">
             <div className="flex rounded-md border border-stone-200 p-0.5 text-xs" role="group" aria-label="Show as">
               {(["list", "board"] as const).map((v) => (
@@ -87,7 +90,7 @@ export default function TasksPage() {
           </div>
         )}
       </div>
-      {box !== "insights" && (
+      {box !== "insights" && box !== "waiting" && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Input className="max-w-xs" placeholder="Search tasks, people, departments" value={filters.q} onChange={(e) => setFilter({ q: e.target.value })} />
           <Select aria-label="Priority" className="w-36" value={filters.priority} onChange={(e) => setFilter({ priority: e.target.value })}>
@@ -119,7 +122,7 @@ export default function TasksPage() {
           )}
         </div>
       )}
-      {box === "insights" ? <TaskInsights /> : q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
+      {box === "waiting" ? <TasksWaiting /> : box === "insights" ? <TaskInsights /> : q.isLoading ? <Spinner /> : q.error ? <ErrorState error={q.error} /> : rows.length === 0 ? (
         <>
           {box === "department" && <DepartmentRecord />}
           <Card><EmptyState title={box === "mine" ? "Nothing to do" : box === "given" ? "You haven't given anyone a task" : box === "to_check" ? "Nothing waiting for your check" : "No tasks"}>{box === "mine" ? "Add a task for yourself with New task." : box === "to_check" ? "When someone finishes a task you gave them, it waits here for you to accept it or send it back." : undefined}</EmptyState></Card>
