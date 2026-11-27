@@ -7,11 +7,13 @@ import { Badge, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } f
 import { api, unwrap } from "@/lib/api/client";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { PresenceDot, usePresence } from "@/components/presence";
 
 /** A supervisor's page: everyone who reports to them (and to their people), and what's waiting for them. */
 export default function MyTeamPage() {
   const { slug } = useWorkspace();
   const team = useQuery({ queryKey: ["my-team", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/team/", wsPath(slug))) });
+  const presence = usePresence(slug, (team.data ?? []).map((r) => r.id));
   const rows = team.data ?? [];
   const leave = rows.reduce((s, r) => s + r.leave_waiting, 0);
   const advances = rows.reduce((s, r) => s + r.advances_waiting, 0);
@@ -34,7 +36,7 @@ export default function MyTeamPage() {
               {rows.map((r) => (
                 <tr key={r.id}>
                   <Td className="font-medium">
-                    <Link href={`/w/${slug}/employees/${r.id}`} className="hover:underline">{r.full_name}</Link>
+                    <span className="inline-flex items-center gap-1.5"><PresenceDot p={presence[r.id]} /><Link href={`/w/${slug}/employees/${r.id}`} className="hover:underline">{r.full_name}</Link></span>
                     {!r.direct && r.reports_to && <p className="text-xs font-normal text-stone-500">through {r.reports_to}</p>}
                   </Td>
                   <Td>{r.job_title || "-"}</Td>

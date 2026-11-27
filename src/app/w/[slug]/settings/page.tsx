@@ -30,13 +30,13 @@ export default function SettingsPage() {
     name: ws.name, legal_name: ws.legal_name ?? "", kra_pin: ws.kra_pin ?? "", vat_registered: !!ws.vat_registered,
     vat_number: ws.vat_number ?? "", currency: ws.currency ?? "KES", phone: ws.phone ?? "", email: ws.email ?? "",
     address: ws.address ?? "", fiscal_year_start_month: ws.fiscal_year_start_month ?? 1, timezone: ws.timezone ?? "Africa/Nairobi",
-    setup_hidden: Boolean(ws.setup_hidden),
+    setup_hidden: Boolean(ws.setup_hidden), show_presence: (ws.show_presence ?? "supervisors") as "everyone" | "supervisors" | "off",
   });
   const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["Africa/Nairobi"];
 
   const save = useMutation({
     mutationFn: async () => unwrap(await api.PATCH("/api/v1/w/{workspace}/", { ...p, body: form })),
-    onSuccess: () => { toast.success("Settings saved"); if (form.setup_hidden !== Boolean(ws.setup_hidden) || form.timezone !== ws.timezone) window.location.reload(); },
+    onSuccess: () => { toast.success("Settings saved"); if (form.setup_hidden !== Boolean(ws.setup_hidden) || form.timezone !== ws.timezone || form.show_presence !== ws.show_presence) window.location.reload(); },
   });
   const sequences = useQuery({ queryKey: ["sequences", slug], enabled: can("sequences.view"), queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/sequences/", p)) });
   const updateSeq = useMutation({
@@ -84,6 +84,13 @@ export default function SettingsPage() {
           {form.vat_registered && (
             <Field label="VAT number" error={fieldError(save.error, "vat_number")}><Input value={form.vat_number} onChange={set("vat_number")} /></Field>
           )}
+          <Field label="Who sees who's active" hint="The small dot beside people's names: active now, or with Attendance on, clocked in, on a break or out. Everyone always sees their own.">
+            <Select value={form.show_presence} onChange={set("show_presence")}>
+              <option value="supervisors">Only supervisors see their team (and HR)</option>
+              <option value="everyone">Everyone sees everyone</option>
+              <option value="off">Nobody: each person sees only their own</option>
+            </Select>
+          </Field>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!form.setup_hidden} onChange={(e) => setForm((prev) => ({ ...prev, setup_hidden: !e.target.checked }))} /> Show the setup checklist on the overview until it&apos;s done</label>
           <FormError error={save.error} />
           <Button type="submit" loading={save.isPending}>Save settings</Button>

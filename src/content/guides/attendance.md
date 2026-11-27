@@ -13,6 +13,8 @@ On **Attendance** (or **My leave and pay**), click **Clock in** when you start a
 
 Your login must be linked to your employee record. If Attendance says it isn't, ask HR.
 
+You can also clock in, take a break and clock out from the dot on your initial at the top right, on any page.
+
 ## Asking for a fix
 
 On **My days**, click **Ask for a fix**: the day, what to fix (clock-in, clock-out or a break), the right time and why. Your supervisor (the person you report to) or your department head approves or declines. The original time stays on record, marked as replaced.

@@ -3662,6 +3662,23 @@ export interface paths {
         patch: operations["w_employees_me_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/employees/presence/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The status of the employees asked for (?ids=a,b,c), only those the business's setting lets you see. */
+        get: operations["w_employees_presence_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/team/": {
         parameters: {
             query?: never;
@@ -14451,7 +14468,7 @@ export interface components {
             comment?: string;
         };
         GoalReviewOut: {
-            state: components["schemas"]["StateEnum"];
+            state: components["schemas"]["GoalReviewOutStateEnum"];
             state_label: string;
             self_review: boolean;
             manager_review: boolean;
@@ -14474,6 +14491,15 @@ export interface components {
             can_write: boolean;
             can_review: boolean;
         };
+        /**
+         * @description * `off` - off
+         *     * `not_due` - not_due
+         *     * `to_write` - to_write
+         *     * `to_review` - to_review
+         *     * `done` - done
+         * @enum {string}
+         */
+        GoalReviewOutStateEnum: "off" | "not_due" | "to_write" | "to_review" | "done";
         GoalReviewRow: {
             /** Format: uuid */
             id: string;
@@ -16125,6 +16151,14 @@ export interface components {
             business_goal?: string;
             /** @description The setup checklist on the overview was dismissed */
             setup_hidden?: boolean;
+            /**
+             * @description Who sees the small active / clocked-in status beside people's names
+             *
+             *     * `everyone` - Everyone sees who's active
+             *     * `supervisors` - Only supervisors see their team (and HR)
+             *     * `off` - Nobody (each person sees their own)
+             */
+            show_presence?: components["schemas"]["ShowPresenceEnum"];
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -16157,6 +16191,8 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
+        /** @enum {unknown} */
+        NullEnum: null;
         OnlineOrder: {
             /** Format: uuid */
             readonly id: string;
@@ -19463,6 +19499,14 @@ export interface components {
             business_goal?: string;
             /** @description The setup checklist on the overview was dismissed */
             setup_hidden?: boolean;
+            /**
+             * @description Who sees the small active / clocked-in status beside people's names
+             *
+             *     * `everyone` - Everyone sees who's active
+             *     * `supervisors` - Only supervisors see their team (and HR)
+             *     * `off` - Nobody (each person sees their own)
+             */
+            show_presence?: components["schemas"]["ShowPresenceEnum"];
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -21015,6 +21059,35 @@ export interface components {
          * @enum {string}
          */
         PositionEnum: "next" | "previous";
+        Presence: {
+            /** @description Used MannaBooks in the last five minutes */
+            active: boolean;
+            /** Format: date-time */
+            last_active_at: string | null;
+            /**
+             * @description Attendance today: clocked in, on a break, clocked out, not in yet. Null: Attendance off or not tracked
+             *
+             *     * `in` - in
+             *     * `on_break` - on_break
+             *     * `done` - done
+             *     * `out` - out
+             */
+            state: (components["schemas"]["State6c5Enum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: date-time */
+            since: string | null;
+            /** @description Your own, tracked: the dot offers clock in and out */
+            can_clock: boolean;
+        };
+        PresenceRow: {
+            /** Format: uuid */
+            employee_id: string;
+            active: boolean;
+            /** Format: date-time */
+            last_active_at: string | null;
+            state: (components["schemas"]["State6c5Enum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: date-time */
+            since: string | null;
+        };
         /**
          * @description * `` -
          *     * `software` - software
@@ -23091,6 +23164,13 @@ export interface components {
          * @enum {string}
          */
         ShortcodeTypeEnum: "paybill" | "till";
+        /**
+         * @description * `everyone` - Everyone sees who's active
+         *     * `supervisors` - Only supervisors see their team (and HR)
+         *     * `off` - Nobody (each person sees their own)
+         * @enum {string}
+         */
+        ShowPresenceEnum: "everyone" | "supervisors" | "off";
         SideBySideColumn: {
             /**
              * Format: uuid
@@ -23150,14 +23230,13 @@ export interface components {
             probability: number;
         };
         /**
-         * @description * `off` - off
-         *     * `not_due` - not_due
-         *     * `to_write` - to_write
-         *     * `to_review` - to_review
+         * @description * `in` - in
+         *     * `on_break` - on_break
          *     * `done` - done
+         *     * `out` - out
          * @enum {string}
          */
-        StateEnum: "off" | "not_due" | "to_write" | "to_review" | "done";
+        State6c5Enum: "in" | "on_break" | "done" | "out";
         Statement: {
             customer: components["schemas"]["Customer"];
             /** Format: decimal */
@@ -24509,6 +24588,14 @@ export interface components {
             business_goal?: string;
             /** @description The setup checklist on the overview was dismissed */
             setup_hidden?: boolean;
+            /**
+             * @description Who sees the small active / clocked-in status beside people's names
+             *
+             *     * `everyone` - Everyone sees who's active
+             *     * `supervisors` - Only supervisors see their team (and HR)
+             *     * `off` - Nobody (each person sees their own)
+             */
+            show_presence?: components["schemas"]["ShowPresenceEnum"];
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -24578,6 +24665,8 @@ export interface components {
             }[];
             /** @description Documents can be downloaded as PDF (the PDF service is set up) */
             pdf_enabled: boolean;
+            /** @description Your own status, for the dot on your avatar */
+            my_status: components["schemas"]["Presence"];
             /** @description Pages this person pinned to the top of the side panel, in order */
             menu_pins?: string[];
             /** @description Blocked by MannaBooks staff */
@@ -24613,6 +24702,14 @@ export interface components {
             business_goal?: string;
             /** @description The setup checklist on the overview was dismissed */
             setup_hidden?: boolean;
+            /**
+             * @description Who sees the small active / clocked-in status beside people's names
+             *
+             *     * `everyone` - Everyone sees who's active
+             *     * `supervisors` - Only supervisors see their team (and HR)
+             *     * `off` - Nobody (each person sees their own)
+             */
+            show_presence?: components["schemas"]["ShowPresenceEnum"];
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -31778,6 +31875,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Employee"];
+                };
+            };
+        };
+    };
+    w_employees_presence_list: {
+        parameters: {
+            query?: {
+                /** @description Employee ids, comma separated (at most 300) */
+                ids?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PresenceRow"][];
                 };
             };
         };

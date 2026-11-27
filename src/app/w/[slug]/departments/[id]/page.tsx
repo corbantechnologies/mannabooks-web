@@ -12,6 +12,7 @@ import { fmt, fmtDate } from "@/lib/format";
 import { sourceLink } from "@/lib/source-links";
 import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
+import { PresenceDot, usePresence } from "@/components/presence";
 
 type Doc = { entry_id: string; date: string; number: string; description: string; reference: string; source: string; source_model: string; source_id: string; kind: string; amount: string };
 
@@ -41,6 +42,7 @@ export default function DepartmentPage() {
     queryKey: ["dashboard-department", slug, id, from, to], enabled: money,
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/dashboard/departments/{id}/", { params: { path: { workspace: slug, id }, query: { from, to } } })),
   });
+  const presence = usePresence(slug, [...((people.data?.results ?? []) as { id: string }[]).map((m) => m.id), ...(dept.data?.head_id ? [dept.data.head_id] : [])]);
   const catalog = useQuery({
     queryKey: ["permission-catalog", slug],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/permissions/", { params: { path: { workspace: slug } } })),
@@ -78,11 +80,11 @@ export default function DepartmentPage() {
           {!can("employees.view") ? <p className="mt-2 text-sm text-stone-500">{d.employee_count ?? 0} employee{d.employee_count === 1 ? "" : "s"}.</p> : (
             <ul className="mt-2 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
               {d.head_name && !headIsMember && d.head_id && (
-                <li className="flex items-center justify-between text-sm"><Link href={`/w/${slug}/employees/${d.head_id}`} className="hover:underline">{d.head_name}</Link><Badge tone="green">Head</Badge></li>
+                <li className="flex items-center justify-between text-sm"><span className="inline-flex items-center gap-1.5"><PresenceDot p={presence[d.head_id]} /><Link href={`/w/${slug}/employees/${d.head_id}`} className="hover:underline">{d.head_name}</Link></span><Badge tone="green">Head</Badge></li>
               )}
               {members.map((m) => (
                 <li key={m.id} className="flex items-center justify-between gap-2 text-sm">
-                  <span className="min-w-0 truncate"><Link href={`/w/${slug}/employees/${m.id}`} className="hover:underline">{m.first_name} {m.last_name}</Link>{m.job_title && <span className="text-stone-500"> · {m.job_title}</span>}</span>
+                  <span className="flex min-w-0 items-center gap-1.5 truncate"><PresenceDot p={presence[m.id]} /><Link href={`/w/${slug}/employees/${m.id}`} className="hover:underline">{m.first_name} {m.last_name}</Link>{m.job_title && <span className="text-stone-500"> · {m.job_title}</span>}</span>
                   {m.id === d.head_id ? <Badge tone="green">Head</Badge> : m.status && m.status !== "active" ? <Badge>{m.status}</Badge> : null}
                 </li>
               ))}

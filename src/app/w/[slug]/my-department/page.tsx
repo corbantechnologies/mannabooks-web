@@ -8,6 +8,7 @@ import { Badge, Card, EmptyState, ErrorState, PageHeader, Spinner } from "@/comp
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { PresenceDot, usePresence } from "@/components/presence";
 
 /**
  * A department head's page: their people, leave waiting, the department's money against its budget, and late work reports.
@@ -19,6 +20,7 @@ export default function MyDepartmentPage() {
     queryKey: ["my-department", slug],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/mine/", { params: { path: { workspace: slug } } })),
   });
+  const presence = usePresence(slug, (mine.data ?? []).flatMap((d) => d.members.map((m) => m.id)));
   if (mine.isLoading) return <Spinner />;
   if (mine.error) return <ErrorState error={mine.error} />;
   const depts = mine.data ?? [];
@@ -50,7 +52,7 @@ export default function MyDepartmentPage() {
                   <ul className="divide-y divide-stone-100">
                     {d.members.map((m) => (
                       <li key={m.id} className="flex items-center justify-between gap-3 px-4 py-2 text-sm">
-                        <span className="min-w-0">{d.is_head ? <Link href={`/w/${slug}/employees/${m.id}`} className="block truncate hover:underline">{m.name}</Link> : <span className="block truncate">{m.name}</span>}<span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span>
+                        <span className="flex min-w-0 items-start gap-1.5"><PresenceDot p={presence[m.id]} className="mt-1.5" /><span className="min-w-0">{d.is_head ? <Link href={`/w/${slug}/employees/${m.id}`} className="block truncate hover:underline">{m.name}</Link> : <span className="block truncate">{m.name}</span>}<span className="block text-xs text-stone-500">{m.job_title || "-"}</span></span></span>
                         {m.away_until ? <Badge tone="amber">On leave until {fmtDate(m.away_until)}</Badge> : !m.has_login ? <span className="text-xs text-stone-400">No sign-in</span> : null}
                       </li>
                     ))}

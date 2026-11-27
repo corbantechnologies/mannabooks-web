@@ -16,6 +16,18 @@
 
 Under the details, **Show the setup checklist on the overview until it's done** brings back the setup list if someone hid it.
 
+## Who's active
+
+A small dot beside your initial at the top right shows your status: **green** while you're using MannaBooks, or, with Attendance on and your time tracked, green when clocked in, **amber** on a break and **grey** when clocked out or not in yet. Click it to clock in, start or end a break, or clock out, from any page.
+
+The same dot shows beside people's names on **My team**, **My department**, a department's page and the task form. **Who sees who's active** under Business details decides whose dots each person sees:
+
+- **Only supervisors see their team (and HR)**, the starting point: the people above someone, and anyone whose role sees attendance;
+- **Everyone sees everyone**;
+- **Nobody**: each person sees only their own.
+
+It works without Attendance (active or not); with Attendance on, it also shows clocked in, on a break or out.
+
 ## Logo
 
 Under **Logo**, choose **Upload logo** and pick a PNG, JPG or WebP picture under 1 MB. It shows straight away on your quotations, invoices, receipts and their PDFs, on the online shop, and on the links customers open (catalogues, quotes, statements). A wide logo on a white or clear background prints best.
