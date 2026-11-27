@@ -1,10 +1,10 @@
 "use client";
 
-import { Plus, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { ActionMenu } from "@/components/action-menu";
 import { OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
-import { AsPage, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { useOwners } from "@/lib/api/owners";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -30,10 +30,10 @@ export default function OwnersPage() {
     <div className="space-y-6">
       <PageHeader title="Owners and directors" guide="owners"
         description="Money between the business and the people who own or run it: capital, shares, loans either way and drawings. Each person has their own account."
-        actions={can("owners.record") && <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => setAdding(true)}><UserPlus className="h-4 w-4" /> Add a person</Button>
-          <Button disabled={!rows.length} onClick={() => setRecording(true)}><Plus className="h-4 w-4" /> Record money</Button>
-        </div>} />
+        actions={can("owners.record") && <ActionMenu label="Actions" primary actions={[
+          { label: "Record money", onClick: () => setRecording(true), hidden: !rows.length },
+          { label: "Add a person", onClick: () => setAdding(true) },
+        ]} />} />
       {owners.isLoading ? <Spinner /> : owners.error ? <ErrorState error={owners.error} /> : rows.length === 0 ? (
         <Card><EmptyState title="No owners or directors yet">Add the people who own or run the business, then record what they put in, lend or take out.</EmptyState></Card>
       ) : (

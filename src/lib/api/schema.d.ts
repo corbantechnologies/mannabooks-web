@@ -6073,6 +6073,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/owners/transactions/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Record several at once (a director's money over a month, say). All or nothing: a problem names its row. */
+        post: operations["w_owners_transactions_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/pay-runs/": {
         parameters: {
             query?: never;
@@ -16687,6 +16704,10 @@ export interface components {
             readonly status: components["schemas"]["PaymentStatusEnum"];
             /** Format: date-time */
             readonly created_at: string;
+        };
+        OwnerTransactionBulkRequest: {
+            /** @description Each a transaction, as for one; all are recorded or none */
+            rows: components["schemas"]["OwnerTransactionRequest"][];
         };
         /**
          * @description * `capital` - Capital put in
@@ -36651,6 +36672,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OwnerTransaction"];
+                };
+            };
+        };
+    };
+    w_owners_transactions_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerTransactionBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OwnerTransactionBulkRequest"];
+                "multipart/form-data": components["schemas"]["OwnerTransactionBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerTransaction"][];
                 };
             };
         };

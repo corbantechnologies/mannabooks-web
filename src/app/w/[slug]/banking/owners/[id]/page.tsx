@@ -1,13 +1,14 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Pencil, Plus, Printer } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
-import { OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
+import { ActionMenu } from "@/components/action-menu";
+import { OwnerBulkForm, OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
 import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
@@ -20,6 +21,7 @@ export default function OwnerStatementPage() {
   const { id } = useParams<{ id: string }>();
   const [editing, setEditing] = useFormFlag("edit");
   const [recording, setRecording] = useFormFlag("money");
+  const [bulk, setBulk] = useFormFlag("bulk");
   const q = useQuery({
     queryKey: ["owner-statement", slug, id],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/owners/{id}/statement/", { params: { path: { workspace: slug, id } } })),
@@ -36,6 +38,9 @@ export default function OwnerStatementPage() {
   if (recording) {
     return <AsPage guide="owners"><OwnerMoneyModal ownerId={owner.id} onClose={() => { setRecording(false); void q.refetch(); }} /></AsPage>;
   }
+  if (bulk) {
+    return <AsPage guide="owners"><OwnerBulkForm ownerId={owner.id} ownerName={owner.name} onClose={() => { setBulk(false); void q.refetch(); }} /></AsPage>;
+  }
   if (editing) {
     return <AsPage guide="owners"><OwnerEditor owner={owner} onClose={() => { setEditing(false); void q.refetch(); }} /></AsPage>;
   }
@@ -49,10 +54,13 @@ export default function OwnerStatementPage() {
           {owner.membership_name && <p className="text-xs text-stone-500">Uses MannaBooks as {owner.membership_name}: sees this account on their Me page.</p>}
           {!owner.is_active && <Badge>No longer involved</Badge>}
         </div>
-        <div className="flex flex-wrap gap-2 print:hidden">
-          <Button variant="secondary" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print</Button>
-          {can("owners.record") && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Edit</Button>}
-          {can("owners.record") && owner.is_active && <Button onClick={() => setRecording(true)}><Plus className="h-4 w-4" /> Record money</Button>}
+        <div className="print:hidden">
+          <ActionMenu label="Actions" primary actions={[
+            { label: "Record money", onClick: () => setRecording(true), hidden: !(can("owners.record") && owner.is_active) },
+            { label: "Record in bulk", onClick: () => setBulk(true), hidden: !(can("owners.record") && owner.is_active) },
+            { label: "Edit", onClick: () => setEditing(true), hidden: !can("owners.record") },
+            { label: "Print", onClick: () => window.print() },
+          ]} />
         </div>
       </div>
 
