@@ -7,6 +7,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
+import { DetailsToAdd } from "@/components/details-to-add";
 import { RelatedDocuments } from "@/components/related-documents";
 import { VoidLinks } from "@/components/void-links";
 import { SendEmailDialog, openPdf } from "@/components/send-email";
@@ -129,6 +130,7 @@ export default function InvoicePage() {
           </div>
         }
       />
+      {inv.needs_details && inv.status !== "void" && <DetailsToAdd kind="invoice" doc={inv as never} canEdit={can("invoices.create")} />}
       <RelatedDocuments kind="invoice" id={id} />
       <VoidLinks kind="invoice" id={id} voided={inv.status === "void"} />
       {inv.status !== "draft" && <Attachments docType="invoice" id={inv.id} side="sales" canAdd={can("invoices.create")}

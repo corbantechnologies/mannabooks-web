@@ -10,6 +10,7 @@ import { CustomerForm } from "@/components/customer-form";
 import { ShareLinkModal } from "@/components/share-link";
 import { Meta } from "@/components/document-view";
 import { SendInvoicesToInbox } from "@/components/send-invoices-to-inbox";
+import { BothSides } from "@/components/both-sides";
 import { Card, EmptyState, ErrorState, Field, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { ActionMenu } from "@/components/action-menu";
 import { api, unwrap } from "@/lib/api/client";
@@ -81,6 +82,7 @@ export default function CustomerPage() {
         {c.price_list_name && <Meta label="Price list">{c.price_list_name}</Meta>}
         {member && <Meta label="Loyalty"><Link className="hover:underline" href={`/w/${slug}/sales/loyalty/${member.id}`}>{member.points_balance} points{member.tier_name ? ` · ${member.tier_name}` : ""}</Link></Meta>}
       </Card>
+      <BothSides side="customer" id={c.id} />
       <div className="mb-3 flex items-end justify-between">
         <h2 className="text-sm font-semibold">Statement</h2>
         <Field label="From"><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></Field>
@@ -91,7 +93,7 @@ export default function CustomerPage() {
           {rows.map((r) => (
             <tr key={`${r.kind}-${r.document_id}`}>
               <Td>{fmtDate(r.date)}</Td>
-              <Td><Link className="hover:underline" href={`/w/${slug}/sales/${KIND[r.kind][1]}/${r.document_id}`}>{KIND[r.kind][0]} <span className="font-mono text-xs">{r.number}</span></Link></Td>
+              <Td>{r.kind === "set_off" ? <>Set-off <span className="font-mono text-xs">{r.number}</span></> : <Link className="hover:underline" href={`/w/${slug}/sales/${KIND[r.kind][1]}/${r.document_id}`}>{KIND[r.kind][0]} <span className="font-mono text-xs">{r.number}</span></Link>}</Td>
               <Td className="text-right font-mono">{fmtNonZero(r.debit)}</Td>
               <Td className="text-right font-mono">{fmtNonZero(r.credit)}</Td>
               <Td className="text-right font-mono">{fmt(r.balance)}</Td>

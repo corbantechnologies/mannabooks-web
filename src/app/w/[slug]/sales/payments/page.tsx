@@ -1,12 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import Link from "next/link";
+
+import { ActionMenu } from "@/components/action-menu";
 import { useState } from "react";
 
 import { ListFilters } from "@/components/doc-list";
-import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { METHODS } from "@/lib/api/sales";
 import { fmt, fmtDate } from "@/lib/format";
@@ -31,7 +32,10 @@ export default function PaymentsPage() {
         title="Customer payments"
         description="Money received against invoices. Each payment is applied to one or more invoices; anything left over stays as the customer's credit."
         guide="payments"
-        actions={can("payments.create") && <Link href={`/w/${slug}/sales/payments/new`}><Button><Plus className="h-4 w-4" /> Record payment</Button></Link>}
+        actions={can("payments.create") && <ActionMenu label="Actions" primary actions={[
+          { label: "Record payment", href: `/w/${slug}/sales/payments/new` },
+          { label: "Record in bulk (money already received)", href: `/w/${slug}/sales/payments/bulk` },
+        ]} />}
       />
       <ListFilters dated count={{ path: "/api/v1/w/{workspace}/payments/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[["posted", "Posted"], ["void", "Void"]]} placeholder="Search number, M-Pesa code or customer" />
       <Card>

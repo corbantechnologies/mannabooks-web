@@ -2203,6 +2203,23 @@ export interface paths {
         patch: operations["w_bills_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/bills/{id}/details/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Add what a bulk-recorded bill is missing: the supplier's invoice and eTIMS numbers, notes, line descriptions. The money doesn't change. */
+        patch: operations["w_bills_details_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/bills/{id}/post/": {
         parameters: {
             query?: never;
@@ -2937,6 +2954,24 @@ export interface paths {
         patch: operations["w_customers_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/customers/{id}/both-sides/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A customer that is also a supplier: what each side owes, linking the two records, or unlinking them. */
+        get: operations["w_customers_both_sides_retrieve"];
+        put?: never;
+        /** @description A customer that is also a supplier: what each side owes, linking the two records, or unlinking them. */
+        post: operations["w_customers_both_sides_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/customers/{id}/statement/": {
         parameters: {
             query?: never;
@@ -2975,6 +3010,46 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_customers_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/customers/set-offs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Set-offs: netting a linked customer's invoices against the business's bills to them. No money moves. */
+        get: operations["w_customers_set_offs_list"];
+        put?: never;
+        /** @description Set-offs: netting a linked customer's invoices against the business's bills to them. No money moves. */
+        post: operations["w_customers_set_offs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/customers/set-offs/{id}/void/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        post: operations["w_customers_set_offs_void_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4944,6 +5019,23 @@ export interface paths {
         patch: operations["w_invoices_partial_update"];
         trace?: never;
     };
+    "/api/v1/w/{workspace}/invoices/{id}/details/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Add what a bulk-recorded invoice is missing: the customer's reference, notes, line descriptions. The money doesn't change. */
+        patch: operations["w_invoices_details_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/invoices/{id}/etims-number/": {
         parameters: {
             query?: never;
@@ -6411,6 +6503,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         post: operations["w_payments_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/payments/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Money already received from customers, in bulk: each sale becomes a paid invoice (not sent to eTIMS), marked details to add. */
+        post: operations["w_payments_bulk_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9417,6 +9526,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/supplier-payments/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Money already paid to suppliers, in bulk: each purchase becomes a paid bill, marked details to add. */
+        post: operations["w_supplier_payments_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/suppliers/": {
         parameters: {
             query?: never;
@@ -9477,6 +9603,24 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_suppliers_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/suppliers/{id}/both-sides/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The same, from the supplier's side. */
+        get: operations["w_suppliers_both_sides_retrieve"];
+        put?: never;
+        /** @description The same, from the supplier's side. */
+        post: operations["w_suppliers_both_sides_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/suppliers/{id}/statement/": {
@@ -11421,6 +11565,8 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
             readonly project_name: string;
+            /** @description Recorded in bulk: the supplier's invoice and eTIMS numbers and line details still to add */
+            readonly needs_details: boolean;
             supplier_invoice_number?: string;
             /** @description The CU invoice number on the supplier's eTIMS invoice */
             supplier_etims_number?: string;
@@ -11446,6 +11592,18 @@ export interface components {
             readonly balance_due: string;
             readonly is_overdue: boolean;
             readonly void_reason: string;
+        };
+        BillDetails: {
+            /** @description The customer's order or LPO number */
+            reference?: string;
+            notes?: string;
+            /** @description New descriptions for its lines */
+            lines?: components["schemas"]["DetailLine"][];
+            /** @description True: the details are complete (it leaves the to-add list) */
+            done?: boolean;
+            supplier_invoice_number?: string;
+            /** @description The CU invoice number on the supplier's eTIMS invoice */
+            supplier_etims_number?: string;
         };
         /** @description One purchase line. Leave out the cost, VAT or account to use the product's. */
         BillLine: {
@@ -11589,6 +11747,34 @@ export interface components {
          * @enum {string}
          */
         BooksEnum: "removed" | "reversed";
+        BothSides: {
+            /** Format: uuid */
+            customer_id: string;
+            customer_name: string;
+            /** Format: uuid */
+            supplier_id: string;
+            supplier_name: string;
+            /**
+             * Format: decimal
+             * @description On their open invoices
+             */
+            they_owe: string;
+            /**
+             * Format: decimal
+             * @description On the business's open bills to them
+             */
+            we_owe: string;
+            /**
+             * Format: decimal
+             * @description Positive: they owe the business, after netting
+             */
+            net: string;
+            /**
+             * Format: decimal
+             * @description The most that can be set off now
+             */
+            can_set_off: string;
+        };
         /** @description For a ModelSerializer with a `code` field: a blank code gets the next one from the `code_key` sequence. */
         Branch: {
             /** Format: uuid */
@@ -11779,6 +11965,18 @@ export interface components {
             rows: components["schemas"]["BudgetRow"][];
             income: components["schemas"]["BudgetTotals"];
             expense: components["schemas"]["BudgetTotals"];
+        };
+        BulkResult: {
+            kind: string;
+            /** Format: uuid */
+            payment_id: string;
+            payment_number: string;
+            /** Format: uuid */
+            document_id: string | null;
+            document_number: string | null;
+            person: string;
+            /** Format: decimal */
+            amount: string;
         };
         Business: {
             /** Format: uuid */
@@ -13440,6 +13638,16 @@ export interface components {
             total: string;
             entries: number;
             assets: number;
+        };
+        DetailLine: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+        };
+        DetailLineRequest: {
+            /** Format: uuid */
+            id: string;
+            description: string;
         };
         /**
          * @description * `out` - out
@@ -15122,6 +15330,8 @@ export interface components {
             readonly etims_qr_url: string;
             /** Format: date-time */
             readonly etims_signed_at: string | null;
+            /** @description Recorded in bulk: line details still to add (the money is fixed) */
+            readonly needs_details: boolean;
             /**
              * @description A debit note charges more against an earlier invoice; KRA treats it as a sale
              *
@@ -15154,6 +15364,15 @@ export interface components {
             readonly payments: {
                 [key: string]: unknown;
             }[];
+        };
+        InvoiceDetails: {
+            /** @description The customer's order or LPO number */
+            reference?: string;
+            notes?: string;
+            /** @description New descriptions for its lines */
+            lines?: components["schemas"]["DetailLine"][];
+            /** @description True: the details are complete (it leaves the to-add list) */
+            done?: boolean;
         };
         /**
          * @description * `invoice` - Invoice
@@ -15719,6 +15938,20 @@ export interface components {
          * @enum {string}
          */
         LinkPaymentStatusEnum: "pending" | "paid" | "failed";
+        LinkRequest: {
+            /**
+             * Format: uuid
+             * @description The supplier (from a customer) or customer (from a supplier) to link
+             */
+            other_id?: string | null;
+            /**
+             * @description Make the other record from this one (same name, contacts, KRA PIN)
+             * @default false
+             */
+            create: boolean;
+            /** @default false */
+            unlink: boolean;
+        };
         LinkStats: {
             paid_count: number;
             paid_total: string;
@@ -15983,6 +16216,83 @@ export interface components {
             /** Format: date */
             due_date?: string | null;
             done?: boolean;
+        };
+        MoneyInRequest: {
+            rows: components["schemas"]["MoneyInRowRequest"][];
+        };
+        /**
+         * @description * `sale` - A sale: makes a paid invoice
+         *     * `payment` - A payment only: for older invoices or in advance
+         * @enum {string}
+         */
+        MoneyInRowKindEnum: "sale" | "payment";
+        MoneyInRowRequest: {
+            /** Format: date */
+            date: string;
+            /** Format: decimal */
+            amount: string;
+            /**
+             * Format: uuid
+             * @description Received into / paid from
+             */
+            bank_account_id: string;
+            reference?: string;
+            /**
+             * Format: uuid
+             * @description Income (in) or expense (out) account
+             */
+            account_id?: string | null;
+            /**
+             * Format: uuid
+             * @description VAT inside the amount; blank: none
+             */
+            tax_rate_id?: string | null;
+            description?: string;
+            /** Format: uuid */
+            customer_id?: string | null;
+            /** @description A name not yet a customer: added */
+            new_customer?: string;
+            /** @default sale */
+            kind: components["schemas"]["MoneyInRowKindEnum"];
+        };
+        MoneyOutRequest: {
+            rows: components["schemas"]["MoneyOutRowRequest"][];
+        };
+        /**
+         * @description * `purchase` - A purchase: makes a paid bill
+         *     * `payment` - A payment only: for older bills or in advance
+         * @enum {string}
+         */
+        MoneyOutRowKindEnum: "purchase" | "payment";
+        MoneyOutRowRequest: {
+            /** Format: date */
+            date: string;
+            /** Format: decimal */
+            amount: string;
+            /**
+             * Format: uuid
+             * @description Received into / paid from
+             */
+            bank_account_id: string;
+            reference?: string;
+            /**
+             * Format: uuid
+             * @description Income (in) or expense (out) account
+             */
+            account_id?: string | null;
+            /**
+             * Format: uuid
+             * @description VAT inside the amount; blank: none
+             */
+            tax_rate_id?: string | null;
+            description?: string;
+            /** Format: uuid */
+            supplier_id?: string | null;
+            /** @description A name not yet a supplier: added */
+            new_supplier?: string;
+            /** @default purchase */
+            kind: components["schemas"]["MoneyOutRowKindEnum"];
+            supplier_invoice_number?: string;
         };
         MonthDocument: {
             /** Format: uuid */
@@ -17982,6 +18292,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["ServiceOrder"][];
         };
+        PaginatedSetOffList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["SetOff"][];
+        };
         PaginatedStatutoryRateList: {
             /** @example 123 */
             count: number;
@@ -18378,6 +18703,18 @@ export interface components {
              * @description Warn when the balance falls below this. Blank: no warning
              */
             min_balance?: string | null;
+        };
+        PatchedBillDetailsRequest: {
+            /** @description The customer's order or LPO number */
+            reference?: string;
+            notes?: string;
+            /** @description New descriptions for its lines */
+            lines?: components["schemas"]["DetailLineRequest"][];
+            /** @description True: the details are complete (it leaves the to-add list) */
+            done?: boolean;
+            supplier_invoice_number?: string;
+            /** @description The CU invoice number on the supplier's eTIMS invoice */
+            supplier_etims_number?: string;
         };
         PatchedBillOfMaterialsRequest: {
             /** Format: uuid */
@@ -18814,6 +19151,15 @@ export interface components {
             manager_review?: boolean;
             rating_labels?: string[];
             remind?: boolean;
+        };
+        PatchedInvoiceDetailsRequest: {
+            /** @description The customer's order or LPO number */
+            reference?: string;
+            notes?: string;
+            /** @description New descriptions for its lines */
+            lines?: components["schemas"]["DetailLineRequest"][];
+            /** @description True: the details are complete (it leaves the to-add list) */
+            done?: boolean;
         };
         /** @description A discount on the whole document, applied once when the lines are saved (spread over them as line discounts). */
         PatchedInvoiceRequest: {
@@ -23191,6 +23537,36 @@ export interface components {
          * @enum {string}
          */
         ServiceOrderStatusEnum: "draft" | "approved" | "completed" | "cancelled";
+        SetOff: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** Format: uuid */
+            customer_id: string;
+            readonly customer_name: string;
+            readonly supplier_name: string;
+            /** Format: date */
+            setoff_date?: string;
+            /** Format: decimal */
+            amount: string;
+            notes?: string;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+            readonly void_reason: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        SetOffRequest: {
+            /** Format: uuid */
+            customer_id: string;
+            /** Format: date */
+            setoff_date?: string;
+            /** Format: decimal */
+            amount: string;
+            notes?: string;
+        };
+        SetOffVoidRequest: {
+            reason: string;
+        };
         ShareLink: {
             url: string;
         };
@@ -23374,11 +23750,13 @@ export interface components {
         };
         /**
          * @description * `invoice` - invoice
+         *     * `debit_note` - debit_note
          *     * `payment` - payment
          *     * `credit_note` - credit_note
+         *     * `set_off` - set_off
          * @enum {string}
          */
-        StatementRowKindEnum: "invoice" | "payment" | "credit_note";
+        StatementRowKindEnum: "invoice" | "debit_note" | "payment" | "credit_note" | "set_off";
         Stats: {
             businesses: number;
             new_this_month: number;
@@ -23950,9 +24328,10 @@ export interface components {
         /**
          * @description * `bill` - bill
          *     * `payment` - payment
+         *     * `set_off` - set_off
          * @enum {string}
          */
-        SupplierStatementRowKindEnum: "bill" | "payment";
+        SupplierStatementRowKindEnum: "bill" | "payment" | "set_off";
         SupportTicket: {
             /** Format: uuid */
             readonly id: string;
@@ -28965,6 +29344,7 @@ export interface operations {
                 bill_date__gte?: string;
                 bill_date__lte?: string;
                 due_date__lte?: string;
+                needs_details?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -29227,6 +29607,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Bill"];
+                };
+            };
+        };
+    };
+    w_bills_details_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedBillDetailsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBillDetailsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedBillDetailsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillDetails"];
                 };
             };
         };
@@ -30714,6 +31122,56 @@ export interface operations {
             };
         };
     };
+    w_customers_both_sides_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BothSides"];
+                };
+            };
+        };
+    };
+    w_customers_both_sides_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["LinkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LinkRequest"];
+                "multipart/form-data": components["schemas"]["LinkRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BothSides"];
+                };
+            };
+        };
+    };
     w_customers_statement_retrieve: {
         parameters: {
             query?: {
@@ -30767,6 +31225,98 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Customer"][];
+                };
+            };
+        };
+    };
+    w_customers_set_offs_list: {
+        parameters: {
+            query?: {
+                customer?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `posted` - Posted
+                 *     * `void` - Void
+                 */
+                status?: "posted" | "void";
+                supplier?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSetOffList"];
+                };
+            };
+        };
+    };
+    w_customers_set_offs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetOffRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SetOffRequest"];
+                "multipart/form-data": components["schemas"]["SetOffRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetOff"];
+                };
+            };
+        };
+    };
+    w_customers_set_offs_void_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetOffVoidRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SetOffVoidRequest"];
+                "multipart/form-data": components["schemas"]["SetOffVoidRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetOff"];
                 };
             };
         };
@@ -34367,6 +34917,7 @@ export interface operations {
                  *     * `debit_note` - Debit note
                  */
                 kind?: "debit_note" | "invoice";
+                needs_details?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -34498,6 +35049,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Invoice"];
+                };
+            };
+        };
+    };
+    w_invoices_details_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedInvoiceDetailsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedInvoiceDetailsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedInvoiceDetailsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvoiceDetails"];
                 };
             };
         };
@@ -37455,6 +38034,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    w_payments_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoneyInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MoneyInRequest"];
+                "multipart/form-data": components["schemas"]["MoneyInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BulkResult"][];
                 };
             };
         };
@@ -43104,6 +43715,38 @@ export interface operations {
             };
         };
     };
+    w_supplier_payments_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoneyOutRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MoneyOutRequest"];
+                "multipart/form-data": components["schemas"]["MoneyOutRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BulkResult"][];
+                };
+            };
+        };
+    };
     w_suppliers_list: {
         parameters: {
             query?: {
@@ -43234,6 +43877,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Supplier"];
+                };
+            };
+        };
+    };
+    w_suppliers_both_sides_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BothSides"];
+                };
+            };
+        };
+    };
+    w_suppliers_both_sides_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["LinkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LinkRequest"];
+                "multipart/form-data": components["schemas"]["LinkRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BothSides"];
                 };
             };
         };

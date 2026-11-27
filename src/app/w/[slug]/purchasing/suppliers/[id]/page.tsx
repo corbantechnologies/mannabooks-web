@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 import { Meta } from "@/components/document-view";
 import { SupplierForm } from "@/components/supplier-form";
+import { BothSides } from "@/components/both-sides";
 import { Button, Card, EmptyState, ErrorState, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { PayTo } from "@/components/pay-to";
 import { ActionMenu } from "@/components/action-menu";
@@ -46,13 +47,14 @@ export default function SupplierPage() {
         <Meta label="KRA PIN">{s.kra_pin || "-"}</Meta>
         <Meta label="Withholding tax">{s.withholding_tax_rate_name ?? "None"}</Meta>
       </Card>
+      <BothSides side="supplier" id={s.id} />
       <h2 className="mb-2 text-sm font-semibold">Statement</h2>
       <Card>
         <Table head={["Date", "Document", "Their ref.", "Billed", "Paid", "Balance"]}>
           {rows.map((r) => (
             <tr key={`${r.kind}-${r.document_id}`}>
               <Td>{fmtDate(r.date)}</Td>
-              <Td><Link className="hover:underline" href={`/w/${slug}/purchasing/${r.kind === "bill" ? "bills" : "payments"}/${r.document_id}`}>{r.kind === "bill" ? "Bill" : "Payment"} <span className="font-mono text-xs">{r.number}</span></Link></Td>
+              <Td>{r.kind === "set_off" ? <>Set-off <span className="font-mono text-xs">{r.number}</span></> : <Link className="hover:underline" href={`/w/${slug}/purchasing/${r.kind === "bill" ? "bills" : "payments"}/${r.document_id}`}>{r.kind === "bill" ? "Bill" : "Payment"} <span className="font-mono text-xs">{r.number}</span></Link>}</Td>
               <Td className="text-stone-500">{r.reference}</Td>
               <Td className="text-right font-mono">{fmtNonZero(r.billed)}</Td>
               <Td className="text-right font-mono">{fmtNonZero(r.paid)}</Td>

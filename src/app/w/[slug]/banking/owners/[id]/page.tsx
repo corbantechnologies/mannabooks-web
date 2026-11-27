@@ -75,7 +75,7 @@ export default function OwnerStatementPage() {
       <Card>
         {rows.length === 0 ? <EmptyState title="Nothing recorded yet" /> : (
           <Table head={["Date", "What", "In", "Out", "Capital", "Shares", "Owed to them", "Owed by them", ""]}>
-            {rows.map(({ transaction: t, ...r }) => (
+            {[...rows].reverse().map(({ transaction: t, ...r }) => ( // newest first; each row keeps its balances after it
               <tr key={t.id}>
                 <Td className="whitespace-nowrap">{fmtDate(t.transaction_date)}</Td>
                 <Td>{t.kind === "opening" ? `Brought forward: ${t.opening_balance_label}` : t.kind_label}

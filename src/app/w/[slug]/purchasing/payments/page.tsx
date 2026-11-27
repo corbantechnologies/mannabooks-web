@@ -1,12 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import Link from "next/link";
+
+import { ActionMenu } from "@/components/action-menu";
 import { useState } from "react";
 
 import { ListFilters } from "@/components/doc-list";
-import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { POSTED_STATUS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
@@ -28,7 +29,10 @@ export default function SupplierPaymentsPage() {
   void Badge; void fmt; void fmtDate; void ListFilters; void Input; void status; void setStatus;
   return (
     <div className="w-full">
-      <PageHeader title="Supplier payments" description="Money paid to suppliers. Most are made from approved payment vouchers." guide="supplier-payments" actions={can("supplierpayments.create") && <Link href={`/w/${slug}/purchasing/payments/new`}><Button><Plus className="h-4 w-4" /> Record payment</Button></Link>} />
+      <PageHeader title="Supplier payments" description="Money paid to suppliers. Most are made from approved payment vouchers." guide="supplier-payments" actions={can("supplierpayments.create") && <ActionMenu label="Actions" primary actions={[
+          { label: "Record payment", href: `/w/${slug}/purchasing/payments/new` },
+          { label: "Record in bulk (money already paid)", href: `/w/${slug}/purchasing/payments/bulk` },
+        ]} />} />
       <ListFilters dated count={{ path: "/api/v1/w/{workspace}/supplier-payments/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(POSTED_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search number or supplier" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (

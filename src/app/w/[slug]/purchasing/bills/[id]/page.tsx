@@ -13,6 +13,7 @@ import { Meta } from "@/components/document-view";
 import { TagsMeta } from "@/components/tag-pickers";
 import { PurchaseDocForm } from "@/components/purchase-doc-form";
 import { PurchaseLinesView } from "@/components/purchase-lines";
+import { DetailsToAdd } from "@/components/details-to-add";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { BILL_STATUS } from "@/lib/api/purchasing";
@@ -60,6 +61,7 @@ export default function BillPage() {
             {open && can("paymentvouchers.create") && <Link href={`/w/${slug}/purchasing/vouchers/new?supplier=${b.supplier_id}&bill=${b.id}`}><Button>Pay</Button></Link>}
           </div>
         } />
+      {b.needs_details && b.status !== "void" && <DetailsToAdd kind="bill" doc={b as never} canEdit={can("bills.create")} />}
       <RelatedDocuments kind="bill" id={id} />
       <VoidLinks kind="bill" id={id} voided={b.status === "void"} />
       <Attachments docType="bill" id={id} side="purchase" canAdd={can("bills.create")} missingEtims={b.status !== "draft" && !b.supplier_etims_number} />

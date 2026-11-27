@@ -21,7 +21,8 @@ export default function BillsPage() {
   const list = useQuery({
     queryKey: [dates,"bills", slug, search, status],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/bills/", {
-      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status || undefined) as never, page_size: 100 } },
+      params: { path: { workspace: slug }, query: { ...dates, search: search || undefined, status: (status && status !== "details" ? status : undefined) as never,
+        needs_details: status === "details" ? true : undefined, page_size: 100 } },
     })),
   });
   const rows = list.data?.results ?? [];
@@ -29,7 +30,7 @@ export default function BillsPage() {
   return (
     <div className="w-full">
       <PageHeader title="Bills" description="Supplier invoices: what you owe. Posting a bill records the payable and the input VAT you can claim." guide="bills" actions={can("bills.create") && <Link href={`/w/${slug}/purchasing/bills/new`}><Button><Plus className="h-4 w-4" /> Enter bill</Button></Link>} />
-      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/bills/", query: { search: search || undefined, status: (status || undefined) }, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={Object.entries(BILL_STATUS).map(([k, v]) => [k, v.label])} placeholder="Search supplier or invoice number" />
+      <ListFilters dated count={{ path: "/api/v1/w/{workspace}/bills/", query: { search: search || undefined, status: (status && status !== "details" ? status : undefined), needs_details: status === "details" ? true : undefined } as never, shown: list.data?.count }} search={search} setSearch={setSearch} status={status} setStatus={setStatus} statuses={[...Object.entries(BILL_STATUS).map(([k, v]) => [k, v.label] as [string, string]), ["details", "Details to add (recorded in bulk)"] as [string, string]]} placeholder="Search supplier or invoice number" />
       <Card>
         {list.isLoading ? <div className="px-4"><Spinner /></div> : list.error ? <div className="p-4"><ErrorState error={list.error} /></div> : rows.length === 0 ? (
           <EmptyState title="Nothing here yet" />
