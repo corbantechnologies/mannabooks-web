@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { ActionMenu } from "@/components/action-menu";
-import { ServiceForm } from "@/components/portfolio-service-form";
+import { serviceEditHref, serviceNewHref } from "@/components/portfolio-service-form";
 import { GroupForm, ServiceRows } from "@/components/portfolio-services";
 import { Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -26,7 +26,6 @@ export default function PortfolioGroupPage() {
   const key = ["portfolio", slug, id];  // the same data as the portfolio page
   const q = useQuery({ queryKey: key, queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/portfolios/{id}/", { params: { path: { workspace: slug, id } } })) });
   const saved = (d: PortfolioDetail) => qc.setQueryData(key, d);
-  const [editing, setEditing] = useState<PortfolioService | null | undefined>(undefined);
   const [changing, setChanging] = useState(false);
   const back = `/w/${slug}/portfolios/${id}?tab=groups`;
   const copy = useMutation({
@@ -58,7 +57,7 @@ export default function PortfolioGroupPage() {
         description={<>A group in {d.customer_name}&apos;s portfolio · {g.services} {g.services === 1 ? "service" : "services"}{g.notes ? ` · ${g.notes}` : ""}</>}
         actions={d.can_manage ? (
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => setEditing(null)}><Plus className="h-4 w-4" /> Add a service</Button>
+            <Link href={serviceNewHref(slug, id, gid, `/w/${slug}/portfolios/${id}/groups/${gid}`)}><Button><Plus className="h-4 w-4" /> Add a service</Button></Link>
             <ActionMenu actions={[
               { label: "Reports for this group", href: `/w/${slug}/portfolios/reports?portfolio=${id}&group=${gid}` },
               { label: "Change name and note", onClick: () => setChanging(true) },
@@ -82,13 +81,11 @@ export default function PortfolioGroupPage() {
           </EmptyState>
         ) : (
           <Table head={["Service", "They pay", "A month", "Costs you a month", "Margin", "Next dates", ""]}>
-            <ServiceRows rows={rows} d={d} onEdit={setEditing} onSaved={saved} />
+            <ServiceRows rows={rows} d={d} onEdit={(s: PortfolioService) => router.push(serviceEditHref(slug, id, s.id, `/w/${slug}/portfolios/${id}/groups/${gid}`))} onSaved={saved} />
           </Table>
         )}
       </Card>
 
-      {editing !== undefined && <ServiceForm key={editing?.id ?? "new"} portfolioId={id} service={editing} open onClose={() => setEditing(undefined)} onSaved={saved}
-        groups={d.groups} groupId={gid} />}
       {changing && <GroupForm portfolioId={id} group={g} onClose={() => setChanging(false)} onSaved={saved} onDeleted={() => router.push(back)} />}
     </div>
   );

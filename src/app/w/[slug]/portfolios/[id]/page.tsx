@@ -13,7 +13,7 @@ import { ask } from "@/components/confirm";
 import { PartyLink } from "@/components/party-link";
 import { MakeInvoice, PortfolioDocuments, Repricing } from "@/components/portfolio-parts";
 import { GroupForm, ServiceRows } from "@/components/portfolio-services";
-import { ServiceForm } from "@/components/portfolio-service-form";
+import { serviceEditHref, serviceNewHref } from "@/components/portfolio-service-form";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { useAssignees } from "@/lib/api/crm";
@@ -34,8 +34,6 @@ export default function PortfolioPage() {
   const saved = (d: PortfolioDetail) => qc.setQueryData(key, d);
   const asked = useSearchParams().get("tab");
   const [tab, setTab] = useState<(typeof TABS)[number][0]>(TABS.some(([k]) => k === asked) ? asked as (typeof TABS)[number][0] : "services");
-  const [editing, setEditing] = useState<PortfolioService | null | undefined>(undefined);
-  const [addTo, setAddTo] = useState("");  // the group a new service goes in
   const [group, setGroup] = useState<PortfolioGroup | null | undefined>(undefined);
   const [shut, setShut] = useState<Set<string>>(new Set());  // collapsed groups
   const toggle = (gid: string) => setShut((s) => { const n = new Set(s); if (n.has(gid)) n.delete(gid); else n.add(gid); return n; });
@@ -50,6 +48,9 @@ export default function PortfolioPage() {
     mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/portfolios/{id}/", { params: { path: { workspace: slug, id } } })),
     onSuccess: () => router.push(`/w/${slug}/portfolios`),
   });
+  const here = `/w/${slug}/portfolios/${id}?tab=${tab}`;
+  const addService = (gid = "") => router.push(serviceNewHref(slug, id, gid, here));
+  const editService = (s: PortfolioService) => router.push(serviceEditHref(slug, id, s.id, here));
   if (q.isLoading) return <Spinner />;
   if (q.error || !q.data) return <ErrorState error={q.error} />;
   const d = q.data;
@@ -64,7 +65,7 @@ export default function PortfolioPage() {
             {d.can_manage && <Button onClick={() => setGroup(null)}><Plus className="h-4 w-4" /> New group</Button>}
             <ActionMenu actions={[
               { label: "Make the month's invoice", onClick: () => setInvoicing(true), hidden: !(d.can_manage && can("invoices.create")) },
-              { label: "Add a service", onClick: () => { setAddTo(""); setEditing(null); }, hidden: !d.can_manage },
+              { label: "Add a service", onClick: () => addService(), hidden: !d.can_manage },
               { label: "Reports for this client", href: `/w/${slug}/portfolios/reports?portfolio=${id}` },
               { label: "Portfolio summary (print or PDF)", href: `/w/${slug}/portfolios/${id}/report` },
               { label: "Lead, margin and notes", onClick: () => setSettings(true), hidden: !d.can_manage },
@@ -121,7 +122,7 @@ export default function PortfolioPage() {
                   <Td className="text-right">
                     {d.can_manage && (
                       <span className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs">
-                        <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(gr.id); setEditing(null); }}>Add a service here</button>
+                        <button type="button" className="text-brand-700 hover:underline" onClick={() => addService(gr.id)}>Add a service here</button>
                         <button type="button" className="text-brand-700 hover:underline" onClick={() => setGroup(gr)}>Change</button>
                         <button type="button" className="text-brand-700 hover:underline" disabled={copyGroup.isPending} onClick={() => copyGroup.mutate(gr)}>Duplicate</button>
                       </span>
@@ -144,7 +145,7 @@ export default function PortfolioPage() {
       {tab === "services" && (
         <Card>
           {d.services.length === 0 && d.groups.length === 0 ? (
-            <EmptyState title="No services yet">{d.can_manage ? <Button className="mt-2" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button> : undefined}</EmptyState>
+            <EmptyState title="No services yet">{d.can_manage ? <Button className="mt-2" onClick={() => addService()}><Plus className="h-4 w-4" /> Add a service</Button> : undefined}</EmptyState>
           ) : (
             <Table head={["Service", "They pay", "A month", "Costs you a month", "Margin", "Next dates", ""]}>
               {[...d.groups.map((gr) => ({ gr, rows: d.services.filter((s) => s.group_id === gr.id) })),
@@ -174,7 +175,7 @@ export default function PortfolioPage() {
                       <Td colSpan={2} className="text-right">
                         {gr && d.can_manage && (
                           <span className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs">
-                            <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(gr.id); setEditing(null); }}>Add a service here</button>
+                            <button type="button" className="text-brand-700 hover:underline" onClick={() => addService(gr.id)}>Add a service here</button>
                             <button type="button" className="text-brand-700 hover:underline" onClick={() => setGroup(gr)}>Change</button>
                             <button type="button" className="text-brand-700 hover:underline" disabled={copyGroup.isPending} onClick={() => copyGroup.mutate(gr)}>Duplicate</button>
                           </span>
@@ -183,9 +184,9 @@ export default function PortfolioPage() {
                     </tr>
                   )}
                   {gr && !closed && rows.length === 0 && (
-                    <tr><Td colSpan={7} className="pl-8 text-sm text-stone-500">No services in this group yet.{d.can_manage && <> <button type="button" className="text-brand-700 hover:underline" onClick={() => { setAddTo(gr.id); setEditing(null); }}>Add one</button>, or move one here from its Change panel.</>}</Td></tr>
+                    <tr><Td colSpan={7} className="pl-8 text-sm text-stone-500">No services in this group yet.{d.can_manage && <> <button type="button" className="text-brand-700 hover:underline" onClick={() => addService(gr.id)}>Add one</button>, or move one here from its Change panel.</>}</Td></tr>
                   )}
-                  {!closed && <ServiceRows rows={rows} d={d} indent={!!gr} onEdit={setEditing} onSaved={saved} />}
+                  {!closed && <ServiceRows rows={rows} d={d} indent={!!gr} onEdit={editService} onSaved={saved} />}
                 </Fragment>
                 );
               })}
@@ -193,7 +194,7 @@ export default function PortfolioPage() {
           )}
           {d.can_manage && (
             <div className="flex flex-wrap gap-2 p-3">
-              {(d.services.length > 0 || d.groups.length > 0) && <Button variant="secondary" onClick={() => { setAddTo(""); setEditing(null); }}><Plus className="h-4 w-4" /> Add a service</Button>}
+              {(d.services.length > 0 || d.groups.length > 0) && <Button variant="secondary" onClick={() => addService()}><Plus className="h-4 w-4" /> Add a service</Button>}
               <Button variant="secondary" onClick={() => setGroup(null)}><Plus className="h-4 w-4" /> New group</Button>
               <span className="self-center text-xs text-stone-500">A group is a folder for some of the client&apos;s services, such as an app with its hosting and support.</span>
             </div>
@@ -296,8 +297,6 @@ export default function PortfolioPage() {
         </Card>
       )}
 
-      {editing !== undefined && <ServiceForm key={editing?.id ?? `new-${addTo}`} portfolioId={id} service={editing} open onClose={() => setEditing(undefined)} onSaved={saved}
-        groups={d.groups} groupId={addTo} />}
       {group !== undefined && <GroupForm key={group?.id ?? "new"} portfolioId={id} group={group} onClose={() => setGroup(undefined)} onSaved={saved} />}
       {invoicing && <MakeInvoice data={d} open onClose={() => setInvoicing(false)} />}
       {settings && <SettingsModal d={d} onClose={() => setSettings(false)} onSaved={saved} />}
