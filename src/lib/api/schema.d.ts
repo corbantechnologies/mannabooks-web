@@ -4037,6 +4037,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/expenses/bulk/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Record several expenses at once (a week of fuel, utilities, shopping). All or nothing: a problem names its row. */
+        post: operations["w_expenses_bulk_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/exports/{kind}/": {
         parameters: {
             query?: never;
@@ -13840,6 +13857,10 @@ export interface components {
             /** Format: uuid */
             project_id?: string | null;
             readonly project_name: string;
+        };
+        ExpenseBulkRequest: {
+            /** @description Each an expense, as for one; all are saved or none */
+            rows: components["schemas"]["ExpenseRequest"][];
         };
         ExpenseClaim: {
             /** Format: uuid */
@@ -32785,6 +32806,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Expense"];
+                };
+            };
+        };
+    };
+    w_expenses_bulk_create: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenseBulkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ExpenseBulkRequest"];
+                "multipart/form-data": components["schemas"]["ExpenseBulkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Expense"][];
                 };
             };
         };
