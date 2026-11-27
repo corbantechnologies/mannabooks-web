@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { AsPage, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { WORKER_TYPES } from "@/lib/attendance";
+import { TIMEZONES } from "@/lib/timezones";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { useFormFlag } from "@/lib/page-form";
 
@@ -94,7 +95,11 @@ export default function AttendanceSettingsPage() {
           </Card>
 
           <Card className="space-y-3 p-4 sm:p-5">
-            <h2 className="text-sm font-semibold">Clocking in away from the office</h2>
+            <h2 className="text-sm font-semibold">Where people work</h2>
+            <label className="flex items-start gap-2 text-sm text-stone-700">
+              <input type="checkbox" className="mt-0.5" checked={!!s.own_timezone} onChange={(e) => set("own_timezone", e.target.checked)} />
+              <span>People may set their own time zone from their device (asked when it differs). Their hours, &quot;today&quot; and alerts follow their clock. Otherwise HR sets it below, for a department or a person.</span>
+            </label>
             <Field label="When someone clocks in from outside the office networks below">
               <Select className="max-w-md" value={s.elsewhere} onChange={(e) => set("elsewhere", e.target.value)}><option value="off">Don&apos;t check: people work from anywhere</option><option value="flag">Allow it, marked Away from the office</option><option value="refuse">Refuse it</option></Select>
             </Field>
@@ -191,7 +196,7 @@ function Overrides({ manage }: { manage: boolean }) {
         {manage && <Button variant="secondary" onClick={() => setEditing(true)}>Add</Button>}
       </div>
       {rows.length === 0 ? <EmptyState title="Everyone follows the settings above" /> : (
-        <Table head={["For", "Pattern", "Hours", "Grace", "Break", "Break rule", "Tracked", ""]}>
+        <Table head={["For", "Pattern", "Hours", "Grace", "Break", "Break rule", "Tracked", "Time zone", ""]}>
           {rows.map((o) => (
             <tr key={o.id}>
               <Td className="font-medium">{o.department_name || o.employee_name}<span className="block text-xs font-normal text-stone-500">{o.department_name ? "Department" : "Person"}</span></Td>
@@ -201,6 +206,7 @@ function Overrides({ manage }: { manage: boolean }) {
               <Td>{o.break_minutes != null ? `${o.break_minutes} min` : "As above"}</Td>
               <Td>{o.break_rule == null ? "As above" : o.break_rule ? "Applies" : "Doesn't apply"}</Td>
               <Td>{o.tracked == null ? "As their type" : o.tracked ? "Yes" : "No"}</Td>
+              <Td className="whitespace-nowrap">{o.timezone ? o.timezone.replace(/_/g, " ") : "As above"}</Td>
               <Td className="text-right">{manage && <button type="button" aria-label="Remove" className="text-stone-400 hover:text-red-600" onClick={() => remove.mutate(o.id)}><Trash2 className="h-4 w-4" /></button>}</Td>
             </tr>
           ))}
@@ -213,7 +219,7 @@ function Overrides({ manage }: { manage: boolean }) {
 function OverrideForm({ onClose }: { onClose: () => void }) {
   const { slug } = useWorkspace();
   const qc = useQueryClient();
-  const [f, setF] = useState({ who: "department", id: "", pattern: "", start_time: "", end_time: "", weekly_hours: "", grace_minutes: "", break_minutes: "", tracked: "", break_rule: "" });
+  const [f, setF] = useState({ who: "department", id: "", pattern: "", start_time: "", end_time: "", weekly_hours: "", grace_minutes: "", break_minutes: "", tracked: "", break_rule: "", timezone: "" });
   const depts = useQuery({ queryKey: ["departments", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/departments/", wsPath(slug))) });
   const people = useQuery({
     queryKey: ["employees", slug, "picker"],
@@ -227,6 +233,7 @@ function OverrideForm({ onClose }: { onClose: () => void }) {
         start_time: f.start_time || null, end_time: f.end_time || null, weekly_hours: f.weekly_hours || null,
         grace_minutes: f.grace_minutes === "" ? null : Number(f.grace_minutes), break_minutes: f.break_minutes === "" ? null : Number(f.break_minutes),
         tracked: f.tracked === "" ? null : f.tracked === "yes", break_rule: f.break_rule === "" ? null : f.break_rule === "yes",
+        timezone: f.timezone,
       },
     })),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["attendance-overrides", slug] }); toast.success("Saved"); onClose(); },
@@ -252,6 +259,9 @@ function OverrideForm({ onClose }: { onClose: () => void }) {
           <Field label="Grace (minutes)"><Input type="number" min="0" value={f.grace_minutes} onChange={set("grace_minutes")} placeholder="As above" /></Field>
           <Field label="Break (minutes)"><Input type="number" min="0" value={f.break_minutes} onChange={set("break_minutes")} placeholder="As above" /></Field>
           <Field label="Break rule"><Select value={f.break_rule} onChange={set("break_rule")}><option value="">As above</option><option value="yes">Applies</option><option value="no">Doesn&apos;t apply</option></Select></Field>
+          <Field label="Time zone" hint="Their hours, today and alerts follow this clock">
+            <Select value={f.timezone} onChange={set("timezone")}><option value="">As above</option>{TIMEZONES.map((z) => <option key={z} value={z}>{z.replace(/_/g, " ")}</option>)}</Select>
+          </Field>
           {f.who === "person" && <Field label="Track their time"><Select value={f.tracked} onChange={set("tracked")}><option value="">As their worker type</option><option value="yes">Yes</option><option value="no">No</option></Select></Field>}
         </div>
         <p className="text-xs text-stone-500">Leave a box blank to follow the level above: the department, then the business.</p>

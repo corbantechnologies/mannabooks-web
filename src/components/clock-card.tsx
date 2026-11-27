@@ -3,11 +3,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Coffee, LogIn, LogOut, MapPin, Wifi } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { Badge, Button, Card, FormError } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { DAY_STATUS, hm, hours } from "@/lib/attendance";
+import { deviceTimezone, zoneCity } from "@/lib/timezones";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 type Action = "in" | "out" | "break_start" | "break_end";
@@ -16,6 +18,7 @@ type Action = "in" | "out" | "break_start" | "break_end";
 export function ClockCard({ showLink = false }: { showLink?: boolean }) {
   const { slug } = useWorkspace();
   const qc = useQueryClient();
+  const [keptNow, setKeptNow] = useState(false);
   const q = useQuery({ queryKey: ["attendance-me", slug], refetchInterval: 60000, queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/me/", wsPath(slug))) });
   const act = useMutation({
     mutationFn: async (action: Action) => unwrap(await api.POST("/api/v1/w/{workspace}/attendance/clock/", { ...wsPath(slug), body: { action } })),
@@ -25,13 +28,30 @@ export function ClockCard({ showLink = false }: { showLink?: boolean }) {
       void qc.invalidateQueries({ queryKey: ["attendance-people", slug] });
     },
   });
+  const setZone = useMutation({
+    mutationFn: async (timezone: string) => unwrap(await api.POST("/api/v1/w/{workspace}/attendance/my-timezone/", { ...wsPath(slug), body: { timezone } })),
+    onSuccess: (r) => { toast.success(r.timezone ? `Your hours now follow ${zoneCity(r.timezone)} time` : "Back to the business's time"); void qc.invalidateQueries({ queryKey: ["attendance-me", slug] }); },
+    onError: (e) => toast.error(e.message),
+  });
   const me = q.data;
   if (!me?.enabled || !me.tracked) return null;
+  const device = deviceTimezone();
+  const kept = (() => { try { return localStorage.getItem(`mb-zone-kept-${slug}`) === `${me.timezone}|${device}`; } catch { return false; } })();
+  const offerZone = Boolean(me.can_set_timezone && device && device !== me.timezone && !setZone.isPending && !kept && !keptNow);
   const day = me.today;
   const st = day?.state ?? "out";
   const status = day ? DAY_STATUS[day.status] : undefined;
   return (
     <Card className="p-4 sm:p-5">
+      {offerZone && (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          <span>Your hours follow {zoneCity(me.timezone)} time, but this device is on {zoneCity(device)} time.</span>
+          <span className="flex gap-2">
+            <Button variant="secondary" className="px-2 py-1 text-xs" onClick={() => setZone.mutate(device)}>Use {zoneCity(device)} time</Button>
+            <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => { try { localStorage.setItem(`mb-zone-kept-${slug}`, `${me.timezone}|${device}`); } catch { /* private window */ } setKeptNow(true); }}>Keep {zoneCity(me.timezone)}</Button>
+          </span>
+        </div>
+      )}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm text-stone-500">{day?.shift_name ? `${day.shift_name} shift` : "Today"}{me.pattern === "fixed" && me.start_time ? `, ${me.start_time.slice(0, 5)} to ${me.end_time?.slice(0, 5)}` : `, flexible: ${Number(me.weekly_hours)} h a week`}</p>

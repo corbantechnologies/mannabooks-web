@@ -1541,6 +1541,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/my-timezone/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Set your own time zone (usually your device's), when the business allows it. Your hours, today and alerts follow it. */
+        post: operations["w_attendance_my_timezone_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/attendance/offices/": {
         parameters: {
             query?: never;
@@ -10838,6 +10855,12 @@ export interface components {
             week_minutes: number;
             /** @description Has a team (or Attendance: manage): shows Who's in now and the register */
             can_approve: boolean;
+            /** @description The clock your hours follow: yours, your department's or the business's */
+            timezone: string;
+            /** @description The time zone set for you alone (blank: none) */
+            own_timezone: string;
+            /** @description The business lets people set their own time zone */
+            can_set_timezone: boolean;
         };
         AttendanceOfficeNetwork: {
             /** Format: uuid */
@@ -10881,6 +10904,8 @@ export interface components {
             tracked?: boolean | null;
             /** @description The break rule here: on, off, or null to follow the level above */
             break_rule?: boolean | null;
+            /** @description Their clock, e.g. America/New_York: hours, today and alerts follow it. Blank: the level above */
+            timezone?: string;
         };
         AttendanceOverrideRequest: {
             /** Format: uuid */
@@ -10903,6 +10928,8 @@ export interface components {
             tracked?: boolean | null;
             /** @description The break rule here: on, off, or null to follow the level above */
             break_rule?: boolean | null;
+            /** @description Their clock, e.g. America/New_York: hours, today and alerts follow it. Blank: the level above */
+            timezone?: string;
         };
         AttendancePersonDay: {
             /** Format: date */
@@ -11018,6 +11045,8 @@ export interface components {
              *     * `refuse` - Refuse it
              */
             elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description People may set their own time zone (from their device) for their hours */
+            own_timezone?: boolean;
             /** @description A forgotten clock-out closes this long after the end time and the person's last activity (0: never) */
             auto_close_hours?: number;
             /**
@@ -16145,6 +16174,14 @@ export interface components {
             reports_late: components["schemas"]["_LateReport"][];
             reports_due_soon: number;
         };
+        MyTimezone: {
+            /** @description Blank: back to your department's or the business's */
+            timezone: string;
+        };
+        MyTimezoneRequest: {
+            /** @description Blank: back to your department's or the business's */
+            timezone: string;
+        };
         /** @description A workspace in the caller's list, with their role in it. */
         MyWorkspace: {
             /** Format: uuid */
@@ -18228,6 +18265,8 @@ export interface components {
              *     * `refuse` - Refuse it
              */
             elsewhere?: components["schemas"]["ElsewhereEnum"];
+            /** @description People may set their own time zone (from their device) for their hours */
+            own_timezone?: boolean;
             /** @description A forgotten clock-out closes this long after the end time and the person's last activity (0: never) */
             auto_close_hours?: number;
             /**
@@ -27856,6 +27895,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AttendanceMe"];
+                };
+            };
+        };
+    };
+    w_attendance_my_timezone_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyTimezoneRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MyTimezoneRequest"];
+                "multipart/form-data": components["schemas"]["MyTimezoneRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyTimezone"];
                 };
             };
         };

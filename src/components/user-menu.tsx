@@ -17,8 +17,9 @@ const CLOCK_DONE: Record<ClockAction, string> = { in: "Clocked in", out: "Clocke
 export function UserMenu() {
   const { data } = useSession();
   const [open, setOpen] = useState(false);
-  const name = data?.user?.name || data?.user?.email || "Account";
   const me = useQuery({ queryKey: ["me"], enabled: Boolean(data), staleTime: 300000, queryFn: async () => unwrap(await api.GET("/api/v1/auth/me/")) });
+  // your name once it's known: no stand-in letter while the session loads
+  const name = me.data?.full_name || data?.user?.name || me.data?.email || data?.user?.email || "";
   // inside a workspace: your status there (the same query as the workspace layout's)
   const slug = usePathname()?.match(/^\/w\/([^/]+)/)?.[1] ?? "";
   const qc = useQueryClient();
@@ -51,7 +52,7 @@ export function UserMenu() {
         aria-expanded={open}
       >
         <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
-          {name.slice(0, 1).toUpperCase()}
+          {name.trim().slice(0, 1).toUpperCase()}
           {status && <PresenceDot p={status} you className="absolute -bottom-0.5 -right-0.5" />}
         </span>
         <span className="hidden max-w-40 truncate lg:inline">{name}</span>
