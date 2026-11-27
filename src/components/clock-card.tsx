@@ -10,6 +10,7 @@ import { Badge, Button, Card, FormError } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { DAY_STATUS, hm, hours } from "@/lib/attendance";
 import { deviceTimezone, zoneCity } from "@/lib/timezones";
+import { sessionsOf } from "@/components/attendance-sessions";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 type Action = "in" | "out" | "break_start" | "break_end";
@@ -60,7 +61,7 @@ export function ClockCard({ showLink = false }: { showLink?: boolean }) {
             {status && st !== "out" && <span className="ml-2 align-middle"><Badge tone={status[1]}>{status[0]}</Badge></span>}
           </p>
           <p className="mt-1 text-sm text-stone-600">
-            {day?.first_in ? `In at ${hm(day.first_in)}` : ""}{day?.last_out && st === "done" ? ` · out at ${hm(day.last_out)}` : ""}
+            {day ? sessionsOf(day.events).map((x) => `${hm(x.in)}–${x.out ? hm(x.out) : "now"}${x.outAuto ? " *" : ""}`).join(", ") : ""}
             {day && day.minutes > 0 ? ` · ${hours(day.minutes)} worked` : ""}{day && day.late_minutes > 0 ? ` · ${hours(day.late_minutes)} late` : ""}
           </p>
           <p className="mt-0.5 text-xs text-stone-500">This week: {hours(me.week_minutes)}{me.pattern === "flexible" ? ` of ${Number(me.weekly_hours)} h` : ""}</p>

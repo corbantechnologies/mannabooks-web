@@ -2,9 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { Sessions } from "@/components/attendance-sessions";
 import { Badge, Card, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
-import { DAY_STATUS, hm, hours } from "@/lib/attendance";
+import { DAY_STATUS, hours } from "@/lib/attendance";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 
@@ -25,13 +26,12 @@ export function AttendanceProfile({ employeeId }: { employeeId: string }) {
       <h2 className="mb-2 text-sm font-semibold">Attendance, last two weeks</h2>
       <p className="mb-2 text-sm text-stone-600">{worked} days worked · late on {late} · absent {absent} · {hours(days.reduce((a, d) => a + d.minutes, 0))} in all</p>
       <Card>
-        <Table head={["Day", "Status", "In", "Out", "Worked"]}>
+        <Table head={["Day", "Status", "In and out", "Worked"]}>
           {days.slice(0, 14).map((d) => (
             <tr key={d.day}>
               <Td className="whitespace-nowrap">{fmtDate(d.day)}</Td>
               <Td><Badge tone={DAY_STATUS[d.status]?.[1] ?? "stone"}>{DAY_STATUS[d.status]?.[0] ?? d.status}</Badge>{d.late_minutes > 0 && <span className="ml-1 text-xs text-amber-700">{hours(d.late_minutes)} late</span>}</Td>
-              <Td className="text-right font-mono">{hm(d.first_in)}</Td>
-              <Td className="text-right font-mono">{hm(d.last_out)}</Td>
+              <Td className="text-right"><Sessions events={d.events} /></Td>
               <Td className="text-right font-mono">{d.minutes ? hours(d.minutes) : "-"}</Td>
             </tr>
           ))}

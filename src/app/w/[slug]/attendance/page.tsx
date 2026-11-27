@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { AttendanceHoursVsPay } from "@/components/attendance-hours";
 import { AttendanceMonths } from "@/components/attendance-months";
 import { AttendanceShifts } from "@/components/attendance-shifts";
+import { Sessions } from "@/components/attendance-sessions";
 import { ClockCard } from "@/components/clock-card";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
@@ -82,13 +83,12 @@ function MyDays({ employeeId, tracked }: { employeeId: string | null; tracked: b
       </div>
       <Card>
         {days.isLoading ? <div className="p-4"><Spinner /></div> : (
-          <Table head={["Day", "Status", "In", "Out", "Worked", "Late", ""]}>
+          <Table head={["Day", "Status", "In and out", "Worked", "Late", ""]}>
             {(days.data ?? []).filter((d) => d.status !== "not_tracked").map((d) => (
               <tr key={d.day}>
                 <Td className="whitespace-nowrap">{fmtDate(d.day)}</Td>
                 <Td><Badge tone={DAY_STATUS[d.status]?.[1] ?? "stone"}>{DAY_STATUS[d.status]?.[0] ?? d.status}</Badge>{d.shift_name && <span className="ml-1 text-xs text-sky-800">{d.shift_name}</span>}</Td>
-                <Td className="text-right font-mono">{hm(d.first_in)}</Td>
-                <Td className="text-right font-mono">{hm(d.last_out)}{d.auto_closed ? " *" : ""}</Td>
+                <Td className="text-right"><Sessions events={d.events} /></Td>
                 <Td className="text-right font-mono">{d.minutes ? hours(d.minutes) : "-"}</Td>
                 <Td className="text-right font-mono">{d.late_minutes ? hours(d.late_minutes) : "-"}</Td>
                 <Td className="text-xs text-stone-500">{d.missed_break && <span className="mr-2 font-medium text-amber-700">No break for {hours(d.longest_stretch)}</span>}{d.elsewhere ? "Away from the office" : ""}</Td>
@@ -97,7 +97,7 @@ function MyDays({ employeeId, tracked }: { employeeId: string | null; tracked: b
           </Table>
         )}
       </Card>
-      <p className="text-xs text-stone-500">* Closed automatically: no clock-out. Ask for a fix if the time is wrong.</p>
+      <p className="text-xs text-stone-500">Each clock-in to its clock-out, with breaks under it; Worked is the total, less unpaid breaks. * Closed automatically: no clock-out. Ask for a fix if the time is wrong.</p>
       <h2 className="text-sm font-semibold">My corrections</h2>
       <Corrections box="mine" />
       {asking && <AskFix onClose={() => setAsking(false)} />}
@@ -153,7 +153,7 @@ function People() {
       </p>
       <Card>
         {rows.length === 0 ? <EmptyState title="Nobody to show">People on your team, or in departments you head, show here.</EmptyState> : (
-          <Table head={["Person", "Status", "In", "Out", "Worked", "Active"]}>
+          <Table head={["Person", "Status", "In and out", "Worked", "Active"]}>
             {rows.map((r) => <PersonRow key={r.employee_id} r={r} />)}
           </Table>
         )}
@@ -172,8 +172,7 @@ function PersonRow({ r }: { r: AttendancePerson }) {
         {r.late_minutes > 0 && <span className="ml-1 text-xs text-amber-700">{hours(r.late_minutes)} late</span>}
         {r.elsewhere && <span className="ml-1 text-xs text-stone-500">away from office</span>}
       </Td>
-      <Td className="text-right font-mono">{hm(r.first_in)}</Td>
-      <Td className="text-right font-mono">{hm(r.last_out)}</Td>
+      <Td className="text-right"><Sessions events={r.events} showBreaks={false} /></Td>
       <Td className="text-right font-mono">{r.minutes ? hours(r.minutes) : "-"}</Td>
       <Td className="whitespace-nowrap text-xs">
         {!r.has_login ? <span className="text-stone-400">No login</span> : r.active_now
