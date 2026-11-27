@@ -45,6 +45,13 @@ export function StatementImport({ bankAccountId, onClose }: { bankAccountId: str
   });
   async function read(file: File) {
     const parsed = parseCsv(await file.text());
+    // a MannaBooks export is the books, not the bank: importing it would match the books to themselves
+    if (parsed.headers.includes("Other side") && parsed.headers.includes("Entry")) {
+      toast.error("That's an export of the books, not a bank statement. Import the statement from your bank, or fill in our template.");
+      setData(null);
+      setCols(null);
+      return;
+    }
     setData(parsed);
     setCols(guessColumns(parsed.headers));
   }

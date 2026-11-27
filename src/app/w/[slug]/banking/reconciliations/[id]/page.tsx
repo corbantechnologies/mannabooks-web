@@ -3,9 +3,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, FormError, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { Badge, Button, Card, ErrorState, Field, FormError, Modal, PageHeader, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
@@ -22,9 +23,11 @@ export default function ReconciliationPage() {
     mutationFn: async ({ ids, cleared }: { ids: string[]; cleared: boolean }) => unwrap(await api.POST("/api/v1/w/{workspace}/reconciliations/{id}/lines/", { ...path, body: { journal_line_ids: ids, cleared } })),
   });
   const act = useMutation({
-    mutationFn: async (action: "complete" | "reopen") => unwrap(await api.POST("/api/v1/w/{workspace}/reconciliations/{id}/action/", { ...path, body: { action } })),
-    onSuccess: (r) => toast.success(r.status === "completed" ? "Reconciled: the books agree with the statement" : "Reopened"),
+    mutationFn: async (action: "complete" | "reopen") => unwrap(await api.POST("/api/v1/w/{workspace}/reconciliations/{id}/action/", { ...path, body: { action, reason: action === "reopen" ? reason : "" } })),
+    onSuccess: (r) => { toast.success(r.status === "completed" ? "Reconciled: the books agree with the statement" : "Reopened"); setReopening(false); },
   });
+  const [reopening, setReopening] = useState(false);
+  const [reason, setReason] = useState("");
   const remove = useMutation({
     mutationFn: async () => unwrap(await api.DELETE("/api/v1/w/{workspace}/reconciliations/{id}/", path)),
     onSuccess: () => { toast.success("Reconciliation deleted"); router.back(); },
@@ -43,7 +46,7 @@ export default function ReconciliationPage() {
           <div className="flex flex-wrap gap-2">
             {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this reconciliation?").then((ok) => ok && remove.mutate())}>Delete</Button>}
             {editable && <Button disabled={diff !== 0} loading={act.isPending} onClick={() => act.mutate("complete")}>Finish</Button>}
-            {r.status === "completed" && can("banking.reconcile") && <Button variant="secondary" onClick={() => void ask("Reopen? Its transactions can be changed again.").then((ok) => ok && act.mutate("reopen"))}>Reopen</Button>}
+            {r.status === "completed" && can("banking.reconcile") && <Button variant="secondary" onClick={() => { act.reset(); setReopening(true); }}>Reopen</Button>}
           </div>
         } />
       <Card className="sticky top-14 z-10 mb-4 grid gap-4 p-4 sm:grid-cols-4">
@@ -75,6 +78,14 @@ export default function ReconciliationPage() {
         )}
       </Card>
       {diff !== 0 && editable && <p className="mt-3 text-sm text-stone-600">Still different? Look for bank charges, interest or deposits on the statement that aren&apos;t in the books: record them from <Link className="text-brand-700 underline" href={`/w/${slug}/banking/accounts/${r.bank_account_id}`}>the statement lines</Link>, or with Spend / Receive money.</p>}
+      <Modal open={reopening} title="Reopen this reconciliation" onClose={() => setReopening(false)}>
+        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); act.mutate("reopen"); }}>
+          <p className="text-sm text-stone-600">Its transactions are unlocked and can be changed or voided again. The reason is kept in the audit log.</p>
+          <Field label="Why"><Textarea required rows={3} value={reason} onChange={(e) => setReason(e.target.value)} /></Field>
+          <FormError error={act.error} />
+          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setReopening(false)}>Cancel</Button><Button type="submit" loading={act.isPending}>Reopen</Button></div>
+        </form>
+      </Modal>
     </div>
   );
 }

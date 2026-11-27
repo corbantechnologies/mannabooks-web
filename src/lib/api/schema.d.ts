@@ -22169,6 +22169,8 @@ export interface components {
         ReconciliationActionActionEnum: "complete" | "reopen";
         ReconciliationActionRequest: {
             action: components["schemas"]["ReconciliationActionActionEnum"];
+            /** @description reopen: why (required); kept in the audit log */
+            reason?: string;
         };
         ReconciliationRequest: {
             /** Format: uuid */
