@@ -45,7 +45,8 @@ The **Overview** is yours to arrange. Choose **Customise** to add, remove and re
 - The left menu shows only the pages your role allows.
 - **Find a page quickly:** press **Ctrl+K** (**Cmd+K** on a Mac), or tap the search button at the top. Type part of a page's name, such as *tasks* or *invoices*, then press **Enter**.
 - **Menu sections:** only the section of the page you're on is open. Tap another heading (Sales, People...) to look inside; it folds again when you move to another page.
-- **Pin pages you use most:** hover over a menu item (on a phone, tap the star beside it) and choose the star. Pinned pages appear at the top of the menu, and first in the quick search.
+- **Pin pages you use most:** hover over a menu item (on a phone, tap the star beside it) and choose the star. Pinned pages appear at the top of the menu, and first in the quick search. Use the arrows beside a pinned page to put them in your order.
+- **Move a whole section up:** the star beside a section's name (Work, People, Organisation...) moves it to the top of the menu, under Overview. Your pins follow you to every phone and computer you sign in on.
 - The **Guide** button on each page opens the guide for that page.
 - **Switch workspace** at the top takes you back to your list of businesses.
 - Under your name (top right): **My account** to change your password or your sign-in email (a link goes to the new address, and the email changes only once you open it), and **Sign out**.

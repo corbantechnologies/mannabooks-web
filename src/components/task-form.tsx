@@ -55,7 +55,7 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
   const waiting = people.data?.waiting ?? [];
   const [f, setF] = useState({
     title: task?.title ?? "", details: task?.details ?? "", due_date: task?.due_date ?? "", due_time: task?.due_time?.slice(0, 5) ?? "",
-    priority: task?.priority ?? "normal", needs_check: task?.needs_check ?? true,
+    priority: task?.priority ?? "normal", needs_check: task?.needs_check ?? true, needs_file: task?.needs_file ?? false,
     project_id: task?.project_id ?? "", customer_id: task?.customer_id ?? "", steps: "", opens_on: task?.opens_on ?? "",
   });
   const who = chosen.length || chosenDeps.length || chosenWaiting.length ? chosen : me ? [me.id] : [];
@@ -159,6 +159,12 @@ export function TaskForm({ task, onClose }: { task?: Task; onClose: () => void }
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" className="mt-1" checked={f.needs_check} onChange={(e) => setF((p) => ({ ...p, needs_check: e.target.checked }))} />
             <span>I&apos;ll check it when it&apos;s done<span className="block text-xs text-stone-500">Off: when they mark it done, it is done.</span></span>
+          </label>
+        )}
+        {!(task ? task.for_self : onlyMe) && (
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-1" checked={f.needs_file} onChange={(e) => setF((p) => ({ ...p, needs_file: e.target.checked }))} />
+            <span>They upload a file back<span className="block text-xs text-stone-500">A signed copy, a receipt or a photo: the task can&apos;t be marked done without it. Attach what to sign after saving.</span></span>
           </label>
         )}
         {clash && (() => {

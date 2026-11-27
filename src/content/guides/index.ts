@@ -88,6 +88,7 @@ export const GUIDES: Guide[] = [
   { slug: "trial-balance", title: "Trial balance", summary: "Every balance on a date, and proof the books balance.", section: "Accounting", app: "/accounting/trial-balance" },
   { slug: "approvals", title: "Approvals", summary: "Approval chains for orders, vouchers, payroll and budgets.", section: "Control", app: "/approvals" },
   { slug: "budgets", title: "Budgets", summary: "Plan the year month by month and compare it with what happened.", section: "Accounting", app: "/accounting/budgets" },
+  { slug: "registers", title: "Registers", summary: "Software and subscriptions, licences, insurance, vehicles and more: who uses them, costs, renewals and access.", section: "Organisation", app: "/registers" },
   { slug: "fixed-assets", title: "Fixed assets", summary: "The asset register, monthly depreciation, and selling or scrapping assets.", section: "Accounting", app: "/accounting/fixed-assets" },
   { slug: "cost-centres", title: "Cost centres", summary: "Track the profit of a shop, vehicle, farm or programme on its own.", section: "Accounting", app: "/accounting/cost-centres" },
   { slug: "projects", title: "Projects", summary: "Job costing: the income, costs and profit of each job or contract.", section: "Projects", app: "/projects" },

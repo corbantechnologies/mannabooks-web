@@ -12,12 +12,13 @@ import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
 
-export type AttachDoc = "invoice" | "payment" | "bill" | "payment_voucher" | "supplier_payment" | "expense" | "journal";
+export type AttachDoc = "invoice" | "payment" | "bill" | "payment_voucher" | "supplier_payment" | "expense" | "journal" | "register_item";
 
 const KINDS = {
   sales: [["etims", "eTIMS invoice"], ["lpo", "LPO / purchase order"], ["delivery", "Proof of delivery"], ["contract", "Contract"],
     ["withholding", "Withholding certificate"], ["payment_proof", "Payment proof"], ["other", "Other"]],
   purchase: [["etims", "eTIMS invoice"], ["supplier_invoice", "Supplier invoice"], ["receipt", "Receipt"], ["payment_proof", "Payment proof"], ["other", "Other"]],
+  register: [["contract", "Contract or policy"], ["supplier_invoice", "Supplier invoice"], ["receipt", "Receipt"], ["other", "Other"]],
 } as const;
 const EMAILED: AttachDoc[] = ["invoice", "payment", "supplier_payment"];
 
@@ -28,9 +29,9 @@ const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} 
  * withholding certificate. Always optional. On documents that are emailed, a file can be marked to go with the email.
  * `missingEtims` shows a gentle reminder while the document has neither an eTIMS number nor an eTIMS file.
  */
-export function Attachments({ docType, id, side, canAdd, missingEtims }: { docType: AttachDoc; id: string; side: "sales" | "purchase"; canAdd: boolean; missingEtims?: boolean }) {
+export function Attachments({ docType, id, side, canAdd, missingEtims }: { docType: AttachDoc; id: string; side: "sales" | "purchase" | "register"; canAdd: boolean; missingEtims?: boolean }) {
   const { slug } = useWorkspace();
-  const [kind, setKind] = useState<string>(side === "sales" ? "etims" : "etims");
+  const [kind, setKind] = useState<string>(side === "register" ? "contract" : "etims");
   const input = useRef<HTMLInputElement>(null);
   const q = useQuery({
     queryKey: ["attachments", slug, docType, id],

@@ -1507,6 +1507,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/attendance/hours-vs-pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Hours worked against hours expected and pay, for everyone you may see (and yourself). Pay shows only with Payroll: view. */
+        get: operations["w_attendance_hours_vs_pay_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/attendance/me/": {
         parameters: {
             query?: never;
@@ -5155,6 +5172,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/leave-requests/settings/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The business's leave rules: notice needed per leave type. Everyone who asks for leave can read them; HR changes them. */
+        get: operations["w_leave_requests_settings_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description The business's leave rules: notice needed per leave type. Everyone who asks for leave can read them; HR changes them. */
+        patch: operations["w_leave_requests_settings_partial_update"];
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/ledger-accounts/": {
         parameters: {
             query?: never;
@@ -5466,6 +5501,23 @@ export interface paths {
          *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
          */
         patch: operations["w_members_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/menu-pins/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description The pages you pinned to the top of the side panel, in order. Yours only, in this workspace. */
+        put: operations["w_menu_pins_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/w/{workspace}/messages/": {
@@ -7850,6 +7902,147 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/registers/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The registers (active ones; all of them with Registers: manage). */
+        get: operations["w_registers_list"];
+        put?: never;
+        /** @description A new register, from a preset (software, licences, insurance, vehicles, domains, contracts) or from scratch. */
+        post: operations["w_registers_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Only an empty register can be deleted; one with items is switched off instead. */
+        delete: operations["w_registers_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Its name, description, seats and own fields (at most eight). */
+        patch: operations["w_registers_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/items/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Items in one register, or across all of them (search: "do we have it?"). */
+        get: operations["w_registers_items_retrieve"];
+        put?: never;
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        post: operations["w_registers_items_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/items/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        get: operations["w_registers_items_retrieve_2"];
+        put?: never;
+        post?: never;
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        delete: operations["w_registers_items_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        patch: operations["w_registers_items_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/items/{id}/ask/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Ask to use it (a login to a tool, say): the person responsible decides. */
+        post: operations["w_registers_items_ask_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/presets/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        get: operations["w_registers_presets_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/requests/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Requests waiting for your decision. */
+        get: operations["w_registers_requests_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/registers/requests/{id}/decide/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Everyone sees the registers and asks for access; costs and changes follow Registers: view and manage. */
+        post: operations["w_registers_requests_decide_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/related-documents/": {
         parameters: {
             query?: never;
@@ -8248,6 +8441,52 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/cash-forecast/planned/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Planned money in and out for the cash projection: bonuses, loan repayments, subscriptions, grants. */
+        get: operations["w_reports_cash_forecast_planned_list"];
+        put?: never;
+        /** @description Planned money in and out for the cash projection: bonuses, loan repayments, subscriptions, grants. */
+        post: operations["w_reports_cash_forecast_planned_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/reports/cash-forecast/planned/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        delete: operations["w_reports_cash_forecast_planned_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * @description Mixin for generic views on a `WorkspaceModel`.
+         *
+         *     Set `module` (e.g. "branches"): reads need `<module>.view`, writes `<module>.manage`.
+         *     Override `permission_map = {"POST": "branches.manage", ...}` for anything finer.
+         */
+        patch: operations["w_reports_cash_forecast_planned_partial_update"];
         trace?: never;
     };
     "/api/v1/w/{workspace}/reports/glance/": {
@@ -9435,6 +9674,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/tasks/colleagues/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everyone active in the business but you, by name: to say who a task is waiting on. */
+        get: operations["w_tasks_colleagues_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/tasks/departments/": {
         parameters: {
             query?: never;
@@ -9444,6 +9700,23 @@ export interface paths {
         };
         /** @description How each department handles its tasks: how long they wait to be taken, and how they end. Heads see their own. */
         get: operations["w_tasks_departments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/tasks/holds/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description What's waiting on whom: `scope=mine` for tasks waiting on you; otherwise the waits on tasks you can see, by who holds them. */
+        get: operations["w_tasks_holds_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9750,6 +10023,26 @@ export interface components {
         AcceptedInvitation: {
             workspace_slug: string;
             workspace_name: string;
+        };
+        AccessAskRequest: {
+            reason: string;
+        };
+        AccessDecideRequest: {
+            approve: boolean;
+            /** @default  */
+            note: string;
+        };
+        AccessRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            item_id: string;
+            item_name: string;
+            register_name: string;
+            name: string;
+            reason: string;
+            /** Format: date-time */
+            created_at: string;
         };
         AccountLedger: {
             account: components["schemas"]["LedgerAccount"];
@@ -10294,9 +10587,10 @@ export interface components {
          *     * `supplier_payment` - supplier_payment
          *     * `expense` - expense
          *     * `journal` - journal
+         *     * `register_item` - register_item
          * @enum {string}
          */
-        AttachmentUploadDocumentTypeEnum: "invoice" | "payment" | "bill" | "payment_voucher" | "supplier_payment" | "expense" | "journal";
+        AttachmentUploadDocumentTypeEnum: "invoice" | "payment" | "bill" | "payment_voucher" | "supplier_payment" | "expense" | "journal" | "register_item";
         AttachmentUploadRequest: {
             document_type: components["schemas"]["AttachmentUploadDocumentTypeEnum"];
             /** Format: uuid */
@@ -10400,6 +10694,10 @@ export interface components {
             minutes: number;
             break_minutes: number;
             late_minutes: number;
+            /** @description The break rule: worked longer than it allows without a break */
+            missed_break: boolean;
+            /** @description The break rule: the longest time worked in one go, in minutes (0 when the rule is off) */
+            longest_stretch: number;
             elsewhere: boolean;
             auto_closed: boolean;
             /** @description The shift they were on that day, if any */
@@ -10428,6 +10726,65 @@ export interface components {
             at_office: boolean | null;
             note: string;
         };
+        AttendanceHoursVsPay: {
+            /** Format: uuid */
+            employee_id: string;
+            name: string;
+            department: string;
+            pay_type: string;
+            /**
+             * Format: decimal
+             * @description Worked this month so far
+             */
+            hours: string;
+            /**
+             * Format: decimal
+             * @description The monthly hours, for the working days gone by
+             */
+            expected: string;
+            percent: number | null;
+            /**
+             * Format: decimal
+             * @description Null: not shown (no payroll access) or waged
+             */
+            salary: string | null;
+            /**
+             * Format: decimal
+             * @description The salary over the monthly hours
+             */
+            per_hour: string | null;
+            /**
+             * Format: decimal
+             * @description The hours worked at that rate
+             */
+            worth: string | null;
+            /**
+             * Format: decimal
+             * @description The salary's share for the days gone by
+             */
+            paid_so_far: string | null;
+            weeks_below_floor: number;
+            weeks_near_extra: number;
+            /**
+             * @description Under 90% or over 110% of the hours expected
+             *
+             *     * `under` - under
+             *     * `ok` - ok
+             *     * `over` - over
+             *     * `no_hours` - no_hours
+             */
+            status: components["schemas"]["AttendanceHoursVsPayStatusEnum"];
+            /** @description Days with a missed break (the break rule) */
+            missed_breaks: number;
+        };
+        /**
+         * @description * `under` - under
+         *     * `ok` - ok
+         *     * `over` - over
+         *     * `no_hours` - no_hours
+         * @enum {string}
+         */
+        AttendanceHoursVsPayStatusEnum: "under" | "ok" | "over" | "no_hours";
         AttendanceMe: {
             enabled: boolean;
             tracked: boolean;
@@ -10488,6 +10845,8 @@ export interface components {
             grace_minutes?: number | null;
             break_minutes?: number | null;
             tracked?: boolean | null;
+            /** @description The break rule here: on, off, or null to follow the level above */
+            break_rule?: boolean | null;
         };
         AttendanceOverrideRequest: {
             /** Format: uuid */
@@ -10508,6 +10867,8 @@ export interface components {
             grace_minutes?: number | null;
             break_minutes?: number | null;
             tracked?: boolean | null;
+            /** @description The break rule here: on, off, or null to follow the level above */
+            break_rule?: boolean | null;
         };
         AttendancePersonDay: {
             /** Format: date */
@@ -10522,6 +10883,10 @@ export interface components {
             minutes: number;
             break_minutes: number;
             late_minutes: number;
+            /** @description The break rule: worked longer than it allows without a break */
+            missed_break: boolean;
+            /** @description The break rule: the longest time worked in one go, in minutes (0 when the rule is off) */
+            longest_stretch: number;
             elsewhere: boolean;
             auto_closed: boolean;
             /** @description The shift they were on that day, if any */
@@ -12079,6 +12444,11 @@ export interface components {
             counted_cash: string;
             notes?: string;
         };
+        Colleague: {
+            /** Format: uuid */
+            id: string;
+            full_name: string;
+        };
         ComingUp: {
             /** Format: date */
             today: string;
@@ -12102,7 +12472,7 @@ export interface components {
              *     * `out` - out
              *     * `in` - in
              */
-            direction: components["schemas"]["ComingUpItemDirectionEnum"];
+            direction: components["schemas"]["DirectionE5aEnum"];
             title: string;
             party: string;
             /** Format: date */
@@ -12115,12 +12485,6 @@ export interface components {
             note: string;
         };
         /**
-         * @description * `out` - out
-         *     * `in` - in
-         * @enum {string}
-         */
-        ComingUpItemDirectionEnum: "out" | "in";
-        /**
          * @description * `bill` - bill
          *     * `voucher` - voucher
          *     * `salaries` - salaries
@@ -12129,9 +12493,10 @@ export interface components {
          *     * `invoice` - invoice
          *     * `portfolio_bill` - portfolio_bill
          *     * `portfolio_renewal` - portfolio_renewal
+         *     * `register` - register
          * @enum {string}
          */
-        ComingUpItemKindEnum: "bill" | "voucher" | "salaries" | "statutory" | "vat" | "invoice" | "portfolio_bill" | "portfolio_renewal";
+        ComingUpItemKindEnum: "bill" | "voucher" | "salaries" | "statutory" | "vat" | "invoice" | "portfolio_bill" | "portfolio_renewal" | "register";
         CompanyGroup: {
             /** Format: uuid */
             readonly id: string;
@@ -12892,7 +13257,23 @@ export interface components {
              * @description Gross pay on approved payslips, by each person's department
              */
             wages: string;
+            /** @description People paid in the range */
             people: number;
+            /** @description People in the department now (not exited) */
+            headcount: number;
+            /** @description On approved leave today */
+            on_leave: number;
+            /** @description Tasks due in the range (not cancelled) */
+            tasks_due: number;
+            tasks_done: number;
+            /** @description Done by their due date */
+            tasks_on_time: number;
+            /** @description Due in the range, past due and not done */
+            tasks_overdue: number;
+            /** @description Done as a % of due; null when none were due */
+            task_completion: number | null;
+            /** @description Work reports late now */
+            reports_late: number;
         };
         DepartmentTaskRecord: {
             /** Format: uuid */
@@ -12930,6 +13311,10 @@ export interface components {
             total_budget: string;
             /** Format: decimal */
             total_wages: string;
+            total_headcount: number;
+            total_on_leave: number;
+            total_tasks_overdue: number;
+            task_completion: number | null;
             /** @description False when your role can't see payroll */
             wages_shown: boolean;
         };
@@ -12958,6 +13343,12 @@ export interface components {
             entries: number;
             assets: number;
         };
+        /**
+         * @description * `out` - out
+         *     * `in` - in
+         * @enum {string}
+         */
+        DirectionE5aEnum: "out" | "in";
         DocumentEmail: {
             /** Format: uuid */
             readonly id: string;
@@ -13643,6 +14034,8 @@ export interface components {
              */
             first_below: string | null;
             months: components["schemas"]["ForecastMonth"][];
+            /** @description Every source the projection uses, with how it's worked out */
+            included: components["schemas"]["ForecastSource"][];
             assumptions: components["schemas"]["ForecastAssumptions"];
         };
         ForecastAssumptions: {
@@ -13652,6 +14045,16 @@ export interface components {
             spending_a_month: string;
             /** Format: decimal */
             payroll_a_month: string;
+            /** Format: decimal */
+            vat_a_month: string;
+        };
+        ForecastLine: {
+            /** Format: date */
+            date: string;
+            label: string;
+            /** Format: decimal */
+            amount: string;
+            overdue: boolean;
         };
         ForecastMonth: {
             /** Format: date */
@@ -13677,6 +14080,24 @@ export interface components {
             bills: string;
             /** Format: decimal */
             payroll: string;
+            /** @description Each source's amount this month, by key */
+            parts: {
+                [key: string]: string;
+            };
+        };
+        ForecastSource: {
+            key: string;
+            label: string;
+            direction: components["schemas"]["DirectionE5aEnum"];
+            how: string;
+            /**
+             * Format: decimal
+             * @description Over the whole period
+             */
+            total: string;
+            left_out: boolean;
+            /** @description What makes it up, dated (empty for averages and payroll) */
+            lines: components["schemas"]["ForecastLine"][];
         };
         /**
          * @description * `pickup` - Pickup
@@ -14978,6 +15399,8 @@ export interface components {
             readonly decided_at: string | null;
             readonly decision_note: string;
             readonly can_decide: boolean;
+            /** @description Asked for with less notice than the business's rule for this leave type */
+            readonly short_notice: boolean;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -14994,6 +15417,15 @@ export interface components {
             end_date: string;
             reason?: string;
         };
+        LeaveSettings: {
+            /** @description Days of notice by leave type (annual, sick, ...); 0: none */
+            notice_days: {
+                [key: string]: number;
+            };
+            short_notice: components["schemas"]["ShortNoticeEnum"];
+            /** @description The leave types, for the form */
+            readonly types: components["schemas"]["LeaveType"][];
+        };
         /**
          * @description * `pending` - Waiting for approval
          *     * `approved` - Approved
@@ -15002,6 +15434,10 @@ export interface components {
          * @enum {string}
          */
         LeaveStatusEnum: "pending" | "approved" | "rejected" | "cancelled";
+        LeaveType: {
+            key: string;
+            label: string;
+        };
         /**
          * @description * `annual` - Annual leave
          *     * `sick` - Sick leave
@@ -15398,6 +15834,14 @@ export interface components {
          * @enum {string}
          */
         MembershipStatusEnum: "active" | "suspended";
+        MenuPins: {
+            /** @description Menu pages ("/tasks") and whole sections ("#Work") pinned to the top, at most 20, in order */
+            pins: string[];
+        };
+        MenuPinsRequest: {
+            /** @description Menu pages ("/tasks") and whole sections ("#Work") pinned to the top, at most 20, in order */
+            pins: string[];
+        };
         /**
          * @description * `cash` - cash
          *     * `mpesa` - mpesa
@@ -15638,6 +16082,8 @@ export interface components {
          */
         MpesaTransactionStatusEnum: "pending" | "completed" | "failed" | "cancelled";
         MyDepartment: {
+            /** @description False: you work in it and may see its budget (Budgets: view own), not head it */
+            is_head: boolean;
             id: string;
             name: string;
             members: components["schemas"]["_Member"][];
@@ -18293,6 +18739,13 @@ export interface components {
             assigned_to_id?: string | null;
             notes?: string;
         };
+        PatchedLeaveSettingsRequest: {
+            /** @description Days of notice by leave type (annual, sick, ...); 0: none */
+            notice_days?: {
+                [key: string]: number;
+            };
+            short_notice?: components["schemas"]["ShortNoticeEnum"];
+        };
         PatchedLedgerAccountRequest: {
             code?: string;
             name?: string;
@@ -18481,6 +18934,20 @@ export interface components {
             is_public?: boolean;
             is_active?: boolean;
             sort?: number;
+        };
+        PatchedPlannedCashItemRequest: {
+            name?: string;
+            direction?: components["schemas"]["DirectionE5aEnum"];
+            /** Format: decimal */
+            amount?: string;
+            /** Format: date */
+            first_date?: string;
+            /** @default once */
+            repeat: components["schemas"]["RepeatEnum"];
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+            is_active?: boolean;
         };
         PatchedPortfolioAppInRequest: {
             name?: string;
@@ -18760,6 +19227,37 @@ export interface components {
             /** Format: uuid */
             cost_center_id?: string | null;
         };
+        PatchedRegisterItemInRequest: {
+            name?: string;
+            status?: components["schemas"]["RegisterItemInStatusEnum"];
+            /** Format: uuid */
+            supplier_id?: string | null;
+            /** Format: decimal */
+            cost?: string;
+            cost_cycle?: components["schemas"]["CostCycleEnum"];
+            /** Format: date */
+            renewal_date?: string | null;
+            auto_renews?: boolean;
+            remind_days?: number;
+            /** Format: uuid */
+            owner_id?: string | null;
+            department_ids?: string[];
+            user_ids?: string[];
+            seats?: number | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            notes?: string;
+            values?: {
+                [key: string]: string;
+            };
+        };
+        PatchedRegisterTypeRequest: {
+            name?: string;
+            description?: string;
+            has_seats?: boolean;
+            fields?: components["schemas"]["RegisterFieldRequest"][];
+            is_active?: boolean;
+        };
         PatchedReminderRuleRequest: {
             name?: string;
             /** @description -3: three days before the due date, 0: on it, 7: a week after */
@@ -18886,6 +19384,8 @@ export interface components {
             due_time?: string | null;
             /** @description The person who gave it accepts it before it counts as done */
             needs_check?: boolean;
+            /** @description The person doing it uploads a file (a signed copy, a receipt, a photo) before it can be done */
+            needs_file?: boolean;
             /** Format: uuid */
             project_id?: string | null;
             /** Format: uuid */
@@ -19747,6 +20247,36 @@ export interface components {
             /** @description Team members using a seat (accountants and self-service staff are free) */
             users: number;
         };
+        PlannedCashItem: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            direction: components["schemas"]["DirectionE5aEnum"];
+            /** Format: decimal */
+            amount: string;
+            /** Format: date */
+            first_date: string;
+            /** @default once */
+            repeat: components["schemas"]["RepeatEnum"];
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+            is_active?: boolean;
+        };
+        PlannedCashItemRequest: {
+            name: string;
+            direction: components["schemas"]["DirectionE5aEnum"];
+            /** Format: decimal */
+            amount: string;
+            /** Format: date */
+            first_date: string;
+            /** @default once */
+            repeat: components["schemas"]["RepeatEnum"];
+            /** Format: date */
+            end_date?: string | null;
+            notes?: string;
+            is_active?: boolean;
+        };
         PlatformAction: {
             /** Format: uuid */
             readonly id: string;
@@ -20485,6 +21015,17 @@ export interface components {
          * @enum {string}
          */
         PositionEnum: "next" | "previous";
+        /**
+         * @description * `` -
+         *     * `software` - software
+         *     * `licences` - licences
+         *     * `insurance` - insurance
+         *     * `vehicles` - vehicles
+         *     * `domains` - domains
+         *     * `contracts` - contracts
+         * @enum {string}
+         */
+        PresetEnum: "software" | "licences" | "insurance" | "vehicles" | "domains" | "contracts";
         Preview: {
             /** @description The customer or supplier's business is on MannaBooks */
             available: boolean;
@@ -21623,6 +22164,125 @@ export interface components {
             /** Format: uuid */
             tax_rate_id?: string | null;
         };
+        RegisterCreateRequest: {
+            preset?: components["schemas"]["PresetEnum"] | components["schemas"]["BlankEnum"];
+            /** @description Blank with a preset: the preset's name */
+            name?: string;
+        };
+        RegisterField: {
+            key?: string;
+            label: string;
+            kind: components["schemas"]["RegisterFieldKindEnum"];
+            options?: string[];
+        };
+        /**
+         * @description * `text` - text
+         *     * `number` - number
+         *     * `date` - date
+         *     * `choice` - choice
+         * @enum {string}
+         */
+        RegisterFieldKindEnum: "text" | "number" | "date" | "choice";
+        RegisterFieldRequest: {
+            key?: string;
+            label: string;
+            kind: components["schemas"]["RegisterFieldKindEnum"];
+            options?: string[];
+        };
+        RegisterItem: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            register_id: string;
+            register_name: string;
+            name: string;
+            status: string;
+            /** Format: uuid */
+            supplier_id: string | null;
+            supplier_name: string;
+            /**
+             * Format: decimal
+             * @description Null: your role doesn't show costs
+             */
+            cost: string | null;
+            cost_cycle: string;
+            cost_cycle_label: string;
+            /** Format: decimal */
+            monthly_cost: string | null;
+            /** Format: date */
+            renewal_date: string | null;
+            renews_in_days: number | null;
+            auto_renews: boolean;
+            remind_days: number;
+            /** Format: uuid */
+            owner_id: string | null;
+            owner_name: string;
+            departments: components["schemas"]["_Named"][];
+            users: components["schemas"]["_Named"][];
+            seats: number | null;
+            seats_used: number;
+            /** Format: uuid */
+            cost_center_id: string | null;
+            cost_center_name: string;
+            notes: string;
+            values: {
+                [key: string]: string;
+            };
+            i_use_it: boolean;
+            i_asked: boolean;
+            can_manage: boolean;
+            money_shown: boolean;
+            /** @description Waiting for a decision (only for whoever decides) */
+            requests: components["schemas"]["_Request"][];
+        };
+        RegisterItemInRequest: {
+            name?: string;
+            status?: components["schemas"]["RegisterItemInStatusEnum"];
+            /** Format: uuid */
+            supplier_id?: string | null;
+            /** Format: decimal */
+            cost?: string;
+            cost_cycle?: components["schemas"]["CostCycleEnum"];
+            /** Format: date */
+            renewal_date?: string | null;
+            auto_renews?: boolean;
+            remind_days?: number;
+            /** Format: uuid */
+            owner_id?: string | null;
+            department_ids?: string[];
+            user_ids?: string[];
+            seats?: number | null;
+            /** Format: uuid */
+            cost_center_id?: string | null;
+            notes?: string;
+            values?: {
+                [key: string]: string;
+            };
+        };
+        /**
+         * @description * `active` - Active
+         *     * `ended` - Ended
+         * @enum {string}
+         */
+        RegisterItemInStatusEnum: "active" | "ended";
+        RegisterItemList: {
+            items: components["schemas"]["RegisterItem"][];
+            money_shown: boolean;
+            /** Format: decimal */
+            total_monthly: string | null;
+            /** Format: decimal */
+            total_yearly: string | null;
+            /** @description Active items renewing in the next 30 days (or overdue) */
+            renewing_soon: number;
+        };
+        RegisterPreset: {
+            key: string;
+            name: string;
+            description: string;
+            has_seats: boolean;
+            /** @description This business already has it */
+            added: boolean;
+        };
         RegisterRequest: {
             /** Format: email */
             email: string;
@@ -21639,6 +22299,18 @@ export interface components {
             user: components["schemas"]["User"];
             /** @description The workspace created from business_name, if any */
             workspace_slug: string | null;
+        };
+        RegisterType: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            readonly preset: string;
+            description?: string;
+            has_seats?: boolean;
+            fields?: components["schemas"]["RegisterField"][];
+            is_active?: boolean;
+            /** @description Active items */
+            readonly items: number;
         };
         RelatedDocument: {
             kind: string;
@@ -21703,6 +22375,16 @@ export interface components {
             account_number: string;
             reminders_sent: string[];
         };
+        /**
+         * @description * `once` - once
+         *     * `weekly` - weekly
+         *     * `monthly` - monthly
+         *     * `quarterly` - quarterly
+         *     * `half_yearly` - half_yearly
+         *     * `yearly` - yearly
+         * @enum {string}
+         */
+        RepeatEnum: "once" | "weekly" | "monthly" | "quarterly" | "half_yearly" | "yearly";
         ReplyRequest: {
             body: string;
             /**
@@ -22397,6 +23079,12 @@ export interface components {
             image_url: string;
             available: boolean;
         };
+        /**
+         * @description * `allow` - allow
+         *     * `block` - block
+         * @enum {string}
+         */
+        ShortNoticeEnum: "allow" | "block";
         /**
          * @description * `paybill` - Paybill
          *     * `till` - Till (Buy Goods)
@@ -23187,6 +23875,21 @@ export interface components {
             readonly can_manage: boolean;
             /** Format: date-time */
             readonly created_at: string;
+            /** @description The person doing it uploads a file (a signed copy, a receipt, a photo) before it can be done */
+            readonly needs_file: boolean;
+            /** @description needs_file: the person doing it has uploaded a file */
+            readonly file_back: boolean;
+            /** @description Every time it waited on someone, oldest first; the open one has no end */
+            readonly holds: components["schemas"]["TaskHold"][];
+            /** @description The open wait, or null */
+            readonly waiting: components["schemas"]["TaskHold"] | null;
+            /**
+             * Format: double
+             * @description All the time it has waited on others, in hours
+             */
+            readonly hold_hours: number;
+            readonly can_resume: boolean;
+            readonly deadline_requests: components["schemas"]["TaskDeadlineRequest"][];
         };
         /**
          * @description * `take` - take
@@ -23198,18 +23901,33 @@ export interface components {
          *     * `return` - return
          *     * `cancel` - cancel
          *     * `reopen` - reopen
+         *     * `hold` - hold
+         *     * `resume` - resume
+         *     * `ask_deadline` - ask_deadline
+         *     * `approve_deadline` - approve_deadline
+         *     * `decline_deadline` - decline_deadline
          * @enum {string}
          */
-        TaskActionActionEnum: "take" | "hand_back" | "assign" | "start" | "done" | "accept" | "return" | "cancel" | "reopen";
+        TaskActionActionEnum: "take" | "hand_back" | "assign" | "start" | "done" | "accept" | "return" | "cancel" | "reopen" | "hold" | "resume" | "ask_deadline" | "approve_deadline" | "decline_deadline";
         TaskActionRequest: {
             action: components["schemas"]["TaskActionActionEnum"];
-            /** @default  */
+            /**
+             * @description hold: what you're waiting for; ask_deadline: why
+             * @default
+             */
             note: string;
             /**
              * Format: uuid
-             * @description assign: the person in the department to give it to
+             * @description assign: the person in the department to give it to; hold: the colleague it waits on
              */
             to_id?: string;
+            /** @description hold: someone outside the business */
+            waiting_on_name?: string;
+            /**
+             * Format: date
+             * @description ask_deadline: the date asked for
+             */
+            new_date?: string | null;
         };
         TaskAttachment: {
             readonly id: number;
@@ -23299,6 +24017,26 @@ export interface components {
             customer_id?: string | null;
             /** @description Steps to tick off */
             checklist?: string[];
+            /**
+             * @description The person doing it must upload a file (signed copy, receipt, photo) before it's done
+             * @default false
+             */
+            needs_file: boolean;
+        };
+        TaskDeadlineRequest: {
+            id: number;
+            /** @default  */
+            asked_by_name: string;
+            /** Format: date */
+            old_date: string | null;
+            /** Format: date */
+            new_date: string;
+            reason: string;
+            status: string;
+            decided_by_name?: string | null;
+            decision_note: string;
+            /** Format: date-time */
+            created_at: string;
         };
         TaskEvent: {
             kind: components["schemas"]["TaskEventKindEnum"];
@@ -23315,6 +24053,53 @@ export interface components {
          * @enum {string}
          */
         TaskEventKindEnum: "taken" | "handed_back" | "assigned";
+        TaskHold: {
+            id: number;
+            waiting_on: string;
+            /** Format: uuid */
+            waiting_on_id: string | null;
+            reason: string;
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            ended_at: string | null;
+            ended_note: string;
+            /** Format: double */
+            readonly hours: number;
+        };
+        TaskHoldRow: {
+            /** Format: uuid */
+            task_id: string;
+            title: string;
+            doing_it: string;
+            waiting_on: string;
+            /** Format: uuid */
+            waiting_on_id: string | null;
+            reason: string;
+            /** Format: date-time */
+            since: string;
+            days: number;
+            /** Format: date */
+            due_date: string | null;
+        };
+        TaskHolder: {
+            who: string;
+            /** Format: uuid */
+            membership_id: string | null;
+            /** @description Tasks waiting on them now */
+            open: number;
+            /** Format: date-time */
+            oldest_since: string | null;
+            /**
+             * Format: double
+             * @description Hours tasks waited on them this month
+             */
+            hours_this_month: number;
+        };
+        TaskHolds: {
+            open: components["schemas"]["TaskHoldRow"][];
+            people: components["schemas"]["TaskHolder"][];
+        };
         TaskInsights: {
             scope: string;
             scopes: string[];
@@ -23793,6 +24578,8 @@ export interface components {
             }[];
             /** @description Documents can be downloaded as PDF (the PDF service is set up) */
             pdf_enabled: boolean;
+            /** @description Pages this person pinned to the top of the side panel, in order */
+            menu_pins?: string[];
             /** @description Blocked by MannaBooks staff */
             blocked: boolean;
             blocked_reason: string;
@@ -23884,6 +24671,11 @@ export interface components {
             costs: string;
             /** Format: decimal */
             net: string;
+        };
+        _Named: {
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         _ProfileActivity: {
             /** Format: date */
@@ -23980,6 +24772,14 @@ export interface components {
         _ProfileReports: {
             record: components["schemas"]["ReportRecord"] | null;
             recent: components["schemas"]["_ProfileReport"][];
+        };
+        _Request: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            reason: string;
+            /** Format: date-time */
+            created_at: string;
         };
     };
     responses: never;
@@ -26586,7 +27386,7 @@ export interface operations {
     w_attachments_list: {
         parameters: {
             query: {
-                document_type: "bill" | "expense" | "invoice" | "journal" | "payment" | "payment_voucher" | "supplier_payment";
+                document_type: "bill" | "expense" | "invoice" | "journal" | "payment" | "payment_voucher" | "register_item" | "supplier_payment";
                 object_id: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -26812,6 +27612,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AttendanceCorrection"];
+                };
+            };
+        };
+    };
+    w_attendance_hours_vs_pay_list: {
+        parameters: {
+            query?: {
+                /** @description Any day in the month (default: this month) */
+                month?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceHoursVsPay"][];
                 };
             };
         };
@@ -33852,6 +34680,54 @@ export interface operations {
             };
         };
     };
+    w_leave_requests_settings_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveSettings"];
+                };
+            };
+        };
+    };
+    w_leave_requests_settings_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedLeaveSettingsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedLeaveSettingsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedLeaveSettingsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveSettings"];
+                };
+            };
+        };
+    };
     w_ledger_accounts_list: {
         parameters: {
             query?: {
@@ -34537,6 +35413,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Membership"];
+                };
+            };
+        };
+    };
+    w_menu_pins_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenuPinsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MenuPinsRequest"];
+                "multipart/form-data": components["schemas"]["MenuPinsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenuPins"];
                 };
             };
         };
@@ -39121,6 +40024,342 @@ export interface operations {
             };
         };
     };
+    w_registers_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterType"][];
+                };
+            };
+        };
+    };
+    w_registers_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RegisterCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RegisterCreateRequest"];
+                "multipart/form-data": components["schemas"]["RegisterCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterType"];
+                };
+            };
+        };
+    };
+    w_registers_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_registers_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedRegisterTypeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedRegisterTypeRequest"];
+                "multipart/form-data": components["schemas"]["PatchedRegisterTypeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterType"];
+                };
+            };
+        };
+    };
+    w_registers_items_retrieve: {
+        parameters: {
+            query?: {
+                department?: string;
+                q?: string;
+                register?: string;
+                status?: "active" | "all" | "ended";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItemList"];
+                };
+            };
+        };
+    };
+    w_registers_items_create: {
+        parameters: {
+            query: {
+                register: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RegisterItemInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RegisterItemInRequest"];
+                "multipart/form-data": components["schemas"]["RegisterItemInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItem"];
+                };
+            };
+        };
+    };
+    w_registers_items_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItem"];
+                };
+            };
+        };
+    };
+    w_registers_items_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_registers_items_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedRegisterItemInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedRegisterItemInRequest"];
+                "multipart/form-data": components["schemas"]["PatchedRegisterItemInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItem"];
+                };
+            };
+        };
+    };
+    w_registers_items_ask_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccessAskRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AccessAskRequest"];
+                "multipart/form-data": components["schemas"]["AccessAskRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItem"];
+                };
+            };
+        };
+    };
+    w_registers_presets_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterPreset"][];
+                };
+            };
+        };
+    };
+    w_registers_requests_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessRequest"][];
+                };
+            };
+        };
+    };
+    w_registers_requests_decide_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccessDecideRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AccessDecideRequest"];
+                "multipart/form-data": components["schemas"]["AccessDecideRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterItem"];
+                };
+            };
+        };
+    };
     w_related_documents_list: {
         parameters: {
             query: {
@@ -39811,6 +41050,8 @@ export interface operations {
         parameters: {
             query?: {
                 floor?: number;
+                /** @description Sources to leave out, comma separated (keys from `included`) */
+                leave_out?: string;
                 months?: number;
             };
             header?: never;
@@ -39827,6 +41068,108 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Forecast"];
+                };
+            };
+        };
+    };
+    w_reports_cash_forecast_planned_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlannedCashItem"][];
+                };
+            };
+        };
+    };
+    w_reports_cash_forecast_planned_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlannedCashItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PlannedCashItemRequest"];
+                "multipart/form-data": components["schemas"]["PlannedCashItemRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlannedCashItem"];
+                };
+            };
+        };
+    };
+    w_reports_cash_forecast_planned_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    w_reports_cash_forecast_planned_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPlannedCashItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedPlannedCashItemRequest"];
+                "multipart/form-data": components["schemas"]["PatchedPlannedCashItemRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlannedCashItem"];
                 };
             };
         };
@@ -42099,6 +43442,32 @@ export interface operations {
             };
         };
     };
+    w_tasks_colleagues_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Colleague"][];
+                };
+            };
+        };
+    };
     w_tasks_departments_list: {
         parameters: {
             query?: {
@@ -42121,6 +43490,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DepartmentTaskRecord"][];
+                };
+            };
+        };
+    };
+    w_tasks_holds_retrieve: {
+        parameters: {
+            query?: {
+                scope?: "mine" | "seen";
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskHolds"];
                 };
             };
         };

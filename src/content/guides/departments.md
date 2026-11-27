@@ -37,7 +37,7 @@ A department's head sees **My department** in the menu. It shows, for each depar
 - **Money:** income, costs and net this month and this financial year so far, against the department's budget if there is an approved one. It counts everything tagged with the department or one of its cost centres.
 - **Work reports:** reports from their people that are late, and how many fall due in the next week.
 
-The menu entry appears only for someone set as a department's head.
+The menu entry appears for someone set as a department's head, and for people whose role has **Budgets: view own** (Self-service has it to start): they see their own department's people, and its money against its budget, without the head's leave and work reports. Take it off a role under **Roles** to hide budgets from that role.
 
 
 ## All departments (owners and finance)
@@ -46,7 +46,9 @@ The menu entry appears only for someone set as a department's head.
 
 - what it **spent**, from the books: everything tagged with the department or one of its cost centres;
 - its approved **budget** for the same months, how much of it is **used**, and what's **left** (amber past 85%, red when over);
-- its **wages**: gross pay on approved payslips, by each person's department, and how many people were paid.
+- its **people** now, and how many are on leave today;
+- its **wages**: gross pay on approved payslips, by each person's department, and how many people were paid;
+- its **tasks** due in the period: how many are done (and how many on time), how many are overdue, and work reports late now. A task counts in its department, or else in the department of the person doing it.
 
 ## A department's page
 

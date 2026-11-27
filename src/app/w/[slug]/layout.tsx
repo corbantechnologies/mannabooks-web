@@ -73,6 +73,7 @@ import {
   ChevronsUpDown,
   Star,
   ChevronDown,
+  ChevronUp,
   Coins,
   History,
   LayoutDashboard,
@@ -102,7 +103,7 @@ import { type JumpItem, QuickJump } from "@/components/quick-jump";
 import { SubscriptionBanner } from "@/components/subscription-banner";
 import { TopBar } from "@/components/top-bar";
 import { ErrorState, Spinner } from "@/components/ui";
-import { SERVER_PREFS, readNavPrefs, subscribeNavPrefs, togglePin } from "@/lib/nav-prefs";
+import { SERVER_PREFS, movePin, readNavPrefs, seedNavPrefs, subscribeNavPrefs, togglePin } from "@/lib/nav-prefs";
 import { PeriodProvider } from "@/lib/period";
 import { WorkspaceProvider, grants, useWorkspaceContextQuery, useWorkspaceSlug } from "@/lib/workspace";
 
@@ -244,6 +245,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/employees", label: "Employees", icon: Users, perm: ["employees.view", "employees.view_own"] },
       { href: "/departments", label: "Departments", icon: Network, perm: ["departments.view"] },
       { href: "/branches", label: "Branches", icon: Building, perm: ["branches.view"] },
+      { href: "/registers", label: "Registers", icon: ClipboardList, perm: null },
       { href: "/team", label: "Team and access", icon: UserCog, perm: ["members.view"] },
       { href: "/roles", label: "Roles", icon: ShieldCheck, perm: ["roles.view"] },
       { href: "/approvals/rules", label: "Approval rules", icon: ListChecks, perm: ["approvals.view"] },
@@ -315,6 +317,8 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
     return () => window.removeEventListener("keydown", onKey);
   }, [menuOpen]);
   const ctx = useWorkspaceContextQuery(slug);
+  const serverPins = ctx.data?.menu_pins;
+  useEffect(() => { if (serverPins) seedNavPrefs(slug, serverPins); }, [slug, serverPins]);
 
   if (ctx.isLoading) {
     return (
@@ -352,20 +356,24 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
     (!switchedOn.length || !moduleOf(item.href) || switchedOn.includes(moduleOf(item.href)!)) &&
     (!item.perm || item.perm.some((code) => grants(context.permissions, code)) ||
       (item.href === "/accounting/budgets" && (context.headed_departments ?? []).length > 0)); // heads draft their department's budget
-  const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0);
+  const pinnedSections = prefs.pinned.filter((p) => p.startsWith("#")).map((p) => p.slice(1));
+  const rank = (name: string | null | undefined) => { const i = name ? pinnedSections.indexOf(name) : -1; return i < 0 ? Number.MAX_SAFE_INTEGER : i; };
+  // the first block (Overview...) stays on top; starred sections come next, in the order they were starred
+  const sections = NAV.map((s) => ({ ...s, items: s.items.filter(allowed) })).filter((s) => s.items.length > 0)
+    .map((s, i) => ({ s, i })).sort((a, b) => (a.s.section ? 1 : 0) - (b.s.section ? 1 : 0) || rank(a.s.section) - rank(b.s.section) || a.i - b.i).map(({ s }) => s);
   const isActive = (href: string) => {
     const target = base + href;
     return href === "" || href === "/pos" || href === "/inventory" || href === "/banking" || href === "/crm" ? pathname === target || (href === "/inventory" && pathname.startsWith(`${target}/products`)) || (href === "/banking" && /^\/w\/[^/]+\/banking\/(accounts|reconciliations)/.test(pathname)) : pathname.startsWith(target);
   };
   const everyItem = sections.flatMap((sec) => sec.items.map((item) => ({ ...item, section: sec.section })));
-  const pinned = prefs.pinned.map((h) => everyItem.find((i) => i.href === h)).filter((i): i is (typeof everyItem)[number] => Boolean(i));
+  const pinned = prefs.pinned.filter((h) => h.startsWith("/")).map((h) => everyItem.find((i) => i.href === h)).filter((i): i is (typeof everyItem)[number] => Boolean(i));
   const jumpItems: JumpItem[] = everyItem.map((i) => ({ href: base + i.href, label: i.label, section: i.section ?? undefined, icon: i.icon, pinned: prefs.pinned.includes(i.href) }));
 
   // counts shown beside a page, and on its section heading while the section is folded
   const countOf = (href: string) => (href === "/sales/online-orders" ? context.online_orders_new : href === "/inbox" ? context.inbox_new
     : href === "/approvals" ? context.tasks_to_check : href === "/messages" ? context.messages_unread : 0) || 0;
 
-  const navLink = ({ href, label, icon: Icon }: NavItem, key: string) => {
+  const navLink = ({ href, label, icon: Icon }: NavItem, key: string, order?: { first: boolean; last: boolean }) => {
     const active = isActive(href);
     const isPinned = prefs.pinned.includes(href);
     return (
@@ -381,6 +389,14 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <Icon className="h-4 w-4 shrink-0" aria-hidden /> <span className="min-w-0 flex-1">{label}</span>
           {countOf(href) > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-xs font-medium text-white">{countOf(href)}</span>}
         </Link>
+        {order && (
+          <span className="absolute right-7 top-1/2 flex -translate-y-1/2 flex-col opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100">
+            <button type="button" disabled={order.first} onClick={() => movePin(slug, href, -1)} aria-label={`Move ${label} up`} title="Move up"
+              className="rounded text-stone-400 hover:bg-stone-200 hover:text-stone-700 disabled:invisible"><ChevronUp className="h-3 w-3" /></button>
+            <button type="button" disabled={order.last} onClick={() => movePin(slug, href, 1)} aria-label={`Move ${label} down`} title="Move down"
+              className="rounded text-stone-400 hover:bg-stone-200 hover:text-stone-700 disabled:invisible"><ChevronDown className="h-3 w-3" /></button>
+          </span>
+        )}
         <button type="button" onClick={() => togglePin(slug, href)} aria-label={isPinned ? `Unpin ${label}` : `Pin ${label}`} title={isPinned ? "Unpin" : "Pin to the top"}
           className={clsx("absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-stone-200",
             isPinned ? "text-amber-500" : "text-stone-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100")}>
@@ -395,7 +411,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
       {pinned.length > 0 && (
         <div className="space-y-0.5">
           <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-amber-600">Pinned</p>
-          {pinned.map((item) => navLink(item, `pin-${item.href}`))}
+          {pinned.map((item, i) => navLink(item, `pin-${item.href}`, { first: i === 0, last: i === pinned.length - 1 }))}
         </div>
       )}
       {sections.map((section) => {
@@ -406,11 +422,19 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
         return (
           <div key={name ?? "main"} className="space-y-0.5">
             {name && (
-              <button type="button" onClick={() => togglePeek(name)} aria-expanded={!folded}
-                className="flex w-full items-center justify-between rounded px-3 pb-1 text-xs font-medium uppercase tracking-wide text-stone-400 hover:text-stone-600">
-                <span className="flex items-center gap-1.5">{name}{folded && waiting > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-[10px] font-medium normal-case tracking-normal text-white">{waiting}</span>}</span>
-                <ChevronDown className={clsx("h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
-              </button>
+              <div className="group/section relative">
+                <button type="button" onClick={() => togglePeek(name)} aria-expanded={!folded}
+                  className="flex w-full items-center justify-between rounded py-0.5 pl-3 pr-1 text-xs font-medium uppercase tracking-wide text-stone-400 hover:text-stone-600">
+                  <span className="flex items-center gap-1.5">{name}{folded && waiting > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-[10px] font-medium normal-case tracking-normal text-white">{waiting}</span>}</span>
+                  <ChevronDown className={clsx("mr-6 h-3.5 w-3.5 transition-transform", folded && "-rotate-90")} />
+                </button>
+                <button type="button" onClick={() => togglePin(slug, `#${name}`)} title={pinnedSections.includes(name) ? "Unpin the section" : "Move the section to the top"}
+                  aria-label={pinnedSections.includes(name) ? `Unpin the ${name} section` : `Move the ${name} section to the top`}
+                  className={clsx("absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-0.5 hover:bg-stone-200",
+                    pinnedSections.includes(name) ? "text-amber-500" : "text-stone-300 opacity-100 md:opacity-0 md:group-hover/section:opacity-100 md:focus:opacity-100")}>
+                  <Star className="h-3 w-3" fill={pinnedSections.includes(name) ? "currentColor" : "none"} />
+                </button>
+              </div>
             )}
             {!folded && section.items.map((item) => navLink(item, item.href))}
           </div>

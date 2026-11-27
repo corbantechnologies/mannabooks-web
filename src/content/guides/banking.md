@@ -35,10 +35,30 @@ On an account's page, **Set one** next to *No low-balance warning* and type the 
 
 ## Cash projection
 
-**Cash and banking > Cash projection** shows where cash is heading if nothing new is decided, month by month for 3 to 18 months. It starts from cash and bank today and, each month:
+**Cash and banking > Cash projection** shows where cash is heading if nothing new is decided, month by month for 3 to 18 months. It starts from cash and bank today, then adds and takes off everything MannaBooks knows is coming. **What's included** lists each source with how it's worked out and its total; untick one to leave it out, and click it to see what makes it up.
 
-- adds what customers owe, in the month each invoice is due (anything overdue in the first month), and your average cash sales and other income;
-- takes off supplier bills, in the month each is due, the payroll (from the latest one), and your average spending paid directly.
+Money in:
+
+- **Customers paying invoices**, in the month each is due (overdue ones in the first month);
+- **Recurring invoices** still to be raised, on their schedule, after the customer's payment terms;
+- **Client portfolio bills** still to be invoiced, on each service's bill date and cycle;
+- **Cash sales and other income**: the average of the last three months;
+- **Planned money in** that you add yourself.
+
+Money out:
+
+- **Supplier bills**, in the month each is due;
+- **Approved purchase orders** not yet billed, after the supplier's payment terms;
+- **Payroll**: the latest month's net pay and statutory deductions, every month;
+- **VAT**: what's owed for past months now, then the last three months' average, each paid the month after;
+- **Client portfolio supplier renewals** and **Registers** renewals (software, licences, policies), on each date and cycle;
+- **Your MannaBooks subscription**, when the next payment is due;
+- **Spending paid directly** (expenses): the average of the last three months;
+- **Planned payments** that you add yourself.
+
+Click a month to see what makes up its money in and out.
+
+**Planned payments and money in** are for what isn't in the books yet: year-end bonuses, a loan repayment, a subscription, a grant. Add one with **Planned payment**: once, or every week, month, 3 or 6 months or year, with an optional end date. Something already in the books (a bill, a recurring invoice) needn't be planned again.
 
 Set **Warn me below** (or leave it to your accounts' minimums) and it tells you the first month cash would go below it, with the chart turning red past that line. It knows only what is in the books: a guide, not a promise.
 

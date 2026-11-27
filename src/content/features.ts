@@ -91,7 +91,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "Salary advances", text: "Staff ask from their phone, supervisors recommend, finance approves and pays, and it comes off the next payslips by itself. Casuals draw only pay already earned.", guide: "salary-advances", isNew: true },
       { name: "Leave, working week and holidays", text: "Leave balances that count only working days, using your working week and Kenya's public holidays.", guide: "leave", isNew: true },
       { name: "Staff self-service", text: "Staff update their own contact details; changes to bank or M-Pesa details wait for HR to approve.", guide: "self-service", isNew: true },
-      { name: "Tasks", text: "Give a task to yourself, your team or any colleague, due by a date and time, with a priority, in progress, done and your check. Overdue tasks are flagged within the hour.", guide: "tasks", isNew: true },
+      { name: "Tasks", text: "Give a task to yourself, your team or any colleague, due by a date and time, with a priority, in progress, done and your check. Overdue tasks are flagged within the hour. Mark a task waiting on someone, ask for more time, or ask for a file back.", guide: "tasks", isNew: true },
       { name: "Work reports", text: "Ask for weekly or monthly reports, and set repeating tasks, with reminders, review and an overdue list. Admins can set them up for someone else.", guide: "work-reports" },
       { name: "Attendance", text: "Staff clock in and out from their own phone, with breaks and an office-network check. See who's in now, keep the day register, and approve corrections. Grace, alerts and extra hours are your own rules. Free on every paid plan until the end of 2026.", guide: "attendance", isNew: true },
       { name: "Shifts and rotas", text: "Day, night or flexible shifts, with people put on them from one date to another. Night shifts run past midnight, and a two-week rota shows who works when.", guide: "attendance", isNew: true },
@@ -111,6 +111,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { name: "My department", text: "A page for each head: their people, leave waiting, the department's money against its budget, and late reports.", guide: "departments", isNew: true },
       { name: "Cost centres and projects", text: "Tag sales and costs to a branch, crop, vehicle or job, and see the profit of each.", guide: "projects", module: "projects" },
       { name: "Fixed assets", text: "A register of vehicles, computers and equipment, with monthly depreciation and the gain or loss when you sell.", guide: "fixed-assets" },
+      { name: "Registers", text: "Software and subscriptions, licences, insurance, vehicles or any list of your own: who uses each, seats, cost, renewal reminders, and staff asking for access.", guide: "registers", isNew: true },
     ],
   },
   {
