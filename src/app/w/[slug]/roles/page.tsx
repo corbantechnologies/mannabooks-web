@@ -5,20 +5,21 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import type { Role } from "@/lib/api/types";
 import { grants, useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { useFormItem } from "@/lib/page-form";
 
 export default function RolesPage() {
   const { slug, can } = useWorkspace();
   const p = wsPath(slug);
-  const [editing, setEditing] = useState<Role | "new" | null>(null);
   const [form, setForm] = useState({ name: "", description: "", permissions: [] as string[] });
 
   const roles = useQuery({ queryKey: ["roles", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/", p)) });
   const catalog = useQuery({ queryKey: ["permission-catalog", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/roles/permissions/", p)) });
+  const [editing, setEditing] = useFormItem(roles.data?.results, fill);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -34,11 +35,11 @@ export default function RolesPage() {
     onError: (e) => toast.error(e.message),
   });
 
-  function open(role: Role | "new") {
+  function fill(role: Role | "new") {
     save.reset();
     setForm(role === "new" ? { name: "", description: "", permissions: [] } : { name: role.name, description: role.description ?? "", permissions: (role.permissions as string[]) ?? [] });
-    setEditing(role);
   }
+  const open = (x: Role | "new") => setEditing(x);
   function toggle(code: string, on: boolean) {
     setForm((prev) => ({ ...prev, permissions: on ? [...prev.permissions, code] : prev.permissions.filter((c) => c !== code) }));
   }
@@ -47,30 +48,10 @@ export default function RolesPage() {
   const isOwnerRole = current?.slug === "owner";
   const fullAccess = form.permissions.includes("*");
 
-  return (
-    <div className="w-full">
-      <PageHeader
-        title="Roles"
-        description="A role is a set of permissions. Preset roles cover the usual jobs; copy the idea into custom roles for anything else."
-        guide="team-and-roles"
-        actions={manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New role</Button>}
-      />
-      <Card>
-        {roles.isLoading ? <div className="px-4"><Spinner /></div> : roles.error ? <div className="p-4"><ErrorState error={roles.error} /></div> : (
-          <Table head={["Role", "Description", "Members", ""]}>
-            {(roles.data?.results ?? []).map((r) => (
-              <tr key={r.id} className="cursor-pointer hover:bg-stone-50" onClick={() => open(r)}>
-                <Td className="font-medium">{r.name}</Td>
-                <Td className="text-stone-600">{r.description}</Td>
-                <Td>{r.member_count}</Td>
-                <Td>{r.is_preset ? <Badge>Preset</Badge> : <Badge tone="blue">Custom</Badge>}</Td>
-              </tr>
-            ))}
-          </Table>
-        )}
-      </Card>
-
-      <Modal size="lg" open={editing !== null} title={editing === "new" ? "New role" : form.name} onClose={() => setEditing(null)}>
+  if (editing !== null) {
+    return (
+      <AsPage guide="team-and-roles">
+      <Modal size="lg" open title={editing === "new" ? "New role" : form.name} onClose={() => setEditing(null)}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           {(editing === "new" || !current?.is_preset) && (
             <Field label="Name" error={fieldError(save.error, "name")}>
@@ -120,6 +101,32 @@ export default function RolesPage() {
           )}
         </form>
       </Modal>
+      </AsPage>
+    );
+  }
+  return (
+    <div className="w-full">
+      <PageHeader
+        title="Roles"
+        description="A role is a set of permissions. Preset roles cover the usual jobs; copy the idea into custom roles for anything else."
+        guide="team-and-roles"
+        actions={manage && <Button onClick={() => open("new")}><Plus className="h-4 w-4" /> New role</Button>}
+      />
+      <Card>
+        {roles.isLoading ? <div className="px-4"><Spinner /></div> : roles.error ? <div className="p-4"><ErrorState error={roles.error} /></div> : (
+          <Table head={["Role", "Description", "Members", ""]}>
+            {(roles.data?.results ?? []).map((r) => (
+              <tr key={r.id} className="cursor-pointer hover:bg-stone-50" onClick={() => open(r)}>
+                <Td className="font-medium">{r.name}</Td>
+                <Td className="text-stone-600">{r.description}</Td>
+                <Td>{r.member_count}</Td>
+                <Td>{r.is_preset ? <Badge>Preset</Badge> : <Badge tone="blue">Custom</Badge>}</Td>
+              </tr>
+            ))}
+          </Table>
+        )}
+      </Card>
+
     </div>
   );
 }

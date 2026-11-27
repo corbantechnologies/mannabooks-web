@@ -10,6 +10,8 @@ import type { Employee } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 import { Badge, Button, Card, Field, FormError, Input, Modal, Select, Spinner } from "./ui";
+import { AsPage } from "@/components/ui";
+import { useFormFlag } from "@/lib/page-form";
 
 const LABEL: Record<string, string> = {
   national_id: "National ID", kra_pin: "KRA PIN", nssf_number: "NSSF number", shif_number: "SHIF number",
@@ -29,46 +31,30 @@ export function MyDetails() {
   const { slug } = useWorkspace();
   const me = useQuery({ queryKey: ["employee-me", slug], retry: false, queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/me/", wsPath(slug))) });
   const [form, setForm] = useState<Form | null>(null);
+  const [open, setOpen] = useFormFlag("details");
+  const close = () => { setForm(null); setOpen(false); };
   const save = useMutation({
     mutationFn: async (body: Form) => unwrap(await api.PATCH("/api/v1/w/{workspace}/employees/me/", { ...wsPath(slug), body: body as never })),
     onSuccess: (e) => {
       const waiting = Object.keys((e.pending_changes ?? {}) as object).filter((k) => k !== "requested_at").length;
       toast.success(waiting ? "Saved. HR will check the ID and pay details before they are used." : "Saved");
-      setForm(null);
+      close();
       void me.refetch();
     },
   });
   if (me.isLoading) return <Spinner />;
   if (me.error || !me.data) return null;
   const e = me.data;
+  if (open && form === null) setForm(fromEmployee(e));  // opened from the address (a refresh, or back and forward)
   const pending = Object.entries((e.pending_changes ?? {}) as Record<string, string>).filter(([k]) => k !== "requested_at");
   const set = (k: string) => (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((p) => ({ ...(p as Form), [k]: ev.target.value }));
   const row = (label: string, value?: string | null) => (
     <div className="flex justify-between gap-3 py-1.5 text-sm"><dt className="text-stone-500">{label}</dt><dd className="text-right">{value || "-"}</dd></div>
   );
-  return (
-    <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">My details</h2>
-        <Button variant="ghost" className="px-2 py-1" onClick={() => { save.reset(); setForm(fromEmployee(e)); }}><Pencil className="h-4 w-4" /> Update</Button>
-      </div>
-      <Card className="p-4">
-        <dl className="divide-y divide-stone-100">
-          {row("Phone", e.phone)}
-          {row("Email", e.email)}
-          {row("Emergency contact", [e.emergency_contact_name, e.emergency_contact_phone].filter(Boolean).join(", "))}
-          {row("KRA PIN", e.kra_pin)}
-          {row("NSSF / SHIF", [e.nssf_number, e.shif_number].filter(Boolean).join(" / "))}
-          {row("Paid by", e.pay_method ? `${PAID_BY[e.pay_method] ?? e.pay_method}${e.pay_method === "bank" && e.bank_account_number ? `, ${e.bank_name} ${e.bank_account_number}` : e.pay_method === "mpesa" && e.mpesa_phone ? `, ${e.mpesa_phone}` : ""}` : "")}
-        </dl>
-        {pending.length > 0 && (
-          <div className="mt-3 rounded-md bg-amber-50 p-3 text-xs text-amber-900">
-            <Badge tone="amber">Waiting for HR</Badge>
-            <p className="mt-1">{pending.map(([k, v]) => `${LABEL[k] ?? k}: ${v || "(blank)"}`).join(" · ")}</p>
-          </div>
-        )}
-      </Card>
-      <Modal open={form !== null} title="Update my details" onClose={() => setForm(null)}>
+  if (open && form !== null) {
+    return (
+      <AsPage guide="self-service">
+      <Modal open title="Update my details" onClose={close}>
         {form && (
           <form className="space-y-4" onSubmit={(ev) => { ev.preventDefault(); save.mutate(form); }}>
             <p className="text-sm font-medium text-stone-700">Contact <span className="font-normal text-stone-500">· saved at once</span></p>
@@ -95,6 +81,31 @@ export function MyDetails() {
           </form>
         )}
       </Modal>
+      </AsPage>
+    );
+  }
+  return (
+    <section>
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-sm font-semibold">My details</h2>
+        <Button variant="ghost" className="px-2 py-1" onClick={() => { save.reset(); setForm(fromEmployee(e)); setOpen(true); }}><Pencil className="h-4 w-4" /> Update</Button>
+      </div>
+      <Card className="p-4">
+        <dl className="divide-y divide-stone-100">
+          {row("Phone", e.phone)}
+          {row("Email", e.email)}
+          {row("Emergency contact", [e.emergency_contact_name, e.emergency_contact_phone].filter(Boolean).join(", "))}
+          {row("KRA PIN", e.kra_pin)}
+          {row("NSSF / SHIF", [e.nssf_number, e.shif_number].filter(Boolean).join(" / "))}
+          {row("Paid by", e.pay_method ? `${PAID_BY[e.pay_method] ?? e.pay_method}${e.pay_method === "bank" && e.bank_account_number ? `, ${e.bank_name} ${e.bank_account_number}` : e.pay_method === "mpesa" && e.mpesa_phone ? `, ${e.mpesa_phone}` : ""}` : "")}
+        </dl>
+        {pending.length > 0 && (
+          <div className="mt-3 rounded-md bg-amber-50 p-3 text-xs text-amber-900">
+            <Badge tone="amber">Waiting for HR</Badge>
+            <p className="mt-1">{pending.map(([k, v]) => `${LABEL[k] ?? k}: ${v || "(blank)"}`).join(" · ")}</p>
+          </div>
+        )}
+      </Card>
     </section>
   );
 }

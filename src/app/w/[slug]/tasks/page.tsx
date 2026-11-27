@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
-import { TASK_STATUS, type Task, TaskForm, dueLabel, holder } from "@/components/task-form";
+import { TASK_STATUS, type Task, dueLabel, holder } from "@/components/task-form";
 import { TasksWaiting } from "@/components/task-chain";
 import { TaskInsights } from "@/components/task-insights";
 import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
@@ -30,7 +30,6 @@ export default function TasksPage() {
     return v === "insights" || v === "to_check" || v === "waiting" ? v : "mine";
   });
   const [open, setOpen] = useState(true);
-  const [adding, setAdding] = useState(false);
   const [filters, setFilters] = useState<Filters>(readFilters);
   // picking Done, or grouping by status, brings in the finished ones too
   const openOnly = open && filters.status !== "done" && filters.status !== "cancelled" && filters.group !== "status";
@@ -70,7 +69,7 @@ export default function TasksPage() {
         description="Things to do by a date, and a time if it matters. For yourself, the people below you, or any colleague if your role allows. For tasks that repeat, use Work reports."
         actions={<div className="flex flex-wrap gap-2">
           <Link href={`/w/${slug}/tasks/chain`}><Button variant="secondary"><Rows3 className="h-4 w-4" /> Several tasks</Button></Link>
-          <Button onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> New task</Button>
+          <Link href={`/w/${slug}/tasks/new`}><Button><Plus className="h-4 w-4" /> New task</Button></Link>
         </div>} />
       <div className="mb-4 flex flex-wrap items-end gap-3 border-b border-stone-200">
         <div className="-mb-px flex gap-1 overflow-x-auto">
@@ -158,7 +157,6 @@ export default function TasksPage() {
           )}
         </div>
       )}
-      {adding && <TaskForm onClose={() => setAdding(false)} />}
     </div>
   );
 }

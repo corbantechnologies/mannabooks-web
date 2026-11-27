@@ -9,11 +9,12 @@ import toast from "react-hot-toast";
 import { ActionMenu } from "@/components/action-menu";
 import { ActivityPanel } from "@/components/activity-panel";
 import { DealForm } from "@/components/deal-form";
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { STAGES, stageLabel } from "@/lib/api/crm";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 export default function DealPage() {
   const { slug, can } = useWorkspace();
@@ -21,7 +22,7 @@ export default function DealPage() {
   const search = useSearchParams();
   const path = { params: { path: { workspace: slug, id } } };
   const deal = useQuery({ queryKey: ["deal", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/deals/{id}/", path)) });
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useFormFlag("edit");
   const [losing, setLosing] = useState(search.get("lose") === "1");
   const [linking, setLinking] = useState(false);
   const move = useMutation({
@@ -35,6 +36,9 @@ export default function DealPage() {
   const manage = can("crm.manage");
   const closed = d.stage === "won" || d.stage === "lost";
   const next = STAGES[STAGES.findIndex(([k]) => k === d.stage) + 1]?.[0];
+  if (editing) {
+    return <AsPage guide="crm"><DealForm open deal={d} onClose={() => setEditing(false)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/crm`} className="text-sm text-stone-500 hover:underline">&larr; Pipeline</Link>
@@ -76,7 +80,6 @@ export default function DealPage() {
         </Card>
         <ActivityPanel deal={d.id} />
       </div>
-      {editing && <DealForm open deal={d} onClose={() => setEditing(false)} />}
       <LoseDialog open={losing} onClose={() => setLosing(false)} pending={move.isPending} error={move.error} onLose={(lost_reason) => move.mutate({ stage: "lost", lost_reason })} />
       {linking && d.customer_id && <LinkQuotation dealId={d.id} customerId={d.customer_id} onClose={() => setLinking(false)} />}
     </div>

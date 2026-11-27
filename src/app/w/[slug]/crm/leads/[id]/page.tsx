@@ -8,20 +8,21 @@ import toast from "react-hot-toast";
 
 import { ActionMenu } from "@/components/action-menu";
 import { ActivityPanel } from "@/components/activity-panel";
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { LEAD_SOURCES, LEAD_STATUS, useAssignees } from "@/lib/api/crm";
 import { useCustomers } from "@/lib/api/sales";
 import type { Lead } from "@/lib/api/types";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 export default function LeadPage() {
   const { slug, can } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const path = { params: { path: { workspace: slug, id } } };
   const lead = useQuery({ queryKey: ["lead", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leads/{id}/", path)) });
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useFormFlag("edit");
   const [converting, setConverting] = useState(false);
   const [losing, setLosing] = useState(false);
   const act = useMutation({
@@ -35,6 +36,9 @@ export default function LeadPage() {
   const manage = can("crm.manage");
   const open = l.status !== "converted" && l.status !== "lost";
   const [statusLabel, tone] = LEAD_STATUS[l.status ?? "new"];
+  if (editing) {
+    return <AsPage guide="crm"><EditLead lead={l} onClose={() => setEditing(false)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/crm/leads`} className="text-sm text-stone-500 hover:underline">&larr; Leads</Link>
@@ -61,7 +65,6 @@ export default function LeadPage() {
         </Card>
         <ActivityPanel lead={l.id} />
       </div>
-      {editing && <EditLead lead={l} onClose={() => setEditing(false)} />}
       <ConvertDialog open={converting} lead={l} onClose={() => setConverting(false)} pending={act.isPending} error={act.error}
         onConvert={(body) => act.mutate({ action: "convert", ...body })} />
       <LoseDialog open={losing} onClose={() => setLosing(false)} pending={act.isPending} error={act.error} onLose={(reason) => act.mutate({ action: "lose", reason })} />

@@ -7,11 +7,12 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, EmptyState, FormError, Input, Modal, Spinner } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, FormError, Input, Modal, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 type Today = components["schemas"]["ChecklistToday"];
 
@@ -31,7 +32,7 @@ export function MyDayCard() {
   const qc = useQueryClient();
   const q = useMyDay(slug);
   const [picking, setPicking] = useState(false);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useFormFlag("my-list");
   const set = (d: Today) => qc.setQueryData(["my-day", slug], d);
   const tick = useMutation({
     mutationFn: async (v: { item_id: string; done: boolean }) => unwrap(await api.POST("/api/v1/w/{workspace}/dashboard/checklist/tick/", { params: { path: { workspace: slug } }, body: v })),
@@ -42,6 +43,9 @@ export function MyDayCard() {
   const d = q.data;
   const pct = d.total ? Math.round((100 * d.done) / d.total) : 0;
   const day = new Date(`${d.day}T00:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  if (editing) {
+    return <AsPage guide="my-day"><EditMyList slug={slug} onClose={() => { setEditing(false); void qc.invalidateQueries({ queryKey: ["my-day", slug] }); }} /></AsPage>;
+  }
   return (
     <Card className="p-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -99,7 +103,6 @@ export function MyDayCard() {
       )}
       {picking && <PickTasks slug={slug} picked={d.picks.map((p) => p.id)} onClose={() => setPicking(false)} onSaved={set}
         onNone={() => { const line = d.items.find((i) => i.key === "plan_day"); if (line) tick.mutate({ item_id: line.id, done: true }); setPicking(false); }} />}
-      {editing && <EditMyList slug={slug} onClose={() => { setEditing(false); void qc.invalidateQueries({ queryKey: ["my-day", slug] }); }} />}
     </Card>
   );
 }

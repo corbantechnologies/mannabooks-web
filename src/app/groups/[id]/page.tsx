@@ -8,11 +8,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { TopBar } from "@/components/top-bar";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { AccountOptions, useAccounts } from "@/lib/api/accounting";
 import { api, unwrap } from "@/lib/api/client";
 import { downloadCsv, fmt, fmtDate, todayIso } from "@/lib/format";
 import { ask } from "@/components/confirm";
+import { useFormFlag } from "@/lib/page-form";
 
 type Tab = "pl" | "bs" | "ic" | "companies";
 type Section = { key: string; label: string; rows: { code: string; name: string; amounts: string[]; eliminations: string; total: string }[]; amounts: string[]; eliminations: string; total: string };
@@ -22,6 +23,17 @@ export default function GroupPage() {
   const [tab, setTab] = useState<Tab>("pl");
   const group = useQuery({ queryKey: ["group", id], queryFn: async () => unwrap(await api.GET("/api/v1/groups/{id}/", { params: { path: { id } } })) });
   const g = group.data;
+  const [recording, setRecording] = useFormFlag("record");
+  if (recording && g) {
+    return (
+      <>
+        <TopBar />
+        <main className="mx-auto max-w-7xl px-4 py-8">
+          <AsPage guide="company-groups"><RecordForm id={id} companies={g.companies} onClose={() => setRecording(false)} /></AsPage>
+        </main>
+      </>
+    );
+  }
   return (
     <>
       <TopBar />
@@ -38,7 +50,7 @@ export default function GroupPage() {
             </div>
             {g.companies.length < 2 && tab !== "companies" ? (
               <Card><EmptyState title="Add at least two companies">Open the Companies tab and add the workspaces this group owns.</EmptyState></Card>
-            ) : tab === "pl" ? <ProfitAndLoss id={id} /> : tab === "bs" ? <BalanceSheet id={id} /> : tab === "ic" ? <Intercompany id={id} companies={g.companies} /> : null}
+            ) : tab === "pl" ? <ProfitAndLoss id={id} /> : tab === "bs" ? <BalanceSheet id={id} /> : tab === "ic" ? <Intercompany id={id} /> : null}
             {tab === "companies" && <Companies id={id} isOwner={g.is_owner} companies={g.companies} />}
           </>
         )}
@@ -168,8 +180,8 @@ const KINDS: [string, string, string, string][] = [
   ["settlement", "Settlement (paying what is owed)", "Paying company", "Company being paid"],
 ];
 
-function Intercompany({ id, companies }: { id: string; companies: { slug: string; name: string }[] }) {
-  const [adding, setAdding] = useState(false);
+function Intercompany({ id }: { id: string }) {
+  const [, setAdding] = useFormFlag("record");
   const [voiding, setVoiding] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const list = useQuery({ queryKey: ["intercompany", id], queryFn: async () => unwrap(await api.GET("/api/v1/groups/{id}/intercompany/", { params: { path: { id } } })) });
@@ -210,7 +222,6 @@ function Intercompany({ id, companies }: { id: string; companies: { slug: string
           </Table>
         )}
       </Card>
-      {adding && <RecordForm id={id} companies={companies} onClose={() => setAdding(false)} />}
       <Modal open={voiding !== null} title="Void this transaction" onClose={() => setVoiding(null)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); voidIt.mutate(); }}>
           <p className="text-sm text-stone-600">Both companies&apos; entries are removed (or reversed if their month is closed).</p>

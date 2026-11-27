@@ -10,11 +10,12 @@ import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { AskAccess } from "@/components/register-ask";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormItem } from "@/lib/page-form";
 
 type Register = components["schemas"]["RegisterType"];
 type Item = components["schemas"]["RegisterItem"];
@@ -28,9 +29,10 @@ export default function RegistersPage() {
   const regs = useQuery({ queryKey: ["registers", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/registers/", wsPath(slug))) });
   const [q, setQ] = useState("");
   const [adding, setAdding] = useState(false);
-  const [fields, setFields] = useState<Register | null>(null);
   const [asking, setAsking] = useState<Item | null>(null);
   const list = regs.data ?? [];
+  const [fieldsOf, setFields] = useFormItem(regs.data);
+  const fields = fieldsOf === "new" ? null : fieldsOf;
   const current = sp.get("register") ?? (q ? "" : list.find((r) => r.is_active)?.id ?? "");
   const reg = list.find((r) => r.id === current);
   const items = useQuery({
@@ -41,6 +43,9 @@ export default function RegistersPage() {
   if (regs.isLoading) return <Spinner />;
   if (regs.error) return <ErrorState error={regs.error} />;
   const d = items.data;
+  if (fields) {
+    return <AsPage guide="registers"><RegisterSettings reg={fields} onClose={() => setFields(null)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Registers" guide="registers"
@@ -117,7 +122,6 @@ export default function RegistersPage() {
         </>
       )}
       {adding && <NewRegister onClose={() => setAdding(false)} />}
-      {fields && <RegisterSettings reg={fields} onClose={() => setFields(null)} />}
       {asking && <AskAccess item={asking} onClose={() => setAsking(null)} />}
     </div>
   );

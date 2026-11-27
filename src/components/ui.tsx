@@ -297,6 +297,16 @@ export function Td({ className, children, colSpan, onClick }: { className?: stri
 
 const MODAL_WIDTH = { md: "max-w-lg", lg: "max-w-3xl", xl: "max-w-5xl" } as const;
 
+/**
+ * Forms with more than six fields are pages, not pop-ups. A form component wrapped in <AsPage> draws its Modal as a page:
+ * the title as the page's heading, the fields in a card, full width. The same component, on its own address.
+ */
+const PageMode = React.createContext<{ description?: React.ReactNode; guide?: string } | null>(null);
+
+export function AsPage({ children, description, guide }: { children: React.ReactNode; description?: React.ReactNode; guide?: string }) {
+  return <PageMode.Provider value={{ description, guide }}>{children}</PageMode.Provider>;
+}
+
 export function Modal({
   open,
   title,
@@ -313,6 +323,7 @@ export function Modal({
 }) {
   // Something typed: closing by tapping outside, Escape or the X asks first, so a stray tap doesn't lose the work.
   // A press that starts inside (selecting text, say) and ends outside never closes it.
+  const asPage = React.useContext(PageMode);
   const dirty = useRef(false);
   const pressedOutside = useRef(false);
   const closeRef = useRef(onClose);
@@ -325,13 +336,21 @@ export function Modal({
     closeRef.current();
   }, []);
   useEffect(() => {
-    if (!open) return;
+    if (!open || asPage) return;
     dirty.current = false;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") void tryClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, tryClose]);
+  }, [open, tryClose, asPage]);
   if (!open) return null;
+  if (asPage) {
+    return (
+      <div className="w-full">
+        <PageHeader title={title} description={asPage.description} guide={asPage.guide} />
+        <Card className="p-4 sm:p-5">{children}</Card>
+      </div>
+    );
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/40 p-2 pt-6 sm:p-10"
       onMouseDown={(e) => { pressedOutside.current = e.target === e.currentTarget; }}

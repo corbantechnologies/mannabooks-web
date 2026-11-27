@@ -7,11 +7,12 @@ import { Fragment, useState } from "react";
 
 import { MonthChart } from "@/components/charts";
 import { ask } from "@/components/confirm";
-import { Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
+import { AsPage, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormItem } from "@/lib/page-form";
 
 type Planned = components["schemas"]["PlannedCashItem"];
 const REPEAT = [["once", "Once"], ["weekly", "Every week"], ["monthly", "Every month"], ["quarterly", "Every 3 months"], ["half_yearly", "Every 6 months"], ["yearly", "Every year"]] as const;
@@ -24,7 +25,6 @@ export default function CashProjectionPage() {
   const [out, setOut] = useState<Set<string>>(new Set());
   const [openMonth, setOpenMonth] = useState<string | null>(null);
   const [openSource, setOpenSource] = useState<string | null>(null);
-  const [editing, setEditing] = useState<Planned | null | undefined>(undefined);
   const leaveOut = [...out].sort().join(",");
   const q = useQuery({
     queryKey: ["cash-forecast", slug, months, floor, leaveOut],
@@ -41,6 +41,9 @@ export default function CashProjectionPage() {
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/reports/history/", { params: { path: { workspace: slug }, query: { months: 6 } } })),
   });
   const f = q.data;
+  const [plannedItem, openPlanned] = useFormItem(planned.data);
+  const editing: Planned | null | undefined = plannedItem === null ? undefined : plannedItem === "new" ? null : plannedItem;
+  const setEditing = (v: Planned | null | undefined) => openPlanned(v === undefined ? null : v === null ? "new" : v);
   const past = (history.data ?? []).slice(0, -1).map((h) => ({ label: h.label, cash: Number(h.cash) }));
   const ahead = (f?.months ?? []).map((m) => ({ label: m.label, cash: Number(m.closing) }));
   const chartRows = [...past, ...ahead];
@@ -48,6 +51,9 @@ export default function CashProjectionPage() {
   const manage = can("banking.spend");
   const sources = f?.included ?? [];
 
+  if (editing !== undefined) {
+    return <AsPage guide="banking"><PlannedForm item={editing} onClose={() => setEditing(undefined)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Cash projection" guide="banking"
@@ -162,7 +168,6 @@ export default function CashProjectionPage() {
           <p className="text-xs text-stone-500">It knows only what is in the books and what you plan here: a guide, not a promise. Something already in the books (a bill, a recurring invoice) needn&apos;t be planned again.</p>
         </>
       )}
-      {editing !== undefined && <PlannedForm item={editing} onClose={() => setEditing(undefined)} />}
     </div>
   );
 }

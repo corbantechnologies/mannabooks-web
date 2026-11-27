@@ -2,24 +2,30 @@
 
 import { Plus, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
-import { Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { useOwners } from "@/lib/api/owners";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 /** Owners, partners, directors and shareholders: what each has put in, lent, borrowed and drawn. */
 export default function OwnersPage() {
   const { slug, can } = useWorkspace();
   const router = useRouter();
   const owners = useOwners(slug);
-  const [adding, setAdding] = useState(false);
-  const [recording, setRecording] = useState(false);
+  const [adding, setAdding] = useFormFlag("new");
+  const [recording, setRecording] = useFormFlag("money");
   const rows = owners.data?.results ?? [];
   const total = (key: "capital" | "shares" | "owed_to" | "owed_by") => rows.reduce((s, r) => s + Number(r.balances[key]), 0);
   const money = (v: string | number) => (Number(v) ? fmt(v) : <span className="text-stone-400">-</span>);
+  if (recording) {
+    return <AsPage guide="owners"><OwnerMoneyModal onClose={() => setRecording(false)} /></AsPage>;
+  }
+  if (adding) {
+    return <AsPage guide="owners"><OwnerEditor owner="new" onClose={() => setAdding(false)} /></AsPage>;
+  }
   return (
     <div className="space-y-6">
       <PageHeader title="Owners and directors" guide="owners"
@@ -55,8 +61,6 @@ export default function OwnersPage() {
           </Card>
         </>
       )}
-      {adding && <OwnerEditor owner="new" onClose={() => setAdding(false)} />}
-      {recording && <OwnerMoneyModal onClose={() => setRecording(false)} />}
     </div>
   );
 }

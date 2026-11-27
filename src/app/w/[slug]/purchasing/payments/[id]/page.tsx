@@ -18,8 +18,10 @@ import { api, unwrap } from "@/lib/api/client";
 import { PAY_METHODS } from "@/lib/api/purchasing";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormParam } from "@/lib/page-form";
 
 export default function SupplierPaymentPage() {
+  const [applying] = useFormParam();
   const { slug, can } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const path = { params: { path: { workspace: slug, id } } };
@@ -33,6 +35,7 @@ export default function SupplierPaymentPage() {
   if (payment.isLoading) return <Spinner />;
   if (payment.error) return <ErrorState error={payment.error} />;
   const p = payment.data!;
+  if (applying === "apply") return <ApplyToBills paymentId={p.id} supplierId={p.supplier_id} unapplied={p.unallocated_amount ?? "0"} />;  // as a page
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/purchasing/payments`} className="text-sm text-stone-500 hover:underline">&larr; Supplier payments</Link>

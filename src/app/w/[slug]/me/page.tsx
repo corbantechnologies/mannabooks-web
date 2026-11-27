@@ -17,11 +17,13 @@ import { ask } from "@/components/confirm";
 import { AskAdvance } from "@/components/ask-advance";
 import { MyOwnerAccount } from "@/components/my-owner-account";
 import { ADVANCE_STATUS } from "@/lib/api/people";
+import { useFormParam } from "@/lib/page-form";
 
 /** Employee self-service: my leave and my payslips. Built for phones first. */
 export default function MePage() {
   const { slug } = useWorkspace();
   const [asking, setAsking] = useState(false);
+  const [formOpen] = useFormParam();
   const [advancing, setAdvancing] = useState(false);
   const balance = useQuery({ queryKey: ["leave-balances", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/balances/", wsPath(slug))), retry: false });
   const requests = useQuery({ queryKey: ["leave-requests", slug, "mine"], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/leave-requests/", { params: { path: { workspace: slug }, query: { mine: "true", page_size: 20 } as never } })) });
@@ -31,6 +33,7 @@ export default function MePage() {
     mutationFn: async (id: string) => unwrap(await api.POST("/api/v1/w/{workspace}/leave-requests/{id}/action/", { params: { path: { workspace: slug, id } }, body: { action: "cancel" } })),
     onSuccess: () => toast.success("Request cancelled"), onError: (e) => toast.error(e.message),
   });
+  if (formOpen === "details") return <MyDetails />;  // its form, as a page
   if (balance.error) {
     return (
       <div className="w-full space-y-5">

@@ -4,22 +4,22 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Pencil, Plus, Printer } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
-import { Badge, Button, Card, EmptyState, ErrorState, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 /** One owner's or director's account: every movement of money, and their balances after each. */
 export default function OwnerStatementPage() {
   const { slug, can } = useWorkspace();
   const { id } = useParams<{ id: string }>();
-  const [editing, setEditing] = useState(false);
-  const [recording, setRecording] = useState(false);
+  const [editing, setEditing] = useFormFlag("edit");
+  const [recording, setRecording] = useFormFlag("money");
   const q = useQuery({
     queryKey: ["owner-statement", slug, id],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/owners/{id}/statement/", { params: { path: { workspace: slug, id } } })),
@@ -33,6 +33,12 @@ export default function OwnerStatementPage() {
   if (q.error) return <ErrorState error={q.error} />;
   const { owner, balances, rows } = q.data!;
   const money = (v?: string | null) => (v && Number(v) ? fmt(v) : "");
+  if (recording) {
+    return <AsPage guide="owners"><OwnerMoneyModal ownerId={owner.id} onClose={() => { setRecording(false); void q.refetch(); }} /></AsPage>;
+  }
+  if (editing) {
+    return <AsPage guide="owners"><OwnerEditor owner={owner} onClose={() => { setEditing(false); void q.refetch(); }} /></AsPage>;
+  }
   return (
     <div className="space-y-6">
       <Link href={`/w/${slug}/banking/owners`} className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800 print:hidden"><ArrowLeft className="h-4 w-4" /> Owners and directors</Link>
@@ -81,8 +87,6 @@ export default function OwnerStatementPage() {
           </Table>
         )}
       </Card>
-      {editing && <OwnerEditor owner={owner} onClose={() => { setEditing(false); void q.refetch(); }} />}
-      {recording && <OwnerMoneyModal ownerId={owner.id} onClose={() => { setRecording(false); void q.refetch(); }} />}
     </div>
   );
 }

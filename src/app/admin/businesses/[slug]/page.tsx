@@ -6,11 +6,12 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { PAYMENT_STATUS, SUB_STATUS, TICKET_STATUS } from "@/lib/api/platform";
 import { fmt, fmtDate } from "@/lib/format";
 import { ask } from "@/components/confirm";
+import { useFormParam } from "@/lib/page-form";
 
 type Action = "block" | "change_plan" | "extend_trial" | "set_discount" | "record_payment" | "note" | "set_complimentary" | "lock_price";
 type Payment = { id: string; paid_at: string | null; created_at: string; plan_name: string; cycle: string; amount: string; method: string; reference: string; status: string; recorded_by_name: string | null; note: string };
@@ -19,7 +20,9 @@ type TicketRow = { id: string; number: string; subject: string; status: string; 
 export default function AdminBusinessPage() {
   const { slug } = useParams<{ slug: string }>();
   const detail = useQuery({ queryKey: ["platform-business", slug], queryFn: async () => unwrap(await api.GET("/api/v1/platform/businesses/{slug}/", { params: { path: { slug } } })) });
-  const [dialog, setDialog] = useState<Action | null>(null);
+  const [dialogParam, setDialogParam] = useFormParam();
+  const dialog = (dialogParam as Action | null) ?? null;
+  const setDialog = (a: Action | null) => setDialogParam(a);
   const act = useMutation({
     mutationFn: async (body: Record<string, unknown>) => unwrap(await api.POST("/api/v1/platform/businesses/{slug}/action/", { params: { path: { slug } }, body: body as never })),
     onSuccess: () => { toast.success("Done"); setDialog(null); },
@@ -36,6 +39,13 @@ export default function AdminBusinessPage() {
   const b = d.business;
   const payments = d.payments as unknown as Payment[];
   const tickets = d.tickets as unknown as TicketRow[];
+  if (dialog === "record_payment") {
+    return (
+      <AsPage>
+        <ActionDialog action={dialog} notes={b.notes ?? ""} plan={b.plan_key ?? "free"} pending={act.isPending} error={act.error} onClose={() => setDialog(null)} onSubmit={(body) => act.mutate({ action: dialog, ...body })} />
+      </AsPage>
+    );
+  }
   return (
     <div className="w-full">
       <Link href="/admin/businesses" className="text-sm text-stone-500 hover:underline">&larr; Businesses</Link>

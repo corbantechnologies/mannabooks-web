@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { TASK_STATUS, TaskForm, dueLabel } from "@/components/task-form";
+import { TASK_STATUS, dueLabel } from "@/components/task-form";
 import { TaskDeadline, TaskFileBack, TaskWaiting } from "@/components/task-chain";
 import { TaskChecklist, TaskComments, TaskFiles } from "@/components/task-work";
 import { Badge, Button, Card, ErrorState, Field, FormError, Select, Spinner, Textarea } from "@/components/ui";
@@ -25,7 +25,6 @@ export default function TaskPage() {
   const path = { params: { path: { workspace: slug, id } } };
   const q = useQuery({ queryKey: ["task", slug, id], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/tasks/{id}/", path)) });
   const [note, setNote] = useState("");
-  const [editing, setEditing] = useState(false);
   const [to, setTo] = useState("");
   const people = useQuery({
     queryKey: ["task-people", slug], enabled: Boolean(q.data?.can_hand_out),
@@ -57,7 +56,7 @@ export default function TaskPage() {
           {t.priority !== "normal" && <Badge tone={t.priority === "high" ? "red" : "stone"}>{t.priority === "high" ? "High priority" : "Low priority"}</Badge>}
           {t.waiting && <Badge tone="amber">Waiting on {t.waiting.waiting_on}</Badge>}
           <Badge tone={st.tone}>{st.label}</Badge>
-          {t.can_manage && (t.status === "todo" || t.status === "in_progress") && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" /> Change</Button>}
+          {t.can_manage && (t.status === "todo" || t.status === "in_progress") && <Link href={`/w/${slug}/tasks/${t.id}/edit`}><Button variant="secondary"><Pencil className="h-4 w-4" /> Change</Button></Link>}
         </div>
       </div>
 
@@ -147,7 +146,6 @@ export default function TaskPage() {
       <FormError error={act.error} />
       <TaskFiles task={t} />
       <TaskComments task={t} />
-      {editing && <TaskForm task={t} onClose={() => { setEditing(false); void q.refetch(); }} />}
     </div>
   );
 }

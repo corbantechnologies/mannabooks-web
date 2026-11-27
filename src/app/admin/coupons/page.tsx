@@ -5,16 +5,20 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
+import { useFormItem } from "@/lib/page-form";
 
 type Coupon = { id: string; code: string; description?: string; percent_off?: string; amount_off?: string; payments?: number | null; plan_keys?: string[]; valid_until?: string | null; max_redemptions?: number | null; times_redeemed: number; is_active?: boolean };
 
 export default function CouponsPage() {
   const list = useQuery({ queryKey: ["platform-coupons"], queryFn: async () => unwrap(await api.GET("/api/v1/platform/coupons/", { params: { query: { page_size: 100 } as never } })) });
-  const [editing, setEditing] = useState<Coupon | "new" | null>(null);
+  const [editing, setEditing] = useFormItem<Coupon>(list.data?.results as Coupon[] | undefined);
   const rows = (list.data?.results ?? []) as Coupon[];
+  if (editing) {
+    return <AsPage guide="plan-and-billing"><EditCoupon coupon={editing === "new" ? null : editing} onClose={() => setEditing(null)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Coupons" description="Discount codes businesses enter when they pay: campaigns, partners, referrals." actions={<Button onClick={() => setEditing("new")}><Plus className="h-4 w-4" /> New coupon</Button>} />
@@ -35,7 +39,6 @@ export default function CouponsPage() {
           </Table>
         )}
       </Card>
-      {editing && <EditCoupon coupon={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
     </div>
   );
 }

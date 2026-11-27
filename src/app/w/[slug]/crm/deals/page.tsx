@@ -7,17 +7,18 @@ import { useState } from "react";
 
 import { DealForm } from "@/components/deal-form";
 import { ListFilters } from "@/components/doc-list";
-import { Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { STAGES, stageLabel } from "@/lib/api/crm";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 export default function DealsPage() {
   const { slug, can } = useWorkspace();
   const [search, setSearch] = useState("");
   const [stage, setStage] = useState("");
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useFormFlag("new");
   const list = useQuery({
     queryKey: ["deals", slug, search, stage],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/deals/", {
@@ -25,6 +26,9 @@ export default function DealsPage() {
     })),
   });
   const rows = list.data?.results ?? [];
+  if (adding) {
+    return <AsPage guide="crm"><DealForm open onClose={() => setAdding(false)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Deals" description="Sales being worked on, with their value, chance and expected close date." guide="crm"
@@ -49,7 +53,6 @@ export default function DealsPage() {
           </Table>
         )}
       </Card>
-      {adding && <DealForm open onClose={() => setAdding(false)} />}
     </div>
   );
 }

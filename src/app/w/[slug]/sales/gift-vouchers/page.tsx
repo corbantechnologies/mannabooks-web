@@ -6,12 +6,13 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { depositFor, useCustomers, useDepositAccounts } from "@/lib/api/sales";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 type Voucher = components["schemas"]["GiftVoucher"];
 
@@ -37,11 +38,14 @@ export default function GiftVouchersPage() {
       params: { path: { workspace: slug }, query: { status: (status || undefined) as never, search: search || undefined, page_size: 200 } as never },
     })),
   });
-  const [selling, setSelling] = useState(false);
+  const [selling, setSelling] = useFormFlag("sell");
   const [openId, setOpenId] = useState<string | null>(null);
   const rows = list.data?.results ?? [];
   const owed = rows.filter((v) => v.status === "active").reduce((a, v) => a + Number(v.balance), 0);
   const cur = context.workspace.currency;
+  if (selling) {
+    return <AsPage guide="gift-vouchers"><SellVoucher onClose={() => setSelling(false)} onDone={(v) => { setSelling(false); void qc.invalidateQueries({ queryKey: ["gift-vouchers", slug] }); setOpenId(v.id); }} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Gift vouchers" guide="gift-vouchers"
@@ -72,7 +76,6 @@ export default function GiftVouchersPage() {
           </Table>
         )}
       </Card>
-      {selling && <SellVoucher onClose={() => setSelling(false)} onDone={(v) => { setSelling(false); void qc.invalidateQueries({ queryKey: ["gift-vouchers", slug] }); setOpenId(v.id); }} />}
       {openId && <VoucherDetail id={openId} onClose={() => setOpenId(null)} />}
     </div>
   );

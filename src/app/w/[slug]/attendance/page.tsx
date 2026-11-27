@@ -17,11 +17,13 @@ import { api, unwrap } from "@/lib/api/client";
 import { type AttendancePerson, DAY_STATUS, hm, hours } from "@/lib/attendance";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormParam } from "@/lib/page-form";
 
 type Tab = "mine" | "now" | "register" | "corrections" | "months" | "hours" | "shifts";
 
 /** Attendance: your own days, Who's in now and the day register for your team, and corrections to decide. */
 export default function AttendancePage() {
+  const [shiftForm] = useFormParam("shift");
   const { slug, can } = useWorkspace();
   const params = useSearchParams();
   const me = useQuery({ queryKey: ["attendance-me", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/me/", wsPath(slug))) });
@@ -29,6 +31,7 @@ export default function AttendancePage() {
   const [tab, setTab] = useState<Tab>(() => (params.get("tab") as Tab) || "mine");
   const tabs: [Tab, string][] = [["mine", "My days"], ...(lead ? [["now", "Who's in now"], ["register", "Day register"], ["corrections", "Corrections"]] as [Tab, string][] : []),
     ["months", lead ? "Months" : "My months"], ["hours", "Hours vs pay"], ...((lead || can("attendance.manage")) ? [["shifts", "Shifts"]] as [Tab, string][] : [])];
+  if (shiftForm) return <AttendanceShifts />;  // a shift, as a page
   if (me.isLoading) return <Spinner />;
   if (me.error) return <ErrorState error={me.error} />;
   return (

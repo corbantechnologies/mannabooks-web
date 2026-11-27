@@ -19,6 +19,7 @@ import { useBankAccounts } from "@/lib/api/banking";
 import { fmt } from "@/lib/format";
 import { usePeriod } from "@/lib/period";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormParam } from "@/lib/page-form";
 
 /** Who can use each card: a card someone can't use is left out of their Overview and their choices. */
 const CARD_PERM: Record<string, string | null> = {
@@ -26,6 +27,7 @@ const CARD_PERM: Record<string, string | null> = {
 };
 
 export default function OverviewPage() {
+  const [formOpen] = useFormParam();
   const { slug, context, can } = useWorkspace();
   const ws = context.workspace;
   const [customising, setCustomising] = useState(false);
@@ -40,6 +42,7 @@ export default function OverviewPage() {
   };
   const cards = (layout.data?.cards ?? []).filter(allowed);
 
+  if (formOpen === "my-list") return <MyDayCard />;  // Edit my list, as a page
   return (
     <div className="w-full">
       <PageHeader title={ws.name} description={`You are signed in as ${context.role}.`} guide="getting-started"

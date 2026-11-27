@@ -6,15 +6,17 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { WORKER_TYPES } from "@/lib/attendance";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 const t = (v?: string | null) => (v ? v.slice(0, 5) : "");
 
 /** Settings > Attendance: every rule is HR's to set, so the business never has to ask MannaBooks. */
 export default function AttendanceSettingsPage() {
+  const [overrideOpen, setOverrideOpen] = useFormFlag("override");
   const { slug, can } = useWorkspace();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["attendance-settings", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/settings/", wsPath(slug))) });
@@ -29,6 +31,9 @@ export default function AttendanceSettingsPage() {
   const set = (k: string, v: unknown) => setDraft((d) => ({ ...d, [k]: v }));
   const manage = can("attendance.manage");
   const types = (s.tracked_types as string[]) ?? [];
+  if (overrideOpen) {
+    return <AsPage guide="attendance"><OverrideForm onClose={() => setOverrideOpen(false)} /></AsPage>;
+  }
   return (
     <div className="w-full space-y-5">
       <Link href={`/w/${slug}/attendance`} className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800"><ArrowLeft className="h-4 w-4" /> Attendance</Link>
@@ -172,7 +177,7 @@ function Offices({ manage }: { manage: boolean }) {
 function Overrides({ manage }: { manage: boolean }) {
   const { slug } = useWorkspace();
   const qc = useQueryClient();
-  const [editing, setEditing] = useState(false);
+  const [, setEditing] = useFormFlag("override");
   const q = useQuery({ queryKey: ["attendance-overrides", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/overrides/", wsPath(slug))) });
   const remove = useMutation({
     mutationFn: async (id: string) => { await api.DELETE("/api/v1/w/{workspace}/attendance/overrides/{id}/", { params: { path: { workspace: slug, id } } }); },
@@ -201,7 +206,6 @@ function Overrides({ manage }: { manage: boolean }) {
           ))}
         </Table>
       )}
-      {editing && <OverrideForm onClose={() => setEditing(false)} />}
     </Card>
   );
 }

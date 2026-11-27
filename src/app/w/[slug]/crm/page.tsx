@@ -7,19 +7,20 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { DealForm } from "@/components/deal-form";
-import { Button, Card, ErrorState, PageHeader, Spinner } from "@/components/ui";
+import { AsPage, Button, Card, ErrorState, PageHeader, Spinner } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { STAGES } from "@/lib/api/crm";
 import type { Deal } from "@/lib/api/types";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 const OPEN = STAGES.filter(([k]) => k !== "won" && k !== "lost");
 
 export default function PipelinePage() {
   const { slug, can, context } = useWorkspace();
   const [mine, setMine] = useState(false);
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useFormFlag("new");
   const summary = useQuery({
     queryKey: ["pipeline", slug, mine],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/deals/pipeline/", { params: { path: { workspace: slug }, query: (mine ? { mine: "true" } : {}) as never } })),
@@ -37,6 +38,9 @@ export default function PipelinePage() {
   const s = summary.data;
   const manage = can("crm.manage");
   const rows = (deals.data?.results ?? []).filter((d: Deal) => !mine || d.assigned_to_id === context.membership_id);
+  if (adding) {
+    return <AsPage guide="crm"><DealForm open onClose={() => setAdding(false)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Pipeline" description="Every open deal by stage. Move a deal along as it progresses; won and lost close it." guide="crm"
@@ -84,7 +88,6 @@ export default function PipelinePage() {
           })}
         </div>
       )}
-      {adding && <DealForm open onClose={() => setAdding(false)} />}
     </div>
   );
 }

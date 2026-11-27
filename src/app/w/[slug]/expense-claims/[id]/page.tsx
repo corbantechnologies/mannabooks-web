@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { useAccounts } from "@/lib/api/accounting";
 import { downloadFile, sendForm } from "@/lib/api/assets";
 import { useBankAccounts } from "@/lib/api/banking";
@@ -16,6 +16,7 @@ import { CLAIM_TONE } from "@/lib/claims";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { useFormFlag } from "@/lib/page-form";
 
 
 type Decision = { approve: boolean; reason: string; account_id: string };
@@ -32,7 +33,7 @@ export default function ExpenseClaimPage() {
   const [line, setLine] = useState({ spent_on: todayIso(), description: "", amount: "" });
   const file = useRef<HTMLInputElement>(null);
   const [picked, setPicked] = useState<File | null>(null);
-  const [deciding, setDeciding] = useState(false);
+  const [deciding, setDeciding] = useFormFlag("approve");
   const [paying, setPaying] = useState(false);
   const add = useMutation({
     mutationFn: async () => {
@@ -63,6 +64,9 @@ export default function ExpenseClaimPage() {
   const draft = c.status === "draft" || c.status === "rejected";
   const editable = c.mine && c.status === "draft";
 
+  if (deciding) {
+    return <AsPage guide="expense-claims"><DecideModal claim={c} onClose={() => { setDeciding(false); refresh(); }} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <Link href={`/w/${slug}/expense-claims`} className="text-sm text-stone-500 hover:underline">&larr; Expense claims</Link>
@@ -113,7 +117,6 @@ export default function ExpenseClaimPage() {
           <p className="mt-2 text-xs text-stone-500">Each line needs a receipt before you send it. On a phone, choose the file box to take a photo.</p>
         </Card>
       )}
-      {deciding && <DecideModal claim={c} onClose={() => { setDeciding(false); refresh(); }} />}
       {paying && <PayModal claimId={id} total={c.approved_total} onClose={() => { setPaying(false); refresh(); }} />}
     </div>
   );

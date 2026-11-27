@@ -16,10 +16,12 @@ import { Button, Card, Field, FormError, Input, PageHeader, Select, Table, Td, T
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 import { ask } from "@/components/confirm";
+import { useFormParam } from "@/lib/page-form";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function SettingsPage() {
+  const [paymentOption] = useFormParam("payment-option");
   const { slug, context, can } = useWorkspace();
   const router = useRouter();
   const p = wsPath(slug);
@@ -52,6 +54,7 @@ export default function SettingsPage() {
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [key]: key === "fiscal_year_start_month" ? Number(e.target.value) : e.target.value }));
 
+  if (paymentOption) return <PaymentOptions />;  // its form, as a page
   return (
     <div className="space-y-6">
       <PageHeader title="Settings" description="Your business details appear on documents and KRA submissions." guide="workspace-settings" />

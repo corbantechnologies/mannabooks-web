@@ -5,11 +5,12 @@ import { Settings2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { LEAVE_STATUS } from "@/lib/api/people";
 import { fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 export default function LeavePage() {
   const { slug, can } = useWorkspace();
@@ -28,8 +29,11 @@ export default function LeavePage() {
     onError: (e) => toast.error(e.message),
   });
   void wsPath;
-  const [rules, setRules] = useState(false);
+  const [rules, setRules] = useFormFlag("rules");
   const rows = list.data?.results ?? [];
+  if (rules) {
+    return <AsPage guide="leave"><LeaveRules onClose={() => setRules(false)} /></AsPage>;
+  }
   return (
     <div className="space-y-6">
       <PageHeader title="Leave" description="Requests from your team. Supervisors decide for the people who report to them; department heads for their department." guide="leave"
@@ -52,7 +56,6 @@ export default function LeavePage() {
           </Table>
         )}
       </Card>
-      {rules && <LeaveRules onClose={() => setRules(false)} />}
       {(balances.data ?? []).length > 0 && (
         <div>
           <h2 className="mb-2 text-sm font-semibold">Annual leave this year</h2>

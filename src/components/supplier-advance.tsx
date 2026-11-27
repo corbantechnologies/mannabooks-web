@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Button, Card, FormError, Input, Modal, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Button, Card, FormError, Input, Modal, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 /**
  * Money paid to a supplier before their bill existed (a deposit) is "not applied" on the payment.
@@ -29,7 +30,7 @@ function useApply(slug: string, paymentId: string) {
 /** On a supplier payment with money not yet applied: choose which of the supplier's bills it pays. */
 export function ApplyToBills({ paymentId, supplierId, unapplied }: { paymentId: string; supplierId: string; unapplied: string }) {
   const { slug } = useWorkspace();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useFormFlag("apply");
   const [amounts, setAmounts] = useState<Record<string, string>>({});
   const bills = useQuery({
     queryKey: ["bills", slug, "open-for", supplierId], enabled: open,
@@ -50,10 +51,10 @@ export function ApplyToBills({ paymentId, supplierId, unapplied }: { paymentId: 
     setAmounts(fill);
   };
   const total = Object.values(amounts).reduce((s, v) => s + (Number(v) || 0), 0);
-  return (
-    <>
-      <Button onClick={() => { apply.reset(); setAmounts({}); setOpen(true); }}>Apply to bills</Button>
-      <Modal open={open} size="lg" title="Apply this payment to bills" onClose={() => setOpen(false)}>
+  if (open) {
+    return (
+      <AsPage guide="supplier-payments">
+      <Modal open size="lg" title="Apply this payment to bills" onClose={() => setOpen(false)}>
         {bills.isLoading ? <Spinner /> : (
           <div className="space-y-4 text-sm">
             <p className="text-stone-600">{fmt(unapplied)} of this payment isn&apos;t applied yet. Choose how much goes to each posted bill. A bill still in draft must be posted first.</p>
@@ -86,6 +87,12 @@ export function ApplyToBills({ paymentId, supplierId, unapplied }: { paymentId: 
           </div>
         )}
       </Modal>
+      </AsPage>
+    );
+  }
+  return (
+    <>
+      <Button onClick={() => { apply.reset(); setAmounts({}); setOpen(true); }}>Apply to bills</Button>
     </>
   );
 }

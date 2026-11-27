@@ -4,18 +4,24 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { fmt } from "@/lib/format";
+import { useFormParam } from "@/lib/page-form";
 
 const MODULES = ["sales", "pos", "store", "purchasing", "inventory", "manufacturing", "banking", "people", "projects", "crm", "control"];
 type Plan = { id: string; key: string; name: string; description?: string; price_monthly?: string; price_yearly?: string; modules?: unknown; features?: unknown; highlights?: unknown; max_users?: number | null; max_documents_month?: number | null; payroll_per_employee?: string; payroll_minimum?: string; is_free?: boolean; is_public?: boolean; is_active?: boolean };
 
 export default function PlansPage() {
   const plans = useQuery({ queryKey: ["platform-plans"], queryFn: async () => unwrap(await api.GET("/api/v1/platform/plans/")) });
-  const [editing, setEditing] = useState<Plan | null>(null);
+  const [planParam, setPlanParam] = useFormParam();
+  const editing = (plans.data ?? []).find((x) => x.key === planParam) ?? null;
+  const setEditing = (v: Plan | null) => setPlanParam(v ? v.key : null);
   if (plans.isLoading) return <Spinner />;
   if (plans.error) return <ErrorState error={plans.error} />;
+  if (editing) {
+    return <AsPage guide="plan-and-billing"><EditPlan plan={editing} onClose={() => setEditing(null)} /></AsPage>;
+  }
   return (
     <div className="w-full">
       <PageHeader title="Plans and prices" description="What each plan costs and includes. A new price applies from each business's next payment; nobody is charged more mid-period." />
@@ -35,7 +41,6 @@ export default function PlansPage() {
           ))}
         </Table>
       </Card>
-      {editing && <EditPlan plan={editing} onClose={() => setEditing(null)} />}
     </div>
   );
 }

@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { MONTHS, RUN_STATUS } from "@/lib/api/people";
 import { fmt, fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 const WAGE = { daily: "a day", hourly: "an hour" } as Record<string, string>;
 
@@ -23,7 +24,7 @@ export default function PayrollPage() {
   const [form, setForm] = useState({ year: now.getFullYear(), month: now.getMonth() + 1 });
   const [casual, setCasual] = useState({ title: "", period_start: todayIso(), period_end: todayIso(), pay_date: "", apply_statutory: false });
   const [picked, setPicked] = useState<string[] | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useFormFlag("new");
   const staff = useQuery({
     queryKey: ["employees", slug, "for-pay"], enabled: creating && kind === "casual",
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/employees/", { params: { path: { workspace: slug }, query: { page_size: 200 } } })),
@@ -40,36 +41,10 @@ export default function PayrollPage() {
   });
   const rows = runs.data?.results ?? [];
   const toggle = (id: string) => setPicked(chosen.includes(id) ? chosen.filter((x) => x !== id) : [...chosen, id]);
-  return (
-    <div className="w-full">
-      <PageHeader title="Payroll" guide="payroll"
-        description="The monthly payroll with PAYE, SHIF, NSSF and the Housing Levy worked out, and casual or wage pay for any period, with or without statutory deductions."
-        actions={
-          <div className="flex flex-wrap gap-2">
-            <Link href={`/w/${slug}/payroll/rates`}><Button variant="secondary"><Settings className="h-4 w-4" /> Statutory rates</Button></Link>
-            {can("payroll.manage") && <Button onClick={() => { create.reset(); setPicked(null); setCreating(true); }}><Plus className="h-4 w-4" /> Pay staff</Button>}
-          </div>
-        } />
-      <Card>
-        {runs.isLoading ? <div className="px-4"><Spinner /></div> : rows.length === 0 ? <EmptyState title="No payrolls yet">Tick &quot;On the monthly payroll&quot; and enter the salary or wage on each employee, or pay casuals with Pay staff.</EmptyState> : (
-          <Table head={["Payroll", "Pay date", "Staff", "Gross", "Net pay", "Status"]}>
-            {rows.map((r) => (
-              <tr key={r.id} className="hover:bg-stone-50">
-                <Td>
-                  <Link href={`/w/${slug}/payroll/${r.id}`} className="font-medium hover:underline">{r.name}</Link>
-                  <div className="text-xs text-stone-500">{r.kind === "casual" ? `Casual pay${r.apply_statutory ? "" : ", no statutory"}` : "Monthly payroll"}</div>
-                </Td>
-                <Td>{fmtDate(r.pay_date)}</Td>
-                <Td className="text-right">{r.employees}</Td>
-                <Td className="text-right font-mono">{fmt(r.gross_pay)}</Td>
-                <Td className="text-right font-mono">{fmt(r.net_pay)}</Td>
-                <Td><Badge tone={RUN_STATUS[r.status ?? "draft"].tone}>{RUN_STATUS[r.status ?? "draft"].label}</Badge></Td>
-              </tr>
-            ))}
-          </Table>
-        )}
-      </Card>
-      <Modal open={creating} title="Pay staff" onClose={() => setCreating(false)} size={kind === "casual" ? "lg" : "md"}>
+  if (creating) {
+    return (
+      <AsPage guide="payroll">
+      <Modal open title="Pay staff" onClose={() => setCreating(false)} size={kind === "casual" ? "lg" : "md"}>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
           <div className="grid gap-2 sm:grid-cols-2">
             {([["monthly", "Monthly payroll", "Everyone on the monthly payroll, with statutory deductions."],
@@ -122,6 +97,38 @@ export default function PayrollPage() {
             <Button type="submit" loading={create.isPending} disabled={kind === "casual" && chosen.length === 0}>Create payslips</Button></div>
         </form>
       </Modal>
+      </AsPage>
+    );
+  }
+  return (
+    <div className="w-full">
+      <PageHeader title="Payroll" guide="payroll"
+        description="The monthly payroll with PAYE, SHIF, NSSF and the Housing Levy worked out, and casual or wage pay for any period, with or without statutory deductions."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/w/${slug}/payroll/rates`}><Button variant="secondary"><Settings className="h-4 w-4" /> Statutory rates</Button></Link>
+            {can("payroll.manage") && <Button onClick={() => { create.reset(); setPicked(null); setCreating(true); }}><Plus className="h-4 w-4" /> Pay staff</Button>}
+          </div>
+        } />
+      <Card>
+        {runs.isLoading ? <div className="px-4"><Spinner /></div> : rows.length === 0 ? <EmptyState title="No payrolls yet">Tick &quot;On the monthly payroll&quot; and enter the salary or wage on each employee, or pay casuals with Pay staff.</EmptyState> : (
+          <Table head={["Payroll", "Pay date", "Staff", "Gross", "Net pay", "Status"]}>
+            {rows.map((r) => (
+              <tr key={r.id} className="hover:bg-stone-50">
+                <Td>
+                  <Link href={`/w/${slug}/payroll/${r.id}`} className="font-medium hover:underline">{r.name}</Link>
+                  <div className="text-xs text-stone-500">{r.kind === "casual" ? `Casual pay${r.apply_statutory ? "" : ", no statutory"}` : "Monthly payroll"}</div>
+                </Td>
+                <Td>{fmtDate(r.pay_date)}</Td>
+                <Td className="text-right">{r.employees}</Td>
+                <Td className="text-right font-mono">{fmt(r.gross_pay)}</Td>
+                <Td className="text-right font-mono">{fmt(r.net_pay)}</Td>
+                <Td><Badge tone={RUN_STATUS[r.status ?? "draft"].tone}>{RUN_STATUS[r.status ?? "draft"].label}</Badge></Td>
+              </tr>
+            ))}
+          </Table>
+        )}
+      </Card>
     </div>
   );
 }

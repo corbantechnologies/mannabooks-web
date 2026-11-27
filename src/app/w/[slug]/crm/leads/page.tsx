@@ -8,11 +8,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ListFilters } from "@/components/doc-list";
-import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td, Textarea } from "@/components/ui";
 import { api, fieldError, unwrap } from "@/lib/api/client";
 import { LEAD_SOURCES, LEAD_STATUS, useAssignees } from "@/lib/api/crm";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormFlag } from "@/lib/page-form";
 
 const BLANK = { name: "", company: "", phone: "", email: "", source: "walk_in", interest: "", estimated_value: "", assigned_to_id: "", notes: "" };
 
@@ -21,7 +22,7 @@ export default function LeadsPage() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useFormFlag("new");
   const [form, setForm] = useState(BLANK);
   const assignees = useAssignees(slug);
   const list = useQuery({
@@ -38,10 +39,35 @@ export default function LeadsPage() {
   });
   const set = (k: keyof typeof BLANK) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((p) => ({ ...p, [k]: e.target.value }));
   const rows = list.data?.results ?? [];
+  if (adding) {
+    return (
+      <AsPage guide="crm">
+      <Modal size="lg" open title="New lead" onClose={() => setAdding(false)}>
+        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} placeholder="Jane Wanjiku" /></Field>
+            <Field label="Company (optional)"><Input value={form.company} onChange={set("company")} /></Field>
+            <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} placeholder="0722 000 111" /></Field>
+            <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
+            <Field label="How they found you"><Select value={form.source} onChange={set("source")}>{LEAD_SOURCES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
+            <Field label="Likely value (optional)"><Input inputMode="decimal" value={form.estimated_value} onChange={set("estimated_value")} /></Field>
+          </div>
+          <Field label="What they want"><Input value={form.interest} onChange={set("interest")} placeholder="Cement and steel for a 4-storey block" /></Field>
+          {assignees.length > 0 && (
+            <Field label="Who follows up"><Select value={form.assigned_to_id} onChange={set("assigned_to_id")}><option value="">Nobody yet</option>{assignees.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
+          )}
+          <Field label="Notes"><Textarea rows={2} value={form.notes} onChange={set("notes")} /></Field>
+          <FormError error={save.error} />
+          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setAdding(false)}>Cancel</Button><Button type="submit" loading={save.isPending}>Add lead</Button></div>
+        </form>
+      </Modal>
+      </AsPage>
+    );
+  }
   return (
     <div className="w-full">
       <PageHeader title="Leads" description="People who might buy: walk-ins, calls, referrals. Follow them up, then convert the good ones into customers." guide="crm"
-        actions={can("crm.manage") && <Button onClick={() => { save.reset(); setAdding(true); }}><Plus className="h-4 w-4" /> New lead</Button>} />
+        actions={can("crm.manage") && <Button onClick={() => { save.reset(); setForm(BLANK); setAdding(true); }}><Plus className="h-4 w-4" /> New lead</Button>} />
       <ListFilters search={search} setSearch={setSearch} status={status} setStatus={setStatus} placeholder="Search name, company or phone"
         statuses={Object.entries(LEAD_STATUS).map(([k, [l]]) => [k, l])} />
       <Card>
@@ -66,25 +92,6 @@ export default function LeadsPage() {
           </Table>
         )}
       </Card>
-      <Modal size="lg" open={adding} title="New lead" onClose={() => setAdding(false)}>
-        <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Name" error={fieldError(save.error, "name")}><Input required value={form.name} onChange={set("name")} placeholder="Jane Wanjiku" /></Field>
-            <Field label="Company (optional)"><Input value={form.company} onChange={set("company")} /></Field>
-            <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} placeholder="0722 000 111" /></Field>
-            <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
-            <Field label="How they found you"><Select value={form.source} onChange={set("source")}>{LEAD_SOURCES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
-            <Field label="Likely value (optional)"><Input inputMode="decimal" value={form.estimated_value} onChange={set("estimated_value")} /></Field>
-          </div>
-          <Field label="What they want"><Input value={form.interest} onChange={set("interest")} placeholder="Cement and steel for a 4-storey block" /></Field>
-          {assignees.length > 0 && (
-            <Field label="Who follows up"><Select value={form.assigned_to_id} onChange={set("assigned_to_id")}><option value="">Nobody yet</option>{assignees.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select></Field>
-          )}
-          <Field label="Notes"><Textarea rows={2} value={form.notes} onChange={set("notes")} /></Field>
-          <FormError error={save.error} />
-          <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={() => setAdding(false)}>Cancel</Button><Button type="submit" loading={save.isPending}>Add lead</Button></div>
-        </form>
-      </Modal>
     </div>
   );
 }

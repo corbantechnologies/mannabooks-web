@@ -6,11 +6,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
-import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, Select, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { fmtDate, todayIso } from "@/lib/format";
 import { useWorkspace, wsPath } from "@/lib/workspace";
+import { useFormItem } from "@/lib/page-form";
 
 type Shift = components["schemas"]["AttendanceShift"];
 const DAY = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -36,9 +37,11 @@ export function AttendanceShifts() {
   const { slug, can } = useWorkspace();
   const qc = useQueryClient();
   const [from, setFrom] = useState(monday(todayIso()));
-  const [editing, setEditing] = useState<Shift | null | undefined>(undefined);
   const [placing, setPlacing] = useState(false);
   const shifts = useQuery({ queryKey: ["attendance-shifts", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/shifts/", wsPath(slug))) });
+  const [shiftItem, openShift] = useFormItem(shifts.data, undefined, "shift");
+  const editing: Shift | null | undefined = shiftItem === null ? undefined : shiftItem === "new" ? null : shiftItem;
+  const setEditing = (v: Shift | null | undefined) => openShift(v === undefined ? null : v === null ? "new" : v);
   const rota = useQuery({
     queryKey: ["attendance-rota", slug, from],
     queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/attendance/rota/", { params: { path: { workspace: slug }, query: { from, days: 14 } } })),
@@ -58,6 +61,9 @@ export function AttendanceShifts() {
   const canSet = can("attendance.manage") || list.some((s) => s.can_manage) || (rota.data?.rows ?? []).some((r) => r.can_manage);
   const days = rota.data?.days ?? [];
   const today = todayIso();
+  if (editing !== undefined) {
+    return <AsPage guide="attendance"><ShiftForm shift={editing} onClose={() => setEditing(undefined)} onSaved={refresh} /></AsPage>;
+  }
   return (
     <div className="space-y-6">
       <section className="space-y-3">
@@ -146,7 +152,6 @@ export function AttendanceShifts() {
           )}
         </Card>
       </section>
-      {editing !== undefined && <ShiftForm shift={editing} onClose={() => setEditing(undefined)} onSaved={refresh} />}
       {placing && <PlaceForm shifts={list.filter((s) => s.is_active)} people={(rota.data?.rows ?? []).filter((r) => r.can_manage)} onClose={() => setPlacing(false)} onSaved={refresh} />}
     </div>
   );

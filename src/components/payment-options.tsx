@@ -11,6 +11,8 @@ import { useWorkspace } from "@/lib/workspace";
 
 import { Badge, Button, Card, EmptyState, Field, FormError, Input, Modal, Select } from "./ui";
 import { ask } from "@/components/confirm";
+import { AsPage } from "@/components/ui";
+import { useFormItem } from "@/lib/page-form";
 
 type PaymentOption = components["schemas"]["PaymentOption"];
 const KINDS = [
@@ -25,7 +27,7 @@ export function PaymentOptions() {
   const p = { params: { path: { workspace: slug } } };
   const manage = can("workspace.manage");
   const list = useQuery({ queryKey: ["payment-options", slug], queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/payment-options/", p)) });
-  const [editing, setEditing] = useState<PaymentOption | "new" | null>(null);
+  const [editing, setEditing] = useFormItem(list.data, fill, "payment-option");
   const [f, setF] = useState<typeof BLANK>(BLANK);
   const set = (k: keyof typeof BLANK) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF((x) => ({ ...x, [k]: e.target.value }));
   const save = useMutation({
@@ -38,37 +40,20 @@ export function PaymentOptions() {
     mutationFn: async (id: string) => unwrap(await api.DELETE("/api/v1/w/{workspace}/payment-options/{id}/", { params: { path: { workspace: slug, id } } })),
     onSuccess: () => { toast.success("Removed"); setEditing(null); },
   });
-  function open(o: PaymentOption | "new") {
+  function fill(o: PaymentOption | "new") {
     save.reset();
-    setEditing(o);
     setF(o === "new" ? BLANK : {
       kind: o.kind, bank_name: o.bank_name ?? "", branch: o.branch ?? "", account_name: o.account_name ?? "", account_number: o.account_number ?? "",
       swift_code: o.swift_code ?? "", number: o.number ?? "", instructions: o.instructions ?? "", show_on_documents: o.show_on_documents ?? true,
     });
   }
+  const open = (o: PaymentOption | "new") => setEditing(o);
   const rows = list.data ?? [];
   const mobile = ["mpesa_paybill", "mpesa_till", "pochi"].includes(f.kind);
-  return (
-    <Card>
-      <div className="flex items-start justify-between gap-3 p-5 pb-3">
-        <div>
-          <h2 className="font-semibold">How customers pay you</h2>
-          <p className="text-sm text-stone-600">Printed on invoices and quotations, and shown on the links you send customers.</p>
-        </div>
-        {manage && <Button variant="secondary" onClick={() => open("new")}><Plus className="h-4 w-4" /> Add</Button>}
-      </div>
-      {rows.length === 0 ? <EmptyState title="No payment options yet">Add your paybill, till or bank account so customers know how to pay.</EmptyState> : (
-        <div className="grid gap-3 p-5 pt-0 sm:grid-cols-2">
-          {rows.map((o) => (
-            <button key={o.id} type="button" disabled={!manage} onClick={() => open(o)}
-              className="rounded-md border border-stone-200 p-3 text-left text-sm hover:border-brand-300 disabled:cursor-default">
-              {o.lines.map((l) => <p key={l} className="text-stone-700">{l}</p>)}
-              {!o.show_on_documents && <span className="mt-1 inline-block"><Badge>Not printed</Badge></span>}
-            </button>
-          ))}
-        </div>
-      )}
-      <Modal open={editing !== null} title={editing === "new" ? "Add a payment option" : "Edit payment option"} onClose={() => setEditing(null)}>
+  if (editing !== null) {
+    return (
+      <AsPage guide="workspace-settings">
+      <Modal open title={editing === "new" ? "Add a payment option" : "Edit payment option"} onClose={() => setEditing(null)}>
         <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
           <Field label="Type"><Select value={f.kind} onChange={set("kind")}>{KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}</Select></Field>
           {f.kind === "bank" && (
@@ -106,6 +91,29 @@ export function PaymentOptions() {
           </div>
         </form>
       </Modal>
+      </AsPage>
+    );
+  }
+  return (
+    <Card>
+      <div className="flex items-start justify-between gap-3 p-5 pb-3">
+        <div>
+          <h2 className="font-semibold">How customers pay you</h2>
+          <p className="text-sm text-stone-600">Printed on invoices and quotations, and shown on the links you send customers.</p>
+        </div>
+        {manage && <Button variant="secondary" onClick={() => open("new")}><Plus className="h-4 w-4" /> Add</Button>}
+      </div>
+      {rows.length === 0 ? <EmptyState title="No payment options yet">Add your paybill, till or bank account so customers know how to pay.</EmptyState> : (
+        <div className="grid gap-3 p-5 pt-0 sm:grid-cols-2">
+          {rows.map((o) => (
+            <button key={o.id} type="button" disabled={!manage} onClick={() => open(o)}
+              className="rounded-md border border-stone-200 p-3 text-left text-sm hover:border-brand-300 disabled:cursor-default">
+              {o.lines.map((l) => <p key={l} className="text-stone-700">{l}</p>)}
+              {!o.show_on_documents && <span className="mt-1 inline-block"><Badge>Not printed</Badge></span>}
+            </button>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
