@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { ApprovalPanel } from "@/components/approval-panel";
 import { Meta } from "@/components/document-view";
 import { PayItemsEditor } from "@/components/pay-items";
+import { ActionMenu } from "@/components/action-menu";
 import { Badge, Button, Card, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Table, Td } from "@/components/ui";
 import { useBankAccounts } from "@/lib/api/banking";
 import { api, unwrap } from "@/lib/api/client";
@@ -36,7 +37,7 @@ export default function PayRunPage() {
   });
   const act = useMutation({
     mutationFn: async (body: Record<string, unknown>) => unwrap(await api.POST("/api/v1/w/{workspace}/pay-runs/{id}/action/", { ...path, body: body as never })),
-    onSuccess: (r) => { toast.success(RUN_STATUS[r.status ?? "draft"].label); setPaying(null); },
+    onSuccess: (r, body) => { toast.success(body.action === "send_payslips" ? "Payslips sent to staff" : RUN_STATUS[r.status ?? "draft"].label); setPaying(null); },
     onError: (e) => { if (!paying) toast.error(e.message); },
   });
   const remove = useMutation({
@@ -74,17 +75,26 @@ export default function PayRunPage() {
       <PageHeader title={r.kind === "casual" ? r.name : `Payroll ${r.name}`} guide="payroll"
         description={`${r.kind === "casual" ? "Casual pay" : "Monthly payroll"} · pay date ${fmtDate(r.pay_date)} · ${r.employees} staff${r.apply_statutory ? "" : " · no statutory deductions"}`}
         actions={
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={exportBank}>Bank / M-Pesa list</Button>
-            <Button variant="secondary" onClick={exportStatutory}>Statutory schedule</Button>
-            {draft && can("payroll.manage") && <Button variant="secondary" onClick={() => { act.reset(); setAddId(""); setAdding(true); }}>Add someone</Button>}
-            {draft && can("payroll.manage") && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this payroll?").then((ok) => ok && remove.mutate())}>Delete</Button>}
-            {draft && can("payroll.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
-            {r.status === "approved" && can("payroll.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change payslips?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
-            {r.status === "approved" && can("payroll.manage") && <Button onClick={() => { act.reset(); setPaying("pay"); }}>Record salaries paid</Button>}
-          </div>
+          <ActionMenu label="Actions" primary actions={[
+            { label: "Approve", onClick: () => act.mutate({ action: "approve" }), hidden: !(draft && can("payroll.approve") && !approval.data?.required) },
+            { label: "Record salaries paid", onClick: () => { act.reset(); setPaying("pay"); }, hidden: !(r.status === "approved" && can("payroll.manage")) },
+            { label: r.payslips_sent_at ? "Send payslips again" : "Send payslips now", hidden: !(r.status !== "draft" && can("payroll.manage")),
+              onClick: () => void ask(r.payslips_sent_at ? `Payslips were sent on ${fmtDate(r.payslips_sent_at)}. Send them again?` : "Email every person their payslip now? Otherwise they go when you record the salaries as paid.", { confirmLabel: "Send" })
+                .then((ok) => ok && act.mutate({ action: "send_payslips" })) },
+            { label: "Add someone", onClick: () => { act.reset(); setAddId(""); setAdding(true); }, hidden: !(draft && can("payroll.manage")) },
+            { label: "Bank / M-Pesa list", onClick: exportBank },
+            { label: "Statutory schedule", onClick: exportStatutory },
+            { label: "Reopen", onClick: () => void ask("Reopen to change payslips?").then((ok) => ok && act.mutate({ action: "reopen" })), hidden: !(r.status === "approved" && can("payroll.approve")) },
+            { label: "Delete", danger: true, onClick: () => void ask("Delete this payroll?").then((ok) => ok && remove.mutate()), hidden: !(draft && can("payroll.manage")) },
+          ]} />
         } />
       <ApprovalPanel docType="pay_run" id={id} />
+      {r.status !== "draft" && (
+        <p className="mb-3 text-sm text-stone-600">
+          {r.payslips_sent_at ? `Payslips emailed to staff on ${fmtDate(r.payslips_sent_at)}.`
+            : r.status === "approved" ? "Payslips will be emailed to staff when you record the salaries as paid, or send them now from Actions." : "Payslips haven't been emailed: send them from Actions."}
+        </p>
+      )}
       <Card className="mb-4 grid gap-4 p-4 sm:grid-cols-4">
         <Meta label="Status"><Badge tone={RUN_STATUS[r.status ?? "draft"].tone}>{RUN_STATUS[r.status ?? "draft"].label}</Badge></Meta>
         <Meta label="Gross pay">{fmt(r.gross_pay)}</Meta>

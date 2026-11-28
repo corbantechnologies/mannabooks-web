@@ -42,3 +42,7 @@ An approved payroll can be **reopened** to correct it until it is paid.
 ## Percentage bonuses
 
 In an employee's monthly allowances, press **%** next to the amount to make it a share of their basic salary, such as *Performance bonus, 10%*. Each payroll works it out from that month's basic salary and shows it on the payslip as *Performance bonus (10%)*.
+
+## Payslips by email
+
+When salaries are **recorded as paid**, each person is emailed that their payslip is ready, with their gross pay, deductions and net pay, and a link to see the full payslip in MannaBooks. It goes to their **personal email**, or their work email when they have none, so a work address that passes to someone else doesn't carry old payslips. People with a login also get a notice in MannaBooks. A payroll can be approved days before payday, so nothing is sent at approval. To send them earlier, choose **Actions > Send payslips now** on the payroll; it says when they were last sent, and you can send them again. Switch the automatic emails off under **Settings** if you'd rather send them yourself.

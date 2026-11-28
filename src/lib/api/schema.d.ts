@@ -6305,7 +6305,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description approve (payroll.approve), reopen, pay (net pay), remit (a statutory deduction), or add_employee to a draft. */
+        /**
+         * @description approve (payroll.approve), reopen, pay (net pay; payslips are emailed then if not sent yet), remit (a statutory deduction),
+         *     add_employee to a draft, or send_payslips now.
+         */
         post: operations["w_pay_runs_action_create"];
         delete?: never;
         options?: never;
@@ -16627,6 +16630,8 @@ export interface components {
              *     * `off` - Nobody (each person sees their own)
              */
             show_presence?: components["schemas"]["ShowPresenceEnum"];
+            /** @description When a payroll is paid, email each person their payslip (personal email first), unless already sent */
+            email_payslips?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -20042,6 +20047,8 @@ export interface components {
              *     * `off` - Nobody (each person sees their own)
              */
             show_presence?: components["schemas"]["ShowPresenceEnum"];
+            /** @description When a payroll is paid, email each person their payslip (personal email first), unless already sent */
+            email_payslips?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -20176,6 +20183,11 @@ export interface components {
             readonly paid_from_name: string;
             /** Format: date */
             readonly paid_at: string | null;
+            /**
+             * Format: date-time
+             * @description When staff were emailed their payslips (sent now, or on payment)
+             */
+            readonly payslips_sent_at: string | null;
             /** @description Statutory amounts paid: {kind: {amount, date, reference}} */
             readonly remittances: unknown;
             /** Format: date-time */
@@ -20187,9 +20199,10 @@ export interface components {
          *     * `pay` - pay
          *     * `remit` - remit
          *     * `add_employee` - add_employee
+         *     * `send_payslips` - send_payslips
          * @enum {string}
          */
-        PayRunActionActionEnum: "approve" | "reopen" | "pay" | "remit" | "add_employee";
+        PayRunActionActionEnum: "approve" | "reopen" | "pay" | "remit" | "add_employee" | "send_payslips";
         /**
          * @description * `paye` - paye
          *     * `shif` - shif
@@ -20199,6 +20212,16 @@ export interface components {
          */
         PayRunActionKindEnum: "paye" | "shif" | "nssf" | "housing_levy";
         PayRunActionRequest: {
+            /**
+             * @description send_payslips: email staff their payslips now (approved or paid)
+             *
+             *     * `approve` - approve
+             *     * `reopen` - reopen
+             *     * `pay` - pay
+             *     * `remit` - remit
+             *     * `add_employee` - add_employee
+             *     * `send_payslips` - send_payslips
+             */
             action: components["schemas"]["PayRunActionActionEnum"];
             /** Format: uuid */
             employee_id?: string;
@@ -25234,6 +25257,8 @@ export interface components {
              *     * `off` - Nobody (each person sees their own)
              */
             show_presence?: components["schemas"]["ShowPresenceEnum"];
+            /** @description When a payroll is paid, email each person their payslip (personal email first), unless already sent */
+            email_payslips?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */
@@ -25348,6 +25373,8 @@ export interface components {
              *     * `off` - Nobody (each person sees their own)
              */
             show_presence?: components["schemas"]["ShowPresenceEnum"];
+            /** @description When a payroll is paid, email each person their payslip (personal email first), unless already sent */
+            email_payslips?: boolean;
             /** @description Show the online shop at /shop/<slug> */
             store_enabled?: boolean;
             /** @description A few words at the top of the shop */

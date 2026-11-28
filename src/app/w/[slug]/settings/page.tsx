@@ -30,7 +30,7 @@ export default function SettingsPage() {
     name: ws.name, legal_name: ws.legal_name ?? "", kra_pin: ws.kra_pin ?? "", vat_registered: !!ws.vat_registered,
     vat_number: ws.vat_number ?? "", currency: ws.currency ?? "KES", phone: ws.phone ?? "", email: ws.email ?? "",
     address: ws.address ?? "", fiscal_year_start_month: ws.fiscal_year_start_month ?? 1, timezone: ws.timezone ?? "Africa/Nairobi",
-    setup_hidden: Boolean(ws.setup_hidden), show_presence: (ws.show_presence ?? "supervisors") as "everyone" | "supervisors" | "off",
+    setup_hidden: Boolean(ws.setup_hidden), email_payslips: ws.email_payslips ?? true, show_presence: (ws.show_presence ?? "supervisors") as "everyone" | "supervisors" | "off",
   });
   const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["Africa/Nairobi"];
 
@@ -91,6 +91,7 @@ export default function SettingsPage() {
               <option value="off">Nobody: each person sees only their own</option>
             </Select>
           </Field>
+          <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-0.5" checked={form.email_payslips} onChange={(e) => setForm((prev) => ({ ...prev, email_payslips: e.target.checked }))} /> Email each person their payslip when a payroll is recorded as paid (to their personal email, or their work email when they have none). They also see it in MannaBooks. You can send them earlier from the payroll&apos;s Actions.</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!form.setup_hidden} onChange={(e) => setForm((prev) => ({ ...prev, setup_hidden: !e.target.checked }))} /> Show the setup checklist on the overview until it&apos;s done</label>
           <FormError error={save.error} />
           <Button type="submit" loading={save.isPending}>Save settings</Button>
