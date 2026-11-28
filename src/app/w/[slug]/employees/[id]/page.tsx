@@ -40,6 +40,11 @@ export default function EmployeeProfilePage() {
             {p.staff_number}{p.reports_to ? ` · reports to ${p.reports_to}` : ""}{p.hire_date ? ` · joined ${fmtDate(p.hire_date)} (${p.years_of_service} years)` : ""}
             {p.exit_date ? ` · left ${fmtDate(p.exit_date)}` : ""}
           </p>
+          {(p.email || p.personal_email || p.phone) && (
+            <p className="text-xs text-stone-500">
+              {[p.phone, p.email && `work ${p.email}`, p.personal_email && `personal ${p.personal_email}`].filter(Boolean).join(" · ")}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Badge tone={p.status === "active" ? "green" : p.status === "on_leave" ? "amber" : "stone"}>{p.status_label}</Badge>{!p.has_login && <Badge>No login</Badge>}

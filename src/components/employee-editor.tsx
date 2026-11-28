@@ -13,7 +13,7 @@ import type { Employee } from "@/lib/api/types";
 import { useWorkspace, wsPath } from "@/lib/workspace";
 
 const EMPTY = {
-  first_name: "", last_name: "", other_names: "", email: "", phone: "", national_id: "", kra_pin: "",
+  first_name: "", last_name: "", other_names: "", email: "", personal_email: "", phone: "", national_id: "", kra_pin: "",
   job_title: "", department_id: "", other_department_ids: [] as string[], employment_type: "permanent", contract_end: "", branch_id: "", reports_to_id: "", hire_date: "", status: "active" as "active" | "on_leave" | "exited",
   on_payroll: false, pay_type: "salary" as "salary" | "daily" | "hourly", basic_salary: "", pay_rate: "",
   pay_method: "bank" as "bank" | "mpesa" | "cash", bank_name: "", bank_account_number: "", mpesa_phone: "",
@@ -26,7 +26,7 @@ type Form = typeof EMPTY;
 
 function toForm(e: Employee): Form {
   return {
-    first_name: e.first_name, last_name: e.last_name, other_names: e.other_names ?? "", email: e.email ?? "", phone: e.phone ?? "",
+    first_name: e.first_name, last_name: e.last_name, other_names: e.other_names ?? "", email: e.email ?? "", personal_email: e.personal_email ?? "", phone: e.phone ?? "",
     national_id: e.national_id ?? "", kra_pin: e.kra_pin ?? "", job_title: e.job_title ?? "", department_id: e.department_id ?? "", other_department_ids: (e.other_department_ids as string[] | undefined) ?? [], employment_type: e.employment_type ?? "permanent", contract_end: e.contract_end ?? "",
     branch_id: e.branch_id ?? "", reports_to_id: e.reports_to_id ?? "", hire_date: e.hire_date ?? "", status: e.status ?? "active",
     on_payroll: e.on_payroll ?? false, pay_type: e.pay_type ?? "salary", basic_salary: e.basic_salary ? String(Number(e.basic_salary)) : "",
@@ -40,7 +40,7 @@ function toForm(e: Employee): Form {
 }
 
 const CHANGE_LABEL: Record<string, string> = {
-  national_id: "National ID", kra_pin: "KRA PIN", nssf_number: "NSSF number", shif_number: "SHIF number",
+  personal_email: "Personal email", national_id: "National ID", kra_pin: "KRA PIN", nssf_number: "NSSF number", shif_number: "SHIF number",
   pay_method: "Paid by", bank_name: "Bank", bank_account_number: "Bank account number", mpesa_phone: "M-Pesa number",
 };
 
@@ -158,7 +158,8 @@ export function EmployeeEditor({ employee, onClose, onSaved }: { employee: Emplo
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         <Field label="First name" error={fieldError(save.error, "first_name")}><Input required value={form.first_name} onChange={set("first_name")} /></Field>
         <Field label="Last name" error={fieldError(save.error, "last_name")}><Input required value={form.last_name} onChange={set("last_name")} /></Field>
-        <Field label="Email" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
+        <Field label="Work email" hint="May pass to whoever takes the role next" error={fieldError(save.error, "email")}><Input type="email" value={form.email} onChange={set("email")} /></Field>
+        <Field label="Personal email" hint="Their own: payslips and private letters go here" error={fieldError(save.error, "personal_email")}><Input type="email" value={form.personal_email} onChange={set("personal_email")} /></Field>
         <Field label="Phone" error={fieldError(save.error, "phone")}><Input value={form.phone} onChange={set("phone")} /></Field>
         <Field label="National ID" error={fieldError(save.error, "national_id")}><Input value={form.national_id} onChange={set("national_id")} /></Field>
         <Field label="KRA PIN" error={fieldError(save.error, "kra_pin")}><Input value={form.kra_pin} onChange={set("kra_pin")} maxLength={11} autoCapitalize="characters" className="uppercase" placeholder="P051234567X" /></Field>

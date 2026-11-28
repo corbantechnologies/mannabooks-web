@@ -3747,6 +3747,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/employees/export/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The employee list as an Excel workbook (name, ID, KRA PIN, pay and its period), for filing PAYE. Pay is in it: payroll staff only. */
+        get: operations["w_employees_export_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/employees/me/": {
         parameters: {
             query?: never;
@@ -13751,7 +13768,10 @@ export interface components {
             last_name: string;
             other_names?: string;
             readonly full_name: string;
+            /** @description Work email: it may pass to whoever takes the role next */
             email?: string;
+            /** @description Their own address, kept when they leave: payslips and private letters go here */
+            personal_email?: string;
             phone?: string;
             emergency_contact_name?: string;
             emergency_contact_phone?: string;
@@ -13846,6 +13866,8 @@ export interface components {
             /** Format: double */
             years_of_service: number | null;
             email: string;
+            /** @description Shown to payroll staff and the person only */
+            personal_email: string;
             phone: string;
             has_login: boolean;
             is_me: boolean;
@@ -13866,7 +13888,10 @@ export interface components {
             first_name: string;
             last_name: string;
             other_names?: string;
+            /** @description Work email: it may pass to whoever takes the role next */
             email?: string;
+            /** @description Their own address, kept when they leave: payslips and private letters go here */
+            personal_email?: string;
             phone?: string;
             emergency_contact_name?: string;
             emergency_contact_phone?: string;
@@ -19012,7 +19037,10 @@ export interface components {
             first_name?: string;
             last_name?: string;
             other_names?: string;
+            /** @description Work email: it may pass to whoever takes the role next */
             email?: string;
+            /** @description Their own address, kept when they leave: payslips and private letters go here */
+            personal_email?: string;
             phone?: string;
             emergency_contact_name?: string;
             emergency_contact_phone?: string;
@@ -19334,6 +19362,8 @@ export interface components {
         PatchedMyDetailsRequest: {
             phone?: string;
             email?: string;
+            /** @description Waits for HR; your current address is told */
+            personal_email?: string;
             emergency_contact_name?: string;
             emergency_contact_phone?: string;
             national_id?: string;
@@ -32663,6 +32693,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EmployeeProfile"];
+                };
+            };
+        };
+    };
+    w_employees_export_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Also people who have left */
+                include_exited?: boolean;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
                 };
             };
         };

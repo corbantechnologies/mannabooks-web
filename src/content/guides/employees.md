@@ -65,3 +65,16 @@ ID numbers show in full only to payroll staff and the person themself; others se
 
 - **Employment**: permanent (salaried), fixed-term contract (with the date it ends), casual, work for hire, volunteer, or intern.
 - **Department** is the main one: pay and wages count against it. **Also works in** adds other departments, so a CEO who also leads a division, or a director in a Directors department, counts as one of its people. They see its tasks, show on its page and on My department.
+
+## Work and personal email
+
+Each employee has two addresses:
+
+- **Work email**: the address that comes with the job. It may pass to whoever takes the role next, so they could read what was sent to it.
+- **Personal email**: their own address, which they keep when they leave. Payslips and private letters (a change to their details, a disciplinary matter) go here. When there is none, private mail goes to their work address.
+
+Only HR (anyone who can see payroll) and the person can see a personal email. Staff can change theirs under **Me > My details**; HR checks the change first, and the old address is told about it.
+
+## Downloading the list for PAYE
+
+On **Employees**, choose **Actions > Download list (Excel)**. The workbook has each person's name, national ID, KRA PIN, salary or wage and its period (monthly, daily or hourly), plus their staff number, employment type and dates. ID numbers keep their leading zeros. **Download list with past staff** adds people who have left. It holds pay, so only people who can see payroll can download it.

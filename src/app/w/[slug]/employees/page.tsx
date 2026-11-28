@@ -1,12 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Badge, Button, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
+import { ActionMenu } from "@/components/action-menu";
+import { Badge, Card, EmptyState, ErrorState, Input, PageHeader, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { useWorkspace } from "@/lib/workspace";
 
@@ -31,7 +32,11 @@ export default function EmployeesPage() {
         title={viewAll ? "Employees" : "My employee record"}
         description={viewAll ? "Everyone who works here. Open someone to see their profile and edit their details." : "Your details as HR has them. Ask HR to correct anything wrong."}
         guide="employees"
-        actions={manage && <Link href={`/w/${slug}/employees/new`}><Button><Plus className="h-4 w-4" /> New employee</Button></Link>}
+        actions={(manage || can("payroll.view")) && <ActionMenu label="Actions" primary actions={[
+          { label: "New employee", href: `/w/${slug}/employees/new`, hidden: !manage },
+          { label: "Download list (Excel): for PAYE", onClick: () => { window.location.href = `/api/backend/api/v1/w/${slug}/employees/export/`; }, hidden: !can("payroll.view") },
+          { label: "Download list with past staff (Excel)", onClick: () => { window.location.href = `/api/backend/api/v1/w/${slug}/employees/export/?include_exited=true`; }, hidden: !can("payroll.view") },
+        ]} />}
       />
       {viewAll && (
         <div className="relative mb-4 max-w-sm">
