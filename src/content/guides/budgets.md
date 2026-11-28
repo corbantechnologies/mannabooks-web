@@ -45,3 +45,7 @@ Heads plan against account names only; they don't see the books' balances. Once 
 The **Budget vs actual** tab shows, for each account, the budget and the actual figure from the start of the year to the month you choose, and the difference. Green means better than planned (more income, or less spending); red means worse. The bar shows how much of the year's budget has been used.
 
 Spending is counted from the books: bills, expenses, payroll and journals posted to that account (and, for a cost centre or project budget, tagged with it).
+
+## Closing a budget
+
+When a budget is done with (the money was spent and paid), choose **Actions > Close (spent and paid)**. It stays approved, so **Budget vs actual** and the spending checks still use it, but it can never be reopened or changed. For any change after that, make a new budget.

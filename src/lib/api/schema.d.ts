@@ -11879,6 +11879,13 @@ export interface components {
             readonly approved_by_name: string;
             /** Format: date-time */
             readonly approved_at: string | null;
+            /**
+             * Format: date-time
+             * @description Closed: done with (spent, paid). It stays approved for reports and can't be reopened
+             */
+            readonly closed_at: string | null;
+            readonly closed_by_name: string;
+            readonly close_note: string;
             readonly submitted_by_name: string;
             /**
              * Format: date-time
@@ -11907,10 +11914,20 @@ export interface components {
          *     * `reopen` - reopen
          *     * `submit` - submit
          *     * `fill_from_last_year` - fill_from_last_year
+         *     * `close` - close
          * @enum {string}
          */
-        BudgetActionActionEnum: "approve" | "reopen" | "submit" | "fill_from_last_year";
+        BudgetActionActionEnum: "approve" | "reopen" | "submit" | "fill_from_last_year" | "close";
         BudgetActionRequest: {
+            /**
+             * @description close: done with (spent and paid); it can't be reopened after
+             *
+             *     * `approve` - approve
+             *     * `reopen` - reopen
+             *     * `submit` - submit
+             *     * `fill_from_last_year` - fill_from_last_year
+             *     * `close` - close
+             */
             action: components["schemas"]["BudgetActionActionEnum"];
             /**
              * Format: decimal

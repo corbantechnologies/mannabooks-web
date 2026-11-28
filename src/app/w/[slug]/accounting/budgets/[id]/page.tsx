@@ -9,6 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ApprovalPanel } from "@/components/approval-panel";
+import { ActionMenu } from "@/components/action-menu";
 import { Badge, Button, Card, EmptyState, ErrorState, Field, FormError, Input, Modal, PageHeader, Select, Spinner, Textarea } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
 import { BUDGET_STATUS, type Budget, monthLabel, useApprovalStatus } from "@/lib/api/control";
@@ -35,9 +36,9 @@ export default function BudgetPage() {
   const approval = useApprovalStatus(slug, "budget", id);
   const [tab, setTab] = useState<"plan" | "actual">("plan");
   const act = useMutation({
-    mutationFn: async (body: { action: "approve" | "reopen" | "submit" | "fill_from_last_year"; uplift_percent?: string; note?: string }) =>
+    mutationFn: async (body: { action: "approve" | "reopen" | "submit" | "fill_from_last_year" | "close"; uplift_percent?: string; note?: string }) =>
       unwrap(await api.POST("/api/v1/w/{workspace}/budgets/{id}/action/", { ...path, body: body as never })),
-    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : v.action === "submit" ? "Sent for approval" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); setSending(false); setNote(""); },
+    onSuccess: (b, v) => { toast.success(v.action === "fill_from_last_year" ? "Filled from last year" : v.action === "submit" ? "Sent for approval" : v.action === "close" ? "Budget closed" : BUDGET_STATUS[b.status ?? "draft"].label); setFilling(false); setSending(false); setNote(""); },
     onError: (e) => { if (!filling && !sending) toast.error(e.message); },
   });
   const [sending, setSending] = useState(false);
@@ -60,19 +61,22 @@ export default function BudgetPage() {
     <div className="w-full">
       <Link href={`/w/${slug}/accounting/budgets`} className="text-sm text-stone-500 hover:underline">&larr; Budgets</Link>
       <PageHeader title={b.name} description={`${b.month ? `${monthLabel(b.month)} only (${b.fiscal_year_name})` : b.fiscal_year_name}, ${b.department_name ?? b.cost_center_name ?? b.project_name ?? "whole business"}`} guide="budgets"
-        actions={<div className="flex flex-wrap gap-2">
-          {editable && <Button variant="ghost" className="text-red-600" onClick={() => void ask("Delete this budget?").then((ok) => ok && remove.mutate())}>Delete</Button>}
-          {editable && <Button variant="secondary" onClick={() => { act.reset(); setFilling(true); }}>Copy last year</Button>}
-          {draft && editable && !can("budgets.approve") && (
-            <Button disabled={!(b.lines ?? []).length} onClick={() => { act.reset(); setSending(true); }}>{b.submitted_at ? "Send again" : "Submit for approval"}</Button>
-          )}
-          {draft && can("budgets.approve") && !approval.data?.required && <Button loading={act.isPending} onClick={() => act.mutate({ action: "approve" })}>Approve</Button>}
-          {!draft && can("budgets.approve") && <Button variant="secondary" onClick={() => void ask("Reopen to change the figures?").then((ok) => ok && act.mutate({ action: "reopen" }))}>Reopen</Button>}
-        </div>} />
+        actions={<ActionMenu label="Actions" primary actions={[
+          { label: "Approve", onClick: () => act.mutate({ action: "approve" }), hidden: !(draft && can("budgets.approve") && !approval.data?.required) },
+          { label: b.submitted_at ? "Send for approval again" : "Submit for approval", onClick: () => { act.reset(); setSending(true); },
+            hidden: !(draft && editable && !can("budgets.approve") && (b.lines ?? []).length > 0) },
+          { label: "Copy last year", onClick: () => { act.reset(); setFilling(true); }, hidden: !editable },
+          { label: "Close (spent and paid)", hidden: !(!draft && !b.closed_at && can("budgets.approve")),
+            onClick: () => void ask("Close this budget? It's done with: it stays approved for reports, but it can never be reopened.", { confirmLabel: "Close it" })
+              .then((ok) => ok && act.mutate({ action: "close" })) },
+          { label: "Reopen", onClick: () => void ask("Reopen to change the figures?").then((ok) => ok && act.mutate({ action: "reopen" })), hidden: !(!draft && !b.closed_at && can("budgets.approve")) },
+          { label: "Delete", danger: true, onClick: () => void ask("Delete this budget?").then((ok) => ok && remove.mutate()), hidden: !editable },
+        ]} />} />
       <ApprovalPanel docType="budget" id={id} />
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge>
         {b.approved_by_name && <span className="text-sm text-stone-500">by {b.approved_by_name}</span>}
+        {b.closed_at && <Badge tone="stone">Closed {fmtDate(b.closed_at)}{b.closed_by_name ? ` by ${b.closed_by_name}` : ""}</Badge>}
         {draft && b.submitted_at && <span className="text-sm text-stone-500">Sent for approval by {b.submitted_by_name ?? "someone"}, {fmtDate(b.submitted_at)}{b.submitted_note && !approval.data?.request ? `: "${b.submitted_note}"` : ""}</span>}
         <div className="ml-auto flex gap-1 rounded-md border border-stone-200 p-0.5">
           {(["plan", "actual"] as const).map((t) => (
@@ -205,7 +209,7 @@ function PlanGrid({ budget, editable }: { budget: Budget; editable: boolean }) {
             </Field>
             <Button variant="secondary" disabled={!adding} onClick={() => { setRows((p) => [...p, { account_id: adding, amounts: Array(12).fill("0") }]); setAdding(""); setDirty(true); }}><Plus className="h-4 w-4" /> Add</Button>
           </div>
-        ) : <span className="text-sm text-stone-500">{budget.status === "approved" ? "Reopen the budget to change it." : ""}</span>}
+        ) : <span className="text-sm text-stone-500">{budget.closed_at ? "This budget is closed: it can't be changed or reopened." : budget.status === "approved" ? "Reopen the budget to change it." : ""}</span>}
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={exportCsv} disabled={!rows.length}><Download className="h-4 w-4" /> CSV</Button>
           {editable && <Button disabled={!dirty} loading={save.isPending} onClick={() => save.mutate()}>Save budget</Button>}

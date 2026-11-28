@@ -61,7 +61,7 @@ export default function BudgetsPage() {
                 <Td>{b.department_name ?? b.cost_center_name ?? b.project_name ?? "Whole business"}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_income)}</Td>
                 <Td className="text-right font-mono">{fmt(b.total_expense)}</Td>
-                <Td><Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge></Td>
+                <Td><Badge tone={BUDGET_STATUS[b.status ?? "draft"].tone}>{BUDGET_STATUS[b.status ?? "draft"].label}</Badge>{b.closed_at && <span className="ml-1"><Badge>Closed</Badge></span>}</Td>
               </tr>
             ))}
           </Table>
