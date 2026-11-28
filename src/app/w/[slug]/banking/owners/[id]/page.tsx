@@ -4,28 +4,38 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { ask } from "@/components/confirm";
 import { ActionMenu } from "@/components/action-menu";
 import { OwnerBulkForm, OwnerEditor, OwnerMoneyModal } from "@/components/owner-money";
-import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Spinner, Table, Td } from "@/components/ui";
+import { AsPage, Badge, Button, Card, EmptyState, ErrorState, Field, Input, Select, Spinner, Table, Td } from "@/components/ui";
 import { api, unwrap } from "@/lib/api/client";
+import { PRESETS, type Preset, presetRange } from "@/lib/date-presets";
 import { fmt, fmtDate } from "@/lib/format";
 import { useWorkspace } from "@/lib/workspace";
 import { useFormFlag } from "@/lib/page-form";
 
 /** One owner's or director's account: every movement of money, and their balances after each. */
 export default function OwnerStatementPage() {
-  const { slug, can } = useWorkspace();
+  const { slug, can, context } = useWorkspace();
   const { id } = useParams<{ id: string }>();
   const [editing, setEditing] = useFormFlag("edit");
   const [recording, setRecording] = useFormFlag("money");
   const [bulk, setBulk] = useFormFlag("bulk");
+  // the statement for a month by default, or the dates chosen
+  const [preset, setPreset] = useState<Preset>("this_month");
+  const [range, setRange] = useState<[string, string]>(() => presetRange("this_month"));
+  const [from, to] = range;
   const q = useQuery({
-    queryKey: ["owner-statement", slug, id],
-    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/owners/{id}/statement/", { params: { path: { workspace: slug, id } } })),
+    queryKey: ["owner-statement", slug, id, from, to],
+    queryFn: async () => unwrap(await api.GET("/api/v1/w/{workspace}/owners/{id}/statement/", {
+      params: { path: { workspace: slug, id }, query: { from: from || undefined, to: to || undefined } },
+    })),
+    placeholderData: (prev) => prev,
   });
+  const pdfUrl = `/api/backend/api/v1/w/${slug}/owners/${id}/statement/pdf/?${new URLSearchParams({ ...(from ? { from } : {}), ...(to ? { to } : {}) })}`;
   const voidIt = useMutation({
     mutationFn: async (tid: string) => unwrap(await api.POST("/api/v1/w/{workspace}/owners/transactions/{id}/void/", { params: { path: { workspace: slug, id: tid } } })),
     onSuccess: () => { toast.success("Voided: its entry is reversed"); void q.refetch(); },
@@ -33,7 +43,7 @@ export default function OwnerStatementPage() {
   });
   if (q.isLoading) return <Spinner />;
   if (q.error) return <ErrorState error={q.error} />;
-  const { owner, balances, rows } = q.data!;
+  const { owner, balances, rows, opening, closing, start, money_in, money_out } = q.data!;
   const money = (v?: string | null) => (v && Number(v) ? fmt(v) : "");
   if (recording) {
     return <AsPage guide="owners"><OwnerMoneyModal ownerId={owner.id} onClose={() => { setRecording(false); void q.refetch(); }} /></AsPage>;
@@ -59,7 +69,8 @@ export default function OwnerStatementPage() {
             { label: "Record money", onClick: () => setRecording(true), hidden: !(can("owners.record") && owner.is_active) },
             { label: "Record in bulk", onClick: () => setBulk(true), hidden: !(can("owners.record") && owner.is_active) },
             { label: "Edit", onClick: () => setEditing(true), hidden: !can("owners.record") },
-            { label: "Print", onClick: () => window.print() },
+            { label: "Download statement (PDF)", onClick: () => window.open(pdfUrl, "_blank", "noopener"), hidden: !context.pdf_enabled },
+            { label: context.pdf_enabled ? "Print this page" : "Print or save as PDF", onClick: () => window.print() },
           ]} />
         </div>
       </div>
@@ -72,9 +83,22 @@ export default function OwnerStatementPage() {
         <Tile label="Drawings, all time" value={balances.drawings} />
       </div>
 
+      <div className="flex flex-wrap items-end gap-3 print:hidden">
+        <Field label="Statement for">
+          <Select value={preset} onChange={(e) => { const p = e.target.value as Preset; setPreset(p); if (p !== "custom") setRange(presetRange(p)); }}>
+            {PRESETS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          </Select>
+        </Field>
+        <Field label="From"><Input type="date" value={from} onChange={(e) => { setPreset("custom"); setRange([e.target.value, to]); }} /></Field>
+        <Field label="To"><Input type="date" value={to} onChange={(e) => { setPreset("custom"); setRange([from, e.target.value]); }} /></Field>
+        <p className="pb-2 text-sm text-stone-600">In {fmt(money_in)} · out {fmt(money_out)}</p>
+      </div>
       <Card>
-        {rows.length === 0 ? <EmptyState title="Nothing recorded yet" /> : (
+        {rows.length === 0 && !start ? <EmptyState title="Nothing recorded yet" /> : rows.length === 0 ? <EmptyState title="Nothing in these dates">The balances are as brought forward: owed to them {fmt(opening.owed_to)}, owed by them {fmt(opening.owed_by)}.</EmptyState> : (
           <Table head={["Date", "What", "In", "Out", "Capital", "Shares", "Owed to them", "Owed by them", ""]}>
+            <tr className="bg-stone-50 font-medium"><Td>{to ? fmtDate(to) : "Now"}</Td><Td>Carried forward</Td><Td /><Td />
+              <Td className="text-right font-mono">{fmt(closing.capital)}</Td><Td className="text-right font-mono">{fmt(closing.shares)}</Td>
+              <Td className="text-right font-mono">{fmt(closing.owed_to)}</Td><Td className="text-right font-mono">{fmt(closing.owed_by)}</Td><Td /></tr>
             {[...rows].reverse().map(({ transaction: t, ...r }) => ( // newest first; each row keeps its balances after it
               <tr key={t.id}>
                 <Td className="whitespace-nowrap">{fmtDate(t.transaction_date)}</Td>
@@ -92,6 +116,9 @@ export default function OwnerStatementPage() {
                   onClick={() => void ask(`Void ${t.number}? Its entry is reversed and the balances change.`).then((ok) => ok && voidIt.mutate(t.id))}>Void</Button>}</Td>
               </tr>
             ))}
+            {start && <tr className="bg-stone-50 font-medium"><Td>{fmtDate(start)}</Td><Td>Brought forward</Td><Td /><Td />
+              <Td className="text-right font-mono">{fmt(opening.capital)}</Td><Td className="text-right font-mono">{fmt(opening.shares)}</Td>
+              <Td className="text-right font-mono">{fmt(opening.owed_to)}</Td><Td className="text-right font-mono">{fmt(opening.owed_by)}</Td><Td /></tr>}
           </Table>
         )}
       </Card>

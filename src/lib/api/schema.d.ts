@@ -6108,6 +6108,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/w/{workspace}/owners/{id}/statement/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The statement as a designed A4 PDF, for the dates asked for. */
+        get: operations["w_owners_statement_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/w/{workspace}/owners/logins/": {
         parameters: {
             query?: never;
@@ -6134,6 +6151,23 @@ export interface paths {
         };
         /** @description Your own owner or director account, if your login is linked to one: read-only, no permission needed. 404: none. */
         get: operations["w_owners_mine_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/w/{workspace}/owners/mine/statement/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Your own statement as a PDF, if your login is linked to an owner or director. */
+        get: operations["w_owners_mine_statement_pdf_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -16945,8 +16979,22 @@ export interface components {
         };
         OwnerStatement: {
             owner: components["schemas"]["Owner"];
+            /** @description Now, whatever the dates */
             balances: components["schemas"]["OwnerBalances"];
+            /** @description In the dates asked for (all when none), oldest first */
             rows: components["schemas"]["OwnerStatementRow"][];
+            /** Format: date */
+            start: string | null;
+            /** Format: date */
+            end: string | null;
+            /** @description Brought forward: the balances the day before start */
+            opening: components["schemas"]["OwnerBalances"];
+            /** @description Carried forward: the balances at the end */
+            closing: components["schemas"]["OwnerBalances"];
+            /** Format: decimal */
+            money_in: string;
+            /** Format: decimal */
+            money_out: string;
         };
         OwnerStatementRow: {
             transaction: components["schemas"]["OwnerTransaction"];
@@ -37144,7 +37192,12 @@ export interface operations {
     };
     w_owners_statement_retrieve: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Blank: from the first transaction */
+                from?: string;
+                /** @description Blank: up to today */
+                to?: string;
+            };
             header?: never;
             path: {
                 id: string;
@@ -37160,6 +37213,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OwnerStatement"];
+                };
+            };
+        };
+    };
+    w_owners_statement_pdf_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Blank: from the first transaction */
+                from?: string;
+                /** @description Blank: up to today */
+                to?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };
@@ -37192,7 +37272,12 @@ export interface operations {
     };
     w_owners_mine_retrieve: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Blank: from the first transaction */
+                from?: string;
+                /** @description Blank: up to today */
+                to?: string;
+            };
             header?: never;
             path: {
                 workspace: string;
@@ -37207,6 +37292,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OwnerStatement"];
+                };
+            };
+        };
+    };
+    w_owners_mine_statement_pdf_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Blank: from the first transaction */
+                from?: string;
+                /** @description Blank: up to today */
+                to?: string;
+            };
+            header?: never;
+            path: {
+                workspace: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };
