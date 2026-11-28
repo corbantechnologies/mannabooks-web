@@ -138,7 +138,7 @@ const NAV: { section: string | null; items: NavItem[] }[] = [
       { href: "/sales/quotations", label: "Quotations", icon: ScrollText, perm: ["quotations.view"] },
       { href: "/sales/catalogues", label: "Catalogues", icon: BookImage, perm: ["quotations.view"] },
       { href: "/sales/invoices", label: "Invoices", icon: FileText, perm: ["invoices.view"] },
-      { href: "/sales/payments", label: "Payments", icon: Banknote, perm: ["payments.view"] },
+      { href: "/sales/payments", label: "Customer payments", icon: Banknote, perm: ["payments.view"] },
       { href: "/sales/cash-sales", label: "Cash sales", icon: ReceiptText, perm: ["receipts.view"] },
       { href: "/sales/credit-notes", label: "Credit notes", icon: FileMinus, perm: ["creditnotes.view"] },
       { href: "/sales/debit-notes", label: "Debit notes", icon: FilePlus, perm: ["invoices.view"] },
